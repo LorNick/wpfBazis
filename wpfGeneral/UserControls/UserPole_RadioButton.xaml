@@ -1,0 +1,57 @@
+﻿<VirtualPole x:Class="wpfGeneral.UserControls.UserPole_RadioButton"
+             xmlns="clr-namespace:wpfGeneral.UserControls"
+             xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+             mc:Ignorable="d"
+             FontSize="14">
+
+    <p:BulletDecorator Margin="0,2,2,2" VerticalAlignment="Center">
+        <p:BulletDecorator.Bullet>
+            <p:Label Name="PART_Label" Height="24" HorizontalAlignment="Left"  Foreground="Navy" Content="UserPoleRadioButton" 
+                     VerticalContentAlignment="Center" Padding="5,0" />
+        </p:BulletDecorator.Bullet>
+        <p:WrapPanel Name="PART_WrapPanel" Margin="0,2,2,2">
+            <p:ListBox  Name="PART_ListBox" 
+                        BorderBrush="{x:Null}" 
+                        Background="{x:Null}" 
+                        SelectionChanged="PART_ListBox_SelectionChanged" 
+                        ItemsSource="{p:Binding Path=PROP_Items, RelativeSource={p:RelativeSource FindAncestor, AncestorType={x:Type UserPole_RadioButton} }}"
+                        IsSynchronizedWithCurrentItem="True">                        
+                <p:ListBox.ItemsPanel>
+                    <p:ItemsPanelTemplate>
+                        <p:VirtualizingStackPanel Orientation="{p:Binding Path=PROP_Orientation, 
+                            RelativeSource={p:RelativeSource FindAncestor, AncestorType={x:Type UserPole_RadioButton} }}" />
+                    </p:ItemsPanelTemplate>
+                </p:ListBox.ItemsPanel>
+                <p:ListBox.ItemContainerStyle>
+                    <p:Style TargetType="{x:Type p:ListBoxItem}">
+                        <!--<p:Setter Property="Background" Value="LightSteelBlue"/>-->
+                        <p:Setter Property="Template">
+                             <p:Setter.Value>
+                                <p:ControlTemplate TargetType="{x:Type p:ListBoxItem}">
+                                    <p:Border x:Name="Border"> 
+                                        <p:RadioButton IsChecked="{p:Binding Path=IsSelected, RelativeSource={p:RelativeSource TemplatedParent}}"
+                                                       Content="{p:TemplateBinding Content}" Margin="0, 0, 5, 0" Focusable="False"
+                                                       Name="Radio"/>
+                                    </p:Border>
+
+                                    <p:ControlTemplate.Triggers>
+                                        <p:Trigger  Property="IsSelected" Value="true">
+                                            <p:Setter  TargetName="Radio" Property="BorderBrush" Value="Red"/>
+                                            <p:Setter  TargetName="Border" Property="Background" Value="#FFBCEE8A"/>
+                                        </p:Trigger>
+                                        <p:Trigger Property="IsMouseOver" Value="true">
+                                            <p:Setter  TargetName="Border" Property="Background" Value="#FFBCCEF5"/>
+                                        </p:Trigger>
+                                    </p:ControlTemplate.Triggers>
+                                </p:ControlTemplate>
+                            </p:Setter.Value>
+                        </p:Setter>
+                    </p:Style>
+                </p:ListBox.ItemContainerStyle>
+            </p:ListBox>
+        </p:WrapPanel>
+    </p:BulletDecorator>
+</VirtualPole>

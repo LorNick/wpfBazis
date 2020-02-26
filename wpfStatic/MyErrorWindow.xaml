@@ -1,0 +1,38 @@
+﻿<Window x:Class="wpfStatic.MyErrorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MyErroConectionWindow" Height="334" Width="500"
+        Topmost="True"
+        WindowStyle="None"
+        FontSize="13"
+        WindowStartupLocation="CenterScreen" 
+        BorderBrush="Blue" ShowInTaskbar="False">
+    <Border BorderBrush="SlateBlue" BorderThickness="0.8" Margin="10,10,10,10" Background="#73FFD1D1">
+        <StackPanel>
+            <Expander x:Name="PART_Expander" Header="Описание ошибки">
+                <RichTextBox x:Name="PART_ErrorText" VerticalScrollBarVisibility="Visible" Height="260" FontSize="11" />
+            </Expander>
+            <TextBlock Text="ВНИМАНИЕ! Ошибка подключения к серверу!" HorizontalAlignment="Center" Foreground="Red" FontSize="16" Margin="0,10,0,0" />
+            <TextBlock FontSize="16" Text="Проверьте соединение сети!" HorizontalAlignment="Center" Margin="0,10,0,0" />
+            <TextBlock Foreground="SeaGreen" Text="Подождите, когда востановиться подключение к серверу, после чего нажмите на кнопку 'Повторить подключение'" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="30,10,30,0" />
+            <TextBlock Foreground="Firebrick" Text="Для закрытия программы нажмите кнопку 'Закрыть программу', все несохраненные данные будут потеряны!" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="30,10,30,0" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,10,30,0">
+                <Button x:Name="PART_ButtonReturn" Width="190" Style="{StaticResource StyleButton}" Click="PART_ButtonReturn_Click">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="{StaticResource btCheck}"/>
+                        <Label Content="Повторить подключение" VerticalContentAlignment="Center" Padding="0" Margin="2" FontSize="13" Foreground="SeaGreen"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="PART_ButtonClose" Style="{StaticResource StyleButton}" Width="190" Margin="10,0,0,0" Click="PART_ButtonClose_Click">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="{StaticResource btUndo}"/>
+                        <Label Content="Закрыть программу" VerticalContentAlignment="Center" Padding="0" Margin="2" Foreground="Firebrick" FontSize="13"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+            <TextBlock x:Name ="PART_Label1" Text="Для связи с техниками позвоните по телефону 3-25, либо в кабинет АСУ по телефону 3-40 (для главного корпуса)" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="20,10,20,0" />
+            <TextBlock x:Name ="PART_Label2" HorizontalAlignment="Center" Text="или Виктор Андреевич по телефону 1-23 (для филиала)" Margin="0,10,0,0" />
+        </StackPanel>
+    </Border>
+   
+</Window>

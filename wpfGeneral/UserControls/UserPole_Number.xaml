@@ -1,0 +1,17 @@
+﻿<VirtualPole x:Class="wpfGeneral.UserControls.UserPole_Number"
+             xmlns="clr-namespace:wpfGeneral.UserControls"
+             xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+             mc:Ignorable="d"  
+             x:Name="UserPole"
+             FontSize="14">
+    
+        <p:BulletDecorator Margin="0,2,2,2" VerticalAlignment="Center">
+            <p:BulletDecorator.Bullet>
+                <p:Label Name="PART_Label" Height="24" HorizontalAlignment="Left"  Foreground="Navy" Content="UserPoleNumber" VerticalContentAlignment="Center" Padding="5,0" />
+            </p:BulletDecorator.Bullet>
+        <p:TextBox Name="PART_TextBox" Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}" MinWidth="80" PreviewTextInput="PART_TextBox_PreviewTextInput" TextChanged="PART_TextBox_TextChanged" LostFocus="PART_TextBox_LostFocus" />
+    </p:BulletDecorator>   
+</VirtualPole>

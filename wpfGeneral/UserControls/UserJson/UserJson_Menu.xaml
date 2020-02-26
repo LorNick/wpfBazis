@@ -1,0 +1,24 @@
+﻿<VirtualJson x:Class="wpfGeneral.UserControls.UserJson_Menu"
+             xmlns="clr-namespace:wpfGeneral.UserControls"
+             xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+             mc:Ignorable="d"  
+             x:Name="UserPole"
+             FontSize="14">
+    <p:StackPanel Orientation="Horizontal">
+        <p:Label Name="PART_Tag" Height="24" Foreground="Navy" 
+                        Content="Tag" VerticalContentAlignment="Center" Padding="5,0" />
+        <p:Label Name="PART_TagName" Height="24" Foreground="Black"
+                        Content="TagName" VerticalContentAlignment="Center" Padding="5,0"/>
+        <!--<p:Label Name="PART_Document" Height="24" Foreground="Navy" 
+                        Content="Documet" VerticalContentAlignment="Center" Padding="5,0" />
+        <p:Label Name="PART_Vrach" Height="24" Foreground="DimGray" 
+                        Content="Vrach" VerticalContentAlignment="Center" Padding="5,0" />
+        <p:Label Name="PART_Diag" Height="24" Foreground="Navy" 
+                        Content="Diag" VerticalContentAlignment="Center" Padding="5,0" />
+        <p:Label Name="PART_Metca" Height="24" Foreground="DimGray" 
+                        Content="Metca" VerticalContentAlignment="Center" Padding="5,0" />-->
+    </p:StackPanel> 
+</VirtualJson>

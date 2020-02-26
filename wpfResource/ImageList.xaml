@@ -1,0 +1,86 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+   
+    <!-- Маленькие Иконки для кнопок bts -->
+    <BitmapImage x:Key="btsRu" UriSource="btsImag/btsRu.png" />
+    <BitmapImage x:Key="btsUs" UriSource="btsImag/btsUs.png" />
+    <BitmapImage x:Key="btsClose" UriSource="btsImag/btsClose.ico" />
+    <BitmapImage x:Key="btsSave" UriSource="btsImag/btsSave.png" />
+    <BitmapImage x:Key="btsUndo" UriSource="btsImag/btsUndo.png" />
+    <BitmapImage x:Key="btsRedo" UriSource="btsImag/btsRedo.png" />
+    <BitmapImage x:Key="btsPrintPreview" UriSource="btsImag/btsPrintPreview.png" />
+    <BitmapImage x:Key="btsPrint" UriSource="btsImag/btsPrint.png" />
+    <BitmapImage x:Key="btsNew" UriSource="btsImag/btsNew.png" />
+    <BitmapImage x:Key="btsDelete" UriSource="btsImag/btsDelete.png" />
+    <BitmapImage x:Key="btsEdit" UriSource="btsImag/btsEdit.png" />
+    <BitmapImage x:Key="btsCopy" UriSource="btsImag/btsCopy.png" />
+
+    <!-- Большие Иконки для кнопок bt -->
+    <BitmapImage x:Key="btAdd" UriSource="btImag/btAdd.png" />
+    <BitmapImage x:Key="btCheck" UriSource="btImag/btCheck.png" />
+    <BitmapImage x:Key="btDelete" UriSource="btImag/btDelete.png" />
+    <BitmapImage x:Key="btEdit" UriSource="btImag/btEdit.png" />
+    <BitmapImage x:Key="btUndo" UriSource="btImag/btUndo.png" />
+
+    <!-- Большие Рисунки -->
+    <BitmapImage x:Key="imgEmblema" UriSource="btImag/Emblema.jpg" />
+    <BitmapImage x:Key="imgImageBazis" UriSource="btImag/ImageBazis.png" />
+
+    <!-- Иконки веток -->
+    <BitmapImage x:Key="mnObSved" UriSource="mnImag/mnObSved.ico" />            <!-- Общие сведенья -->
+    <BitmapImage x:Key="mnPasp" UriSource="mnImag/mnPasp.ico" />                <!-- Паспортная часть -->    
+    <BitmapImage x:Key="mnPriemnOtd" UriSource="mnImag/mnPriemnOtd.ico" />      <!-- Приемное отделение -->
+    <BitmapImage x:Key="mnOneOsmotr" UriSource="mnImag/mnOneOsmotr.ico" />      <!-- Осмотр при поступлении -->
+    <BitmapImage x:Key="mnPredOperEpikriz" UriSource="mnImag/mnPredOperEpikriz.ico" />    <!-- Предоперационный эпикриз -->
+    <BitmapImage x:Key="mnAnest" UriSource="mnImag/mnAnest.ico" />              <!-- Шаблон Анестезиолога -->
+    <BitmapImage x:Key="mnStac" UriSource="mnImag/mnStac.ico" />                <!-- Стационар -->
+    <BitmapImage x:Key="mnDoc_1" UriSource="mnImag/mnDoc_1.ico" />              <!-- Осмотр -->
+    <BitmapImage x:Key="mnDoc_2" UriSource="mnImag/mnDoc_2.ico" />              <!-- Протокол катетеризации -->
+    <BitmapImage x:Key="mnNaznach" UriSource="mnImag/mnNaznach.ico" />          <!-- Назначения -->
+    <BitmapImage x:Key="mnNaznachMed" UriSource="mnImag/mnNaznachMed.ico" />    <!-- Медикаменты -->
+    <BitmapImage x:Key="mnDoc_3" UriSource="mnImag/mnDoc_3.ico" />              <!-- Консилиум, Протокол порта -->
+    <BitmapImage x:Key="mnDoc_4" UriSource="mnImag/mnDoc_4.ico" />              <!-- Дневник -->
+    <BitmapImage x:Key="mnDoc_5" UriSource="mnImag/mnDoc_5.ico" />              <!-- Эпикриз -->
+    <BitmapImage x:Key="mnDoc_6" UriSource="mnImag/mnDoc_6.ico" />              <!-- Лучевой Эпикриз -->
+    <BitmapImage x:Key="mnDoc_7" UriSource="mnImag/mnDoc_7.ico" />              <!-- Шаблон поликлиники -->
+    <BitmapImage x:Key="mnDoc_8" UriSource="mnImag/mnDoc_8.ico" />              <!-- Документ 8 -->
+    <BitmapImage x:Key="mnDoc_9" UriSource="mnImag/mnDoc_9.ico" />              <!-- Документ 9 -->
+    <BitmapImage x:Key="mnDoc_10" UriSource="mnImag/mnDoc_10.ico" />            <!-- Документ 10 -->
+    <BitmapImage x:Key="mnDoc_11" UriSource="mnImag/mnDoc_11.ico" />            <!-- Документ 11 -->
+    <BitmapImage x:Key="mnDoc_12" UriSource="mnImag/mnDoc_12.ico" />            <!-- Документ 12 -->
+    <BitmapImage x:Key="mnObhod" UriSource="mnImag/mnObhod.ico" />              <!-- Обходы, консилиумы -->
+    <BitmapImage x:Key="mnHimTer" UriSource="mnImag/mnHimTer.ico" />            <!-- Химиотерапия -->
+    <BitmapImage x:Key="mnGoHome" UriSource="mnImag/mnGoHome.ico" />            <!-- Выписной эпикриз -->
+    <BitmapImage x:Key="mnPerev" UriSource="mnImag/mnPerev.ico" />              <!-- Переводной эпикриз -->
+    <BitmapImage x:Key="mnPin_blue" UriSource="mnImag/mnPin_blue.ico" />        <!-- Метка синяя -->
+    <BitmapImage x:Key="mnPin_green" UriSource="mnImag/mnPin_green.ico" />      <!-- Метка зеленая -->
+    <BitmapImage x:Key="mnPin_grey" UriSource="mnImag/mnPin_grey.ico" />        <!-- Метка серая -->
+    <BitmapImage x:Key="mnPin_red" UriSource="mnImag/mnPin_red.ico" />          <!-- Метка красная -->
+    <BitmapImage x:Key="mnPin_yellow" UriSource="mnImag/mnPin_yellow.ico" />    <!-- Метка желтая -->
+    <BitmapImage x:Key="mnLog" UriSource="mnImag/mnLog.ico" />                  <!-- Логи -->
+    <BitmapImage x:Key="mnSelectPac" UriSource="mnImag/mnSelectPac.ico" />      <!-- Выбор нового пациента -->
+    <BitmapImage x:Key="mnHistory" UriSource="mnImag/mnHistory.ico" />          <!-- История -->
+    <BitmapImage x:Key="mnOper" UriSource="mnImag/mnOper.ico" />                <!-- Операции -->
+    <BitmapImage x:Key="mnExtact" UriSource="mnImag/mnExtact.ico" />            <!-- Выписка -->
+    <BitmapImage x:Key="mnPosPolikl" UriSource="mnImag/mnPosPolikl.ico" />      <!-- Посещение поликлиники -->
+    <BitmapImage x:Key="mnParacl" UriSource="mnImag/mnParacl.ico" />            <!-- Параклинника --> 
+    <BitmapImage x:Key="mnDocuments" UriSource="mnImag/mnDocuments.ico" />      <!-- Документы -->
+    <BitmapImage x:Key="mnReg" UriSource="mnImag/mnReg.ico" />                  <!-- Регистратура -->
+    <BitmapImage x:Key="mnKdl_green" UriSource="mnImag/mnKdl_green.ico" />      <!-- КДЛ -->
+    <BitmapImage x:Key="mnMicroscope" UriSource="mnImag/mnMicroscope.ico" />    <!-- КДЛ Гистология -->
+    <BitmapImage x:Key="mnChild" UriSource="mnImag/mnChild.ico" />              <!-- Учащисяй -->
+    <BitmapImage x:Key="mnMen" UriSource="mnImag/mnMen.ico" />                  <!-- Мент -->
+    <BitmapImage x:Key="mnPhysiology" UriSource="mnImag/mnPhysiology.ico" />    <!-- Физиология -->
+    <BitmapImage x:Key="mnGreenDown" UriSource="mnImag/mnGreenDown.ico" />      <!-- Стрелка вниз -->
+    <BitmapImage x:Key="mnGreenUp" UriSource="mnImag/mnGreenUp.ico" />          <!-- Стрелка вверх -->
+    <BitmapImage x:Key="mnRakReg" UriSource="mnImag/mnRakReg.ico" />            <!-- Раковый Регистр (желтый паучек) -->
+    <BitmapImage x:Key="mnDevil" UriSource="mnImag/mnDevil.ico" />              <!-- Ошибки по КСГ (черт) -->
+    <BitmapImage x:Key="mnPhone" UriSource="mnImag/mnPhone.ico" />              <!-- Телефоны -->
+    <BitmapImage x:Key="mnObDocum" UriSource="mnImag/mnObDocum.ico" />          <!-- Общие документы --> 
+    <BitmapImage x:Key="mnMonitor" UriSource="mnImag/mnMonitor.ico" />          <!-- Монитор -->
+    <BitmapImage x:Key="mnSubscr" UriSource="mnImag/mnSubscr.ico" />            <!-- Выписка (из поликлиники/стационара) -->
+    <BitmapImage x:Key="mnDelete" UriSource="mnImag/mnDelete.ico" />            <!-- Удаление -->
+    <BitmapImage x:Key="mnKarta" UriSource="mnImag/mnKarta.ico" />              <!-- Карта (форма с полями) -->
+    <BitmapImage x:Key="mnAngel" UriSource="mnImag/mnAngel.ico" />              <!-- Умер -->
+    <BitmapImage x:Key="mnKons" UriSource="mnImag/mnKons.ico" />                <!-- Консилиум -->
+</ResourceDictionary>

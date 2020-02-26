@@ -1,0 +1,122 @@
+﻿using System;
+using System.Data;
+using System.Windows;
+using System.Windows.Controls;
+using wpfStatic;
+
+namespace wpfGeneral.UserWindows
+{
+    /// <summary>КЛАСС Таблицы ответов шаблона</summary>
+    public class UserWindow_List : VirtualUserWindow
+    {   
+        /// <summary>Номер шаблона</summary>
+        private readonly int PRI_NomerShablon;
+        /// <summary>Номер вопроса</summary>
+        private readonly int PRI_VarID;
+
+       
+        /// <summary>КОНСТРУКТОР</summary>
+        public UserWindow_List(string pTable, int pShablon, int pVarID)
+        {
+            // Имя таблицы
+            PRO_TableName = pTable;
+            // Номер шаблона
+            PRI_NomerShablon = pShablon;
+            // Номер вопроса
+            PRI_VarID = pVarID;
+            // Заголовок
+            Title = "Варианты ответов:";
+            //Размеры
+            MinWidth = Width;
+            // Сортируем по полю Варианты ответа
+            PRO_PoleSort = 0;
+            // Показываем в подсказке 
+            PRO_PoleBarPanel = 1;
+            // Открываем кнопки редактирования
+            PROP_FlagButtonEdit = true;
+            // Открываем таблицу
+            MET_OpenForm();
+            // Ставим фокус на сторку поиска
+            PART_TextBox.Focus();
+        }
+
+        /// <summary>МЕТОД Формирование Запроса</summary>
+        protected override string MET_SelectQuery()
+        {
+            return MyQuery.s_ListDocum_Select_1(PRO_TableName, PRI_NomerShablon, PRI_VarID);
+        }
+
+        /// <summary>МЕТОД Удаляем ненужные столбцы</summary>
+        protected override void MET_RemoveAt()
+        {
+            PART_DataGrid.Columns.RemoveAt(0);
+        }
+
+        /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
+        protected override string MET_Header(int pIndex)
+        {
+            string[] _mName = { "", "Варианты ответов" };
+            return _mName[pIndex];
+        }
+
+        /// <summary>МЕТОД Разрешаем (false), Запрещаяем (true) редактировать столбцы</summary>
+        protected override bool MET_ReadOnly(int pIndex)
+        {
+            // строка с метода metHeader 
+            //string[] _Name = { "", "Варианты ответов" };
+            bool[] _mReadOnly = { true, false };
+            return _mReadOnly[pIndex];
+        }
+
+        /// <summary>МЕТОД Удаляем данные справочника</summary>
+        /// <param name="pRow">Удаляемая строка</param>
+        protected override bool MET_SqlDelete(DataRow pRow)
+        {
+            // Если нету кода, то выходим
+            if (pRow["Cod"].ToString() == "")
+                return false;
+            // Код ответа
+            int _Cod = Convert.ToInt32(pRow["Cod"]);
+            // Удаляем
+            MySql.MET_QueryNo(MyQuery.s_ListDocum_Delete_1(PRO_TableName, _Cod));
+
+            return true;
+        }
+
+        /// <summary>МЕТОД Сохраняем данные справочника</summary>
+        /// <param name="pStrValue">Данные которые сохраняем</param>
+        /// <param name="pRow">Редактируемая строка</param>
+        /// <param name="pColumn">Редактируемый столбец</param>
+        protected override bool MET_SqlEdit(DataRow pRow, string pStrValue, DataGridColumn pColumn)
+        {
+            int _Cod;                                                           // код ответа
+
+            // Проверяем на наличие повторов
+            // Если есть повтор, то не сохраняем
+            if (MySql.MET_QueryBool(MyQuery.s_ListDocum_Select_3(PRO_TableName, PRI_NomerShablon, PRI_VarID, pStrValue)))
+            {
+                MessageBox.Show("Ошибка! Данный ответ уже есть в списке ответов");
+                return false;
+            }
+            // Update Если есть код ответа, значить строка старая и меняем ответ
+            if (pRow["Cod"].ToString() != "")
+            {
+                _Cod = Convert.ToInt32(pRow["Cod"]);        // код ответа
+                MySql.MET_QueryNo(MyQuery.s_ListDocum_Update_1(PRO_TableName, _Cod, pStrValue));
+                return true;
+            }
+            // Insert Находим максимальный код
+            _Cod = MySql.MET_QueryInt(MyQuery.s_ListDocum_Select_2(PRO_TableName, PRI_NomerShablon)) + 1;
+            if (_Cod == 1)
+                _Cod = PRI_NomerShablon * 1000 + 1;                             // если это первый ответ в шаблоне то начинаем с нужного номера
+            // Добавляем ответ в базу
+            MySql.MET_QueryNo(MyQuery.s_ListDocum_Insert_1(PRO_TableName, _Cod, PRI_NomerShablon, PRI_VarID, pStrValue));
+            // Добавляем данные в sqlDs
+            pRow["Cod"] = _Cod;
+            pRow["Value"] = pStrValue;
+            MyGlo.DataSet.Tables[PRO_TableName].Rows.Add(pRow);
+
+            return true;
+        }
+    }
+}

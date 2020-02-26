@@ -1,0 +1,142 @@
+﻿<Window x:Class="wpfReestr.MyReestr"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        Title="Подготовка Страховых реестров" Height="660" Width="500"
+        ShowInTaskbar="false"        
+        FontFamily="Tahoma" FontSize="14" 
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"         
+        Name="PART_UserPage"
+        WindowStyle="ToolWindow" ResizeMode="NoResize">
+    
+    <Grid DataContext="{Binding}">
+        <Grid.Resources>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="Width" Value="100"/>
+                <Setter Property="BorderBrush" Value="#FFB9BFBF"/> 
+                <Setter Property="HorizontalContentAlignment" Value="Center"/> 
+                <Style.Triggers>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="Background" Value="#FFFFFFC0"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style TargetType="{x:Type DatePicker}">
+                <Setter Property="Width" Value="110"/>
+            </Style>
+        </Grid.Resources>
+        
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label>Код корректировки:</Label>
+                <TextBox  Text="{Binding ElementName=PART_UserPage, Path=PROP_Korekt}" Name="PART_Korekt" />
+                <Label Name="PART_Info" Margin="10,0,0,0" Foreground="#FF2E57E2">Записей: 0</Label>
+            </StackPanel>
+            <GroupBox Header="Счет:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0">Номер:</Label>
+                    <TextBox Name="PART_Schet" Text="{Binding ElementName=PART_UserPage, Path=PROP_Schet}" 
+                             Grid.Column="1" HorizontalAlignment="Left"/>
+                    <Label Grid.Column="2" HorizontalAlignment="Right" >от:</Label>
+                    <DatePicker Name="PART_DateSchet" 
+                                SelectedDate="{Binding ElementName=PART_UserPage, Path=PROP_DateSchet, Mode=TwoWay}"
+                                Grid.Column="3" HorizontalAlignment="Left" />
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Исправления:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
+                <StackPanel Orientation="Horizontal">                   
+                    <Label>Код родителя:</Label>
+                    <ComboBox Name="PART_ComboBoxParent" Width="350" SelectionChanged="PART_ComboBoxParent_SelectionChanged" DropDownOpened="PART_ComboBoxParent_DropDownOpened"/>
+                </StackPanel>
+            </GroupBox>            
+            <GroupBox Header="Период:" BorderBrush="#FF359FE2" Margin="3" Padding="5" Foreground="#FF359FE2" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="110"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0">начало:</Label>
+                    <DatePicker Name="PART_DateN"
+                                SelectedDate="{Binding ElementName=PART_UserPage, Path=PROP_DateN, Mode=TwoWay}"
+                                Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" SelectedDateChanged="PART_DateN_SelectedDateChanged" />
+                    <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" >конец:</Label>
+                    <DatePicker Name="PART_DateK"
+                                SelectedDate="{Binding ElementName=PART_UserPage, Path=PROP_DateK, Mode=TwoWay}"
+                                Grid.Row="0" Grid.Column="3" HorizontalAlignment="Left" SelectedDateChanged="PART_DateK_SelectedDateChanged" />
+                    <telerik:RadButton Name="PART_LastButton" Grid.Row="1" Grid.Column="1" Content="Прошлый" Margin="0,5,0,0" Click="PART_LastButton_Click"/>
+                    <telerik:RadButton Name="PART_CarrentButton" Grid.Row="1" Grid.Column="3" Content="Текущий" Margin="0,5,0,0" Width="110" HorizontalAlignment="Left" Click="PART_CarrentButton_Click"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Name="PART_StrahComp" Header="Формировать только по указанной страх комп.:"  Foreground="#FF359FE2" BorderBrush="#FF359FE2" Margin="3" Padding="5" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Grid.Row="0" Grid.Column="0" IsChecked="True" Tag="0" Name="PART_StrahCompRadio_0" Click="RadioButtonStrahComp_Click" >ВСЕ области</RadioButton>
+                    <RadioButton Grid.Row="0" Grid.Column="1" Tag="2" Name="PART_StrahCompRadio_2" Click="RadioButtonStrahComp_Click">Капитал МС (55041)</RadioButton>
+                    <RadioButton Grid.Row="1" Grid.Column="0" Tag="1" Name="PART_StrahCompRadio_1" Click="RadioButtonStrahComp_Click">Альфа (55050)</RadioButton>
+                    <RadioButton Grid.Row="1" Grid.Column="1" Tag="3" Name="PART_StrahCompRadio_3" Click="RadioButtonStrahComp_Click">ВТБ МС (55046)</RadioButton>
+                    <RadioButton Grid.Row="2" Grid.Column="0" Tag="4" Name="PART_StrahCompRadio_4" Click="RadioButtonStrahComp_Click">Иногородние</RadioButton>
+                </Grid>
+            </GroupBox>
+            <GroupBox Name="PART_ExportVMP" Header="Тип файла:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Grid.Column="0" Tag="3" Name="PART_VMPRadio_3" IsChecked="True" Click="RadioButtonTipFile_Click">ЗНО {C}</RadioButton>
+                    <RadioButton Grid.Column="1" Tag="4" Name="PART_VMPRadio_4" Click="RadioButtonTipFile_Click">Без С {H}</RadioButton>
+                    <RadioButton Grid.Column="2" Tag="1" Name="PART_VMPRadio_1" Click="RadioButtonTipFile_Click">ВМП {T}</RadioButton>
+                </Grid>
+            </GroupBox>
+            <GroupBox Name="PART_ExportType" Header="Выгрузка, только:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="24"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Grid.Row="0" Grid.Column="0" Tag="2" Click="RadioButtonType_Click">Поликлиника</RadioButton>
+                    <RadioButton Grid.Row="0" Grid.Column="1" Tag="3" Click="RadioButtonType_Click">Дневной стационар</RadioButton>
+                    <RadioButton Grid.Row="1" Grid.Column="0" Tag="1" Click="RadioButtonType_Click">Стационар</RadioButton>
+                    <RadioButton Grid.Row="1" Grid.Column="1" Tag="4" Click="RadioButtonType_Click">Параклиника</RadioButton>
+                    <RadioButton Grid.Row="2" Grid.Column="0" Tag="0" IsChecked="True" Name="PART_ExportType_1" Click="RadioButtonType_Click">Всё в одном файле</RadioButton>
+                </Grid>
+            </GroupBox>
+            <Grid>
+                <ProgressBar Name="PART_ProgressBar" Height="30" Margin="5,0"/>
+                <Label Name="PART_ProgressLabel"
+                       VerticalAlignment="Top" HorizontalAlignment="Center"
+                       Content="{Binding ElementName=PART_UserPage, Path=PROP_ProgressLabel, Mode=TwoWay}"/>
+            </Grid>
+            <telerik:RadButton Name="PART_ButtonStart" 
+                    Content="Формирование реестра" Height="40" Margin="150,8" Click="PART_ButtonStart_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

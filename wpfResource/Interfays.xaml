@@ -1,0 +1,182 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" >
+
+    <!--Шаблон для панели инструмента-->
+    <Style  TargetType="ToolBar">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Background" Value="#FFD4D4F0"/>
+        <Setter Property="Height" Value="28"/>
+        <Setter Property="VerticalAlignment" Value="Top"/>
+    </Style>
+    
+    <!--Стиль для Экспандера-->
+    <Style TargetType="Expander">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush EndPoint="1,0.5" StartPoint="0,0.5">
+                    <GradientStop Color="#47000000" Offset="1" />
+                    <GradientStop Color="Azure" Offset="0.6" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!--Стиль для Бордюра 1-->
+    <Style TargetType="Border" x:Key="Border_1">
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Margin" Value="0, 2, 0, 0"/> 
+        <Setter Property="Background" Value="GhostWhite"/>
+    </Style>
+    
+    <!--Стиль для Бордюра 2-->
+    <Style TargetType="Border" x:Key="Border_2">
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Margin" Value="0, 2, 0, 0"/>
+        <Setter Property="Background" Value="Azure"/>
+    </Style>
+
+    <!--Стили для TextBox-->
+    <Style TargetType="TextBox">
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#FFFFFFC0"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Стили для TextBlock-->
+    <Style TargetType="TextBlock">
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#FFFFFFC0"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Стили для telerik:RadWatermarkTextBox-->
+    <Style TargetType="telerik:RadWatermarkTextBox">
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#FFFFFFC0"/>                               
+            </Trigger>          
+        </Style.Triggers>
+    </Style>
+
+    <!--Стили для ListBoxItem (для списков)-->
+    <Style TargetType="{x:Type ListBoxItem}">
+        <Style.Triggers>
+            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                <Setter Property="Background" Value="#1989632C"></Setter>
+            </Trigger>
+            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                <Setter Property="Background" Value="#19000000"></Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Стили для DatePickerTextBox-->
+    <Style TargetType="DatePickerTextBox">
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#FFFFFFC0"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Стили для DataGridColumnHeader (заголовок)-->
+    <Style TargetType="DataGridColumnHeader">
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding}" TextAlignment="Center"></TextBlock>  
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Column.(ToolTipService.ToolTip)}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Стили для Колонок с текстом по центру-->
+    <Style TargetType="TextBlock" x:Key="Column_Center">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <!--Стили для Колонок с текстом по правой стороне-->
+    <Style TargetType="TextBlock" x:Key="Column_Right">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+    </Style>
+
+    <!--Стили для DataGrid (таблиц)-->
+    <Style TargetType="DataGrid"> 
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="CanUserReorderColumns" Value="False"/>
+        <Setter Property="CanUserResizeColumns" Value="False"/>      
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="AlternationCount" Value="2"/>
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="GridLinesVisibility" Value="All"/>
+        <Setter Property="SelectionMode" Value="Single"/>
+        <Setter Property="ClipboardCopyMode" Value="IncludeHeader"/>
+        <Setter Property="VerticalGridLinesBrush" Value="#C6D7C5"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#C6D7C5"/>
+        <Setter Property="SelectionUnit" Value="FullRow"/>
+        <Setter Property="AlternatingRowBackground" Value="#FFF0F0F0"/>
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                            <Setter Property="Background" Value="Blue"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+     <!--Стили для DataGrid (таблиц)-->
+    <Style TargetType="{x:Type DataGrid}" x:Key="DataGridReestr">
+        <Setter Property="VerticalGridLinesBrush" Value="#C6D7C5"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#C6D7C5"/>
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="DataGridCell.IsSelected" Value="True">
+                            <Setter Property="Background" Value="Blue"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Стили для TableCell (ячейки отчета)-->
+    <Style TargetType="TableCell">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0.4"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <!--Стили для TableCell 1 (ячейки отчета)-->
+    <Style TargetType="TableCell"  x:Key="TableCell_1">
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0.4"/>
+        <Setter Property="TextAlignment" Value="Left"/>
+    </Style>
+
+    <!--Меняем системные цвета для выбранных элеметнов Дерева -->
+    <SolidColorBrush Color="Gainsboro" x:Key="{x:Static SystemColors.HighlightBrushKey}" />
+    <SolidColorBrush Color="Black" x:Key="{x:Static SystemColors.HighlightTextBrushKey}" />
+</ResourceDictionary>

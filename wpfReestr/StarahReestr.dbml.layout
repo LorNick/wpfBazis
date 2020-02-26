@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 14" name="StarahReestr">
+  <DataContextMoniker Name="/StarahReestrDataContext" />
+  <nestedChildShapes>
+    <classShape Id="51fcd9ba-a32e-44ce-8efe-66261f3b29dd" absoluteBounds="0.875, 0.75, 2, 4.0785139973958326">
+      <DataClassMoniker Name="/StarahReestrDataContext/StrahFile" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4053854f-2346-4fbc-9946-e40828b3a6a1" absoluteBounds="0.89, 1.21, 1.9700000000000002, 3.518513997395833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4e731d99-177d-467c-bc2f-38325868edea" absoluteBounds="6.625, 0.75, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/StarahReestrDataContext/s_StrahComp" />
+      <nestedChildShapes>
+        <elementListCompartment Id="369fb364-28c2-4806-901c-507dd3f99077" absoluteBounds="6.64, 1.21, 1.9700000000000002, 1.7878011067708335" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b33bef87-f21c-44c0-8dd7-05c085637cda" absoluteBounds="6.625, 3.375, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/StarahReestrDataContext/s_Oblast" />
+      <nestedChildShapes>
+        <elementListCompartment Id="84e11f45-b587-4f86-af9c-e67540c9aeaa" absoluteBounds="6.64, 3.835, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4239dbd2-13dd-4b22-b859-3bf8516611ff" absoluteBounds="6.625, 5.5, 2, 3.8862125651041666">
+      <DataClassMoniker Name="/StarahReestrDataContext/StrahSpr" />
+      <nestedChildShapes>
+        <elementListCompartment Id="32dc2e7c-639e-4f74-88c8-273207ff9939" absoluteBounds="6.64, 5.96, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9ce834f4-3e6e-43e1-89d6-908b03754b36" absoluteBounds="3.625, 0.875, 2, 12.9243798828125">
+      <DataClassMoniker Name="/StarahReestrDataContext/StrahReestr" />
+      <nestedChildShapes>
+        <elementListCompartment Id="a7114a7c-9de8-4231-91b5-4ed3d030dc57" absoluteBounds="3.64, 1.335, 1.9700000000000002, 12.3643798828125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.875 : 2.85175699869792); (3.625 : 2.85175699869792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/StarahReestrDataContext/StrahFile/StrahFile_StrahReestr" />
+      <nodes>
+        <classShapeMoniker Id="51fcd9ba-a32e-44ce-8efe-66261f3b29dd" />
+        <classShapeMoniker Id="9ce834f4-3e6e-43e1-89d6-908b03754b36" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

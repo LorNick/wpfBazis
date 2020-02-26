@@ -1,0 +1,27 @@
+﻿<p:UserControl x:Class="wpfGeneral.UserControls.UserPole_ListProtokol"
+             xmlns="clr-namespace:wpfGeneral.UserControls"
+             xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+             mc:Ignorable="d"
+             FontSize="14">
+    <p:Grid>
+        <p:Grid.Resources>
+            <p:Style x:Key="ExpStyle" TargetType="{x:Type p:Expander}">
+                <p:Setter Property="Background" Value="White">
+                </p:Setter>
+            </p:Style>
+        </p:Grid.Resources>
+        <p:Expander Name="PART_Expander" Style="{p:DynamicResource ExpStyle}" Expanded="PART_Expander_Expanded" Collapsed="PART_Expander_Collapsed">
+            <p:Expander.Header>
+                <p:StackPanel Name="PART_StackPanelUp" Orientation="Horizontal">
+                    <p:Label>Тут будет 1е поле</p:Label>
+                    <p:Label>2е поле</p:Label>
+                </p:StackPanel>
+            </p:Expander.Header>
+            <p:StackPanel Name="PART_StackPanelDown">
+            </p:StackPanel>
+        </p:Expander>
+    </p:Grid>
+</p:UserControl>

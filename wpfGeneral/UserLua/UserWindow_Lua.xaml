@@ -1,0 +1,63 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"        
+        xmlns:my="clr-namespace:wpfGeneral.UserControls"
+        x:Class="wpfGeneral.UserLua.UserWindow_Lua"
+        Title="Окно строки шаблона"
+        Width="500"
+        MaxHeight="1000"
+        Height="Auto"
+        Topmost="True"
+        ShowInTaskbar="False"            
+        SizeToContent="Height"
+        Loaded="UserWindows_Loaded"
+        StateChanged="UserWindows_StateChanged" 
+        Closing="UserWindows_Closing" Background="White" >
+    <Border BorderBrush="SlateBlue" BorderThickness="0.8" Margin="4,4,4,4">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30,10,30,10">
+                <Button x:Name="PART_ButtonReturn" Width="150" Style="{StaticResource StyleButton}" Click="PART_ButtonReturn_Click">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="{StaticResource btCheck}"/>
+                        <Label Content="Сохранить в SQL" VerticalContentAlignment="Center" Padding="0" Margin="2" FontSize="13" Foreground="SeaGreen" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="PART_ButtonClose" Style="{StaticResource StyleButton}" Width="150" Margin="10,0,0,0" Click="PART_ButtonClose_Click">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="{StaticResource btUndo}"/>
+                        <Label Content="Закрыть" VerticalContentAlignment="Center" Padding="0" Margin="2" Foreground="Firebrick" FontSize="13"/>
+                    </StackPanel>
+                </Button>
+                <Button x:Name="PART_ButtonUp" Style="{StaticResource StyleButton}" Width="40" Margin="10,0,0,0" Click="PART_ButtonUp_Click" ToolTip="Верхний вопрос">
+                    <Image Source="{StaticResource mnGreenUp}"/>
+                </Button>
+                <Button x:Name="PART_ButtonDown" Style="{StaticResource StyleButton}" Width="40" Margin="10,0,0,0"  ToolTip="Нижний вопрос" Click="PART_ButtonDown_Click">
+                    <Image Source="{StaticResource mnGreenDown}"/>
+                </Button>
+            </StackPanel>
+
+            <my:UserPole_Text x:Name="PART_Cod"     PROP_Text="{Binding PROP_Cod}"      PROP_Description="Код вопроса (Cod)" PROP_MinWidthDescription="200" IsEnabled="False" />
+            <my:UserPole_Text x:Name="PART_ID"      PROP_Text="{Binding PROP_ID}"       PROP_Description="Номер шаблона (ID)" PROP_MinWidthDescription="200" IsEnabled="False" />
+            <my:UserPole_Text x:Name="PART_Nomer"   PROP_Text="{Binding PROP_Nomer, Mode=TwoWay}"    PROP_Description="Номер по порядку (Nomer)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_VarId"   PROP_Text="{Binding PROP_VarId, Mode=TwoWay}"    PROP_Description="Код вопроса (VarId)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_Maska"   PROP_Text="{Binding PROP_Maska, Mode=TwoWay}"    PROP_Description="VarID родителя (Maska)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_Type"    PROP_Text="{Binding PROP_Type, Mode=TwoWay}"     PROP_Description="Тип вопроса (Type)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_Razdel"  PROP_Text="{Binding PROP_Razdel, Mode=TwoWay}"   PROP_Description="Раздел (Razdel)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_Name"    PROP_Text="{Binding PROP_Name, Mode=TwoWay}"     PROP_Description="Описание вопроса (Name)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Label PROP_DefaultText="Значение по умолчанию (ValueStart):"/>
+            <my:UserPole_Text x:Name="PART_ValueStart"  PROP_Text="{Binding PROP_ValueStart, Mode=TwoWay}"   PROP_Description="" PROP_MinWidthDescription="2"/>
+            <my:UserPole_Text x:Name="PART_OutText"     PROP_Text="{Binding PROP_OutText, Mode=TwoWay}"      PROP_Description="Текст перед (OutText)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_InText"  PROP_Text="{Binding PROP_InText, Mode=TwoWay}"   PROP_Description="Текст после (InText)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Text x:Name="PART_xFormat" PROP_Text="{Binding PROP_xFormat, Mode=TwoWay}"  PROP_Description="Формат текста (xFormat)" PROP_MinWidthDescription="200" />
+            <my:UserPole_Label PROP_DefaultText="Скрипт Lua (xLua):"/>
+            <Border BorderThickness="0.8" Margin="2" BorderBrush="Gray">
+                <WindowsFormsHost Name="PART_WindowsFormsHostFCTB" MinHeight="24" MaxHeight="400"  />
+            </Border>
+            <my:UserPole_Label PROP_DefaultText="Логи testa скриптов:"/>
+            <my:UserPole_Text x:Name="PART_Log" PROP_Description="" PROP_MinWidthDescription="2"/>
+            <Button x:Name="PART_ButtonTest" Content="Test скриптов" Height="24" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="PART_ButtonTest_Click"/>
+
+        </StackPanel>
+    </Border>
+
+</Window>

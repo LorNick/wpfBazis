@@ -1,0 +1,48 @@
+﻿<Window x:Class="wpfGeneral.UserWindows.UserWindow_CardAdmin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:my="clr-namespace:wpfGeneral.UserControls"
+        Title="Карточка администратора"  Width="566"  Height="500" 
+        x:Name="UserWindows"
+        ShowInTaskbar="false" 
+        FontFamily="Tahoma" 
+        FontSize="14" 
+        Loaded="Window_Loaded" 
+        WindowStartupLocation="CenterScreen"
+        Topmost="True" x:ClassModifier="internal">
+    <Grid Name="PART_Grid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="24" />
+            <RowDefinition />           
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" BorderThickness="1,0,0,1">
+            <Menu  Name ="PART_Menu" FontSize="12">
+                <MenuItem Header="_Команды">
+                    <MenuItem Name ="PART_MenuItem_1" Header="_Поставить доступ на Редактирование (в реестре)" Click="PART_MenuItem_1_Click"></MenuItem>
+                    <MenuItem Name ="PART_MenuItem_2" Header="_Поставить доступ Администратора (в реестре)" Click="PART_MenuItem_2_Click"></MenuItem>
+                    <MenuItem Name ="PART_MenuItem_3" Header="_Зарегистрировать Путь wpfBazis (в реестре)" Click="PART_MenuItem_3_Click"></MenuItem>
+                </MenuItem>
+            </Menu>
+        </Border>
+        <Border Grid.Row="1" Background="Beige" BorderBrush="DarkGray">
+            <StackPanel Margin="0,10,0,10">
+                <my:UserPole_Text x:Name="PART_FIOkbol" PROP_Description="ФИО пациента" PROP_MinWidthDescription="140" />
+                <my:UserPole_Text x:Name="PART_KLkbol" PROP_Description="KL пациента" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_Tip" PROP_Description="Тип" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Data x:Name="PART_pDate" PROP_Description="pDate" PROP_MinWidthDescription="140" />
+                <my:UserPole_Text x:Name="PART_Index" PROP_Description="Индекс" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_NumShablon" PROP_Description="Номер шаблона" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_TipProtokol" PROP_Description="Тип протокола" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_IND" PROP_Description="IND" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_CodProtokol" PROP_Description="Код протокола" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Data x:Name="PART_DateUp" PROP_Description="Дата создания" PROP_MinWidthDescription="140" />
+                <my:UserPole_Text x:Name="PART_UserUp" PROP_Description="Код пользователя" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_UserUpName" PROP_Description="Имя пользователя" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_xDelete" PROP_Description="Удален" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+                <my:UserPole_Text x:Name="PART_Import" PROP_Description="xImport" PROP_MinWidthDescription="140" PROP_WidthText="200" />
+            </StackPanel>
+        </Border>        
+        <StatusBar Grid.Row="3" />
+    </Grid>
+</Window>

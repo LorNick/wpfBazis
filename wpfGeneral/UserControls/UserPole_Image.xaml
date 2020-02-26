@@ -1,0 +1,24 @@
+﻿<VirtualPole x:Class="wpfGeneral.UserControls.UserPole_Image"
+             xmlns="clr-namespace:wpfGeneral.UserControls"
+             xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             FontSize="14">
+    
+    <p:BulletDecorator Margin="0,2,2,2" VerticalAlignment="Center">
+        <p:BulletDecorator.Bullet>
+            <p:Label Name="PART_Label" Height="24" HorizontalAlignment="Left"  Foreground="Navy" Content="UserPoleImage" 
+                     VerticalContentAlignment="Center" Padding="5,0" DataContext="{p:Binding RelativeSource={p:RelativeSource Self}}" />
+        </p:BulletDecorator.Bullet>
+        <p:Border Name="PART_Border" BorderBrush="CornflowerBlue" BorderThickness="0.5" Margin="0,1">
+            <p:WrapPanel Name="PART_WrapPanel">
+                <p:Label Name="PART_Change" FontSize="12">Нажмите правой кнопкой мыши для выбора рисунка</p:Label>
+            </p:WrapPanel>
+        </p:Border>
+        <p:BulletDecorator.ContextMenu>
+            <p:ContextMenu Name="PART_ContextMenu" FontSize="13" Opened="PART_ContextMenu_Opened"/>
+        </p:BulletDecorator.ContextMenu>
+    </p:BulletDecorator>
+</VirtualPole>

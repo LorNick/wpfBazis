@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Bazis" Class="StarahReestrDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=192.168.0.8;Initial Catalog=Bazis;Persist Security Info=True;User ID=sa" SettingsObjectName="wpfReestr.Properties.Settings" SettingsPropertyName="BazisConnectionString4" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.StrahFile" Member="StrahFile">
+    <Type Name="StrahFile">
+      <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DateN" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="DateK" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="Korekt" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="StrahComp" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="Tip" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="YEAR" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MONTH" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NSCHET" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DSCHET" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="SUMMAV" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+      <Column Name="pPaket" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="pHide" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="pDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="pUpDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="pParent" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="VMP" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Association Name="StrahFile_StrahReestr" Member="StrahReestr" ThisKey="Cod" OtherKey="CodFile" Type="StrahReestr" />
+    </Type>
+  </Table>
+  <Table Name="dbo.s_StrahComp" Member="s_StrahComp">
+    <Type Name="s_StrahComp">
+      <Column Name="KOD" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TKOD" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Column Name="NewTKod" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="KodReg" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="NameReg" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="OGRN" Type="System.String" DbType="NVarChar(13)" CanBeNull="true" />
+      <Column Name="xDelete" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="xImport" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.s_Oblast" Member="s_Oblast">
+    <Type Name="s_Oblast">
+      <Column Name="kod" Type="System.Int16" DbType="SmallInt NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NAIM" Type="System.String" DbType="NVarChar(90)" CanBeNull="true" />
+      <Column Name="NewKod" Type="System.String" DbType="NVarChar(5)" CanBeNull="true" />
+      <Column Name="xDelete" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="xImport" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StrahSpr" Member="StrahSpr">
+    <Type Name="StrahSpr">
+      <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TableID" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Number" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ID1" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ID2" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ID3" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ID4" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Kod1" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Kod2" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Kod3" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="DateBeg" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="DateEnd" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="xInfo" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="xImport" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="xDelete" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StrahReestr" Member="StrahReestr">
+    <Type Name="StrahReestr">
+      <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CodFile" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PLAT" Type="System.String" DbType="NVarChar(5)" CanBeNull="true" />
+      <Column Name="SMO_OGRN" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="SMO_OK" Type="System.String" DbType="NVarChar(5)" CanBeNull="true" />
+      <Column Name="SMO_NAM" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="LPU_1" Type="System.Decimal" DbType="Decimal(8,0)" CanBeNull="true" />
+      <Column Name="[ORDER]" Member="ORDER" Type="System.Decimal" DbType="Decimal(2,0)" CanBeNull="true" />
+      <Column Name="LPU_ST" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="VIDPOM" Type="System.Decimal" DbType="Decimal(4,0)" CanBeNull="true" />
+      <Column Name="PODR" Type="System.Decimal" DbType="Decimal(8,0)" CanBeNull="true" />
+      <Column Name="PROFIL" Type="System.Decimal" DbType="Decimal(3,0)" CanBeNull="true" />
+      <Column Name="DET" Type="System.Decimal" DbType="Decimal(1,0)" CanBeNull="true" />
+      <Column Name="CODE_USL" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="PRVS" Type="System.String" DbType="NVarChar(9)" CanBeNull="true" />
+      <Column Name="IDDOKT" Type="System.String" DbType="NVarChar(16)" CanBeNull="true" />
+      <Column Name="ARR_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="EX_DATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="DS1" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="DS2" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="PACIENTID" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="RES_G" Type="System.Decimal" DbType="Decimal(3,0)" CanBeNull="true" />
+      <Column Name="ISHOD" Type="System.Decimal" DbType="Decimal(3,0)" CanBeNull="true" />
+      <Column Name="IDSP" Type="System.Decimal" DbType="Decimal(2,0)" CanBeNull="true" />
+      <Column Name="KOL_USL" Type="System.Decimal" DbType="Decimal(6,2)" CanBeNull="true" />
+      <Column Name="TARIF" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+      <Column Name="DoTarif" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+      <Column Name="SUM_LPU" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+      <Column Name="VPOLIS" Type="System.Decimal" DbType="Decimal(1,0)" CanBeNull="true" />
+      <Column Name="SERIA" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="NUMBER" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="FAMILY" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="NAME" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="FATHER" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="POL" Type="System.Decimal" DbType="Decimal(1,0)" CanBeNull="true" />
+      <Column Name="VOZRAST" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="SS" Type="System.String" DbType="NVarChar(14)" CanBeNull="true" />
+      <Column Name="OS_SLUCH" Type="System.String" DbType="NVarChar(2)" CanBeNull="true" />
+      <Column Name="FAM_P" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="IM_P" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="OT_P" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="W_P" Type="System.Decimal" DbType="Decimal(1,0)" CanBeNull="true" />
+      <Column Name="DR_P" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="MR" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="DOCTYPE" Type="System.Decimal" DbType="Decimal(2,0)" CanBeNull="true" />
+      <Column Name="DOCSER" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="DOCNUM" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="OKATOG" Type="System.String" DbType="NVarChar(11)" CanBeNull="true" />
+      <Column Name="NOM_ZAP" Type="System.Decimal" DbType="Decimal(8,0)" CanBeNull="true" />
+      <Column Name="UKL" Type="System.Decimal" DbType="Decimal(4,2)" CanBeNull="true" />
+      <Column Name="NOM_USL" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ID_PAC" Type="System.Decimal" DbType="Decimal(18,0)" CanBeNull="true" />
+      <Column Name="N_ZAP" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PR_NOV" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="xUpdate" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DoSumRea" Type="System.Decimal" DbType="Decimal(15,2)" CanBeNull="true" />
+      <Column Name="DayN" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="VID_VME" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="VID_HMP" Type="System.String" DbType="NVarChar(12)" CanBeNull="true" />
+      <Column Name="METOD_HMP" Type="System.String" DbType="NVarChar(5)" CanBeNull="true" />
+      <Column Name="Kod_Ksg" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="DOCDATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="DOCORG" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Association Name="StrahFile_StrahReestr" Member="StrahFile" ThisKey="CodFile" OtherKey="Cod" Type="StrahFile" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+</Database>

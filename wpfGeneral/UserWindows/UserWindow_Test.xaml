@@ -1,0 +1,41 @@
+﻿<Window x:Class="wpfGeneral.UserWindows.UserWindow_Test"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:my="clr-namespace:wpfGeneral.UserControls"
+        Title="Тестовая форма"  Width="566"  Height="525" 
+        x:Name="UserWindows"
+        ShowInTaskbar="false" 
+        FontFamily="Tahoma" 
+        FontSize="14"         
+        WindowStartupLocation="CenterScreen"
+        Topmost="True" Loaded="UserWindows_Loaded" >
+    <Grid Name="PART_Grid">
+        <Grid.RowDefinitions>            
+            <RowDefinition />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <my:UserJson_Form x:Name="PART_JsonForm" Grid.Row="0"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+            <Button Name="PART_Button_Delete" Style="{StaticResource StyleButton}"  IsEnabled="False">
+                <StackPanel Orientation="Horizontal" >
+                    <Image Source="{StaticResource btDelete}"></Image>
+                    <Label Content="Удалить" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>
+                </StackPanel>
+            </Button>
+            <Button Name="PART_Button_Change" Style="{StaticResource StyleButton}"  Margin="10,0,0,0" IsEnabled="False">
+                <StackPanel Orientation="Horizontal" >
+                    <Image Source="{StaticResource btEdit}"></Image>
+                    <Label Content="Изменить" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>
+                </StackPanel>
+            </Button>
+            <Button Name="PART_Button_Close" Style="{StaticResource StyleButton}"  Margin="10,0,0,0" IsEnabled="False">
+                <StackPanel Orientation="Horizontal" >
+                    <Image Source="{StaticResource btUndo}"></Image>
+                    <Label Content="Закрыть" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <StatusBar Grid.Row="3" />
+    </Grid>
+</Window>

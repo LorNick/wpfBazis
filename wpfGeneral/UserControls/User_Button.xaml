@@ -1,0 +1,27 @@
+﻿<Button x:Class="wpfGeneral.UserControls.User_Button"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:userControls="clr-namespace:wpfGeneral.UserControls"
+             x:Name="UserPole"
+             FontSize="14">
+    <Button.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/wpfResource;component/ImageList.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/wpfResource;component/Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <userControls:IconImageConverter x:Key="YesNoToBooleanConverter" />
+        </ResourceDictionary>
+    </Button.Resources>
+    
+    <StackPanel Orientation="Horizontal" >
+        <Image Name="PART_Image" Source="{Binding Path=PROP_Image, Converter={StaticResource YesNoToBooleanConverter}}"></Image>
+        <!--<Image Name="PART_Image" Source="pack://application:,,,/wpfResource;component/mnImag/mnAnest.ico"></Image>-->
+        <Label Content="Удалить" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>
+        </StackPanel>
+
+    
+    <!--Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}"--> 
+         
+  
+</Button>

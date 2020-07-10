@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Bazis" Class="StarahReestrDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=192.168.0.8;Initial Catalog=Bazis;Persist Security Info=True;User ID=sa" SettingsObjectName="wpfReestr.Properties.Settings" SettingsPropertyName="BazisConnectionString4" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=192.168.0.8;Initial Catalog=Bazis;Persist Security Info=True;User ID=sa" SettingsObjectName="wpfReestr.Properties.Settings" SettingsPropertyName="BazisConnectionString5" Provider="System.Data.SqlClient" />
   <Table Name="dbo.StrahFile" Member="StrahFile">
     <Type Name="StrahFile">
       <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -129,6 +129,33 @@
       <Column Name="DOCDATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="DOCORG" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
       <Association Name="StrahFile_StrahReestr" Member="StrahFile" ThisKey="CodFile" OtherKey="Cod" Type="StrahFile" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StrahError" Member="StrahError">
+    <Type Name="StrahError">
+      <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Idcase" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Korect" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CodFiles" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Comment" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StrahStacSv" Member="StrahStacSv">
+    <Type Name="StrahStacSv">
+      <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PRVS" Type="System.String" DbType="NVarChar(9) NOT NULL" CanBeNull="false" />
+      <Column Name="PROFIL" Type="System.Decimal" DbType="Decimal(3,0) NOT NULL" CanBeNull="false" />
+      <Column Name="PROFIL_K" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CODE_USL" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="VID_VME" Type="System.String" DbType="NVarChar(15)" CanBeNull="true" />
+      <Column Name="Flag" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="DateN" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="DateK" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="VidPom" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Discript" Type="System.String" DbType="NVarChar(250)" CanBeNull="true" />
+      <Column Name="Tarif" Type="System.Decimal" DbType="Decimal(12,2)" CanBeNull="true" />
+      <Column Name="Child" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="UslOld" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

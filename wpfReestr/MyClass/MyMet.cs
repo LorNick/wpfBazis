@@ -55,9 +55,8 @@ namespace wpfReestr
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(string pStr)
-        {
-            int _Result;
-            Int32.TryParse(pStr, out _Result);
+        {            
+            int.TryParse(pStr, out int _Result);
             return _Result;
         }
 
@@ -65,9 +64,8 @@ namespace wpfReestr
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(object pObject)
-        {
-            int _Result;
-            Int32.TryParse(pObject.ToString(), out _Result);
+        {            
+            int.TryParse(pObject.ToString(), out int _Result);
             return _Result;
         }
 
@@ -75,9 +73,8 @@ namespace wpfReestr
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(string pStr)
-        {
-            decimal _Result;
-            Decimal.TryParse(pStr, out _Result);
+        {         
+            decimal.TryParse(pStr, out decimal _Result);
             return _Result;
         }
 
@@ -85,9 +82,8 @@ namespace wpfReestr
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(object pObject)
-        {
-            decimal _Result;
-            Decimal.TryParse(pObject.ToString(), out _Result);
+        {            
+            decimal.TryParse(pObject.ToString(), out decimal _Result);
             return _Result;
         }
 
@@ -95,9 +91,8 @@ namespace wpfReestr
         /// <param name="pStr">Строка с датой</param>
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(string pStr)
-        {
-            DateTime _Result;
-            DateTime.TryParse(pStr, out _Result);
+        {            
+            DateTime.TryParse(pStr, out DateTime _Result);
             return _Result;
         }
 
@@ -105,9 +100,8 @@ namespace wpfReestr
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static double MET_ParseRea(object pObject)
-        {
-            double _Result;
-            Double.TryParse(pObject.ToString(), out _Result);
+        {            
+            double.TryParse(pObject.ToString(), out double _Result);
             return _Result;
         }
 
@@ -116,9 +110,8 @@ namespace wpfReestr
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(object pObject)
         {
-            if (pObject.ToString() == "") return null;
-            DateTime _Result;
-            DateTime.TryParse(pObject.ToString(), out _Result);
+            if (pObject.ToString() == "") return null;           
+            DateTime.TryParse(pObject.ToString(), out DateTime _Result);
             return _Result;
         }
 

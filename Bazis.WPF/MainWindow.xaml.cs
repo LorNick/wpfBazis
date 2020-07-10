@@ -302,9 +302,9 @@ namespace wpfBazis
                     _WinSpr = new UserWindow_VrachPol();
                     _WinSpr.Show();
                     break;
-                case "_Отделения стационара":
+                case "_Отделения":
                     // Справочник отделений стационара
-                    _WinSpr = new UserWindow_Otdel();
+                    _WinSpr = new UserWindow_Department();
                     _WinSpr.Show();
                     break;
                 case "_Талоны параклиники":

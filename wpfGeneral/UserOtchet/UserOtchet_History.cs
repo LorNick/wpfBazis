@@ -118,7 +118,7 @@ namespace wpfGeneral.UserOtchet
             {
                 PRO_RowShablon = _Row;
                 UserPole_History _Pole = new UserPole_History();
-                string _Ico = "";
+                string _Icon = "";
                 // Тип поля
                 _Pole.PROP_Type = (eTipDocum)MET_PoleInt("Nom");
                 // Код документа
@@ -128,14 +128,14 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_Diag = MET_PoleStr("D");
                 _Pole.PROP_Profil = MET_PoleStr("Profil");
                 _Pole.PROP_CodApstac = MET_PoleDec("CodApstac");
-                _Pole.PROP_Kdl = MET_PoleInt("kdl");
+                _Pole.PROP_Kdl = MET_PoleStr("kdl");
                 _Pole.PROP_IsDelete = MET_PoleInt("xDelete") == 1;
 
                 // В зависимости от типа: поликлинника/стационар/параклиника
                 switch (_Pole.PROP_Type)
                 {
                     case eTipDocum.Pol:
-                        _Ico = "mnPosPolikl";
+                        _Icon = "mnPosPolikl";
                         _Pole.PROP_Date = MET_PoleDat("Dp");
                         _Pole.PROP_Document = MET_PoleStr("Profil");
                         _Pole.PROP_Vrach = MET_PoleStr("Vr");
@@ -151,10 +151,13 @@ namespace wpfGeneral.UserOtchet
                             _Pole.PROP_Metca += " (без протоколов)";
                             _Pole.IsEnabled = false;
                         }
+                        // Ставим значек консилиум
+                        if (MET_PoleStr("ImageInform") == "консилиум")
+                            _Pole.MET_LoadIconInform("mnKons", "Наличие консилиума");
                         _Pole.callbackOpenNew = MET_OpenPolicl;
                         break;
                     case eTipDocum.Stac:
-                        _Ico = "mnStac";
+                        _Icon = "mnStac";
                         string _Dk = MET_PoleDat("Dk");
                         if (_Dk == "") _Dk = "(по сегодня)";
                         _Pole.PROP_Date = MET_PoleDat("Dp") + " - " + _Dk;
@@ -173,7 +176,7 @@ namespace wpfGeneral.UserOtchet
                         _Pole.callbackOpenNew = MET_OpenStac;
                         break;
 					case eTipDocum.Paracl:
-						_Ico = "mnParacl";
+						_Icon = "mnParacl";
                         _Pole.PROP_Date = MET_PoleDat("Dp");
                         _Pole.PROP_Document = MET_PoleStr("Profil");
                         _Pole.PROP_Vrach = MET_PoleStr("Vr");
@@ -188,19 +191,24 @@ namespace wpfGeneral.UserOtchet
                         // Костыль для физиологов
                         if (_Pole.PROP_NumerShablon > 300 & _Pole.PROP_NumerShablon < 400)
                         {
-                            _Ico = "mnPhysiology";
+                            _Icon = "mnPhysiology";
                             _Pole.PROP_Background = Brushes.LightYellow;
                         }
 						break;
                 }
-                // Иконка
-                _Pole.PROP_BitmapImage = (BitmapImage)_Pole.FindResource(_Ico);                
+                // Иконка               
+                _Pole.MET_LoadIcon(_Icon);
+
+                // Если есть результат КДЛ, то окрашиваем это поле в зависимости от результата
+                if (_Pole.PROP_Kdl != "" && _Pole.PROP_Type != eTipDocum.Paracl)
+                    MET_ColorKDL(_Pole);
+                 
                 // Добавляем в очередь
                 PRO_PoleHistory.Add(_Pole);
                 // Добавляем поле в параграф
                 PRO_Paragraph.Inlines.Add(_Pole);
 
-                if (_Pole.PROP_Kdl > 0 && _Pole.PROP_Type == eTipDocum.Paracl)
+                if (_Pole.PROP_Kdl != "" && _Pole.PROP_Type == eTipDocum.Paracl)
                 {
                     var _KDL = MET_GreatKDL(_Pole);
                     // Добавляем в очередь
@@ -208,7 +216,7 @@ namespace wpfGeneral.UserOtchet
                     // Добавляем поле в параграф
                     PRO_Paragraph.Inlines.Add(_KDL);
                 }
-                // PRO_Paragraph.Inlines.Add(new LineBreak());                     // разрыв строки 
+                 //PRO_Paragraph.Inlines.Add(new LineBreak());                     // разрыв строки 
             }
         }
 
@@ -270,7 +278,7 @@ namespace wpfGeneral.UserOtchet
                 }
 
                 // Только для КДЛ
-                if ((_Tip == eTipDocum.Null || _Tip == eTipDocum.Kdl) && _Pole.PROP_Kdl > 0)
+                if ((_Tip == eTipDocum.Null || _Tip == eTipDocum.Kdl) && _Pole.PROP_Kdl != "")
                     _Pole.Visibility = Visibility.Visible;
             }   
         }     
@@ -291,14 +299,14 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_Background = Brushes.LightYellow;
                 // Находим иконку
                 string _Icon = MET_PoleStr("Icon") != "" ? MET_PoleStr("Icon") : "mnOneOsmotr";
-                _Pole.PROP_BitmapImage = (BitmapImage)_Pole.FindResource(_Icon);
+                _Pole.MET_LoadIcon(_Icon);               
                 // Дополнительные параметры
                 _Pole.PROP_Type = eTipDocum.Pol;
                 _Pole.PROP_Cod = MET_PoleInt("Cod");
                 _Pole.PROP_ParentCod = pPole.PROP_Cod;
                 _Pole.PROP_CodApstac = pPole.PROP_CodApstac;
                 _Pole.PROP_NumerShablon = MET_PoleInt("NumShablon");
-                _Pole.PROP_Kdl = MET_PoleInt("kdl");
+                _Pole.PROP_Kdl = MET_PoleStr("kdl");
                 _Pole.PROP_DocumHistory = new UserDocument(_Pole.PROP_Type);
                 _Pole.PROP_Dp = pPole.PROP_Dp;
                 _Pole.PROP_Profil = pPole.PROP_Profil;
@@ -318,7 +326,7 @@ namespace wpfGeneral.UserOtchet
                 pPole.MET_AddEle(_Pole);
 
                 // 
-                if (_Pole.PROP_Kdl > 0)
+                if (_Pole.PROP_Kdl != "")
                 {
                     var _PoleKDL = MET_GreatKDL(_Pole);
                     _PoleKDL.Margin = new Thickness(5, 0, 0, 0);
@@ -343,7 +351,7 @@ namespace wpfGeneral.UserOtchet
                 UserPole_History _Pole = new UserPole_History();
                 _Pole.PROP_Date = MET_PoleDat("pDate");
                 _Pole.PROP_Document = MET_PoleStr("NameKr");
-                _Pole.PROP_Vrach = MET_PoleStr("Vr");
+                
                 _Pole.PROP_Dp = MET_PoleDat("pDate");
                 _Pole.Margin = new Thickness(5, 0, 0, 0);
                 _Pole.PROP_Background = Brushes.LightYellow;
@@ -351,14 +359,15 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_IsTexted = true;
                 // Находим иконку
                 string _Icon = MET_PoleStr("Icon") != "" ? MET_PoleStr("Icon") : "mnOneOsmotr";
-                _Pole.PROP_BitmapImage = (BitmapImage)_Pole.FindResource(_Icon);
+                _Pole.MET_LoadIcon(_Icon);               
                 _Pole.PROP_Cod = MET_PoleInt("Cod");
                 _Pole.PROP_CodApstac = pPole.PROP_CodApstac;
                 _Pole.PROP_NumerShablon = MET_PoleInt("NumShablon");
-                _Pole.PROP_Kdl = MET_PoleInt("kdl");
+                _Pole.PROP_Kdl = MET_PoleStr("kdl");
                 _Pole.PROP_DocumHistory = new UserDocument(_Pole.PROP_Type);
 
                 _Pole.PROP_DocumHistory.PROP_Protokol = UserProtokol.MET_FactoryProtokol(_Pole.PROP_Type, (int)_Pole.PROP_Cod);
+                _Pole.PROP_Vrach = _Pole.PROP_DocumHistory.PROP_Protokol.PROP_UserName;
                 _Pole.MET_Inicial();
                 // Делегат при открытии документа
                 _Pole.callbackOpenNew = MET_Protokol;
@@ -374,7 +383,7 @@ namespace wpfGeneral.UserOtchet
                 pPole.MET_AddEle(_Pole);
 
                 // 
-                if (_Pole.PROP_Kdl > 0)
+                if (_Pole.PROP_Kdl != "")
                 {
                     var _PoleKDL = MET_GreatKDL(_Pole);
                     _PoleKDL.Margin = new Thickness(5, 0, 0, 0);
@@ -399,40 +408,27 @@ namespace wpfGeneral.UserOtchet
             _Pole.PROP_Date = MET_PoleDat("pDate");
             _Pole.PROP_Document = MET_PoleStr("NameKr");
             _Pole.PROP_Dp = MET_PoleDat("pDate");
-            _Pole.PROP_Vrach = MET_PoleStr("Vr");
-            _Pole.PROP_Metca = " (" + MET_PoleStr("Indicator") + ")";
+            _Pole.PROP_Kdl = MET_PoleStr("Indicator");
+            _Pole.PROP_Metca = " (" + _Pole.PROP_Kdl + ")";
+            _Pole.PROP_Background = Brushes.LightYellow;
 
-            Color _Color;
-            switch (MET_PoleStr("Indicator"))
-            {
-                case "без патологии":
-                    _Color = Colors.LightGreen;
-                    break;
-                case "патология":
-                    _Color = Colors.Red;
-                    break;               
-                default:
-                    _Color = Colors.Yellow;
-                    break;
-            }
-
-            LinearGradientBrush _myBrush = new LinearGradientBrush(Colors.LightYellow, _Color, new Point(0.5, 0.5), new Point(1.0, 0.5));
-
-            _Pole.PROP_Background = _myBrush;
+            // Окрашиваем поле в зависимости от результата
+            MET_ColorKDL(_Pole);
 
             _Pole.PROP_Type = eTipDocum.Kdl;
             _Pole.PROP_IsTexted = true;
             // Находим иконку
             string _Icon = MET_PoleStr("Icon") != "" ? MET_PoleStr("Icon") : "mnOneOsmotr";
-            _Pole.PROP_BitmapImage = (BitmapImage)_Pole.FindResource(_Icon);
+            _Pole.MET_LoadIcon(_Icon);          
             _Pole.PROP_Cod = MET_PoleInt("Cod");
             _Pole.PROP_CodApstac = pPole.PROP_CodApstac;
             _Pole.PROP_NumerShablon = MET_PoleInt("NumShablon");
-            _Pole.PROP_Kdl = 1;
+            _Pole.PROP_Kdl = "1";
             _Pole.PROP_DocumHistory = new UserDocument(_Pole.PROP_Type);
             _Pole.PROP_IsDelete = MET_PoleInt("xDelete") == 1;
 
             _Pole.PROP_DocumHistory.PROP_Protokol = UserProtokol.MET_FactoryProtokol(_Pole.PROP_Type, (int)_Pole.PROP_Cod);
+            _Pole.PROP_Vrach = _Pole.PROP_DocumHistory.PROP_Protokol.PROP_UserName;
             _Pole.MET_Inicial();
 
             // Делегат при открытии документа
@@ -440,7 +436,30 @@ namespace wpfGeneral.UserOtchet
 
             return _Pole; 
         }
-      
+
+        /// <summary>МЕТОД Окрашиваем поле в зависимости от результата КДЛ</summary>
+        /// <param name="pPole">Поле которое окрашиваем</param>
+        private void MET_ColorKDL(UserPole_History pPole)
+        {
+            Color _Color;
+            switch (pPole.PROP_Kdl)
+            {
+                case "без патологии":
+                    _Color = Colors.LightGreen;
+                    break;
+                case "патология":
+                    _Color = Colors.Tomato;
+                    break;
+                default:
+                    _Color = Colors.Yellow;
+                    break;
+            }
+            
+            LinearGradientBrush _myBrush = new LinearGradientBrush(((SolidColorBrush)pPole.PROP_Background).Color, _Color, new Point(0.85, 0.4), new Point(1.0, 0.4));
+
+            pPole.PROP_Background = _myBrush;
+        }
+
         /// <summary>МЕТОД Заполняем Протоколы</summary>
         /// <param name="pPole">Наше поле</param>
         public void MET_Protokol(UserPole_History pPole)

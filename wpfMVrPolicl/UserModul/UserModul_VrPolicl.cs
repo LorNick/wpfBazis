@@ -13,9 +13,9 @@ namespace wpfMVrPolicl
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
-            MyGlo.KL = 126069855099003; //114510866161757;
+            MyGlo.KL = 116730666826365; //114510866161757;
             MyGlo.Otd = 11;  // Профиль врача ProfilVr
-            MyGlo.IND = 1664013; //631942;
+            MyGlo.IND = 1704377; //631942;
 
             String[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
@@ -76,8 +76,9 @@ namespace wpfMVrPolicl
             VirtualNodes _Node;
 
             // Временно скрыта для врачей по приказу начальника, из за конфликта Тарасевич-Плахотенко (сентябрь 2019)
-            if (MyGlo.Admin)
-            {
+            // Пока открыл (июль 2020)
+            //if (MyGlo.Admin)
+            //{
                 // ВЕТКА Запись в регистратуру
                 _Node = new UserNodes_Inform
                 {
@@ -90,7 +91,7 @@ namespace wpfMVrPolicl
                 _Node.PROP_Docum = new UserDocument(_Node);
                 _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Registration { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
-            }
+            //}
 
             // ВЕТКА Поликлиника
             _Node = new UserNodes_RootsListPol

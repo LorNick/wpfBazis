@@ -21,7 +21,10 @@ namespace wpfGeneral.UserNodes
 
         /// <summary>Нижний Текст ветки</summary>
         private string PRI_TextDown;
-         
+
+        /// <summary>Номер сортировки ветки</summary>
+        public int PRI_Sort = 0;
+
         #region ---- Свойства ----
         /// <summary>СВОЙСТВО Документ этой ветки</summary>
         public UserDocument PROP_Docum { get; set; }

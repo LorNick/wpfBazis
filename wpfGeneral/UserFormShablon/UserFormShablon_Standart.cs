@@ -154,7 +154,7 @@ namespace wpfGeneral.UserFromShablon
                         _Pole.PROP_ForegroundText = Brushes.Gray;
                     _Pole.Name = "elePoleShabl_" + _Pole.PROP_VarId; // имя поля  
                     // Lua
-                    if (!String.IsNullOrEmpty(_Shablon.PROP_xLua))
+                    if (!string.IsNullOrEmpty(_Shablon.PROP_xLua))
                     {
                         _Pole.PROP_Lua = new UserLua_Standart(_Pole)
                         {

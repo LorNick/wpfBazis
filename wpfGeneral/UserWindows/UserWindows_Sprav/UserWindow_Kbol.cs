@@ -7,7 +7,7 @@ using System.Windows.Media;
 using wpfStatic;
 
 namespace wpfGeneral.UserWindows
-{ 
+{
     /// <summary>КЛАСС Таблицы "kbol"</summary>
     public class UserWindow_Kbol : VirtualUserWindow
     {
@@ -118,11 +118,11 @@ namespace wpfGeneral.UserWindows
             _SPanel_2.Children.Add(_Label_2);
             // Отделения
             PRI_ComboBox_2 = new ComboBox();
-            PRI_ComboBox_2.Width = 280;
-            MySql.MET_DsAdapterFill(MyQuery.s_Otdel_Select_1(), "s_Otdel");
-            PRI_ComboBox_2.ItemsSource = new DataView(MyGlo.DataSet.Tables["s_Otdel"]);
-            PRI_ComboBox_2.DisplayMemberPath = "TKOD";
-            PRI_ComboBox_2.SelectedValuePath = "KOD";
+            PRI_ComboBox_2.Width = 280;           
+            MySql.MET_DsAdapterFill(MyQuery.s_Department_Select_1(" and Tip in (1, 2)"), "s_Department");
+            PRI_ComboBox_2.ItemsSource =  new DataView(MyGlo.DataSet.Tables["s_Department"]);           
+            PRI_ComboBox_2.SelectedValuePath = "Cod";
+            PRI_ComboBox_2.DisplayMemberPath = "Names";           
             PRI_ComboBox_2.IsEnabled = false;
             PRI_ComboBox_2.SelectedValue = 1;
             PRI_ComboBox_2.SelectionChanged += PART_SelectionChanged;

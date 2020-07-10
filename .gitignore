@@ -152,3 +152,5 @@ _NCrunch*
 /Bazis.WPF/Resources/ImageSQL
 *.csproj
 *.licx
+*.sqlite
+*.json

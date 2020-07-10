@@ -62,7 +62,7 @@ namespace wpfMKancReg
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
             // Отделение 
-            _Title += " (" + MySql.MET_NameSpr(MyGlo.Otd, "s_Otdel") + ")";
+            _Title += $" ({MyMet.MET_NameOtd()})";
             // Пациент
             _Title += "  (" + MyGlo.FIO + " " + MyGlo.DR;
             // Показываем имя пользователя

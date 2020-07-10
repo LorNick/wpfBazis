@@ -59,9 +59,8 @@ namespace wpfStatic
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(string pStr)
-        {
-            int _Result;
-            Int32.TryParse(pStr, out _Result);
+        {            
+            int.TryParse(pStr, out int _Result);
             return _Result;
         }
 
@@ -69,9 +68,8 @@ namespace wpfStatic
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(object pObject)
-        {
-            int _Result;
-            Int32.TryParse(pObject.ToString(), out _Result);
+        {            
+            int.TryParse(pObject.ToString(), out int _Result);
             return _Result;
         }
 
@@ -79,9 +77,8 @@ namespace wpfStatic
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(string pStr)
-        {
-            decimal _Result;
-            Decimal.TryParse(pStr, out _Result);
+        {            
+            decimal.TryParse(pStr, out decimal _Result);
             return _Result;
         }
 
@@ -89,9 +86,8 @@ namespace wpfStatic
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(object pObject)
-        {
-            decimal _Result;
-            Decimal.TryParse(pObject.ToString(), out _Result);
+        {           
+            decimal.TryParse(pObject.ToString(), out decimal _Result);
             return _Result;
         }
 
@@ -99,9 +95,8 @@ namespace wpfStatic
         /// <param name="pStr">Строка с датой</param>
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(string pStr)
-        {
-            DateTime _Result;
-            DateTime.TryParse(pStr, out _Result);
+        {            
+            DateTime.TryParse(pStr, out DateTime _Result);
             return _Result;
         }
 
@@ -110,9 +105,8 @@ namespace wpfStatic
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(object pObject)
         {
-            if (pObject.ToString() == "") return null;
-            DateTime _Result;
-            DateTime.TryParse(pObject.ToString(), out _Result);
+            if (pObject.ToString() == "") return null;            
+            DateTime.TryParse(pObject.ToString(), out DateTime _Result);
             return _Result;
         }
 
@@ -130,9 +124,8 @@ namespace wpfStatic
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static double MET_ParseRea(object pObject)
-        {
-            double _Result;
-            Double.TryParse(pObject.ToString(), out _Result);
+        {            
+            double.TryParse(pObject.ToString(), out double _Result);
             return _Result;
         }
         #endregion
@@ -184,15 +177,6 @@ namespace wpfStatic
             return _UserName;
         }
 
-        /// <summary>МЕТОД Имя пользователя по коду из s_Users</summary>
-        /// <param name="pCod">Код пользователя</param>
-        /// <returns>В случае ошибки возвращаем пустое поле</returns>
-        public static string MET_UserName(object pCod)
-        {
-            string _UserName = MySql.MET_NameSpr((int)pCod, "s_Users", "FIO", "Cod");
-            return _UserName;
-        }
-
         /// <summary>МЕТОД Сколько лет</summary>
         /// <param name="pDob">Дата рождения</param>
         /// <param name="pToDay">Дата на которую расчитываем возраст</param>
@@ -228,6 +212,23 @@ namespace wpfStatic
             return _Value;
         }
 
+        /// <summary>Наименование отделения из s_Department по коду</summary>
+        /// <param name="pCod">Числовой код отделения</param>
+        /// <returns>Возвращаем наименование отделения</returns>
+        public static string MET_NameOtd(int pCod)
+        {
+            string _NameOtd = MyGlo.PUB_Context.s_Department.FirstOrDefault(e => e.Cod == pCod).Names;
+            return _NameOtd;
+        }
+
+        /// <summary>Наименование отделения из s_Department текущего отделения по MyGlo.Otd</summary>        
+        /// <returns>Возвращаем наименование текущего отделения</returns>
+        public static string MET_NameOtd()
+        {
+            string _NameOtd = MyGlo.PUB_Context.s_Department.FirstOrDefault(e => e.Cod == MyGlo.Otd).Names;
+            return _NameOtd;
+        }
+
         /// <summary>МЕТОД Устанавливаем язык RU или US по умолчанию русский</summary>
         /// <param name="pTeg">Какой язык нужен RU или US</param>
         public static void MET_Lаng(string pTeg = "RU")
@@ -248,7 +249,7 @@ namespace wpfStatic
         [DllImport("User32.dll")]
         private static extern bool ShowWindow(IntPtr handle, int cmdShow);      // Отображает данное окно на перед, даже елси было свернуто
 
-        /// <summary>МЕТОД Пытаемся найти подобный просесс по строке заголовка главного окна</summary>
+        /// <summary>МЕТОД Пытаемся найти подобный процесс по строке заголовка главного окна</summary>
         /// <param name="pTitle">Строка нового окна</param>
         /// <param name="pCountWindows">Сколько открыто окон wpfBazis</param>
         /// <returns>true - такое окно уже открыто - выходим, false - окно уникальное</returns>

@@ -69,10 +69,15 @@
             <StackPanel>
                 <StackPanel Orientation="Horizontal" Height="30" >
                     <Label Content="Строка поиска:" Height="28" Margin="50,0,0,0" />
-                    <TextBox Height="23" Margin="5,0,0,0" Name="PART_TextBox" Width="340" 
+                    <!--<TextBox Height="23" Margin="5,0,0,0" Name="PART_TextBox" Width="340" 
                              SelectionChanged="PART_TextBox_SelectionChanged" 
-                             CharacterCasing="Upper" DataContext="{Binding ElementName=PART_Grid, Path=MaxHeight}" />
-                    <Label Content="FAM" Height="28" Margin="10,0,0,0" Name="PART_LabelZap" Foreground="Red" />
+                             CharacterCasing="Upper" DataContext="{Binding ElementName=PART_Grid, Path=MaxHeight}" />-->
+                    <telerik:RadWatermarkTextBox Height="24" Name="PART_TextBox" Width="340"
+                        WatermarkBehavior="HideOnTextEntered"
+                        WatermarkContent="Введите для поиска"
+                        TextChanged="PART_TextBox_SelectionChanged"  
+                        CharacterCasing="Upper" DataContext="{Binding ElementName=PART_Grid, Path=MaxHeight}" />
+                    <Label Content="IDCASE" Height="28" Margin="10,1,0,1" Name="PART_LabelZap" Foreground="Red" />
                 </StackPanel>
                 <Expander Header="Фильтры" Name="PART_Expander" >
                     <StackPanel Orientation="Vertical" >
@@ -115,7 +120,8 @@
                           RowDetailsVisibilityMode="VisibleWhenSelected"                                                     
                           CurrentCellChanged="dataGrid1_CurrentCellChanged" 
                           CellEditEnding="dataGrid1_CellEditEnding" 
-                          Sorting="dataGrid1_Sorting" Margin="0,0,0,5" 
+                          Sorting="dataGrid1_Sorting"
+                          Margin="0,0,0,5" 
                           FrozenColumnCount="5"
                           Style="{StaticResource DataGridReestr}">
                     
@@ -157,9 +163,9 @@
                         <DataGridTextColumn Header="DayN"       Binding="{Binding DayN}"    Width="SizeToHeader" ToolTipService.ToolTip="Длительность лечения из Тарифов" Visibility="Hidden" />
                         <DataGridTextColumn Header="KSG"        Binding="{Binding Kod_Ksg}"                      ToolTipService.ToolTip="Код КСГ (только для стационара)"  ElementStyle="{StaticResource Column_Center}" Visibility="Hidden"/>
                         <DataGridTextColumn Header="SUMV_USL"   Binding="{Binding SUM_LPU}" Width="SizeToHeader" ToolTipService.ToolTip="81. Сумма услуги" ElementStyle="{StaticResource Column_Right}" />
-                        <DataGridTextColumn Header="DOCTYPE"    Binding="{Binding DOCTYPE}" Width="SizeToHeader" ToolTipService.ToolTip="104. Тип документа удостоверяющего личность" ElementStyle="{StaticResource Column_Center}"/>
-                        <DataGridTextColumn Header="DOCSER"     Binding="{Binding DOCSER}"  Width="SizeToHeader" ToolTipService.ToolTip="105. Серия документа удостоверяющего личность" />
-                        <DataGridTextColumn Header="DOCNUM"     Binding="{Binding DOCNUM}"  Width="SizeToHeader" ToolTipService.ToolTip="106. Номер документа удостоверяющего личность" />
+                        <DataGridTextColumn Header="DOCTYPE"    Binding="{Binding DOCTYPE}" Width="SizeToHeader" ToolTipService.ToolTip="104. Тип документа удостоверяющего личность" ElementStyle="{StaticResource Column_Center}" Visibility="Hidden"/>
+                        <DataGridTextColumn Header="DOCSER"     Binding="{Binding DOCSER}"  Width="SizeToHeader" ToolTipService.ToolTip="105. Серия документа удостоверяющего личность" Visibility="Hidden" />
+                        <DataGridTextColumn Header="DOCNUM"     Binding="{Binding DOCNUM}"  Width="SizeToHeader" ToolTipService.ToolTip="106. Номер документа удостоверяющего личность" Visibility="Hidden" />
                         <DataGridTextColumn Header="DOCDATE"    Binding="{Binding DOCDATE, StringFormat={}{0:dd\.}{0:MM\.}{0:yyyy}}" Width="SizeToHeader" ToolTipService.ToolTip="Дата выдачи документа удостоверяющего личность" Visibility="Hidden" />
                         <DataGridTextColumn Header="DOCORG"     Binding="{Binding DOCORG}"  Width="SizeToHeader" ToolTipService.ToolTip="Кто выдал документ удостоверяющего личность" Visibility="Hidden" />                        
                         <DataGridTextColumn Header="OKATOG"     Binding="{Binding OKATOG}"  Width="80"           ToolTipService.ToolTip="108. и (109. OKATOP) ОКАТО места жительства" />
@@ -168,7 +174,7 @@
                         <DataGridTextColumn Header="CODE_USL"   Binding="{Binding CODE_USL}" Width="120"         ToolTipService.ToolTip="78. Код услуги - для дополнительной оплаты и операций Код услуг прописан програмно (справочник услуг)" />
                         <DataGridTextColumn Header="VID_VME"    Binding="{Binding VID_VME}"                      ToolTipService.ToolTip="Вид медицинского вмешательства" />
                         <DataGridTextColumn Header="PR_NOV"     Binding="{Binding PR_NOV}"  Width="SizeToHeader" ToolTipService.ToolTip="21. Признак исправленной записи (0 - первый раз, 1 - повторно)" Visibility="Hidden" />                        
-                        <DataGridTextColumn Header="VIDPOM"     Binding="{Binding VIDPOM}"  Width="SizeToHeader" ToolTipService.ToolTip="35. Вид помощи (справочник V008) (у нас 31 - спец. помощь)" Visibility="Hidden" />
+                        <DataGridTextColumn Header="VIDPOM"     Binding="{Binding VIDPOM}"  Width="SizeToHeader" ToolTipService.ToolTip="35. Вид помощи, справочник V008: 11 - полик. медс., 13 - поликл./диагн./дн. стац., 31 - стационар, 32 - ВМП, 33 - телемедиц." Visibility="Hidden" />
                         <DataGridTextColumn Header="EXTR"       Binding="{Binding ORDER}"   Width="SizeToHeader" ToolTipService.ToolTip="37. Направление на госпитализацию (1 - плановая, 2 - экстренная (у нас нету), 0 - поликлиника)" Visibility="Hidden" />
                         <DataGridTextColumn Header="LPU_1"      Binding="{Binding LPU_1}"   Width="SizeToHeader" ToolTipService.ToolTip="39. Подразделения МО" Visibility="Hidden" />
                         <DataGridTextColumn Header="PODR"       Binding="{Binding PODR}"                         ToolTipService.ToolTip="40. и (72.) Код отделения" />

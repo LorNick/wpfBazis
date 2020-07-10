@@ -94,7 +94,8 @@ namespace wpfMVrStac
             }
             // Отделение
             xVopr = " Отделение:";
-            xOtvet = MET_PoleStr("otd") + ". " + MySql.MET_NameSpr(MET_PoleInt("otd"), "s_Otdel");
+            int _Otd = MET_PoleInt("otd");
+            xOtvet = $"{_Otd}. {MyMet.MET_NameOtd(_Otd)}";
             xEnter = 1;
             MET_Print();
             // Врач
@@ -117,7 +118,8 @@ namespace wpfMVrStac
             if (MET_PoleInt("FlagIn") == 2)
             {
                 xVopr = " Переведен из другого отделения:";
-                xOtvet = MET_PoleStr("OtdIn") + ". " + MySql.MET_NameSpr(MET_PoleInt("OtdIn"), "s_Otdel");
+                int _OtdIn = MET_PoleInt("OtdIn");
+                xOtvet = $"{_OtdIn}. {MyMet.MET_NameOtd(_OtdIn)}";               
                 xEnter = 1;
                 MET_Print();
             }
@@ -125,7 +127,8 @@ namespace wpfMVrStac
             if (MET_PoleInt("FlagOut") == 2)
             {
                 xVopr = " Переведен из другого отделения:";
-                xOtvet = MET_PoleStr("OtdOut") + ". " + MySql.MET_NameSpr(MET_PoleInt("OtdOut"), "s_Otdel");
+                int _OtdOut = MET_PoleInt("OtdOut");
+                xOtvet = $"{_OtdOut}. {MyMet.MET_NameOtd(_OtdOut)}";               
                 xEnter = 1;
                 MET_Print();
             }

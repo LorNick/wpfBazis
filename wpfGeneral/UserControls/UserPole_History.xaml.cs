@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -57,6 +58,20 @@ namespace wpfGeneral.UserControls
             set { PART_Image.Source = value; }
         }
 
+        /// <summary>СВОЙСТВО Дополнительная Инконка (та что справа)</summary>
+        public BitmapImage PROP_BitmapImageInform
+        {
+            get { return (BitmapImage)PART_ImageInform.Source; }
+            set { PART_ImageInform.Source = value; }
+        }
+
+        /// <summary>СВОЙСТВО Дополнительная Инконка (та что справа)</summary>
+        public string PROP_ImageInformToolTip
+        {
+            get { return (string)PART_ImageInform.ToolTip; }
+            set { PART_ImageInform.ToolTip = value; }
+        }
+
         /// <summary>СВОЙСТВО Тип вкладки 1 - поликлиника, 2 - стационар, 3 - параклиника, 4 - КДЛ</summary>
         public eTipDocum PROP_Type { get; set; }
 
@@ -77,12 +92,12 @@ namespace wpfGeneral.UserControls
         {
             get
             {
-                return PART_Expander?.Background;
+                return PART_DockPanel?.Background;
             }
             set
             {
-                if (PART_Expander != null)
-                    PART_Expander.Background = value;
+                if (PART_DockPanel != null)
+                    PART_DockPanel.Background = value;
             }
         }
 
@@ -133,7 +148,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО КДЛ</summary>
-        public int PROP_Kdl { get; set; }
+        public string PROP_Kdl { get; set; }
 
         /// <summary>Признак удаления true - удален, false - не удален</summary>
         private bool PRI_IsDelete;
@@ -201,6 +216,38 @@ namespace wpfGeneral.UserControls
             {
                 PROP_DocumHistory.PROP_Protokol.OnDelete += delegate { PROP_IsDelete = true; };
                 PROP_DocumHistory.PROP_Protokol.OnRestore += delegate { PROP_IsDelete = false; };
+            }
+        }
+
+        /// <summary>МЕТОД Добавляем иконку</summary>
+        /// <param name="pIconName">Наименование иконки</param>
+        public void MET_LoadIcon(string pIconName)
+        {
+            try
+            {
+                PROP_BitmapImage = (BitmapImage)FindResource(pIconName);     // настраиваем картинку
+            }
+            catch (Exception e)
+            {
+                PROP_BitmapImage = (BitmapImage)FindResource("mnDoc_7");    // не нашел иконку, ставим стандартную
+                MyGlo.PUB_Logger.Error(e, $"Для поля UserPole_History типа: {PROP_Type}, не найдена иконка: {pIconName}.");
+            }
+        }
+
+        /// <summary>МЕТОД Добавляем дополнительную иконку (ту что справа)</summary>
+        /// <param name="pIconName">Наименование иконки</param>
+        /// <param name="pToolTip">Подсказка</param>
+        public void MET_LoadIconInform(string pIconName, string pToolTip = "")
+        {
+            try
+            {
+                PROP_BitmapImageInform = (BitmapImage)FindResource(pIconName);     // настраиваем картинку
+                PROP_ImageInformToolTip = pToolTip;
+            }
+            catch (Exception e)
+            {
+                // Иконку не ставим, раз не нашли
+                MyGlo.PUB_Logger.Error(e, $"Для поля UserPole_History типа: {PROP_Type}, не найдена дополнительная иконка: {pIconName}.");
             }
         }
 
@@ -278,6 +325,7 @@ namespace wpfGeneral.UserControls
             callbackOpenNew?.Invoke(this);
         }
 
+        #region ---- СОБЫТИЯ Контекстного меню----
         /// <summary>СОБЫТИЕ Выбор контекстного меню Карточка Администратора</summary>
         private void PART_MenuItem_CardAdmin_Click(object sender, RoutedEventArgs e)
         {
@@ -319,7 +367,7 @@ namespace wpfGeneral.UserControls
             MyMet.MET_EditWindows(_MyTipProtokol.PROP_TipDocum, _IND, MyGlo.KL);
         }
 
-        /// <summary>СОБЫТИЕ Открытие окна логов документа</summary>     
+        /// <summary>СОБЫТИЕ Выбор контекстного меню Открытие окна логов документа</summary>     
         private void PART_MenuItem_Log_Click(object sender, RoutedEventArgs e)
         {
             if (PROP_IsTexted)                               // если протокол, предполагаем, что это протокол
@@ -349,5 +397,6 @@ namespace wpfGeneral.UserControls
                 PROP_DocumHistory.PROP_Protokol.OnRestore?.Invoke();               
             }           
         }
+        #endregion       
     }
 }

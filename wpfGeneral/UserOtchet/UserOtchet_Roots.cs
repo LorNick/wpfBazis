@@ -59,7 +59,7 @@ namespace wpfGeneral.UserOtchet
             // Сортировка, с помощью промежуточных массиввов
             UserPole_History[] _mHistories = new UserPole_History[PRO_PoleHistory.Count];
             PRO_PoleHistory.CopyTo(_mHistories, 0);
-            var _Protokols = _mHistories.OrderBy(x => Convert.ToDateTime(x.PROP_Dp)).ThenBy(x => x.PROP_NumerShablon);
+            var _Protokols = _mHistories.OrderBy(x => Convert.ToDateTime(x.PROP_Dp)); //.ThenBy(x => x.PROP_NumerShablon);
             // Чистим очередь
             PRO_PoleHistory.Clear();
             // Выводим протокол на экра и запоминаем его в очередь
@@ -86,15 +86,16 @@ namespace wpfGeneral.UserOtchet
                 {
                     // Настраиваем поле документа
                     UserPole_History _Pole = new UserPole_History();
-                    _Pole.PROP_Dp = _Node.PROP_Data.ToString();
+                    _Pole.PROP_Dp = _Node.PROP_Data.ToString().Substring(0, 10);
+                    _Pole.PROP_Date = _Pole.PROP_Dp;
                     _Pole.PROP_NumerShablon = _Node.PROP_shaNomerShablon;
                     _Pole.PROP_DocumHistory = _Node.PROP_Docum;
                     _Pole.PROP_Cod = (decimal?)_Node.PROP_Docum?.PROP_Protokol?.PROP_Cod ?? 0;
+                    _Pole.PROP_Vrach = _Node.PROP_Docum?.PROP_Protokol?.PROP_UserName;
                     // Название протокола
-                    _Pole.PROP_Description = _Node.PROP_Data.ToString().Substring(0, 10) + " - " +
-                                             _Node.PROP_TextDefault;
+                    _Pole.PROP_Document = _Node.PROP_TextDefault;
                     _Pole.Margin = new Thickness(5, 0, 0, 0);
-                    _Pole.PROP_Background = Brushes.LightYellow;
+                    _Pole.PROP_Background = Brushes.LightYellow;                    
                     _Pole.PROP_IsDelete = _Node.PROP_Docum?.PROP_Protokol?.PROP_xDelete == 1;
                     // Находим иконку
                     _Pole.PROP_BitmapImage = (BitmapImage) _Node.PROP_ImageSource;
@@ -107,8 +108,6 @@ namespace wpfGeneral.UserOtchet
                     _Pole.callbackOpenNew = MET_OpenOtch;
                     // Добавляем поле в очередь
                     PRO_PoleHistory.Enqueue(_Pole);
-
-                    
                 }
             }
         }

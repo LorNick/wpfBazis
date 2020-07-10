@@ -17,7 +17,7 @@
 		<StackPanel Grid.Column="1">			
 			<TextBlock Name="PART_Bazis" Text="wpfBazis" FontSize="40" Margin="0,15,0,0"/>
 			<TextBlock Name="PART_Ver" Text="Версия:" Margin="0,5,0,0" Foreground="Blue"/>
-			<TextBlock Text="БУЗОО КОД 2009 - 2019:" Margin="0,3,0,5" />
+			<TextBlock Text="БУЗОО КОД 2009 - 2020:" Margin="0,3,0,5" />
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="130" />

@@ -39,7 +39,7 @@ namespace wpfGeneral.UserWindows
             PRO_PoleFiltr = "Names";
             // Фильтр по диагнозу
             if (pDiag.Length > 4)
-                PRI_Filtr = $"where (Diag like '%{pDiag.Substring(0, 5)};%' or Diag like '%{pDiag.Substring(0, 3)};%' or right(HVid, 1) = 'Р' )";
+                PRI_Filtr = $" and (Diag like '%{pDiag.Substring(0, 5)};%' or Diag like '%{pDiag.Substring(0, 3)};%' or json_value(xInfo, '$.TipVMP') = 6)";
             // Открываем таблицу
             MET_OpenForm();
             // Создаем фильтр
@@ -57,7 +57,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
-            string[] _mName = { "", "Вид ВМП", "Код", "Модель", "Наименование Метода ВМП"  };
+            string[] _mName = { "", "", "Вид ВМП", "Код", "Модель", "Наименование Метода ВМП"  };
             return _mName[pIndex];
         }
 
@@ -65,12 +65,14 @@ namespace wpfGeneral.UserWindows
         protected override void MET_RemoveAt()
         {
             PART_DataGrid.Columns.RemoveAt(0);
+            PART_DataGrid.Columns.RemoveAt(0);
         }
 
         /// <summary>МЕТОД Устанавливаем Ширину колонок</summary>
         protected override void MET_WithColumn()
         {
-            PART_DataGrid.Columns[3].Width = 200;    // Name
+            PART_DataGrid.Columns[3].Width = 60;    // Вид ВМП
+            PART_DataGrid.Columns[4].Width = 200;    // Модель
         }
 
         /// <summary>МЕТОД Создание фильтров</summary>
@@ -98,9 +100,9 @@ namespace wpfGeneral.UserWindows
             PRI_ComboBox_1.Width = 600;
             MySql.MET_DsAdapterFill(MyQuery.varVidVMP_Select_1(), "varVidVMP");
             PRI_ComboBox_1.ItemsSource = new DataView(MyGlo.DataSet.Tables["varVidVMP"]);
-            PRI_ComboBox_1.DisplayMemberPath = "NameVid";
-            PRI_ComboBox_1.SelectedValuePath = "Cod";
-            PRI_ComboBox_1.SelectedValue = "09.00.16.001Р";
+            PRI_ComboBox_1.DisplayMemberPath = "Names";
+            PRI_ComboBox_1.SelectedValuePath = "TipVMP";
+            PRI_ComboBox_1.SelectedValue = "6";
             PRI_ComboBox_1.SelectionChanged += PART_SelectionChanged;
             _SPanel_1.Children.Add(PRI_ComboBox_1);
             // Check Вида ВМП
@@ -113,7 +115,7 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox_1.Click += PART_CheckBox_Click;
             _SPanel_1.Children.Add(PRI_CheckBox_1);
 
-            PRO_Where = $" HVid = '{PRI_ComboBox_1.SelectedValue}'";
+            PRO_Where = $" TipVMP = {PRI_ComboBox_1.SelectedValue}";
             MET_Filter();
         }
 
@@ -126,7 +128,7 @@ namespace wpfGeneral.UserWindows
 
             // Фильтр по отделению стационара
             if (PRI_ComboBox_1.IsEnabled)
-                PRO_Where = $" HVid = '{PRI_ComboBox_1.SelectedValue}'";
+                PRO_Where += $" TipVMP = {PRI_ComboBox_1.SelectedValue}";
 
             MET_Filter();
         }
@@ -138,7 +140,7 @@ namespace wpfGeneral.UserWindows
 
             // Фильтр по отделению стационара
             if (PRI_ComboBox_1.IsEnabled)
-                PRO_Where = $" HVid = '{PRI_ComboBox_1.SelectedValue}'";
+                PRO_Where += $" TipVMP = {PRI_ComboBox_1.SelectedValue}";
 
             MET_Filter();
         }

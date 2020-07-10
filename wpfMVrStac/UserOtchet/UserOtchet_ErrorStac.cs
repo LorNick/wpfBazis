@@ -7,8 +7,8 @@ using wpfStatic;
 
 namespace wpfMVrStac
 {
-    /// <summary>КЛАСС Ошибки по КСГ (не находит КСГ услуги, а только диагноза С или Д, да и то если коэффициент меньше 0.8</summary>
-    public class UserOtcher_ErrorKSG : VirtualOtchet
+    /// <summary>КЛАСС Ошибки Стационара по КСГ (не находит КСГ услуги, а только диагноза С или Д, да и то если коэффициент меньше 0.8</summary>
+    public class UserOtcher_ErrorStac : VirtualOtchet
     {
         ///<summary>МЕТОД Инициализация отчета</summary>
         /// <param name="pNodes">Ветка</param>
@@ -58,7 +58,7 @@ namespace wpfMVrStac
             PRO_Paragraph.Inlines.Add(new LineBreak());                         // разрыв строки
             
             // Заполняем строку данными запроса
-            foreach (DataRow _Row in MyGlo.DataSet.Tables["ErrorKSG"].Rows)
+            foreach (DataRow _Row in MyGlo.DataSet.Tables["ErrorStac"].Rows)
             {
                 UserPole_ErrorKSG _Pole = new UserPole_ErrorKSG(_Row);
                 PRO_Paragraph.Inlines.Add(_Pole);

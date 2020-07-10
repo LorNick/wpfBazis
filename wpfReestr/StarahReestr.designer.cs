@@ -45,10 +45,16 @@ namespace wpfReestr
     partial void InsertStrahReestr(StrahReestr instance);
     partial void UpdateStrahReestr(StrahReestr instance);
     partial void DeleteStrahReestr(StrahReestr instance);
+    partial void InsertStrahError(StrahError instance);
+    partial void UpdateStrahError(StrahError instance);
+    partial void DeleteStrahError(StrahError instance);
+    partial void InsertStrahStacSv(StrahStacSv instance);
+    partial void UpdateStrahStacSv(StrahStacSv instance);
+    partial void DeleteStrahStacSv(StrahStacSv instance);
     #endregion
 		
 		public StarahReestrDataContext() : 
-				base(global::wpfReestr.Properties.Settings.Default.BazisConnectionString4, mappingSource)
+				base(global::wpfReestr.Properties.Settings.Default.BazisConnectionString5, mappingSource)
 		{
 			OnCreated();
 		}
@@ -114,6 +120,22 @@ namespace wpfReestr
 			get
 			{
 				return this.GetTable<StrahReestr>();
+			}
+		}
+		
+		public System.Data.Linq.Table<StrahError> StrahError
+		{
+			get
+			{
+				return this.GetTable<StrahError>();
+			}
+		}
+		
+		public System.Data.Linq.Table<StrahStacSv> StrahStacSv
+		{
+			get
+			{
+				return this.GetTable<StrahStacSv>();
 			}
 		}
 	}
@@ -2968,6 +2990,538 @@ namespace wpfReestr
 						this._CodFile = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("StrahFile");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StrahError")]
+	public partial class StrahError : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Cod;
+		
+		private int _Idcase;
+		
+		private int _Korect;
+		
+		private int _CodFiles;
+		
+		private string _Comment;
+		
+    #region Определения метода расширяемости
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCodChanging(int value);
+    partial void OnCodChanged();
+    partial void OnIdcaseChanging(int value);
+    partial void OnIdcaseChanged();
+    partial void OnKorectChanging(int value);
+    partial void OnKorectChanged();
+    partial void OnCodFilesChanging(int value);
+    partial void OnCodFilesChanged();
+    partial void OnCommentChanging(string value);
+    partial void OnCommentChanged();
+    #endregion
+		
+		public StrahError()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cod", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Cod
+		{
+			get
+			{
+				return this._Cod;
+			}
+			set
+			{
+				if ((this._Cod != value))
+				{
+					this.OnCodChanging(value);
+					this.SendPropertyChanging();
+					this._Cod = value;
+					this.SendPropertyChanged("Cod");
+					this.OnCodChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Idcase", DbType="Int NOT NULL")]
+		public int Idcase
+		{
+			get
+			{
+				return this._Idcase;
+			}
+			set
+			{
+				if ((this._Idcase != value))
+				{
+					this.OnIdcaseChanging(value);
+					this.SendPropertyChanging();
+					this._Idcase = value;
+					this.SendPropertyChanged("Idcase");
+					this.OnIdcaseChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Korect", DbType="Int NOT NULL")]
+		public int Korect
+		{
+			get
+			{
+				return this._Korect;
+			}
+			set
+			{
+				if ((this._Korect != value))
+				{
+					this.OnKorectChanging(value);
+					this.SendPropertyChanging();
+					this._Korect = value;
+					this.SendPropertyChanged("Korect");
+					this.OnKorectChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CodFiles", DbType="Int NOT NULL")]
+		public int CodFiles
+		{
+			get
+			{
+				return this._CodFiles;
+			}
+			set
+			{
+				if ((this._CodFiles != value))
+				{
+					this.OnCodFilesChanging(value);
+					this.SendPropertyChanging();
+					this._CodFiles = value;
+					this.SendPropertyChanged("CodFiles");
+					this.OnCodFilesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Comment", DbType="NVarChar(250)")]
+		public string Comment
+		{
+			get
+			{
+				return this._Comment;
+			}
+			set
+			{
+				if ((this._Comment != value))
+				{
+					this.OnCommentChanging(value);
+					this.SendPropertyChanging();
+					this._Comment = value;
+					this.SendPropertyChanged("Comment");
+					this.OnCommentChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StrahStacSv")]
+	public partial class StrahStacSv : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Cod;
+		
+		private string _PRVS;
+		
+		private decimal _PROFIL;
+		
+		private System.Nullable<int> _PROFIL_K;
+		
+		private string _CODE_USL;
+		
+		private string _VID_VME;
+		
+		private byte _Flag;
+		
+		private System.DateTime _DateN;
+		
+		private System.DateTime _DateK;
+		
+		private System.Nullable<int> _VidPom;
+		
+		private string _Discript;
+		
+		private System.Nullable<decimal> _Tarif;
+		
+		private System.Nullable<byte> _Child;
+		
+		private string _UslOld;
+		
+    #region Определения метода расширяемости
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCodChanging(int value);
+    partial void OnCodChanged();
+    partial void OnPRVSChanging(string value);
+    partial void OnPRVSChanged();
+    partial void OnPROFILChanging(decimal value);
+    partial void OnPROFILChanged();
+    partial void OnPROFIL_KChanging(System.Nullable<int> value);
+    partial void OnPROFIL_KChanged();
+    partial void OnCODE_USLChanging(string value);
+    partial void OnCODE_USLChanged();
+    partial void OnVID_VMEChanging(string value);
+    partial void OnVID_VMEChanged();
+    partial void OnFlagChanging(byte value);
+    partial void OnFlagChanged();
+    partial void OnDateNChanging(System.DateTime value);
+    partial void OnDateNChanged();
+    partial void OnDateKChanging(System.DateTime value);
+    partial void OnDateKChanged();
+    partial void OnVidPomChanging(System.Nullable<int> value);
+    partial void OnVidPomChanged();
+    partial void OnDiscriptChanging(string value);
+    partial void OnDiscriptChanged();
+    partial void OnTarifChanging(System.Nullable<decimal> value);
+    partial void OnTarifChanged();
+    partial void OnChildChanging(System.Nullable<byte> value);
+    partial void OnChildChanged();
+    partial void OnUslOldChanging(string value);
+    partial void OnUslOldChanged();
+    #endregion
+		
+		public StrahStacSv()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cod", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		public int Cod
+		{
+			get
+			{
+				return this._Cod;
+			}
+			set
+			{
+				if ((this._Cod != value))
+				{
+					this.OnCodChanging(value);
+					this.SendPropertyChanging();
+					this._Cod = value;
+					this.SendPropertyChanged("Cod");
+					this.OnCodChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PRVS", DbType="NVarChar(9) NOT NULL", CanBeNull=false)]
+		public string PRVS
+		{
+			get
+			{
+				return this._PRVS;
+			}
+			set
+			{
+				if ((this._PRVS != value))
+				{
+					this.OnPRVSChanging(value);
+					this.SendPropertyChanging();
+					this._PRVS = value;
+					this.SendPropertyChanged("PRVS");
+					this.OnPRVSChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROFIL", DbType="Decimal(3,0) NOT NULL")]
+		public decimal PROFIL
+		{
+			get
+			{
+				return this._PROFIL;
+			}
+			set
+			{
+				if ((this._PROFIL != value))
+				{
+					this.OnPROFILChanging(value);
+					this.SendPropertyChanging();
+					this._PROFIL = value;
+					this.SendPropertyChanged("PROFIL");
+					this.OnPROFILChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PROFIL_K", DbType="Int")]
+		public System.Nullable<int> PROFIL_K
+		{
+			get
+			{
+				return this._PROFIL_K;
+			}
+			set
+			{
+				if ((this._PROFIL_K != value))
+				{
+					this.OnPROFIL_KChanging(value);
+					this.SendPropertyChanging();
+					this._PROFIL_K = value;
+					this.SendPropertyChanged("PROFIL_K");
+					this.OnPROFIL_KChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CODE_USL", DbType="NVarChar(20) NOT NULL", CanBeNull=false)]
+		public string CODE_USL
+		{
+			get
+			{
+				return this._CODE_USL;
+			}
+			set
+			{
+				if ((this._CODE_USL != value))
+				{
+					this.OnCODE_USLChanging(value);
+					this.SendPropertyChanging();
+					this._CODE_USL = value;
+					this.SendPropertyChanged("CODE_USL");
+					this.OnCODE_USLChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VID_VME", DbType="NVarChar(15)")]
+		public string VID_VME
+		{
+			get
+			{
+				return this._VID_VME;
+			}
+			set
+			{
+				if ((this._VID_VME != value))
+				{
+					this.OnVID_VMEChanging(value);
+					this.SendPropertyChanging();
+					this._VID_VME = value;
+					this.SendPropertyChanged("VID_VME");
+					this.OnVID_VMEChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Flag", DbType="TinyInt NOT NULL")]
+		public byte Flag
+		{
+			get
+			{
+				return this._Flag;
+			}
+			set
+			{
+				if ((this._Flag != value))
+				{
+					this.OnFlagChanging(value);
+					this.SendPropertyChanging();
+					this._Flag = value;
+					this.SendPropertyChanged("Flag");
+					this.OnFlagChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateN", DbType="Date NOT NULL")]
+		public System.DateTime DateN
+		{
+			get
+			{
+				return this._DateN;
+			}
+			set
+			{
+				if ((this._DateN != value))
+				{
+					this.OnDateNChanging(value);
+					this.SendPropertyChanging();
+					this._DateN = value;
+					this.SendPropertyChanged("DateN");
+					this.OnDateNChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateK", DbType="Date NOT NULL")]
+		public System.DateTime DateK
+		{
+			get
+			{
+				return this._DateK;
+			}
+			set
+			{
+				if ((this._DateK != value))
+				{
+					this.OnDateKChanging(value);
+					this.SendPropertyChanging();
+					this._DateK = value;
+					this.SendPropertyChanged("DateK");
+					this.OnDateKChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_VidPom", DbType="Int")]
+		public System.Nullable<int> VidPom
+		{
+			get
+			{
+				return this._VidPom;
+			}
+			set
+			{
+				if ((this._VidPom != value))
+				{
+					this.OnVidPomChanging(value);
+					this.SendPropertyChanging();
+					this._VidPom = value;
+					this.SendPropertyChanged("VidPom");
+					this.OnVidPomChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Discript", DbType="NVarChar(250)")]
+		public string Discript
+		{
+			get
+			{
+				return this._Discript;
+			}
+			set
+			{
+				if ((this._Discript != value))
+				{
+					this.OnDiscriptChanging(value);
+					this.SendPropertyChanging();
+					this._Discript = value;
+					this.SendPropertyChanged("Discript");
+					this.OnDiscriptChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Tarif", DbType="Decimal(12,2)")]
+		public System.Nullable<decimal> Tarif
+		{
+			get
+			{
+				return this._Tarif;
+			}
+			set
+			{
+				if ((this._Tarif != value))
+				{
+					this.OnTarifChanging(value);
+					this.SendPropertyChanging();
+					this._Tarif = value;
+					this.SendPropertyChanged("Tarif");
+					this.OnTarifChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Child", DbType="TinyInt")]
+		public System.Nullable<byte> Child
+		{
+			get
+			{
+				return this._Child;
+			}
+			set
+			{
+				if ((this._Child != value))
+				{
+					this.OnChildChanging(value);
+					this.SendPropertyChanging();
+					this._Child = value;
+					this.SendPropertyChanged("Child");
+					this.OnChildChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UslOld", DbType="NVarChar(50)")]
+		public string UslOld
+		{
+			get
+			{
+				return this._UslOld;
+			}
+			set
+			{
+				if ((this._UslOld != value))
+				{
+					this.OnUslOldChanging(value);
+					this.SendPropertyChanging();
+					this._UslOld = value;
+					this.SendPropertyChanged("UslOld");
+					this.OnUslOldChanged();
 				}
 			}
 		}

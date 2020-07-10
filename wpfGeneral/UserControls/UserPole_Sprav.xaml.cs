@@ -233,7 +233,7 @@ namespace wpfGeneral.UserControls
         private void MET_ButtonSelect_Otdel()
         {
             // Справочник Отделений                   
-            UserWindow_Otdel _WinSpr = new UserWindow_Otdel
+            UserWindow_Department _WinSpr = new UserWindow_Department(" and Tip in (1, 2)")
             {
                 WindowStyle = WindowStyle.ToolWindow,
                 PROP_Modal = true,

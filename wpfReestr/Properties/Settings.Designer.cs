@@ -76,5 +76,16 @@ namespace wpfReestr.Properties {
                 return ((string)(this["BazisConnectionString4"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=192.168.0.8;Initial Catalog=Bazis;Persist Security Info=True;User ID=" +
+            "sa;Password=QWE123asdZXC")]
+        public string BazisConnectionString5 {
+            get {
+                return ((string)(this["BazisConnectionString5"]));
+            }
+        }
     }
 }

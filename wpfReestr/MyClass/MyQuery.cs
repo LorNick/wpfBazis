@@ -1,4 +1,6 @@
-﻿namespace wpfReestr
+﻿using System;
+
+namespace wpfReestr
 {
     /// <summary>КЛАСС для вывода SQL Запросов</summary>
     /// <remarks>Файл MyQuery
@@ -22,7 +24,7 @@
                             when 0 then 'Все Областные'
                             when 1 then 'Альфа (50)'
                             when 2 then 'Капитал МС (41)'
-                            when 3 then 'ВТБ МС (46)'
+                            when 3 then 'СОГАЗ-Мед (44)'
                             when 4 then 'Иногородние'
                         end as StrahComp 
                         ,case f.VMP
@@ -81,7 +83,7 @@
                         ,case StrahComp           
                             when 1 then 'Альфа (50)'
                             when 2 then 'Капитал МС (41)'
-                            when 3 then 'ВТБ МС (46)'
+                            when 3 then 'СОГАЗ-Мед (44)'
                             when 4 then 'Иногородние'
                         end
                         ,datename(year, DateN)
@@ -278,7 +280,7 @@
                 ,case StrahComp 
                     when 1 then '55050'
                     when 2 then '55041'
-                    when 3 then '55046'
+                    when 3 then '55044'
                     else null
                     end         as 'SCHET/PLAT'
                 ,SUMMAV         as 'SCHET/SUMMAV'
@@ -291,13 +293,14 @@
                         ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                         ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                         ,NUMBER     as 'ZAP/PACIENT/NPOLIS'	
+                        ,iif(VPOLIS = 1, SMO_OK, null) as 'ZAP/PACIENT/ST_OKATO'
                         ,PLAT       as 'ZAP/PACIENT/SMO'
                         ,SMO_OK     as 'ZAP/PACIENT/SMO_OK'   		  
                         ,0          as 'ZAP/PACIENT/NOVOR'
             -- Законченный случай Z_SL ---
                         ,(select  
                              NOM_ZAP    as 'Z_SL/IDCASE'
-                            ,iif(LPU_ST = 4, 3, LPU_ST)     as 'Z_SL/USL_OK'  -- для параклиники меняем 4 на 3
+                            ,iif(LPU_ST in (4, 5), 3, LPU_ST)     as 'Z_SL/USL_OK'  -- для параклиники меняем 4 и 5 на 3
                             ,VIDPOM     as 'Z_SL/VIDPOM'
                             ,3          as 'Z_SL/FOR_POM'
                             ,json_value(NOM_USL, '$.NPR_MO')   as 'Z_SL/NPR_MO'                                 --- !!!
@@ -345,11 +348,11 @@
                 --- БЛОК Консилиумы CONS ---  
                                 ,(select 
                                         0                                   as 'CONS/PR_CONS'     -- нет консилиума  для параклиники                                                     
-                                    where LPU_ST = 4 and dbo.jsonIf(NOM_USL, 'DS1_T') = 1
+                                    where LPU_ST in (4, 5) and dbo.jsonIf(NOM_USL, 'C_ZAB') = 1
                                     for xml path(''), type ) as 'SL'
                                 ,(select 
                                         0                                   as 'CONS/PR_CONS'     -- нет консилиума                                                       
-                                    where dbo.jsonIf(NOM_USL, 'Taktika_1') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_2') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_3') = 0 and LPU_ST <> 4
+                                    where dbo.jsonIf(NOM_USL, 'Taktika_1') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_2') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_3') = 0 and LPU_ST not in (4, 5)
                                     for xml path(''), type ) as 'SL'
                                 ,(select 
                                         1                                   as 'CONS/PR_CONS'     -- противопоказания химии  
@@ -593,7 +596,7 @@
                                     ,SUM_LPU    as 'USL/SUMV_USL'
                                     ,PRVS       as 'USL/PRVS' 
                                     ,IDDOKT     as 'USL/CODE_MD' 									          
-                                where LPU_ST in (3, 4)
+                                where LPU_ST in (4, 5)
                                 for xml path(''), type ) as 'SL'
             --- продолжаем Законченный Случай Z_SL ---
                             ,IDSP       as 'IDSP'
@@ -632,7 +635,7 @@
                         ,case StrahComp 
                             when 1 then '55050'
                             when 2 then '55041'
-                            when 3 then '55046'
+                            when 3 then '55044'
                             else null
                          end        as 'SCHET/PLAT'
                         ,SUMMAV     as 'SCHET/SUMMAV'
@@ -645,6 +648,7 @@
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                                 ,NUMBER     as 'ZAP/PACIENT/NPOLIS'	
+                                ,iif(VPOLIS = 1, SMO_OK, null) as 'ZAP/PACIENT/ST_OKATO'
                                 ,PLAT       as 'ZAP/PACIENT/SMO'
                                 ,SMO_OK     as 'ZAP/PACIENT/SMO_OK'   		  
                                 ,0          as 'ZAP/PACIENT/NOVOR'
@@ -674,7 +678,7 @@
                                         ,json_value(NOM_USL, '$.PROFIL_K') as 'SL/PROFIL_K'                          
                                         ,DET        as 'SL/DET'
                                         ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.TAL_D'), 104 ), 20)  as 'SL/TAL_D' 
-                                        ,replace(json_value(NOM_USL, '$.TAL_NUM'), '.', '/') as 'SL/TAL_NUM' 
+                                        ,json_value(NOM_USL, '$.TAL_NUM') as 'SL/TAL_NUM' 
                                         ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/TAL_P'      
                                         ,PACIENTID  as 'SL/NHISTORY'
                                         ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/DATE_1'
@@ -723,7 +727,8 @@
                                             ,dbo.jsonValInt(NOM_USL, 'ONK_T') as 'ONK_SL/ONK_T'
                                             ,dbo.jsonValInt(NOM_USL, 'ONK_N') as 'ONK_SL/ONK_N'
                                             ,dbo.jsonValInt(NOM_USL, 'ONK_M') as 'ONK_SL/ONK_M'                      
-                                            ,dbo.jsonValInt(NOM_USL, 'MTSTZ') as 'ONK_SL/MTSTZ'                     
+                                            ,dbo.jsonValInt(NOM_USL, 'MTSTZ') as 'ONK_SL/MTSTZ'   
+                                            ,try_cast(dbo.jsonValReal(NOM_USL, 'SOD')  as decimal(6,2)) as 'ONK_SL/SOD'
                         --- БЛОК Диагноститческий блок B_DIAG --- 
                                             ,(select 
                                                  convert(date, DIAG_DATE, 104 )    as 'B_DIAG/DIAG_DATE'
@@ -792,8 +797,7 @@
 							                    ,json_value(value, '$.PPTR') as 'ONK_USL/PPTR'
 						                    from openjson(NOM_USL, '$.ONK_SL.ONK_USL')
 						                    for xml path(''), type) as 'ONK_SL' 
-	                    --- Продолжаем блок Онкологическое лечение ONK_SL
-                                            ,try_cast(dbo.jsonValReal(NOM_USL, 'SOD')  as decimal(6,2)) as 'ONK_SL/SOD'
+	                    --- Продолжаем блок Онкологическое лечение ONK_SL                                            
                                             ,iif(dbo.jsonIf(NOM_USL, 'K_FR') = 1, iif(dbo.jsonValInt(NOM_USL, 'K_FR') = -1, 0, dbo.jsonValInt(NOM_USL, 'K_FR')), null) as 'ONK_SL/K_FR'
                                             ,try_cast(dbo.jsonValReal(NOM_USL, 'WEI')  as decimal(4,1)) as 'ONK_SL/WEI'
                                             ,dbo.jsonValInt(NOM_USL, 'HEI')     as 'ONK_SL/HEI'
@@ -899,7 +903,7 @@
                         ,case StrahComp 
                             when 1 then '55050'
                             when 2 then '55041'
-                            when 3 then '55046'
+                            when 3 then '55044'
                             else null
                          end        as 'SCHET/PLAT'
                         ,SUMMAV     as 'SCHET/SUMMAV'
@@ -912,6 +916,7 @@
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                                 ,NUMBER     as 'ZAP/PACIENT/NPOLIS'	
+                                ,iif(VPOLIS = 1, SMO_OK, null) as 'ZAP/PACIENT/ST_OKATO'
                                 ,PLAT       as 'ZAP/PACIENT/SMO'
                                 ,SMO_OK     as 'ZAP/PACIENT/SMO_OK'
                                 ,0          as 'ZAP/PACIENT/NOVOR'
@@ -1151,6 +1156,16 @@
             return _Return;
         }
 
+        /// <summary>Находим код обращения протокола параклиники</summary>
+        public static string Table_Select_2(decimal pCod)
+        {
+            string _Return = $@"
+                select CodZap
+                from dbo.kbolInfo
+                where Tab = 'par' and Cod = {pCod}";
+            return _Return;
+        }
+
         /// <summary>Смотрим сколько записей будет удалены и тип реестров (основные или исправленные) (из Excel)</summary>
         public static string DeleteFromExcel_Select_1()
         {
@@ -1222,6 +1237,7 @@
 	                SERIA nvarchar(10),
 	                NUMBER nvarchar(20),
 	                PLAT nvarchar(5),
+                    IDDOKT nvarchar(16),
 	                ARR_DATE date,
 	                EX_DATE date,
 	                KOL_USL int,
@@ -1233,7 +1249,7 @@
 	                NOM_USL nvarchar(max),					
 	                NOM_ZAP int,
 	                Cod int primary key,
-                    CodFile int
+                    CodFile int                    
                 );
 
                 insert @Reestr
@@ -1251,6 +1267,7 @@
 	                ,SERIA
 	                ,NUMBER
 	                ,PLAT
+                    ,IDDOKT
 	                ,ARR_DATE
 	                ,EX_DATE
 	                ,KOL_USL
@@ -1267,10 +1284,10 @@
                 where CodFile = @CodFile
 
                 select 
-	                r.NOM_ZAP              as IDCASE
-	                ,r.LPU_ST
-                    ,choose(r.LPU_ST, s.Podr, s.Podr, p.Podr, o.Podr)   as Podr					
-                    ,choose(r.LPU_ST, s.Vrach, s.Vrach, p.Vrach, o.Vrach) as Vrach
+	                r.NOM_ZAP              as IDCASE 
+	                ,r.LPU_ST                   
+                    ,choose(r.LPU_ST, s.Podr, s.Podr, p.Podr, 'Параклиника', 'Гистология')   as Podr					
+                    ,u.FIO as Vrach
                     ,isnull(p.Nurs, '')       as Nurse
                     ,dbo.GetFIO(r.FAMILY, r.[NAME], r.FATHER) as FIO
                     ,r.POL
@@ -1291,49 +1308,40 @@
                     ,r.PODR as Cod_Otd
                     ,iif(er.IdCase is not null, 'не оплачен', '') as ErrorPay
 	                ,r.CodFile
-	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[0].Usl'), ''), iif(r.LPU_ST = 4, isnull(json_value(r.NOM_USL, '$.USL[0].Code_Usl'), ''), '')) as Usl1
+	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[0].Usl'), ''), iif(r.LPU_ST in (4, 5), isnull(json_value(r.NOM_USL, '$.USL[0].Code_Usl'), ''), '')) as Usl1
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[1].Usl'), ''), '') as Usl2
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[2].Usl'), ''), '') as Usl3
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[3].Usl'), ''), '') as Usl4
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[4].Usl'), ''), '') as Usl5
-                    ,iif(s.Arhiv = 1, 'не в архиве', '') as Arhiv
-                    
+                    ,iif(s.Arhiv = 1, 'не в архиве', '') as Arhiv                    
                 from @Reestr as r
                 left join (select r.Cod    -- Поликлиника
                                  ,iif(r.LPU_1 = 55550900, '1я поликлиника', '2я поликлиника') as Podr
-                                 ,v.TKOD    as Vrach
                                  ,n.[Name]  as Nurs 
                             from @Reestr			as r
                             join dbo.APAC			as ac	on ac.Cod= r.PACIENTID
-                            join dbo.s_VrachPol		as v	on ac.KV = v.KOD 
                             left join dbo.s_Nurse	as n    on ac.Nurse = n.Cod 
                             where r.LPU_ST = 3 and isnull(ac.xDelete, 0) = 0)     as p
                     on  p.Cod = r.Cod
                 left join (select r.Cod    -- Стационар
-                                 ,ot.TKOD     as Podr
-                                 ,v.TKOD      as Vrach 
+                                 ,ot.Names    as Podr
                                  ,a.FlagClose as Arhiv
                             from @Reestr			as r
                             join dbo.APSTAC			as a	on a.IND = r.PACIENTID 
-                            join dbo.s_VrachStac	as v	on a.KV = v.KOD    
-                            join dbo.s_Otdel		as ot   on a.otd = ot.KOD 
+                            join dbo.s_Department	as ot   on a.otd = ot.Cod 
                             where r.LPU_ST < 3 and isnull(a.xDelete, 0) = 0)    as s
                     on s.Cod = r.Cod
-                left join (select r.Cod    -- Параклиника
-                                 ,'Параклиника'     as Podr
-                                 ,u.FIO      as Vrach                  
-                            from @Reestr			as r
-                            join dbo.parObsledov	as o	on o.Cod = r.PACIENTID 
-                            join dbo.parProtokol	as p	on p.CodApstac = o.Cod    
-                            join dbo.s_UsersDostup  as d	on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.element') = 6 
-			                join dbo.s_Users		as u	on u.Cod = d.UserCod
-                            where r.LPU_ST = 4 and isnull(o.xDelete, 0) = 0)    as o
-                    on o.Cod = r.Cod
+                left join (select row_number() over(partition by json_value(xInfo, '$.iddokt') order by Cod) as Nom
+                                 ,json_value(xInfo, '$.iddokt') as iddokt
+                                 ,FIO
+                           from dbo.s_Users
+                           where isjson(xInfo) > 0  and json_value(xInfo, '$.iddokt') is not null
+                          ) as u on u.Nom = 1 and u.iddokt= r.IDDOKT 
                 left join (select distinct IdCase
                            from dbo.StrahError 
                            where CodFiles = @CodFile) as er
-                    on r.NOM_ZAP = er.Idcase                
-                order by LPU_ST, Podr, Vrach, Nurse, FIO, VOZRAST, d2";
+                    on r.NOM_ZAP = er.Idcase  
+                order by  LPU_ST, Podr, Vrach, Nurse, FIO, VOZRAST, d2";
             return _Query;
         }
         #endregion
@@ -1350,7 +1358,8 @@
                 use Bazis;
                 select 3     as LPU_ST                                        -- тип подразделения (3 - поликлиника)
                       ,cast(a.Cod as decimal) as Cod 
-                      ,a.DP                     
+                      ,a.DP   
+                      ,1 as Doubl
                       {pSelectAll}                                              
                 from dbo.APAC as a                                              -- поликлиника
                 left join dbo.ErrorASU  as e    on a.PD = e.Cod                 -- справочник ошибок                      
@@ -1367,10 +1376,11 @@
                 select iif(o.Tip = 1, 1, 2) as LPU_ST                           -- 1 кр. стационар, 2 дн. стационар 
                       ,a.IND as Cod
                       ,a.DN as DP
+                      ,1 as Doubl
                       {pSelectAll}  
                 from dbo.APSTAC as a                                            -- стационар
                 left join dbo.ErrorASU  as e    on a.PD = e.Cod                 -- справочник ошибок
-                join dbo.s_Otdel        as o    on o.KOD = a.otd                -- отделения                  
+                join dbo.s_Department   as o    on o.Cod = a.otd                -- отделения                  
                 join dbo.kbol           as k    on a.KL = k.KL 
                 left join dbo.s_Diag    as d    on d.KOD = a.D 
                 left join dbo.s_Docum   as do   on k.Doc = do.KOD
@@ -1383,28 +1393,33 @@
                   on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0                                        
                 {pWereStac}                                                             -- условия стационара
                 union all
-                select 4 as LPU_ST		-- тип подразделения (4 - параклиника, при выгрузке в XML превратить в 3)
-	                ,cast(i.Cod as decimal) as Cod
-	                ,p.pDate as DP
-	                {pSelectAll}
-                from dbo.parProtokol	as p
-                join dbo.parObsledov	as o	on p.CodApstac = o.Cod
-                join dbo.kbol			as k	on p.KL = k.KL
-                join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap 
-                join dbo.s_Diag			as d	on d.KOD = json_value(i.jTag, '$.Diag')
-                join dbo.s_Docum		as do   on k.Doc = do.KOD 
-                left join dbo.KLADR		as kl
-                    on concat(right(concat('00', k.Obl),2), 
-			                right(concat('000', k.KR), 3),
-			                right(concat('000', k.Gorod), 3), 
-			                right(concat('000', k.NasP), 3), '00') = kl.CODE
-                left join dbo.ErrorASU as e on json_value(i.jTag, '$.Error') = e.Cod
-                where NumShablon in (515, 518, 519, 101, 102, 103, 1301)
-                {pWerePar}                                                               -- условия параклиника
+                select d.* from (
+                    select 4 as LPU_ST		-- тип подразделения (4 - параклиника, при выгрузке в XML превратить в 3)
+	                    ,cast(i.Cod as decimal) as Cod
+	                    ,p.pDate as DP
+                        ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
+	                    {pSelectAll}
+                    from dbo.parProtokol	as p
+                    join dbo.parObsledov	as o	on p.CodApstac = o.Cod
+                    join dbo.kbol			as k	on p.KL = k.KL
+                    join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap 
+                    join dbo.s_Diag			as d	on d.KOD = json_value(i.jTag, '$.Diag')
+                    join dbo.s_Docum		as do   on k.Doc = do.KOD 
+                    left join dbo.KLADR		as kl
+                        on concat(right(concat('00', k.Obl),2), 
+			                    right(concat('000', k.KR), 3),
+			                    right(concat('000', k.Gorod), 3), 
+			                    right(concat('000', k.NasP), 3), '00') = kl.CODE
+                    left join dbo.ErrorASU as e on json_value(i.jTag, '$.Error') = e.Cod
+                    where NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
+                    {pWerePar}                                                               -- условия параклиника
+                ) as d
+				where Dubl = 1  -- избавляемся от дублей
                 union all
                 select 5 as LPU_ST		-- тип подразделения (5 - гистология, при выгрузке в XML превратить в 3)
-	                ,cast(i.Cod as decimal) as Cod
-	                ,p.pDate as DP
+	                  ,cast(i.Cod as decimal) as Cod
+	                  ,p.pDate as DP
+                      ,1 as Doubl
 	                {pSelectAll}
 				from dbo.kdlProtokol	as p
 				join dbo.kbol			as k	on p.KL = k.KL
@@ -1555,7 +1570,7 @@
                     from (
                         select dense_rank() over(PARTITION BY a.IND order by s.Tarif desc, v.Nom) as Rang         
                             ,a.IND
-                            ,iif(o.Tip = 1, 1, 2) as LPU_ST
+                            ,cast(o.Tip as int) as LPU_ST
                             ,iif(a.OtdIn = 0, a.DN, isnull(cast(json_value(a.xInfo, '$.DN') as date), a.DN)) as Dn
                             ,a.DK
                             ,a.Age
@@ -1566,9 +1581,8 @@
                             ,a.OtdIn                                            -- откуда прибыл пациент
                             ,a.ISXOD                                            -- исход госпитализации
                             ,iif(a.OtdIn = 0, a.UET3, isnull(json_value(a.xInfo, '$.Uet3'), a.UET3)) as Uet3 -- койко дни
-                            ,o.Korpus                                           -- корпус отделения 1-главный, 2-филиал
-                            ,o.Depart                                           -- тип отделения 1-кр. стационар, 2-дн. стационар при стац, 3-дн. стационар при пол.
-                            ,o.PODR                                             -- код отделения
+                            ,o.Korpus                                           -- корпус отделения 1-главный, 2-филиал                            
+                            ,json_value(o.xInfo, '$.PODR') as PODR              -- код отделения
                             ,s.PROFIL                                           -- профиль врача
                             ,s.PROFIL_K                                         -- профиль койки
                             ,v.PRVSs                                            -- специальность врача                  
@@ -1589,7 +1603,7 @@
 				                    iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DK) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
                          from dbo.APSTAC as a                                   -- стационар   
                          left join dbo.ErrorASU	as e	on a.PD = e.Cod         -- справочник ошибок                                                  
-                         join dbo.s_Otdel		as o    on o.KOD = a.otd        -- отделения
+                         join dbo.s_Department  as o    on o.Cod = a.otd        -- отделения
                          left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
                            on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
                          left join (select KOD, Nom, PRVSs, IDDOKT
@@ -1601,10 +1615,10 @@
                            on v.KOD = a.KV 
                               and not((a.OTD in (17, 18) and PRVSs = 41)        -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102 
                                    or (a.Age > 17 and PRVSs = 19)               -- если взрослый, то не берем специальность детскую онкологию 
-                                   or (p.Cod is not null and PRVSs <> 41))      -- отсекаем для ВМП все специальности, кроме онкологии                                                                                  
+                                   or (p.Cod is not null and PRVSs not in (41, 57, 58)))      -- отсекаем для ВМП все специальности, кроме онкологии и радиологии                                                                                  
                          left join dbo.StrahStacSv   as s                                                                          
                            on v.PRVSs = s.PRVS and a.DK between s.DateN and s.DateK   
-							and ((s.Flag = 0 and o.Depart = 1) or (s.Flag = 1 and o.Depart in (2, 3)))   
+							and ((s.Flag = 0 and o.Tip = 1) or (s.Flag = 1 and o.Tip = 2))   
                          left join dbo.kbolInfo as ki
                            on ki.Tab = 'stac' and a.IND = ki.CodZap    
                          left join dbo.s_Diag        as d     on d.KOD = a.D                 
@@ -1634,11 +1648,10 @@
                 select a.IND
 	                    ,a.D
 	                    ,a.DK
-	                    ,iif(a.Dnevnoi = 1, 1, 2) as UslOk
+	                    ,o.Tip as UslOk
 	                    ,iif(a.Age < 18, 5, 6) as Det   
                 from dbo.APSTAC as a
-                join dbo.s_Otdel as o                                  
-                    on o.KOD = a.otd
+                join dbo.s_Department as o  on o.Cod = a.otd 
                 left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
                     on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
                 --where a.DK between '01/01/2019' and '01/21/2019' and a.OMS = 1 and a.FlagOut > 0  -- для проверки запроса
@@ -1767,12 +1780,12 @@
 	                select   a.IND
 			                ,kp.jTag
 			                ,row_number() over(partition by a.IND order by isnull(a1.DP, s1.DK) desc) as Num
-	                from dbo.APSTAC               as a  
-                    left join dbo.ErrorASU	as e	on a.PD = e.Cod         -- справочник ошибок                                                  
-                    join dbo.s_Otdel		as o    on o.KOD = a.otd        -- отделения
-	                left join dbo.kbolInfo as kp on kp.KL = a.KL
-	                left join dbo.APAC as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DK >= a1.DP
-	                left join dbo.APSTAC as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DK >= s1.DK
+	                from dbo.APSTAC         as a  
+                    left join dbo.ErrorASU	as e  on a.PD = e.Cod         -- справочник ошибок                                                  
+                    join dbo.s_Department   as o  on o.Cod = a.otd        -- отделения
+	                left join dbo.kbolInfo  as kp on kp.KL = a.KL
+	                left join dbo.APAC      as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DK >= a1.DP
+	                left join dbo.APSTAC    as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DK >= s1.DK
                     left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
                       on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
 	                {pWereStac}
@@ -1794,31 +1807,35 @@
             string _Return = $@"
                 use Bazis;
 
-                select cast(i.Cod as decimal) as Cod
-                    ,4 as LPU_ST
-	                ,k.SCom
-	                ,k.SN
-	                ,k.SS
-	                ,i.jTag
-	                ,json_value(d.xInfo, '$.vrach')	as IDDOKT
-                    ,datediff(year, k.DR, p.pDate) as Age
-	                ,s.PRVS
-	                ,s.PROFIL
-	                ,s.CODE_USL
-	                ,s.VID_VME
-	                ,s.VidPom
-	                ,s.Tarif
-	                ,isnull(l.KodOKPO, '555509') as NPR_MO
-                    ,p.pDate as NPR_DATE
-                from dbo.parProtokol	as p
-                join dbo.parObsledov	as o	on p.CodApstac = o.Cod
-                join dbo.kbol			as k	on p.KL = k.KL
-                join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap  
-                join dbo.s_UsersDostup  as d	on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.modul') = 15 and json_value(d.xInfo, '$.element') in (1, 6, 13)
-                join dbo.StrahStacSv	as s	on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
-                left join dbo.s_LPU		as l	on k.StrLPU = l.StrLPU 
-                where NumShablon in (515, 518, 519, 101, 102, 103, 1301)
-                {pWerePar}
+                select d.* from (
+                    select cast(i.Cod as decimal) as Cod
+                        ,4 as LPU_ST
+	                    ,k.SCom
+	                    ,k.SN
+	                    ,k.SS
+	                    ,i.jTag
+	                    ,json_value(d.xInfo, '$.vrach')	as IDDOKT
+                        ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
+	                    ,s.PRVS
+	                    ,s.PROFIL
+	                    ,s.CODE_USL
+	                    ,s.VID_VME
+	                    ,s.VidPom
+	                    ,s.Tarif
+	                    ,isnull(l.KodOKPO, '555509') as NPR_MO
+                        ,convert(date, p.pDate, 104) as NPR_DATE
+                        ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
+                    from dbo.parProtokol	as p
+                    join dbo.parObsledov	as o	on p.CodApstac = o.Cod
+                    join dbo.kbol			as k	on p.KL = k.KL
+                    join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap  
+                    join dbo.s_UsersDostup  as d	on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.modul') = 15 and json_value(d.xInfo, '$.element') in (1, 6, 13) and d.isWork = 0
+                    join dbo.StrahStacSv	as s	on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
+                    left join dbo.s_LPU		as l	on k.StrLPU = l.StrLPU 
+                    where NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
+                    {pWerePar}
+                ) as d
+				where Dubl = 1  -- избавляемся от дублей
                 union all
                 select cast(i.Cod as decimal) as Cod
                         ,5 as LPU_ST
@@ -1827,7 +1844,7 @@
 	                    ,k.SS
 		                ,i.jTag
 		                ,json_value(d.xInfo, '$.vrach') as IDDOKT
-		                ,datediff(year, k.DR, p.pDate) as Age
+		                ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
 		                ,s.PRVS
 	                    ,s.PROFIL
 	                    ,s.CODE_USL
@@ -1836,11 +1853,12 @@
 	                    ,s.Tarif
 		                ,json_value(i.jTag, '$.NPR_MO') as NPR_MO
 		                ,convert(date, json_value(i.jTag, '$.NPR_DATE'), 104) as NPR_DATE
+                        ,1 as Dubl
                 from dbo.kdlProtokol    as p
                 join dbo.kbol           as k on p.KL = k.KL
                 join dbo.kbolInfo       as i on i.Tab = 'kdl' and i.CodZap = p.Cod
-                join dbo.s_UsersDostup as d    on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.userrigth') = 'histologydoctor' and json_value(d.xInfo, '$.vrach') is not null
-                join dbo.StrahStacSv as s    on s.Flag = 11 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.VID_VME
+                join dbo.s_UsersDostup  as d on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.userrigth') = 'histologydoctor' and json_value(d.xInfo, '$.vrach') is not null and d.isWork = 0
+                join dbo.StrahStacSv    as s on s.Flag = 11 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.VID_VME
                 where p.NumShablon = 20001
                 {pWerePar}";
 
@@ -1849,6 +1867,7 @@
 
         /// <summary>Загружаем данные по пациенту ВМП</summary>
         /// <param name="pIND">Код стационара</param>
+        /// <param name="pPRVS">Специальность врача</param>
         public static string ReVMP_Select_1(string pIND)
         {
             string _Return = $@"
@@ -1856,17 +1875,16 @@
                         ,s.PROFIL_K                                         -- профиль койки  
                         ,s.CODE_USL                                         -- код услуги
                         ,sv.IDHM as VID_VME                                 -- вид медицинского вмешательства                                               
-                        ,t.Tarif                                            -- тариф                                    
+                        ,s.Tarif                                            -- тариф                                    
                         ,sv.IDHM as METOD_HMP                               -- код метода ВМП
                         ,sv.HVid as VID_HMP                                 -- код вида ВМП
                         ,dbo.GetPole(8, p.Protokol) as TAL_NUM                   -- номер талона ВМП
                         ,cast(dbo.GetPoleD(9, p.Protokol) as date) as TAL_D      -- дата талона ВМП   
                 from dbo.APSTAC as a                                        -- стационар   
                 left join dbo.astProtokol   as p    on p.CodApstac = a.IND and p.NumShablon = 8013  
-                left join dbo.StrahVMP      as sv   on p.Cod is not null and left(dbo.GetPole(6, p.Protokol), 3) = sv.IDHM    --  метод ВМП находиться в 6м вопросе 8013 шаблона стационара                                                    
-                left join dbo.Tarif         as t    on p.Cod is not null and t.Flag = 7 and t.TCod = sv.HVid                        
-                left join dbo.StrahStacSv   as s    on s.PRVS=41 and t.Flag = s.Flag and a.DK between s.DateN and s.DateK                                                                                           
-                where t.DateN <= a.DK and (t.DateK >= a.DK or t.DateK is null) and a.IND = {pIND}"; 
+                left join dbo.StrahVMP      as sv   on p.Cod is not null and left(dbo.GetPole(6, p.Protokol), 3) = sv.IDHM    --  метод ВМП находиться в 6м вопросе 8013 шаблона стационара                                                                       
+                left join dbo.StrahStacSv   as s    on s.Flag = 7 and sv.HVid = s.VID_VME and a.DK between s.DateN and s.DateK                                                                                           
+                where a.IND = {pIND}"; 
  
             return _Return;
         }
@@ -1880,8 +1898,22 @@
                       ,s.TKOD   as Names
                       ,o.NewKod as OKATO  
                 from dbo.s_StrahComp as s
-                join dbo.s_Oblast    as o    
-                  on o.kod = s.KodReg";
+                join dbo.s_Oblast    as o on o.kod = s.KodReg";
+
+            return _Return;
+        }
+
+        /// <summary>Загружаем справочник врачей из МИАЦ (для проверки действующих сертефикатов)</summary>
+        /// <param name="pDN">Дата начала периода реестра</param>
+        public static string ReStrahVrachMIAC_Select_1(DateTime pDN)
+        {
+            string _Return = $@"
+                select iddokt   
+                      ,prvs    
+                      ,data_n
+                      ,data_e
+                from dbo.StrahVrachMIAC
+                where data_e >= cast(dateadd(month, -2, '{pDN:MM.dd.yyyy}') as date)";   // сертефикат должен быть действителен 2 месяца назад (для разовой поликлиники)
 
             return _Return;
         }

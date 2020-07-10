@@ -24,7 +24,7 @@ namespace wpfGeneral.UserStruct
         public byte PROP_Nomer
         {
             get { return PRI_Nomer; }
-            set { PRI_Nomer = value; PART_RaisePropertyChanged("PROP_Nomer");}
+            set { if (PRI_Nomer != value) { PRI_Nomer = value; PART_RaisePropertyChanged("PROP_Nomer"); } }
         }
 
         private int PRI_VarId;
@@ -32,7 +32,7 @@ namespace wpfGeneral.UserStruct
         public int PROP_VarId
         {
             get { return PRI_VarId; }
-            set { PRI_VarId = value; PART_RaisePropertyChanged("PROP_VarId"); }
+            set { if (PRI_VarId != value) { PRI_VarId = value; PART_RaisePropertyChanged("PROP_VarId"); } }
         }
 
         private string PRI_Maska;
@@ -40,7 +40,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_Maska
         {
             get { return PRI_Maska; }
-            set { PRI_Maska = value; PART_RaisePropertyChanged("PROP_Maska"); }
+            set { if (PRI_Maska != value) { PRI_Maska = value; PART_RaisePropertyChanged("PROP_Maska"); } }
         }
 
         private byte PRI_Type;
@@ -48,7 +48,7 @@ namespace wpfGeneral.UserStruct
         public byte PROP_Type
         {
             get { return PRI_Type; }
-            set { PRI_Type = value; PART_RaisePropertyChanged("PROP_Type"); }
+            set { if (PRI_Type != value) { PRI_Type = value; PART_RaisePropertyChanged("PROP_Type"); } }
         }
 
         private string PRI_Razdel;
@@ -56,7 +56,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_Razdel
         {
             get { return PRI_Razdel; }
-            set { PRI_Razdel = value; PART_RaisePropertyChanged("PROP_Razdel"); }
+            set { if (PRI_Razdel != value) { PRI_Razdel = value; PART_RaisePropertyChanged("PROP_Razdel"); } }
         }
 
         private string PRI_Name;
@@ -64,7 +64,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_Name
         {
             get { return PRI_Name; }
-            set { PRI_Name = value; PART_RaisePropertyChanged("PROP_Name"); }
+            set { if (PRI_Name != value) { PRI_Name = value; PART_RaisePropertyChanged("PROP_Name"); } }
         }
 
         private string PRI_ValueStart;
@@ -72,7 +72,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_ValueStart
         {
             get { return PRI_ValueStart; }
-            set { PRI_ValueStart = value; PART_RaisePropertyChanged("PROP_ValueStart"); }
+            set { if (PRI_ValueStart != value) { PRI_ValueStart = value; PART_RaisePropertyChanged("PROP_ValueStart"); } }
         }
 
         private string PRI_OutText;
@@ -80,7 +80,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_OutText
         {
             get { return PRI_OutText; }
-            set { PRI_OutText = value; PART_RaisePropertyChanged("PROP_OutText"); }
+            set { if (PRI_OutText != value) { PRI_OutText = value; PART_RaisePropertyChanged("PROP_OutText"); } }
         }
 
         private string PRI_InText;
@@ -88,7 +88,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_InText
         {
             get { return PRI_InText; }
-            set { PRI_InText = value; PART_RaisePropertyChanged("PROP_InText"); }
+            set { if (PRI_InText != value) { PRI_InText = value; PART_RaisePropertyChanged("PROP_InText"); } }
         }
 
         private string PRI_xFormat;
@@ -96,7 +96,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_xFormat
         {
             get { return PRI_xFormat; }
-            set { PRI_xFormat = value; PART_RaisePropertyChanged("PROP_xFormat"); }
+            set { if (PRI_xFormat != value) { PRI_xFormat = value; PART_RaisePropertyChanged("PROP_xFormat"); } }
         }
 
         private string PRI_xLua;
@@ -104,7 +104,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_xLua
         {
             get { return PRI_xLua; }
-            set { PRI_xLua = value; PART_RaisePropertyChanged("PROP_xLua"); }
+            set { if (PRI_xLua != value) { PRI_xLua = value; PART_RaisePropertyChanged("PROP_xLua"); } }
         }
 
         private string PRI_xInfo;
@@ -112,7 +112,7 @@ namespace wpfGeneral.UserStruct
         public string PROP_xInfo
         {
             get { return PRI_xInfo; }
-            set { PRI_xInfo = value; PART_RaisePropertyChanged("PROP_xInfo"); }
+            set { if (PRI_xInfo != value) { PRI_xInfo = value; PART_RaisePropertyChanged("PROP_xInfo"); } }
         }
 
 
@@ -137,7 +137,7 @@ namespace wpfGeneral.UserStruct
         }
 
         ///<summary>МЕТОД Сохраняем ВЕСЬ шаблон данного элемента в SQL</summary>
-        public void MET_SaveSQL()
+        public int MET_SaveSQL()
         {
             // Коллекция Shablon
             List<UserShablon> _Shablon = ((VirtualModul)MyGlo.Modul).PUB_Shablon;
@@ -154,6 +154,7 @@ namespace wpfGeneral.UserStruct
                 _i.PROP_FlagEdit = false;
             }
             MessageBox.Show($"Сохранено {_Value.Count} вопросов");
+            return _Value.Count;
         }
 
         ///<summary>МЕТОД Замена шаблона в SQL (при импорте из Excel)</summary>

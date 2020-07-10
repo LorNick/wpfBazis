@@ -30,7 +30,7 @@
                         <Separator></Separator>
                         <MenuItem Header="_Врачи стационара" Click="PART_MenuItem_Click"></MenuItem>
                         <MenuItem Header="_Врачи поликлиники" Click="PART_MenuItem_Click"></MenuItem>
-                        <MenuItem Header="_Отделения стационара" Click="PART_MenuItem_Click"></MenuItem>
+                        <MenuItem Header="_Отделения" Click="PART_MenuItem_Click"></MenuItem>
                         <MenuItem Header="_Параклиника ОМС" Click="PART_MenuItem_Click"></MenuItem>
                         <Separator></Separator>
                         <MenuItem Header="_Талоны параклиники" Click="PART_MenuItem_Click" ></MenuItem>

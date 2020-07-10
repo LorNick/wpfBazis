@@ -287,7 +287,10 @@ namespace wpfReestr
 
             if (dataGrid1.SelectedItem == null) return;
             try
-            {   
+            {
+                decimal _KL = Convert.ToDecimal(MET_StrGrid1("ID_PAC"));
+                decimal _IND = Convert.ToDecimal(MET_StrGrid1("PACIENTID"));
+
                 MyTipProtokol _MyTipProtokol;
                 switch (MET_IntGrid1("LPU_ST"))
                 {
@@ -300,13 +303,13 @@ namespace wpfReestr
                         break;
                     case 4:                      
                         _MyTipProtokol = new MyTipProtokol(eTipDocum.Paracl);   // модуль параклиники
+                        _IND = MySql.MET_QueryInt(MyQuery.Table_Select_2(_IND));
                         break;
                     default:
                         _MyTipProtokol = new MyTipProtokol(eTipDocum.Null);     // модуль истории болезни
                         break;
                 }                                 
-                decimal _KL = Convert.ToDecimal(MET_StrGrid1("ID_PAC"));
-                decimal _IND = Convert.ToDecimal(MET_StrGrid1("PACIENTID"));
+               
 
                 // Пытаемся открыть новую копию программы, для редактирования протоколов
                 m.MET_EditWindows(_MyTipProtokol.PROP_TipDocum, _IND, _KL, _Path);
@@ -364,7 +367,7 @@ namespace wpfReestr
         {
             PART_LabelZap.Content = e.Column.Header.ToString();
             PART_TextBox.Text = "";
-        }  
+        }
 
         /// <summary>СОБЫТИЕ Фильтруем по списку в зависимости от типа записи в dataGrid1</summary>
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -374,13 +377,15 @@ namespace wpfReestr
 
         /// <summary>СОБЫТИЕ Находим данные по строке ввода Поиска (поиск по dataGrid1)</summary>
         private void PART_TextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {           
+        {
             // Наше условие поиска
             string _Text = (sender as TextBox)?.Text;
             // Если есть символы в строке поиска
             if (_Text?.Length > 0)
             {
-                MyPole _Pole = new MyPole(PRI_DVStrahReestr.Sort, PRI_DVStrahReestr);                
+                if (PRI_DVStrahReestr.Sort == null)
+                    PRI_DVStrahReestr.Sort = dataGrid1.Columns[3].SortMemberPath;
+                MyPole _Pole = new MyPole(PRI_DVStrahReestr.Sort, PRI_DVStrahReestr);
                 // строка условия
                 string _Where = _Pole.MET_FiltrPr(_Text);                       // строка условия
                 string _Colum = _Pole.PUB_Name;
@@ -404,8 +409,8 @@ namespace wpfReestr
                         }
                     }
                 }
-                catch { }  // если ввели некоректные данные для поиска (к примеру буквы в столбце чисел), то выходим 
-            }                  
+                catch { }  // если ввели некоректные данные для поиска (к примеру буквы в столбце чисел), то выходим
+            }
         }
 
         /// <summary>СОБЫТИЕ Нажали на кнопку "Фильтр 1" (фильтр по dataGrid1)</summary>
@@ -460,9 +465,9 @@ namespace wpfReestr
                 // Сразу покажим количество записей
                 PART_Expander.Header = "Фильтры (записей = " + PRI_DVStrahReestr.Count + ")";
                 // Cортировка по номеру поля (потом можно поменять на индивидуальную)    
-                PRI_DVStrahReestr.Sort = dataGrid1.Columns[4].SortMemberPath;             
+                PRI_DVStrahReestr.Sort = dataGrid1.Columns[3].SortMemberPath;
                 // Имя, по которому делаем поиск
-                PART_LabelZap.Content = dataGrid1.Columns[4].Header.ToString();
+                PART_LabelZap.Content = dataGrid1.Columns[3].Header.ToString();
                 // Отображаем таблицу                
                 dataGrid1.ItemsSource = PRI_DVStrahReestr;
             }
@@ -514,7 +519,6 @@ namespace wpfReestr
             catch
             {                
             }
-
         }
 
         /// <summary>МЕТОД Добавляем в строку фильтра PRI_Where новое условие</summary>
@@ -836,8 +840,8 @@ namespace wpfReestr
                 case "Капитал МС (41)":
                     _MainFileName += "S55041";
                     break;
-                case "ВТБ МС (46)":
-                    _MainFileName += "S55046";
+                case "СОГАЗ-Мед (44)":
+                    _MainFileName += "S55044";
                     break;
             }
 

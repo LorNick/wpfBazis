@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Data.Linq;
 using System.Data;
 using System.Xml;
+using System.Linq;
 
 namespace wpfStatic
 {
@@ -605,7 +606,7 @@ namespace wpfStatic
                             from dbo.{pTable}    
                             where {pPoleWhere} = {pValCod}";
             return MET_QueryStr(_StrSql);
-        }
+        }       
 
         /// <summary>Находим максимальный Cod + 1 (целое число)</summary>
         /// <param name="pTable">Имя таблицы</param>

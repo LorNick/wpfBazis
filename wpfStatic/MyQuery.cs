@@ -384,7 +384,7 @@ namespace wpfStatic
                     ,p.NumShablon
                     ,p.Protokol
                     ,p.KL
-                    ,p.xDateUp
+                    ,isnull(p.xDateUp, p.pDate) as xDateUp
                     ,p.xUserUp
                     ,p.xImport 
                     ,isnull(p.xDelete, 0) as xDelete
@@ -639,19 +639,21 @@ namespace wpfStatic
                     ,p.Name     as Profil
                     ,(select count(p.Cod) from dbo.apaNProtokol as p where a.Cod = p.CodApstac and isnull(p.xDelete, 0) = 0) as pCount
                     ,a.Cod      as CodApstac
-                    ,(select count(p.Cod) 
+                    ,(select  isnull(max(dbo.GetPole(200, k.Protokol)), '') --count(p.Cod) 
                       from dbo.apaNProtokol as p 
                       join dbo.kdlProtokol as k
 				        on k.pIndex = 1 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL
                       where p.NumShablon >= 20000 and a.Cod = p.CodApstac and isnull(p.xDelete, 0) = 0
                      ) as kdl
                     ,iif(a.IsCloseTap = 2, iif(a.Cod = a.NumberFirstTap, '(разовое)', '(обращение)'), '') as Metka
+                    ,(select  'консилиум' 
+                      from dbo.apaNProtokol as p 
+                       where a.Cod = p.CodApstac and p.NumShablon%100 = 11 and p.NumShablon < 3000 and  isnull(p.xDelete, 0) = 0
+                     ) as ImageInform
                     ,isnull(a.xDelete, 0) as xDelete
-                from dbo.APAC             as a
-                left join dbo.s_VrachPol  as v
-                  on a.Kv = v.KOD
-                left join dbo.s_ProfPol   as p
-                  on v.SPCS = p.Cod
+                from dbo.APAC               as a
+                left join dbo.s_VrachPol    as v    on a.Kv = v.KOD
+                left join dbo.s_ProfPol     as p    on v.SPCS = p.Cod
                 where a.KL = {KL}               
                 union
                 select 2        as Nom
@@ -661,22 +663,21 @@ namespace wpfStatic
                     ,a.Dn       as Dp
                     ,a.Dk
                     ,a.D
-                    ,o.TKOD     as Profil
+                    ,o.Names    as Profil
                     ,(select count(p.Cod) from dbo.astProtokol as p where a.IND = p.CodApstac and isnull(p.xDelete, 0) = 0) as pCount
                     ,a.IND      as CodApstac
-                    ,(select count(p.Cod) 
+                    ,(select  isnull(max(dbo.GetPole(200, k.Protokol)), '') --count(p.Cod) 
                       from dbo.astProtokol as p 
                       join dbo.kdlProtokol as k
 				        on k.pIndex = 2 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL
                       where p.NumShablon >= 20000 and a.IND = p.CodApstac and isnull(p.xDelete, 0) = 0
                      ) as kdl
                     ,'' as Metka
+                    ,'' as ImageInform
                     ,isnull(a.xDelete, 0) as xDelete
-                from dbo.APSTAC           as a
-                left join dbo.s_VrachStac as v
-                  on a.Kv = v.KOD
-                left join dbo.s_Otdel     as o
-                  on a.Otd = o.KOD
+                from dbo.APSTAC             as a
+                left join dbo.s_VrachStac   as v    on a.Kv = v.KOD
+                left join dbo.s_Department  as o    on a.Otd = o.Cod
                 where a.KL = {KL}
 			    union
 				select 3        as Nom
@@ -689,16 +690,14 @@ namespace wpfStatic
 					,l.NameKr   as Profil
 					,p.NumShablon as pCount
                     ,p.CodApstac
-                    ,isnull(k.Cod, 0) as kdl
+                    ,isnull(cast(k.Cod as nvarchar), '') as kdl
                     ,'' as Metka
+                    ,'' as ImageInform
                     ,isnull(p.xDelete, 0) as xDelete
-				from dbo.parProtokol as p
-				left join dbo.parListShablon as l
-				  on p.NumShablon = l.Cod
-				left join dbo.s_Users as u
-				  on p.xUserUp = u.Cod
-                left join dbo.kdlProtokol as k
-				  on k.pIndex = 3 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL 
+				from dbo.parProtokol            as p
+				left join dbo.parListShablon    as l    on p.NumShablon = l.Cod
+				left join dbo.s_Users           as u    on p.xUserUp = u.Cod
+                left join dbo.kdlProtokol       as k    on k.pIndex = 3 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL 
 				where p.KL = {KL}
                 order by Dp desc, Nom desc";
              return _Query;
@@ -710,17 +709,12 @@ namespace wpfStatic
              string _Query = $@"
                 select p.Cod, p.NumShablon, p.pDate, ls.NameKr, ls.Icon
                       ,iif(charindex('\DostupKR', ls.xFormat) > 0, 1, 0) as Dostup  -- если есть тег Dostup, то отображаем в истории программы КР                                                                 
-                      ,isnull(k.Cod, 0) as kdl
-                      ,p.xUserUp  as Kv
-					  ,u.FIO      as Vr
+                      ,isnull(cast(k.Cod as nvarchar), '') as kdl                      				  
                       ,isnull(p.xDelete, 0) as xDelete
-                from dbo.astProtokol          as p
-                left join dbo.astListShablon  as ls
-                  on p.NumShablon = ls.Cod
-                left join dbo.s_Users as u
-				  on p.xUserUp = u.Cod
-                left join dbo.kdlProtokol as k
-				  on k.pIndex = 2 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL 
+                from dbo.astProtokol            as p
+                left join dbo.astListShablon    as ls   on p.NumShablon = ls.Cod
+                left join dbo.s_Users           as u    on p.xUserUp = u.Cod
+                left join dbo.kdlProtokol       as k    on k.pIndex = 2 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL 
                 where p.CodApstac = {CodApstac}
                 order by p.pDate desc, iif(ls.NameKr = 'Выписка' or ls.NameKr = 'Выписной эпикриз', p.NumShablon * 1000, p.NumShablon) desc";
              return _Query;
@@ -732,17 +726,12 @@ namespace wpfStatic
              string _Query = $@"
                 select p.Cod, p.NumShablon, p.pDate, ls.NameKr, ls.Icon             
                       ,iif(charindex('\DostupKR', ls.xFormat) > 0, 1, 0) as Dostup  -- если есть тег Dostup, то отображаем в истории программы КР
-                      ,isnull(k.Cod, 0) as kdl
-                      ,p.xUserUp  as Kv
-					  ,u.FIO      as Vr
+                      ,isnull(cast(k.Cod as nvarchar), '') as kdl                      				 
                       ,isnull(p.xDelete, 0) as xDelete
-                from dbo.apaNProtokol          as p
-                left join dbo.apaNListShablon  as ls
-                    on p.NumShablon = ls.Cod
-                left join dbo.s_Users as u
-				  on p.xUserUp = u.Cod
-                left join dbo.kdlProtokol as k
-	                on k.pIndex = 1 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL 
+                from dbo.apaNProtokol           as p
+                left join dbo.apaNListShablon   as ls   on p.NumShablon = ls.Cod
+                left join dbo.s_Users           as u    on p.xUserUp = u.Cod
+                left join dbo.kdlProtokol       as k    on k.pIndex = 1 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL 
                 where p.CodApstac = {CodApstac}";
              return _Query;
         }
@@ -753,16 +742,12 @@ namespace wpfStatic
             string _Query = $@"
                 select p.Cod, p.NumShablon, ls.NameKr, ls.Icon 
                       ,isnull(p.pDate, p.xDateUp) as pDate                      
-                      ,dbo.GetPole(200, p.Protokol) as Indicator
-                      ,p.xUserUp  as Kv
-					  ,u.FIO      as Vr
+                      ,dbo.GetPole(200, p.Protokol) as Indicator                    				 
                       ,isnull(p.xDelete, 0) as xDelete
-                 from dbo.kdlProtokol          as p
-                left join dbo.kdlListShablon  as ls
-                  on p.NumShablon = ls.Cod
-                left join dbo.s_Users as u
-				  on p.xUserUp = u.Cod
-                where p.Cod = {Cod}";
+                 from dbo.kdlProtokol           as p
+                left join dbo.kdlListShablon    as ls   on p.NumShablon = ls.Cod
+                left join dbo.s_Users           as u    on p.xUserUp = u.Cod
+                where p.Cod = cast({Cod} as int)";
             return _Query;
         }
         #endregion
@@ -1428,20 +1413,6 @@ namespace wpfStatic
              return _Query;
         }
 
-        /// <summary>Выборка отделений parTalon</summary>
-        public static string parObsledovt_Select_4(int Cod)
-        {
-             string _Query = $@"
-                select cast(ot.KOD as nvarchar) + '. ' + ot.TKOD
-                from dbo.parTalon as t
-                join dbo.parObsledov as o
-                  on t.Obsledov = o.Cod 
-                join dbo.s_Otdel as ot
-                  on t.Otdel = ot.KOD
-                where o.Cod = {Cod}";
-             return _Query;
-        }
-
         /// <summary>Выборка протоколов Параклиники для ОМС</summary>
         public static string parObsledovt_Select_5(string proSqlWhere)
         {
@@ -1460,7 +1431,7 @@ namespace wpfStatic
                 join dbo.parObsledov	as o	on p.CodApstac = o.Cod
                 join dbo.kbol			as k	on p.KL = k.KL
                 join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap  
-                join dbo.s_UsersDostup  as d	on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.element') = 6
+                join dbo.s_UsersDostup  as d	on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.element') = 6 and d.isWork = 0
                 join dbo.s_Users		as u	on u.Cod = d.UserCod
                 join dbo.StrahStacSv	as s	on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
                 left join dbo.s_LPU		as l	on k.StrLPU = l.StrLPU
@@ -1485,22 +1456,17 @@ namespace wpfStatic
                        ,case 
                           when t.WhereCod = 1 then 'Поликлиника - 1'
                           when t.WhereCod = 2 then 'Поликлиника - 2'
-                          else o.TKOD 
+                          else o.Names 
                         end as Otd
                        ,t.SendName   
                        ,e.FIO as Element      
                       ,i.Name as Issled     
-                from Bazis.dbo.parTalon as t
-                join Bazis.dbo.parElement as e
-                  on t.Element = e.COD 
-                join Bazis.dbo.kbol as k
-                  on t.KL = k.KL
-                left join Bazis.dbo.s_Otdel as o
-                  on t.Otdel = o.KOD
-                join Bazis.dbo.parProfil as p
-                  on e.PROFIL = p.COD 
-                join Bazis.dbo.parIssledov as i
-                  on t.TipObsled = i.Cod
+                from Bazis.dbo.parTalon          as t
+                join Bazis.dbo.parElement        as e on t.Element = e.COD 
+                join Bazis.dbo.kbol              as k on t.KL = k.KL
+                left join Bazis.dbo.s_Department as o on t.Otdel = o.Cod
+                join Bazis.dbo.parProfil         as p on e.PROFIL = p.COD 
+                join Bazis.dbo.parIssledov       as i on t.TipObsled = i.Cod
                 {proSqlWhere}
                 order by k.FAM, k.DR, t.Date desc";
              return _Query;
@@ -1518,7 +1484,17 @@ namespace wpfStatic
                 order by Names";
              return _Query;
 		}
-		#endregion
+
+        /// <summary>Тип отделения стационара s_Department</summary>
+        public static string s_Department_Select_2(int pCod)
+        {
+            string _Query = $@"
+                select Tip
+                from dbo.s_Department
+                where Cod = {pCod}";
+            return _Query;
+        }
+        #endregion
 
         #region ---- s_Diag (справочник МКБ-10) ----
         /// <summary>Cправочник МКБ-10 s_Diag</summary>
@@ -1674,28 +1650,6 @@ namespace wpfStatic
         }
         #endregion
 
-        #region ---- s_Otdel (справочник отделений) ----
-        /// <summary>Выборка списка отделений s_Otdel</summary>
-        public static string s_Otdel_Select_1()
-        {
-             string _Query = @"
-                select concat(KOD, ';', TKOD) as Filter, KOD, TKOD
-                from dbo.s_Otdel
-                where isnull(xDelete, 0) = 0
-                order by TKOD";
-             return _Query;
-        }
-
-        /// <summary>Тип отделения стационара s_Otdel</summary>
-        public static string s_Otdel_Select_2(int pKOD)
-        {
-            string _Query = $@"
-                select Depart
-                from dbo.s_Otdel
-                where KOD = {pKOD}";
-            return _Query;
-        }
-        #endregion
 
         #region ---- s_MorfTip (справочник мрфологического типа) ----
         /// <summary>Справочник морфологического типа s_MorfTip</summary>
@@ -1753,18 +1707,15 @@ namespace wpfStatic
         public static string s_VrachStac_Select_1()
         {
              string _Query = @"
-                select concat(v.KOD, ';', v.TKOD, ';', isnull(p.TKOD, ''), ';', isnull(o.TKOD, '')) as Filter 
+                select concat(v.KOD, ';', v.TKOD, ';', isnull(p.TKOD, ''), ';', isnull(o.Names, '')) as Filter 
                     ,v.KOD
                     ,v.TKOD
                     ,'PROF' = isnull(p.TKOD, '')
-                    ,'Otd'  = isnull(o.TKOD, '')
-                from dbo.s_VrachStac			as v
-                left join dbo.s_ProfOtStac	    as p
-                  on v.SPCS = p.KOD
-                left join dbo.s_Otdel			as o
-                  on v.Otd = o.KOD
-                where isnull(v.xDelete, 0) = 0
-";
+                    ,'Otd'  = isnull(o.Names, '')
+                from dbo.s_VrachStac		as v
+                left join dbo.s_ProfOtStac	as p  on v.SPCS = p.KOD
+                left join dbo.s_Department	as o  on v.Otd = o.Cod
+                where isnull(v.xDelete, 0) = 0";
              return _Query;
         }
         #endregion
@@ -1835,9 +1786,11 @@ namespace wpfStatic
         {
             string _Query = $@"
                 select concat(HVid, ';', IDHM, ';',left(Model, 30), ';', HMName) as Names 
+                    ,json_value(xInfo, '$.TipVMP') as TipVMP
                     ,HVid, IDHM, left(Model, 30) as Model, HMName
                 from dbo.StrahVMP
-                {pWhere}";
+                where isjson(xInfo) > 0 and xEndDate = '01/01/2222' {pWhere}
+                order by TipVMP, Names";
             return _Query;
         }
 
@@ -1845,19 +1798,19 @@ namespace wpfStatic
         public static string varVidVMP_Select_1()
         {
             string _Query = @"
-                select *
-                from (select distinct HVid as Cod
-                     ,f.Names as  NameVid
-	                 ,f.Cod as ord
+                select distinct f.TipVMP 
+	                ,f.Names
                 from Bazis.dbo.StrahVMP as v
-                join (select * from (values ('1', '001 - Видеоэндоскопич., интервенцион.радиологич., малоинвазивные органосохр.хирург.вмешат'),
-  						                    ('2', '002 - Расширенные хирургические вмешательства'),
-						                    ('3', '003 - Комбинированное лечение ЗНО (хирургическое и противоопух.лекарственное)'),
-						                    ('4', '004 - Лучевая терапия'), 
-						                    ('5', '005 - Комплексная и высокодозная химиотерапия (включая таргетную)'),
-							                ('Р', '001 - Региональное ВМП')) as s(Cod, Names)) as f
-                  on right(v.HVid, 1) = f.Cod) as d
-                  order by ord";
+                left join (values 
+	                ('1', '1 - Видеоэндоскопич., интервенцион.радиологич., малоинвазивные органосохр.хирург.вмешат'),
+   	                ('2', '2 - Расширенные хирургические вмешательства'),
+	                ('3', '3 - Комбинированное лечение ЗНО (хирургическое и противоопух.лекарственное)'),
+	                ('4', '4 - Лучевая терапия'), 
+	                ('5', '5 - Комплексная и высокодозная химиотерапия (включая таргетную)'),
+	                ('6', '6 - Региональное ВМП')) as f(TipVMP, Names)
+                  on json_value(v.xInfo, '$.TipVMP') = f.TipVMP
+                where v.xEndDate = '01/01/2222' and isjson(v.xInfo) > 0			
+                order by f.TipVMP";
             return _Query;
         }
         #endregion
@@ -2087,7 +2040,7 @@ namespace wpfStatic
         }
 
         /// <summary>Ошибки Стационара</summary>
-        public static string varKSGError_Select_1(int Otd, int User)
+        public static string varErrorStac_Select_1(int Otd, int User)
         {
             string _Query = $@"
                 use Bazis;
@@ -2111,7 +2064,7 @@ namespace wpfStatic
                         ,cast(dbo.jsonValStr(Message, 'IND') as decimal(19)) as IND
                         ,iif(UserCod = @User, 1, 0) as Us -- 1 - текущий пользователь/врач, 0 - остальные врачи этого отделения       
                 from dbo.MessageHistory as m
-                where TypeMessage in (1, 2, 3) and getdate() between xBeginDate and xEndDate
+                where TypeMessage between 1 and 99 and getdate() between xBeginDate and xEndDate
                     and (Otd = @Otd or UserCod = @User)) as f
                 order by Us desc, TKOD, FIO";
             return _Query;
@@ -2163,29 +2116,20 @@ namespace wpfStatic
         public static string MET_varStaff_Select_1()
         {
             string _Query = @"
-                -- Cтарые пользователи s_User
-                select ou.Name as FIO     
-                        ,concat('Cod: ', ou.Cod, char(13),
-                            'Модуль: ', Kateg, ' - ', g.Name, char(13),
-                            'Password: ', Parol) as Tegs     
-                        ,iif(FlagDelete = 1, 'удален', '') as isWork    
-                        ,'1 - старые пользователи' as Tips
-                from dbo.s_User as ou
-                left join dbo.s_GroupPol as g on ou.Kateg = g.Cod
-                union
                 -- Пользователи s_Users
                 select FIO
-                        ,concat('Cod: ', Cod, char(13),
-                        'KL: ', KL, char(13),
-                        'Password: ', Password, 
-                        replace(cast((select 
-                            char(13) + concat(Cod, '. ',  
-                            Names, char(13),
-                            '   ', 'xInfo: ', xInfo, 
-                            iif(isWork = 1, char(13) + '   ' + 'Запись: удалена', ''))       
-                        from dbo.s_UsersDostup as ud
-                        where UserCod = u.Cod
-                        for xml path(''), type) as nvarchar(max)), '&#x0D;', char(13))) as Tegs      
+                      ,concat('Cod: ', Cod, char(13),
+                              'KL: ', KL, char(13),
+                              'Password: ', Password, 
+                              replace(cast((
+                                  select 
+                                     char(13) + concat(Cod, '. ',  
+                                                       Names, char(13),
+                                                       '   ', 'xInfo: ', xInfo, 
+                                                       iif(isWork = 1, char(13) + '   ' + 'Запись: удалена', ''))       
+                                  from dbo.s_UsersDostup as ud
+                                  where UserCod = u.Cod
+                                  for xml path(''), type) as nvarchar(max)), '&#x0D;', char(13))) as Tegs      
                         ,iif(isWork = 1, 'удален', '') as isWork    
                         ,'2 - пользователи' as Tips  
                 from dbo.s_Users as u
@@ -2225,10 +2169,10 @@ namespace wpfStatic
                 union
                 -- Медсёстры
                 select Name as FIO   
-                        ,concat('Cod: ', n.Cod, char(13),
+                      ,concat('Cod: ', n.Cod, char(13),
                             'Подразделение: ', n.Podrazd, ' - ', dep.TKOD) as Tegs         
-                        ,'' as isWork
-                        ,'5 - медсёстры' as Tips
+                      ,'' as isWork
+                      ,'5 - медсёстры' as Tips
                 from dbo.s_Nurse as n
                 left join dbo.z_Podrazd as dep      on n.Podrazd = dep.Cod
                 where n.Cod not in (0, 100)
@@ -2260,10 +2204,10 @@ namespace wpfStatic
         public static string MET_varTimeGosp(int pOtd, string pDate)
         {
             string _Query = $@"
-                -- C 8:30 прибавляем по 5 минут
-                -- Если в очереди больше 84 человек, то начинаем отсчет сначала с 8:30 ( до 15:30)
+                -- C 8:30 прибавляем по 10 минут
+                -- Если в очереди больше 42 человек, то начинаем отсчет сначала с 8:30 ( до 15:30)
                 use Bazis;
-                select convert(varchar(5), dateadd(mi, 5 * iif(count(*) > 84, count(*) - 84, count(*)), datetimefromparts(2017, 1, 1, 8, 30, 0, 0)), 108) as times
+                select convert(varchar(5), dateadd(mi, 10 * (count(*)%42), datetimefromparts(2017, 1, 1, 8, 30, 0, 0)), 108) as times
                       ,count(*) as cou
                 from (
                     select KL, dbo.GetPole(4, p.Protokol) as d, try_cast(left(dbo.GetPole(3, p.Protokol), 2) as real) as otd 

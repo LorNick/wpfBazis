@@ -39,5 +39,17 @@
         <classShapeMoniker Id="9ce834f4-3e6e-43e1-89d6-908b03754b36" />
       </nodes>
     </associationConnector>
+    <classShape Id="d3964101-720f-47db-aa53-56595935fb92" absoluteBounds="0.875, 5.25, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/StarahReestrDataContext/StrahError" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ae0b3b83-d0d7-414b-afef-c3b5049793dc" absoluteBounds="0.89000000000000012, 5.71, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="f2f604ce-c6d3-4f9c-afe0-da8608e6de52" absoluteBounds="0.875, 7.25, 2, 3.5016097005208326">
+      <DataClassMoniker Name="/StarahReestrDataContext/StrahStacSv" />
+      <nestedChildShapes>
+        <elementListCompartment Id="775c9264-5dfe-40d5-aaa6-7b924de55cff" absoluteBounds="0.89000000000000012, 7.71, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

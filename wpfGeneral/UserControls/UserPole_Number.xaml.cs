@@ -154,10 +154,9 @@ namespace wpfGeneral.UserControls
             if (_TextBox.Text == PROP_Text) return;
             // Проверим число на правильность
             if (_TextBox.Text != "")
-            {
-                double _Number;
+            {                
                 // Если не парсится в число или мы ставим пробел, то вертаем всё назад
-                if (!double.TryParse(_TextBox.Text, out _Number) || _TextBox.Text.IndexOf(' ') != -1)
+                if (!double.TryParse(_TextBox.Text, out double _Number) || _TextBox.Text.IndexOf(' ') != -1)
                 {
                     int _Select = _TextBox.SelectionStart - 1;                  // запоминаем где курсор
                     _TextBox.Text = PROP_Text;                                  // востанавливаем данные

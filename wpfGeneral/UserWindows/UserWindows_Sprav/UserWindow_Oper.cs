@@ -117,7 +117,7 @@ namespace wpfGeneral.UserWindows
             // Смотрим тип стационара
             if (MyGlo.TypeModul == eModul.VrStac)
             {
-                if (MySql.MET_QueryInt(MyQuery.s_Otdel_Select_2(MyGlo.Otd)) == 1)
+                if (MySql.MET_QueryInt(MyQuery.s_Department_Select_2(MyGlo.Otd)) == 1)
                     PRI_ComboBox_1.SelectedValue = "hour";  // круглосуточный
                 else
                     PRI_ComboBox_1.SelectedValue = "day";   // дневной

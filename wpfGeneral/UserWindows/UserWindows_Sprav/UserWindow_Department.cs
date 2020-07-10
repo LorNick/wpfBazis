@@ -13,27 +13,33 @@ namespace wpfGeneral.UserWindows
         private CheckBox PRI_CheckBox_1;
         private ComboBox PRI_ComboBox_1;
 
+        /// <summary>Условие запроса</summary>
+        private string PRI_Where;
+
         /// <summary>СВОЙСТВО Код отделения</summary>
-        public string PROP_Cod { get; private set; }  
-        
+        public string PROP_Cod { get; private set; }
+
         /// <summary>СВОЙСТВО Наименование отделения</summary>
         public string PROP_Text { get; private set; }
-        
+
         /// <summary>КОНСТРУКТОР</summary>
-        public UserWindow_Department()
+        public UserWindow_Department(string pWhere = "")
         {
             // Имя таблицы
             PRO_TableName = "s_Department";
             // Заголовок
             Title = "Справочник Подразделений:";
-            //Размеры
+            //Размеры            
+            Height = 620;            
             MinWidth = Width;
             // Поле поиска
             PRO_PoleFiltr = "Filtr";
             // Сортируем по полю Код подразделения
             PRO_PoleSort = 0;
+            // Условие запроса
+            PRI_Where = pWhere;
             // Создаем фильтр
-            MET_CreateFiltr(); 
+            MET_CreateFiltr();
             // Открываем таблицу
             MET_OpenForm();
             // Фильтр
@@ -45,7 +51,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
-            return MyQuery.s_Department_Select_1();
+            return MyQuery.s_Department_Select_1(PRI_Where);
         }
 
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
@@ -73,6 +79,7 @@ namespace wpfGeneral.UserWindows
         {
             PART_Grid.RowDefinitions[0].Height = new GridLength(80, GridUnitType.Auto);
             PART_Expander.Visibility = Visibility.Visible;
+            PART_Expander.IsExpanded = true;
             Border _Border = new Border();
             _Border.Style = (Style)FindResource("Border_2");
             PART_Expander.Content = _Border;

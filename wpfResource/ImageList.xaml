@@ -83,4 +83,5 @@
     <BitmapImage x:Key="mnKarta" UriSource="mnImag/mnKarta.ico" />              <!-- Карта (форма с полями) -->
     <BitmapImage x:Key="mnAngel" UriSource="mnImag/mnAngel.ico" />              <!-- Умер -->
     <BitmapImage x:Key="mnKons" UriSource="mnImag/mnKons.ico" />                <!-- Консилиум -->
+    <BitmapImage x:Key="mnCito" UriSource="mnImag/mnCito.ico" />                <!-- Цитология -->
 </ResourceDictionary>

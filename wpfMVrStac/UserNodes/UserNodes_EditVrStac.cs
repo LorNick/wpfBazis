@@ -26,7 +26,12 @@ namespace wpfMVrStac
             {
                 // Если последняя часть шаблона (иначе весь код шаблона)
                 if (value < 99)
+                {
                     PRI_NomerShablon = (MyGlo.Otd > 50 ? MyGlo.Otd - 50 : MyGlo.Otd) * 100 + value;
+                    // Временно только для Химиотерапии 12
+                    if (MyGlo.Otd == 12)
+                        PRI_NomerShablon = 3 * 100 + value;
+                }
                 else
                     PRI_NomerShablon = value;
                 // Проверяем наличие протокола

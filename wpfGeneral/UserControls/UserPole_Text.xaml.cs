@@ -66,7 +66,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Ширина текстового поля</summary>
-        public override Double PROP_WidthText
+        public override double PROP_WidthText
         {
             get { return PART_TextBox.Width; }
             set 
@@ -80,7 +80,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Высота текстового поля</summary>
-        public override Double PROP_HeightText
+        public override double PROP_HeightText
         {
             get { return PART_TextBox.Height; }
             set
@@ -90,7 +90,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Минимальная Ширина описания</summary>
-        public override Double PROP_MinWidthDescription
+        public override double PROP_MinWidthDescription
         {
             get { return PART_Label.MinWidth; }
             set { PART_Label.MinWidth = value; }

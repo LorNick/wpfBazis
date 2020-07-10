@@ -3,15 +3,23 @@
              xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"             
              x:Name="UserPole"
-             mc:Ignorable="d" Width="Auto"
-             FontSize="14" ContextMenuOpening="UserPole_ContextMenuOpening">
+             mc:Ignorable="d" 
+             Width="Auto"
+             FontSize="14"             
+             ContextMenuOpening="UserPole_ContextMenuOpening">
     <p:UserControl.Resources>
         <p:ControlTemplate x:Key="ExpanderControlTemplate1" TargetType="{x:Type p:Expander}">
-            <p:Border BorderBrush="{p:TemplateBinding BorderBrush}" BorderThickness="{p:TemplateBinding BorderThickness}" Background="{p:TemplateBinding Background}" CornerRadius="3" SnapsToDevicePixels="True">
+            <p:Border BorderBrush="{p:TemplateBinding BorderBrush}" BorderThickness="{p:TemplateBinding BorderThickness}" 
+                      Background="{p:TemplateBinding Background}" CornerRadius="3" SnapsToDevicePixels="True" HorizontalAlignment="Stretch">
                 <p:DockPanel>
-                    <p:ToggleButton x:Name="HeaderSite" ContentTemplate="{p:TemplateBinding HeaderTemplate}" Content="{p:TemplateBinding Header}" p:DockPanel.Dock="Top" Foreground="{p:TemplateBinding Foreground}" FontWeight="{p:TemplateBinding FontWeight}" FontStyle="{p:TemplateBinding FontStyle}" FontStretch="{p:TemplateBinding FontStretch}" FontSize="{p:TemplateBinding FontSize}" FontFamily="{p:TemplateBinding FontFamily}" HorizontalContentAlignment="{p:TemplateBinding HorizontalContentAlignment}" IsChecked="{p:Binding IsExpanded, Mode=TwoWay, RelativeSource={p:RelativeSource TemplatedParent}}" Margin="1" MinWidth="0" MinHeight="0" Padding="{p:TemplateBinding Padding}" VerticalContentAlignment="{p:TemplateBinding VerticalContentAlignment}" >
+                    <p:ToggleButton x:Name="HeaderSite" ContentTemplate="{p:TemplateBinding HeaderTemplate}" Content="{p:TemplateBinding Header}" p:DockPanel.Dock="Top" 
+                                    Foreground="{p:TemplateBinding Foreground}" FontWeight="{p:TemplateBinding FontWeight}" FontStyle="{p:TemplateBinding FontStyle}" 
+                                    FontStretch="{p:TemplateBinding FontStretch}" FontSize="{p:TemplateBinding FontSize}" FontFamily="{p:TemplateBinding FontFamily}" 
+                                    HorizontalContentAlignment="{p:TemplateBinding HorizontalContentAlignment}" 
+                                    IsChecked="{p:Binding IsExpanded, Mode=TwoWay, RelativeSource={p:RelativeSource TemplatedParent}}" Margin="1" MinWidth="0" MinHeight="0" 
+                                    Padding="{p:TemplateBinding Padding}" VerticalContentAlignment="{p:TemplateBinding VerticalContentAlignment}" >
                         <p:ToggleButton.FocusVisualStyle>
                             <p:Style>
                                 <p:Setter Property="p:Control.Template">
@@ -37,8 +45,11 @@
                                                         <p:ColumnDefinition Width="*"/>
                                                     </p:Grid.ColumnDefinitions>
                                                     <p:Ellipse x:Name="circle" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>
-                                                    <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" StrokeThickness="2" VerticalAlignment="Center"/>
-                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" p:Grid.Column="1" ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Left" Margin="4,0,0,0" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
+                                                    <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" 
+                                                            StrokeThickness="2" VerticalAlignment="Center"/>
+                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" 
+                                                                        p:Grid.Column="1" ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Stretch" 
+                                                                        Margin="4,0,0,0" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
                                                 </p:Grid>
                                             </p:Border>
                                             <p:ControlTemplate.Triggers>
@@ -107,9 +118,12 @@
                                                             </p:TransformGroup>
                                                         </p:Grid.LayoutTransform>
                                                         <p:Ellipse x:Name="circle" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>
-                                                        <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" StrokeThickness="2" VerticalAlignment="Center"/>
+                                                        <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" 
+                                                                Stroke="#FF333333" StrokeThickness="2" VerticalAlignment="Center"/>
                                                     </p:Grid>
-                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Center" Margin="0,4,0,0" p:Grid.Row="1" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Top"/>
+                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" 
+                                                                        ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Stretch" Margin="0,4,0,0" p:Grid.Row="1" 
+                                                                        RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Top"/>
                                                 </p:Grid>
                                             </p:Border>
                                             <p:ControlTemplate.Triggers>
@@ -162,9 +176,12 @@
                                                             </p:TransformGroup>
                                                         </p:Grid.LayoutTransform>
                                                         <p:Ellipse x:Name="circle" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>
-                                                        <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" StrokeThickness="2" VerticalAlignment="Center"/>
+                                                        <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" 
+                                                                StrokeThickness="2" VerticalAlignment="Center"/>
                                                     </p:Grid>
-                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" p:Grid.Column="1" ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Left" Margin="4,0,0,0" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
+                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" p:Grid.Column="1" 
+                                                                        ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Stretch" Margin="4,0,0,0" 
+                                                                        RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Center"/>
                                                 </p:Grid>
                                             </p:Border>
                                             <p:ControlTemplate.Triggers>
@@ -217,9 +234,12 @@
                                                             </p:TransformGroup>
                                                         </p:Grid.LayoutTransform>
                                                         <p:Ellipse x:Name="circle" Fill="White" HorizontalAlignment="Center" Height="19" Stroke="#FF333333" VerticalAlignment="Center" Width="19"/>
-                                                        <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" StrokeThickness="2" VerticalAlignment="Center"/>
+                                                        <p:Path x:Name="arrow" Data="M1,1.5L4.5,5 8,1.5" HorizontalAlignment="Center" SnapsToDevicePixels="False" Stroke="#FF333333" 
+                                                                StrokeThickness="2" VerticalAlignment="Center"/>
                                                     </p:Grid>
-                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Center" Margin="0,4,0,0" p:Grid.Row="1" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Top"/>
+                                                    <p:ContentPresenter ContentTemplate="{p:TemplateBinding ContentTemplate}" Content="{p:TemplateBinding Content}" 
+                                                                        ContentStringFormat="{p:TemplateBinding ContentStringFormat}" HorizontalAlignment="Stretch" Margin="0,4,0,0" 
+                                                                        p:Grid.Row="1" RecognizesAccessKey="True" SnapsToDevicePixels="True" VerticalAlignment="Top"/>
                                                 </p:Grid>
                                             </p:Border>
                                             <p:ControlTemplate.Triggers>
@@ -257,25 +277,20 @@
         </p:ControlTemplate>
     </p:UserControl.Resources>
     <p:Grid>
-        <p:Expander Name="PART_Expander" Margin="0,2,2,2" BorderBrush="CornflowerBlue" Background="WhiteSmoke" 
-                    Expanded="PART_Expander_Expanded" MinWidth="685" Template="{p:DynamicResource ExpanderControlTemplate1}">
+        <p:Expander Name="PART_Expander" Margin="0,2,2,2" BorderBrush="CornflowerBlue" Background="WhiteSmoke"
+            Expanded="PART_Expander_Expanded" MinWidth="685" Template="{p:DynamicResource ExpanderControlTemplate1}">
             <p:Expander.Header>
-                <p:StackPanel Orientation="Horizontal">
-                    <p:Image Name="PART_Image" Width="24" />
-                    <p:TextBlock Name="PART_Description" Height="24" Foreground="Navy" 
-                        Text="Description" VerticalAlignment="Center" Padding="5,2" />
-                    <p:TextBlock Name="PART_Date" Height="24" Foreground="Black"
-                        Text="Date" VerticalAlignment="Center" Padding="5,2"/>
-                    <p:TextBlock Name="PART_Document" Height="24" Foreground="Navy" 
-                        Text="Documet" VerticalAlignment="Center" Padding="5, 2" />
-                    <p:TextBlock Name="PART_Vrach" Height="24" Foreground="DimGray" 
-                        Text="Vrach" VerticalAlignment="Center" Padding="5,2" />
-                    <p:TextBlock Name="PART_Diag" Height="24" Foreground="Navy" 
-                        Text="Diag" VerticalAlignment="Center" Padding="5,2" />
-                    <p:TextBlock Name="PART_Metca" Height="24" Foreground="DimGray" 
-                        Text="Metca" VerticalAlignment="Center" Padding="5,2" />
-                </p:StackPanel>
-            </p:Expander.Header>
+                <p:DockPanel Name="PART_DockPanel" LastChildFill="False" Background="WhiteSmoke" HorizontalAlignment="Stretch">                                                     
+                    <p:Image Name="PART_Image" Width="24" p:DockPanel.Dock="Left"/>
+                    <p:TextBlock Name="PART_Description" Height="24" Foreground="Navy" Text="Description" VerticalAlignment="Center" Padding="5,2" />
+                    <p:TextBlock Name="PART_Date" Height="24" Foreground="Black" Text="Date" VerticalAlignment="Center" Padding="5,2"/>
+                    <p:TextBlock Name="PART_Document" Height="24" Foreground="Navy" Text="Documet" VerticalAlignment="Center" Padding="5, 2" />
+                    <p:TextBlock Name="PART_Vrach" Height="24" Foreground="DimGray" Text="Vrach" VerticalAlignment="Center" Padding="5,2" />
+                    <p:TextBlock Name="PART_Diag" Height="24" Foreground="Navy" Text="Diag" VerticalAlignment="Center" Padding="5,2" />
+                    <p:TextBlock Name="PART_Metca" Height="24" Foreground="DimGray" Text="Metca" VerticalAlignment="Center" Padding="5,2" />
+                    <p:Image Name="PART_ImageInform" Width="18" Height="18" p:DockPanel.Dock="Left"/>                  
+                </p:DockPanel>        
+            </p:Expander.Header>            
             <p:StackPanel Name="PART_StackPanel"/>
         </p:Expander>
         <p:StackPanel Name="PART_StackPanelPreview" Visibility="Collapsed" />

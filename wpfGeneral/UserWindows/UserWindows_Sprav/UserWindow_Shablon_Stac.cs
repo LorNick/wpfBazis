@@ -75,10 +75,10 @@ namespace wpfGeneral.UserWindows
             // Отделения
             PRI_ComboBox_1 = new ComboBox();
             PRI_ComboBox_1.Width = 280;
-            MySql.MET_DsAdapterFill(MyQuery.s_Otdel_Select_1(), "s_Otdel");
-            PRI_ComboBox_1.ItemsSource = new DataView(MyGlo.DataSet.Tables["s_Otdel"]);
-            PRI_ComboBox_1.DisplayMemberPath = "TKOD";
-            PRI_ComboBox_1.SelectedValuePath = "KOD";
+            MySql.MET_DsAdapterFill(MyQuery.s_Department_Select_1(" and Tip in (1, 2)"), "s_Department");
+            PRI_ComboBox_1.ItemsSource = new DataView(MyGlo.DataSet.Tables["s_Department"]);
+            PRI_ComboBox_1.DisplayMemberPath = "Names";
+            PRI_ComboBox_1.SelectedValuePath = "Cod";
             PRI_ComboBox_1.SelectedValue = MyGlo.Otd;
             PRI_ComboBox_1.SelectionChanged += delegate { if (PRI_ComboBox_1.SelectedValue == null) return; MET_SqlFilter(); }; 
             _SPanel_1.Children.Add(PRI_ComboBox_1);

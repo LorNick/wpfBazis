@@ -244,18 +244,7 @@ namespace wpfGeneral.UserFromShablon
         public VirtualPole GetPole(int pVarId)
         {
             string _NamePole = "elePoleShabl_" + pVarId;
-            return GetPoleName(_NamePole);
-        }
-
-        /// <summary>МЕТОД Возвращает поле по коду VarId</summary>
-        /// <param name="pName">Имя данного поля</param>
-        public VirtualPole GetPoleName(string pName)
-        {
-            if (PUB_HashPole.ContainsKey(pName))
-            {
-                return (VirtualPole)PUB_HashPole[pName];
-            }
-            return null;
+            return GetPole(_NamePole);
         }
 
         /// <summary>МЕТОД Возвращает поле по имени поля</summary>

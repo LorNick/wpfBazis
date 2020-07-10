@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Bazis" Class="BazisDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=192.168.0.8;Initial Catalog=Bazis;Persist Security Info=True;User ID=sa" SettingsObjectName="wpfStatic.Properties.Settings" SettingsPropertyName="BazisConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.s_Department" Member="s_Department">
+    <Type Name="s_Department">
+      <Column Name="Cod" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Names" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Korpus" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="Tip" Type="System.Byte" DbType="TinyInt NOT NULL" CanBeNull="false" />
+      <Column Name="xDelete" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+      <Column Name="xImport" Type="System.Byte" DbType="TinyInt" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

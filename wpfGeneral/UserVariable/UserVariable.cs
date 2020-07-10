@@ -302,14 +302,12 @@ namespace wpfGeneral.UserVariable
                 var _ST = new Func<string>(() =>
                 {
                     // Рост
-                    string _Str = MET_StrRazdel(PROP_NomShabl, "Рост");
-                    double _Rost;
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out _Rost)) return ""; 
+                    string _Str = MET_StrRazdel(PROP_NomShabl, "Рост");                    
+                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Rost)) return ""; 
 
                     // Вес                                                                                   
-                    _Str = MET_StrRazdel(PROP_NomShabl, "Вес");
-                    double _Ves;
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out _Ves)) return "";
+                    _Str = MET_StrRazdel(PROP_NomShabl, "Вес");                    
+                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Ves)) return "";
                     
                     // Результат
                     double _Rezult = Math.Sqrt(_Rost * _Ves / 3600);
@@ -332,24 +330,21 @@ namespace wpfGeneral.UserVariable
                 var _Klirens = new Func<string>(() =>
                 {
                     // Возраст
-                    string _Str = MET_StrRazdel(PROP_NomShabl, "Возраст");
-                    double _Age;
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1, 3), out _Age)) return ""; // берем 2 символа
+                    string _Str = MET_StrRazdel(PROP_NomShabl, "Возраст");                    
+                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1, 3), out double _Age)) return ""; // берем 2 символа
 
                     // Вес                                                                                   
-                    _Str = MET_StrRazdel(PROP_NomShabl, "Вес");
-                    double _Ves;
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out _Ves)) return "";
+                    _Str = MET_StrRazdel(PROP_NomShabl, "Вес");                    
+                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Ves)) return "";
 
                     // Креатин
-                    _Str = MET_StrRazdel(PROP_NomShabl, "Креатинин");
-                    double _Kreatin;
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out _Kreatin)) return "";
+                    _Str = MET_StrRazdel(PROP_NomShabl, "Креатинин");                    
+                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Kreatin)) return "";
 
                     // Результат
                     double _Rezult = (140 - _Age) * _Ves / (72 * (_Kreatin / 88.4));
                     if (MyGlo.Pol == "Женский") _Rezult *= 0.85;
-                    return String.Format("{0:####.##}", _Rezult);
+                    return string.Format("{0:####.##}", _Rezult);
 
                 });
                 PROP_Text = PROP_Text.Replace("[fKlirens]", _Klirens());
@@ -516,9 +511,8 @@ namespace wpfGeneral.UserVariable
                             // Увеличиваем VarID или раздел
                             _NumVopr++;
                             // Если VarID или раздел не первый, то печатаем OutText, в первом вопросе
-                            bool _OneOut = _NumVopr != 1;
-                            int _VarID;
-                            if (int.TryParse(_mArr[i], out _VarID))
+                            bool _OneOut = _NumVopr != 1;                           
+                            if (int.TryParse(_mArr[i], out int _VarID))
                             {        
                                 // VarID
                                 _Str += MET_LoadStr(_Protokol, _NomProtokol, "", _VarID, "", true, _OneOut) + " ";
@@ -658,14 +652,14 @@ namespace wpfGeneral.UserVariable
 
 		/// <summary>Наименование текущего Отделения</summary>
 		private void NameOtd()
-		{
-			PROP_Text = PROP_Text.Replace("[NameOtd]", MySql.MET_NameSpr(MyGlo.Otd, "s_Otdel"));
+		{			
+            PROP_Text = PROP_Text.Replace("[NameOtd]", MyMet.MET_NameOtd());
 		}
 
         /// <summary>Наименование текущего Отделения с номером</summary>
         private void astOtd()
         {
-            PROP_Text = PROP_Text.Replace("[astOtd]", String.Format("{0}. {1}", MyGlo.Otd, MySql.MET_NameSpr(MyGlo.Otd, "s_Otdel")));
+            PROP_Text = PROP_Text.Replace("[astOtd]", $"{MyGlo.Otd}. {MyMet.MET_NameOtd()}");
         }
 
 		/// <summary>Номер истории болезни</summary>
@@ -1115,51 +1109,6 @@ namespace wpfGeneral.UserVariable
             
         }
 
-        /// <summary>Наименование Отделения Госпитализации</summary>
-        private void apaOtdGosp()
-        {
-            string _NameOtd;
-            try
-            {
-                _NameOtd = MySql.MET_NameSpr(Convert.ToInt16(MyGlo.HashAPAC["OtdGosp"]), "s_Otdel");
-            }
-            catch
-            {
-                _NameOtd = "";
-            }
-            PROP_Text = PROP_Text.Replace("[apaOtdGosp]", _NameOtd);
-        }
-
-        /// <summary>Дата Госпитализации</summary>
-        private void apaDataGosp()
-        {
-            string _Data;
-            try
-            {
-                _Data = Convert.ToString(MyGlo.HashAPAC["DataGosp"]).Substring(0, 10);
-            }
-            catch
-            {
-                _Data = "";
-            }
-            PROP_Text = PROP_Text.Replace("[apaDataGosp]", _Data);
-        }
-
-        /// <summary>Время направления на Госпитализацию (НЕ РАБОТАЕТ)</summary>
-        private void apaTimeGosp()
-        {
-            string _Time;
-            try
-            {
-                _Time = MySql.MET_QueryStr(MyQuery.APAC_Select_3(MyGlo.Korpus, Convert.ToDateTime(MyGlo.HashAPAC["DataGosp"])));
-            }
-            catch
-            {
-                _Time = "9:00";
-            }
-            PROP_Text = PROP_Text.Replace("[apaTimeGosp]", _Time);
-        }
-
         /// <summary>Оплата по тарифу Поликлиники</summary>
         private void apaSumTarif()
         {
@@ -1194,12 +1143,6 @@ namespace wpfGeneral.UserVariable
         private void parIssledov()
         {
             PROP_Text = PROP_Text.Replace("[parIssledov]", MySql.MET_QueryStr(MyQuery.parObsledovt_Select_3((int)MyGlo.IND)));
-        }
-
-        /// <summary>Отделение, направившее на обследование</summary>
-        private void parOtdel()
-        {
-            PROP_Text = PROP_Text.Replace("[parOtdel]", MySql.MET_QueryStr(MyQuery.parObsledovt_Select_4((int)MyGlo.IND)));
         }
         #endregion
 				

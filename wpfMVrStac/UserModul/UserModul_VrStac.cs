@@ -14,9 +14,9 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
-            MyGlo.IND = 126166599133076; // 98413453655037;
-            MyGlo.KL = 114321309318003; // 96400380579035;
-            MyGlo.Otd = 15; //6;
+            MyGlo.IND = 127797613890180;
+            MyGlo.KL = 127330686847687;
+            MyGlo.Otd = 8;
 
             String[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
@@ -66,8 +66,8 @@ namespace wpfMVrStac
             string _Title = "wpfBazis -- Врач стационара --";
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
-            // Отделение 
-            _Title += " (" + MySql.MET_NameSpr(MyGlo.Otd, "s_Otdel");
+            // Отделение          
+            _Title += " (" + MySql.MET_NameSpr(MyGlo.Otd, "s_Department", "Names", "Cod");
             // Пациент
             _Title += "  " + MyGlo.FIO + " " + MyGlo.DR;
             // Показываем имя пользователя
@@ -84,25 +84,25 @@ namespace wpfMVrStac
             // Загружаем все протоколы Protokol текущего стационара (внутри загружаются и ListShablon и Shablon)
             UserProtokol.MET_FactoryProtokolArray(eTipDocum.Stac, MyGlo.IND);
             
-            // ВЕТКА Ошибки по КСГ
-            MySql.MET_DsAdapterFill(MyQuery.varKSGError_Select_1(MyGlo.Otd, MyGlo.User), "ErrorKSG");
-            int _AllError = MyGlo.DataSet.Tables["ErrorKSG"].Rows.Count;
+            // ВЕТКА Ошибки Стационара (для реестров)
+            MySql.MET_DsAdapterFill(MyQuery.varErrorStac_Select_1(MyGlo.Otd, MyGlo.User), "ErrorStac");
+            int _AllError = MyGlo.DataSet.Tables["ErrorStac"].Rows.Count;
             VirtualNodes _Node;
             if (_AllError > 0)
             {
                 _Node = new UserNodes_Inform
                 {
                     PROP_TipNodes = eTipNodes.Main,
-                    Name = "eleTVItem_ErrorKSG",
-                    PROP_Text = "\"Ошибки\" по КСГ",
+                    Name = "eleTVItem_ErrorStac",
+                    PROP_Text = "\"Ошибки\" стационара",
                     PROP_ImageName = "mnDevil",
                     PROP_ParentName = "eleTVItemObSved"
                 };
                 _Node.PROP_Docum = new UserDocument(_Node);
-                _Node.PROP_Docum.PROP_Otchet = new UserOtcher_ErrorKSG { PROP_Docum = _Node.PROP_Docum };
+                _Node.PROP_Docum.PROP_Otchet = new UserOtcher_ErrorStac { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
 
-                var _UserError = MyGlo.DataSet.Tables["ErrorKSG"].Compute("Count(Us)", "Us=1");
+                var _UserError = MyGlo.DataSet.Tables["ErrorStac"].Compute("Count(Us)", "Us=1");
                 _Node.PROP_TextDown = $"Ваших пациентов: {_UserError} из {_AllError}";
 
                 if (_UserError != null)
@@ -120,7 +120,7 @@ namespace wpfMVrStac
                 IsExpanded = true
             };
             _Node.PROP_Docum = new UserDocument(_Node);
-            _Node.PROP_Docum.PROP_Otchet = new UserOtchet_HistoryStac { PROP_Docum = _Node.PROP_Docum };
+            _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
             _Node.MET_Inizial();
             {
                 // ВЕТКА Приемное отделение
@@ -141,6 +141,7 @@ namespace wpfMVrStac
                 _Node.PROP_Docum = new UserDocument(_Node);
                 _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformPriem { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
+              
 
                 // ВЕТКА Осмотр при поступлении
                 _Node = new UserNodes_EditVrStac

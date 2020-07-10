@@ -184,7 +184,10 @@ namespace wpfStatic
         public delegate void callbackEvents(TabItem pTabItem);
         /// <summary>Переменная делегата (закрытие вкладки)</summary>
         public static callbackEvents callbackEvent_sClose;
-        
+
+        /// <summary>Переменная делегата (вызывает для записи сообщения в Log окно формы UserWindow_Lua)</summary>
+        public static Action<string> callbackEvent_sLuaLog;
+
         /// <summary>Контекстное меню</summary>
         public static ContextMenu ContextMenu;
         /// <summary>База</summary>
@@ -251,6 +254,9 @@ namespace wpfStatic
 
         /// <summary>Создаем логгер</summary>
         public static Logger PUB_Logger = LogManager.GetCurrentClassLogger();
+
+        /// <summary>Наша база</summary>
+        public static BazisDataContext PUB_Context;
         #endregion 
 
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
@@ -263,13 +269,13 @@ namespace wpfStatic
 #if DEBUG
             User =  60;
            // Server = 2;
-           // TypeModul = eModul.VrPolicl;
-            // TypeModul = eModul.VrStac;
+          //  TypeModul = eModul.VrPolicl;
+             TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
-            // TypeModul = eModul.Viewer;
-            TypeModul = eModul.VrPara;
+           //  TypeModul = eModul.Viewer;
+            //TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
-            // TypeModul = eModul.OtherLpu;
+            //TypeModul = eModul.OtherLpu;
 #endif
             
             string[] _mArgs = Environment.GetCommandLineArgs();           
@@ -284,10 +290,12 @@ namespace wpfStatic
                     TypeModul = (eModul)Convert.ToInt32(_mArgs[3]);
             }
 
+            PUB_Context = new BazisDataContext(MySql.MET_ConSql());
+
             // Заполняем таблицу пользователей s_Users
             MySql.MET_DsAdapterFill("select * from dbo.s_Users", "s_Users");
 
-            // Заполняем таблицу пользователей s_Users
+            // Заполняем таблицу доступа текущего пользователя s_UsersDostup
             MySql.MET_DsAdapterFill($"select * from dbo.s_UsersDostup where UserCod = {User}", "s_UsersDostup");
 
             // ФИО пользователя

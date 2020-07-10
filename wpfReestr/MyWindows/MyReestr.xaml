@@ -95,7 +95,7 @@
                     <RadioButton Grid.Row="0" Grid.Column="0" IsChecked="True" Tag="0" Name="PART_StrahCompRadio_0" Click="RadioButtonStrahComp_Click" >ВСЕ области</RadioButton>
                     <RadioButton Grid.Row="0" Grid.Column="1" Tag="2" Name="PART_StrahCompRadio_2" Click="RadioButtonStrahComp_Click">Капитал МС (55041)</RadioButton>
                     <RadioButton Grid.Row="1" Grid.Column="0" Tag="1" Name="PART_StrahCompRadio_1" Click="RadioButtonStrahComp_Click">Альфа (55050)</RadioButton>
-                    <RadioButton Grid.Row="1" Grid.Column="1" Tag="3" Name="PART_StrahCompRadio_3" Click="RadioButtonStrahComp_Click">ВТБ МС (55046)</RadioButton>
+                    <RadioButton Grid.Row="1" Grid.Column="1" Tag="3" Name="PART_StrahCompRadio_3" Click="RadioButtonStrahComp_Click">СОГАЗ-Мед (55044)</RadioButton>
                     <RadioButton Grid.Row="2" Grid.Column="0" Tag="4" Name="PART_StrahCompRadio_4" Click="RadioButtonStrahComp_Click">Иногородние</RadioButton>
                 </Grid>
             </GroupBox>

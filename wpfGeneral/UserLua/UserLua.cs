@@ -58,8 +58,21 @@ namespace wpfGeneral.UserLua
             // Обязательно добавить имя функции в этот файл, для подсветки кода
             // E:\Nick\C#\wpfBazis\wpfGeneral\UserLua\UserWindow_Lua.cs
 
-            // Подключаем функцию для считывания глобальных данных
+            // Подключаем функции для считывания глобальных данных
+            // Выводим окно сообещиния
             PRI_Env.lMessage = new Action<string, string>(lMessage);
+            // Выводим сообещние в лог окно UserWindow_Lua
+            PRI_Env.lLog = new Action<string>(lLog);
+            // Отображаем поля в шаблоне, указанные в массиве VarId
+            PRI_Env.lVisiblOn = new Action<int[]>(lVisiblOn);
+            // Скрываем поля в шаблоне, указанные в массиве VarId
+            PRI_Env.lVisiblOff = new Action<int[]>(lVisiblOff);
+            // Делаем обязательными поля, указанные в массиве VarId
+            PRI_Env.lNecesOn = new Action<int[]>(lNecesOn);
+            //  Делаем НЕобязательными поля, указанные в массиве VarId
+            PRI_Env.lNecesOff = new Action<int[]>(lNecesOff);
+            //  Отчистка текста полей, указанные в массиве VarId
+            PRI_Env.lTextClear = new Action<int[]>(lTextClear);
             // Добавление/изменение данных в таблицу kbolInfo
             PRI_Env.lKbolInfoAdd = new Func<string, object, string, decimal, string, bool>(lKbolInfoAdd);
             // Удаление данных из таблицы kbolInfo
@@ -96,10 +109,18 @@ namespace wpfGeneral.UserLua
         /// <summary>Lua Функция. Вывод окна сообщения</summary>
         /// <param name="pMessage">Строка сообщения</param>
         /// <param name="pHeader">Заголовок окна</param>
-        private static void lMessage(string pMessage, string pHeader)
+        private void lMessage(string pMessage, string pHeader)
         {
             MessageBox.Show(pMessage, pHeader);
         } // func lMessage
+
+        /// <summary>Lua Функция. Вывод сообщения в лог окно UserWindow_Lua</summary>
+        /// <param name="pText">Строка сообщения</param>
+        private void lLog(string pText)
+        {           
+            // Если открыто окно UserWindows_Lua, то выводим в логи код VarId вопроса и заданный текст
+            MyGlo.callbackEvent_sLuaLog?.Invoke($"VarId{PUB_Pole.PROP_VarId}: {pText}");
+        } // func lLog
 
         /// <summary>Lua Функция. Добавление/изменение таблицы kbolInfo</summary>
         /// <param name="pTag">Имя ключа тега</param>
@@ -228,7 +249,7 @@ namespace wpfGeneral.UserLua
         /// <summary>Lua Функция. Ссылка на поле pDate</summary>
         private VirtualPole lPolePDate()
         {
-            return PUB_Pole.PROP_FormShablon.GetPoleName("DateOsmotr");
+            return PUB_Pole.PROP_FormShablon.GetPole("DateOsmotr");
         } // func lPolePDate
 
         /// <summary>Lua Функция. Добавление/изменение данных в поле xInfo, таблицы Oper</summary>
@@ -338,6 +359,56 @@ namespace wpfGeneral.UserLua
 
             return _Rezult;
         } // func lDateIf
+
+        /// <summary>Lua Функция. Отображаем поля в шаблоне, указанные в массиве VarId</summary>
+        /// <param name="pVarId">Перечень кодов VarId</param>      
+        private void lVisiblOn(params int[] pVarId)
+        {
+            for (int i = 0; i < pVarId.Length; i++)
+            {
+                PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).Visibility = Visibility.Visible;
+            }
+        } // func lVisiblOn
+
+        /// <summary>Lua Функция. Скрываем поля в шаблоне, указанные в массиве VarId</summary>
+        /// <param name="pVarId">Перечень кодов VarId</param>      
+        private void lVisiblOff(params int[] pVarId)
+        {
+            for (int i = 0; i < pVarId.Length; i++)
+            {
+                PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).Visibility = Visibility.Collapsed;
+            }
+        } // func lVisiblOff
+
+        /// <summary>Lua Функция. Делаем обязательными поля, указанные в массиве VarId</summary>
+        /// <param name="pVarId">Перечень кодов VarId</param>      
+        private void lNecesOn(params int[] pVarId)
+        {
+            for (int i = 0; i < pVarId.Length; i++)
+            {
+                PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).PROP_Necessarily = true;
+            }
+        } // func lNecesOn
+
+        /// <summary>Lua Функция. Делаем НЕобязательными поля, указанные в массиве VarId</summary>
+        /// <param name="pVarId">Перечень кодов VarId</param>      
+        private void lNecesOff(params int[] pVarId)
+        {
+            for (int i = 0; i < pVarId.Length; i++)
+            {
+                PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).PROP_Necessarily = false;
+            }
+        } // func lNecesOff     
+
+        /// <summary>Lua Функция.  Отчистка текста полей, указанные в массиве VarId</summary>
+        /// <param name="pVarId">Перечень кодов VarId</param>      
+        private void lTextClear(params int[] pVarId)
+        {
+            for (int i = 0; i < pVarId.Length; i++)
+            {
+                PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).PROP_Text = "";
+            }
+        } // func lTextClear   
 
         //private bool lFocusPole(int pVarId)
         //{

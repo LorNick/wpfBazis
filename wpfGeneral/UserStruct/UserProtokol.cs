@@ -156,7 +156,7 @@ namespace wpfGeneral.UserStruct
         /// <summary>МЕТОД Изменяем логи xLog</summary>
         /// <param name="pUser">Кто создал/изменил протокол</param> 
         /// <param name="pTipLog">Тип лога Создан, Изменён, Удалён</param> 
-        public void MET_ChangeLogs(int pUser, string pTipLog)
+        public void MET_ChangeLogs1(int pUser, string pTipLog)
         {
             string _jLog = PROP_xLog;
             var _ListLogs = new List<UserLog>();
@@ -235,27 +235,25 @@ namespace wpfGeneral.UserStruct
             PROP_xLog = "{ \"Log\":" + PROP_xLog + "}";
         }
 
-        /// <summary>МЕТОД Создаем логи xLog</summary>
+        /// <summary>МЕТОД Изменяем логи xLog</summary>
         /// <param name="pUser">Кто создал/изменил протокол</param> 
         /// <param name="pTipLog">Тип лога Создан, Изменён, Удалён</param> 
-        public static string MET_CreateLogs(int pUser, string pTipLog)
+        public void MET_ChangeLogs(int pUser, string pTipLog)
         {
-            var _ListLogs = new List<UserLog>();
-            UserLog _Log = new UserLog
+            string _jLog = PROP_xLog;
+          
+            // Если нет логов и это НЕ создание протокола
+            if (string.IsNullOrEmpty(PROP_xLog) && pTipLog != "Создан")
             {
-                Cod = 1,
-                Date = DateTime.Now.ToString("dd.MM.yyyy H:mm"),
-                Tip = pTipLog,
-                User = pUser,
-                Ver = MyMet.MET_Ver()
-            };
-            _ListLogs.Add(_Log);
-
-            string _xLog = JsonConvert.SerializeObject(_ListLogs,
-                            Formatting.None,
-                            new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
-            _xLog = "{ \"Log\":" + _xLog + "}";
-            return _xLog;
+                // СОЗДАЕМ первый лог (если изменили протокол вытаскиваем информацию из xDateUp, pDate)
+                PROP_xLog = UserLog.MET_LogAdd("", PROP_pDate < PROP_xDateUp ? PROP_pDate : PROP_xDateUp, "Создан", PROP_xUserUp, "-");
+                
+                // Если возможно ИЗМЕНЯЛСЯ протокол, добавляем изменение
+                if (PROP_xDateUp > PROP_pDate)
+                    PROP_xLog = UserLog.MET_LogAdd("", PROP_xDateUp, "Изменён", PROP_xUserUp, "-");               
+            }
+            else
+                PROP_xLog = UserLog.MET_LogAdd(PROP_xLog, DateTime.Now, pTipLog);         
         }
 
         ///<summary>МЕТОД Фабрика объекта Protokol</summary>

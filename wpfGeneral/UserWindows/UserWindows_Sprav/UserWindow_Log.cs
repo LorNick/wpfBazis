@@ -296,7 +296,7 @@ namespace wpfGeneral.UserWindows
         {
             if (!MyGlo.Admin)
             {
-                MessageBox.Show("У вас нет доступа.");
+                MessageBox.Show("У вас нет доступа к данной информации.");
                 return false;
             }
             return true;

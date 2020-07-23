@@ -1,7 +1,7 @@
 ﻿<Window x:Class="wpfGeneral.UserWindows.UserWindow_DocumLog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Логи протокола (кто когда создал/изменил/удалил)"  Width="550"  Height="380" 
+        Title="Логи документа (кто когда создал/изменил/удалил)"  Width="550"  Height="380" 
         x:Name="UserWindows"
         ShowInTaskbar="false" 
         FontFamily="Tahoma" 

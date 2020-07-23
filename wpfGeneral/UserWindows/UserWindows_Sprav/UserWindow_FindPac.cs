@@ -43,7 +43,7 @@ namespace wpfGeneral.UserWindows
             MinWidth = Width;
             Height = 700;
             // Подсказка в строке поиска
-            PART_TextBox.WatermarkContent = "Введите ФИО и года рождения (например: ИВАНО И НИ 28) или KL, или код посещения, или номер страхового полиса";
+            PART_TextBox.WatermarkContent = "Введите ФИО и год рождения (например: ИВАНО И НИ 28) или KL, или код посещения, или номер страхового полиса";
             // Сортируем по Фамилии
             PRO_PoleSort = 1;
             // Разрешаем выбирать записи
@@ -104,7 +104,6 @@ namespace wpfGeneral.UserWindows
             PRI_TipRadioButton.PROP_Items.Add(new ListBoxItem() { Content = "Поликлиника" });
             PRI_TipRadioButton.PROP_Items.Add(new ListBoxItem() { Content = "Стационар" });
             PRI_TipRadioButton.PROP_Items.Add(new ListBoxItem() { Content = "Параклиника" });
-            //    PRI_TipRadioButton.PROP_Selected = 1;
             PRI_TipRadioButton.ItemsChanged += delegate { PRI_Timer.Start(); };
             _SPanel_1.Children.Add(PRI_TipRadioButton);
 

@@ -210,9 +210,9 @@
       <Project>{7DCF41B5-5EBE-4440-99F9-77EC038CBB9C}</Project>
       <Name>wpfMKancReg</Name>
     </ProjectReference>
-    <ProjectReference Include="..\wpfMList\wpfMList.csproj">
+    <ProjectReference Include="..\wpfMLaboratory\wpfMLaboratory.csproj">
       <Project>{19af91fd-eaba-47db-8b9c-f2dd4706c339}</Project>
-      <Name>wpfMList</Name>
+      <Name>wpfMLaboratory</Name>
     </ProjectReference>
     <ProjectReference Include="..\wpfMOtherLpu\wpfMOtherLpu.csproj">
       <Project>{6ee2165c-f480-4b3e-b48a-5c00cd88ad8f}</Project>

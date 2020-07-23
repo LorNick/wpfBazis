@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -24,10 +23,10 @@ namespace wpfGeneral.UserWindows
             // Имя таблицы
             PRO_TableName = "UserWindowPolApac";
             // Заголовок
-            Title = "Выбор ранее принятого пациента:";
+            Title = "Выбор ранее принятого ВАМИ пациента:";
             // Подсказка в строке поиска
             PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И)";
-            if (UserWindow_Log.MET_Access()) // Пояснение только для админов
+            if (MyGlo.Admin) // Пояснение только для админов
             {
                 // Подсказка в строке поиска
                 PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И) или Код посещения или KL";
@@ -123,7 +122,7 @@ namespace wpfGeneral.UserWindows
             PRO_SqlWhere = $" where a.DP between '{PRI_BeginDate.PROP_Date:MM.dd.yyyy}' and '{PRI_EndDate.PROP_Date:MM.dd.yyyy}'";
 
             // Если НЕ админ - то показываем только своих пациентов
-            if (!UserWindow_Log.MET_Access())
+           if (!MyGlo.Admin)
                 PRO_SqlWhere += $" and v.[User] = {MyGlo.User}";    
 
             // Фильтр по строке поиска

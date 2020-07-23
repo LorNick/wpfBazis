@@ -20,7 +20,7 @@ namespace wpfMViewer
             MyGlo.Otd = 0;
             MyGlo.IND = 1;
 		   
-            String[] _mArgs = Environment.GetCommandLineArgs();
+            string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
                 // Нулевая строка - путь к программе

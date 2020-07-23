@@ -263,7 +263,7 @@ namespace wpfGeneral.UserFromShablon
 			    }
 			    else
                 {
-                    string _xLog = UserProtokol.MET_CreateLogs(MyGlo.User, "Создан");
+                    string _xLog = UserLog.MET_CreateLogs();
                     PROP_Cod = MySql.MET_GetNextRef(PROP_TipProtokol.PROP_NextRef);
 			        _StrSql = MyQuery.MET_Protokol_Insert_1(PROP_Cod, MyGlo.IND, PRO_NomerShablon, _Rezult,
                         MyGlo.KL, DateTime.Today, _User, PUB_VirtualNodes.PROP_shaIndex, _Date, PROP_TipProtokol.PROP_Prefix, _xLog);

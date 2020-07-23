@@ -137,6 +137,10 @@ namespace wpfGeneral.UserWindows
                 // Если есть спец поле, то используем его, иначе выбранный столбик
                 string _PoleSort = PRO_PoleFiltr != "" ? PRO_PoleFiltr : PRO_DataView.Sort;
 
+                // Если после сортировки так и не нашли то выходим (как правило, это когда нет данных)
+                if (_PoleSort == "")
+                    return;
+
                 string _And = PRO_Where.Length > 0 ? " and " : "";
                 try
                 {
@@ -248,7 +252,7 @@ namespace wpfGeneral.UserWindows
                 PRO_TextFilter = PRO_TextFilter.Replace("'", "''");
                 MET_SqlFilter();
                 PRO_DataView.RowFilter = "";
-                PRO_TextFilter = "";             
+              //  PRO_TextFilter = "";       // Надо с этой строкой разобраться, почему она здесь?      
             }
             // Вызываем дополнительный фильтр, куда добавляем фильтр по загруженным данным
             MET_DopFilter();

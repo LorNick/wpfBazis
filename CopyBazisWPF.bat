@@ -2,7 +2,7 @@ copy %CD%\Bazis.WPF\bin\Release\NLog.config D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\wpfBazis.exe D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\wpfGeneral.dll D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\wpfMKancReg.dll  D:\Bazis.kod\Exe
-copy %CD%\Bazis.WPF\bin\Release\wpfMList.dll D:\Bazis.kod\Exe
+copy %CD%\Bazis.WPF\bin\Release\wpfMLaboratory.dll D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\wpfMViewer.dll D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\wpfStatic.dll D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\wpfMVrParackl.dll D:\Bazis.kod\Exe

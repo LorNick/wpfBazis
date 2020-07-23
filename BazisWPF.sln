@@ -53,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpfMViewer", "wpfMViewer\wp
 		{D96018DD-5698-4ECE-9392-06F5D6F189E3} = {D96018DD-5698-4ECE-9392-06F5D6F189E3}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpfMList", "wpfMList\wpfMList.csproj", "{19AF91FD-EABA-47DB-8B9C-F2DD4706C339}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpfMLaboratory", "wpfMLaboratory\wpfMLaboratory.csproj", "{19AF91FD-EABA-47DB-8B9C-F2DD4706C339}"
 	ProjectSection(ProjectDependencies) = postProject
 		{60BF897E-ADF7-4A77-9131-D94A59EFE904} = {60BF897E-ADF7-4A77-9131-D94A59EFE904}
 	EndProjectSection

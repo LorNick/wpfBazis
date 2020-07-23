@@ -62,29 +62,4 @@ namespace wpfGeneral.UserWindows
             }
             PART_ListView.ItemsSource = PROP_Logs;}
     }
-
-    /// <summary>КЛАСС Логи протоколов</summary>
-    /// <remarks>Пример json лога: { "Log":[{ "Cod":1, "Tip":"Создан", "User":160, "Date":"01.01.2018 12:30", "Ver":"1.274" },
-    ///                                     { "Cod":2, "Tip":"Изменён", "User":215, "Date":"02.01.2018 12:30", "Ver":"1.274" }
-    ///                                     { "Cod":3, "Tip":"Удален", "User":300, "Date":"03.01.20181 11:30", "Ver":"1.274" }] }</remarks>
-    public class UserLog
-    {
-        /// <summary>СВОЙСТВО Порядковый номер лога Cod</summary>
-        public int Cod { get; set; }
-
-        /// <summary>СВОЙСТВО Дата-время создания/изменения протокола Date</summary>
-        public string Date { get; set; }
-
-        /// <summary>СВОЙСТВО Тип лога (create, update, delete) Tip (c, u, d)</summary>
-        public string Tip { get; set; }
-
-        /// <summary>СВОЙСТВО Код пользователя User</summary>
-        public int User { get; set; }
-        
-        /// <summary>СВОЙСТВО ФИО пользователя</summary>
-        public string UserName { get; set; }
-
-        /// <summary>СВОЙСТВО Версия программы</summary>
-        public string Ver { get; set; }
-    }
 }

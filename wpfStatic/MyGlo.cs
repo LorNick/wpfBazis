@@ -81,10 +81,10 @@ namespace wpfStatic
         KancerReg = 21,
 		/// <summary>Просмоторщик Истории болезни</summary>
         Viewer = 22,
-        /// <summary>Списки протоколов</summary>
-        List = 23,
         /// <summary>Для других ЛПУ</summary>
-        OtherLpu = 24
+        OtherLpu = 24,
+        /// <summary>Лаборатория</summary>
+        Laboratory = 29
     }
 
     /// <summary>Тип закладки</summary>
@@ -143,7 +143,7 @@ namespace wpfStatic
         Calendar = 17
     }
 
-    /// <summary>Тип Тегов</summary>
+    /// <summary>Тип Тегов (Нерабочие)</summary>
     public enum eTipTegs
     {
         /// <summary>1. Целое число int</summary>
@@ -269,15 +269,16 @@ namespace wpfStatic
 #if DEBUG
             User =  60;
            // Server = 2;
-          //  TypeModul = eModul.VrPolicl;
-             TypeModul = eModul.VrStac;
+            TypeModul = eModul.VrPolicl;
+          //   TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
            //  TypeModul = eModul.Viewer;
             //TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
-            //TypeModul = eModul.OtherLpu;
+           // TypeModul = eModul.OtherLpu;
+           // TypeModul = eModul.Laboratory;
 #endif
-            
+
             string[] _mArgs = Environment.GetCommandLineArgs();           
             for (int x = 0; x < _mArgs.Length; x++)
             {

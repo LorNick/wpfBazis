@@ -17,7 +17,7 @@ using wpfGeneral.UserTab;
 using wpfGeneral.UserWindows;
 using wpfGeneral.UserLua;
 using wpfMKancReg;
-using wpfMList;
+using wpfMLaboratory;
 using wpfMOtherLpu;
 using wpfMViewer;
 using wpfMVrParacl;
@@ -151,29 +151,31 @@ namespace wpfBazis
                         PART_Menu.IsEnabled = false;
                     }
                     break;
-                case eModul.List:
-                    // Скрываем левую панель вкладок
-                    PART_Grid.ColumnDefinitions[0].MinWidth = 0;
-                    PART_Grid.ColumnDefinitions[0].Width = new GridLength(0);
-                    PART_TreeView.Visibility = Visibility.Collapsed;
-                    PART_TabOtch.Visibility = Visibility.Collapsed;
-                    // Показываем вкладку формы
-                    PART_TabForm.Visibility = Visibility.Visible;
-                    // Открываем вкладку с формой
-                    PART_TabControl.SelectedItem = PART_TabForm;
-                    // Скрываем кнопку "Закрыть" у шаблонов
-                    PART_Button_CloseSha.Visibility = Visibility.Collapsed;
-                    // Оформляем заголовок
-                    PART_TabForm.Header = "Тут наше название шаблона";
-                    // Выбранная ветка
-                    PRI_FormMyNodes = (VirtualNodes)PART_TreeView.SelectedItem;
-                    PRI_FormMyNodes.PROP_TipNodes = eTipNodes.Stac_Add;
-                    // Создаем форму
-                    PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true);
-
-                    // Оформляем заголовог
-                    PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabOtch, eVkladki.Table);
+                case eModul.Laboratory:
+                    PART_Grid.ColumnDefinitions[0].Width = new GridLength(300);
                     break;
+                    //// Скрываем левую панель вкладок
+                    //PART_Grid.ColumnDefinitions[0].MinWidth = 0;
+                    //PART_Grid.ColumnDefinitions[0].Width = new GridLength(0);
+                    //PART_TreeView.Visibility = Visibility.Collapsed;
+                    //PART_TabOtch.Visibility = Visibility.Collapsed;
+                    //// Показываем вкладку формы
+                    //PART_TabForm.Visibility = Visibility.Visible;
+                    //// Открываем вкладку с формой
+                    //PART_TabControl.SelectedItem = PART_TabForm;
+                    //// Скрываем кнопку "Закрыть" у шаблонов
+                    //PART_Button_CloseSha.Visibility = Visibility.Collapsed;
+                    //// Оформляем заголовок
+                    //PART_TabForm.Header = "Тут наше название шаблона";
+                    //// Выбранная ветка
+                    //PRI_FormMyNodes = (VirtualNodes)PART_TreeView.SelectedItem;
+                    //PRI_FormMyNodes.PROP_TipNodes = eTipNodes.Stac_Add;
+                    //// Создаем форму
+                    //PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true);
+
+                    //// Оформляем заголовог
+                    //PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabOtch, eVkladki.Table);
+                    //break;
                 case eModul.OtherLpu:
                     PART_Grid.ColumnDefinitions[0].Width = new GridLength(300);
                     //  Закрываем меню и меняем смену пациентов
@@ -207,11 +209,11 @@ namespace wpfBazis
                 case eModul.Viewer:
                     _VirtualModul = new UserModul_Viewer();
                     break;
-                case eModul.List:
-                    _VirtualModul = new UserModul_List();
-                    break;
                 case eModul.OtherLpu:
                     _VirtualModul = new UserModul_OtherLpu();
+                    break;
+                case eModul.Laboratory:
+                    _VirtualModul = new UserModul_Laboratory();
                     break;
                 default:
                     _VirtualModul = new UserModul_Viewer();
@@ -936,6 +938,11 @@ namespace wpfBazis
                     _WinSpr = new UserWindow_Shablon_Kdl("Шаблоны документов:", "\\OtherLpu");
                     break;
 
+                // Для исследований пока только на CODVID 19 (kdl)
+                case "eleTVItem_Laboratory":
+                    _WinSpr = new UserWindow_Shablon_Kdl("Шаблоны исследований:", "\\Issled");
+                    break;
+
                 // Иначе (если, сама ветка радактируется, то идем дальше, а если не редактируется, то выходим)
                 default:
                     if (PRI_FormMyNodes.PROP_TipNodes == eTipNodes.EditDocum ||
@@ -1109,6 +1116,10 @@ namespace wpfBazis
                 case eModul.OtherLpu:
                     // Открываем список Направлений в текущее ЛПУ
                     _WinSpr = new UserWindow_OtherLpu();
+                    break;
+                case eModul.Laboratory:
+                    // Открываем список Лаборатории
+                    _WinSpr = new UserWindow_Laboratory();
                     break;
                 default:
                     if (((UserModul_Viewer)PUB_Modul).PUB_Menu == 0)

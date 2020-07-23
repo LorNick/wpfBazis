@@ -872,6 +872,85 @@ namespace wpfStatic
 			{proSqlWhere}";
             return _Query;
         }
+
+        /// <summary>Выборка записи kbol по условию (Лаборатории)</summary>
+        public static string kbol_Select_6(int ShabLab, string Dat, string Fio)
+        {
+            string _Query = $@"
+                use Bazis;
+
+                declare @ShabLab as int = {ShabLab}; --1000;		
+                declare @Dat as date = {Dat}; -- = '07/13/2020'; -- дата проведения исследования
+                declare @Fio as nvarchar(50) = '{Fio}'; --'АА ТЕ Т 00';              
+
+                -- Удаляем 2е, 3е, 4е пробелы между словами (ну вдруг пользователь разойдется)
+                set @Fio = replace(@Fio, '  ', ' ');
+                set @Fio = replace(@Fio, '  ', ' ');
+                set @Fio = replace(@Fio, '  ', ' ');
+
+                declare @F as nvarchar(50);
+                declare @I as nvarchar(50) = '';
+                declare @O as nvarchar(50) = '';
+                declare @DR as nvarchar(50) = '';
+                declare @n as int;
+
+                -- Находим первые символы Фамилии, Имени, Отчества, и цифры даты рождения
+                set @n = charindex(' ', @Fio);
+                if @n = 0
+                    set @F = @Fio;                              -- Если только фамилия
+                else begin
+                    set @F = left(@Fio, @n - 1);
+                    set @Fio = stuff(@Fio, 1, @n, '')           -- Фамилия, но ещё имя есть
+                    set @n = charindex(' ', @Fio);
+                    if @n = 0
+                        set @I = @Fio;                          -- Если только имя
+                    else begin
+                        set @I = left(@Fio, @n - 1);        
+                        set @Fio = stuff(@Fio, 1, @n, '')       -- Имя, но ещё отчество есть
+                        set @n = charindex(' ', @Fio);
+                        if @n = 0
+                            set @O = @Fio;                      -- Если только отчество
+                        else begin
+                            set @O = left(@Fio, @n - 1);
+                            set @Fio = stuff(@Fio, 1, @n, '')   -- Отчество, но ещё год рождения есть
+                            set @n = charindex(' ', @Fio);
+                            if @n = 0
+                                set @DR = @Fio;                 -- Всё цифры даты рождения
+                            else begin
+                                set @DR = left(@Fio, @n - 1);   -- Ан нет, ещё какуют то фигню после даты рождения добавили        
+                            end
+                        end
+                    end
+                end;
+        
+                select top 200 
+	                k.KL
+	                ,dbo.GetFIO(k.FAM, k.I, k.O) as FIO
+	                ,k.DR	
+	                ,p.Lab
+	                ,p.pDate	   
+                from dbo.kbol as k with (nolock)
+                left join (
+                    select r.KL, r.pDate, u.FIO as Lab
+	                from (
+	                    select row_number() over(partition by KL order by pDate desc, Cod desc) as Num, xUserUp, pDate, KL
+		                from dbo.kdlProtokol 	
+		                where NumShablon = @ShabLab and isnull(xDelete, 0) = 0			        
+	                    ) as r
+                    join dbo.s_Users as u on r.xUserUp = u.Cod
+	                where Num = 1  
+                    ) as p on k.KL = p.KL
+                where not(k.DSmerti is not null and p.KL is null)                                   -- не показываем новых умерших пациентов без результата
+                    and ((len(@F) = 0 and p.KL is not null and p.pDate = @Dat)                      -- если строка ФИО пустая
+                        or 
+                        (len(@F) > 0                                                                -- если строка ФИО НЕ пустая
+                        and (k.FAM like @F + '%' 
+                        and ((@I <> '' and k.I like @I + '%') or @I = '')
+                        and ((@O <> '' and k.O like @O + '%') or @O = '')
+                        and ((@DR <> '' and cast(year(k.DR) as nvarchar(4)) like '%' + @DR + '%') or @DR = ''))
+                        ))";
+            return _Query;
+        }
         #endregion
 
         #region ---- kbolInfo (итоговая информация для таблиц  kbol, APAC, APSTAC) ----

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 14" name="StarahReestr">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 14.25" name="StarahReestr">
   <DataContextMoniker Name="/StarahReestrDataContext" />
   <nestedChildShapes>
     <classShape Id="51fcd9ba-a32e-44ce-8efe-66261f3b29dd" absoluteBounds="0.875, 0.75, 2, 4.0785139973958326">
@@ -26,10 +26,10 @@
         <elementListCompartment Id="32dc2e7c-639e-4f74-88c8-273207ff9939" absoluteBounds="6.64, 5.96, 1.9700000000000002, 3.3262125651041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="9ce834f4-3e6e-43e1-89d6-908b03754b36" absoluteBounds="3.625, 0.875, 2, 12.9243798828125">
+    <classShape Id="9ce834f4-3e6e-43e1-89d6-908b03754b36" absoluteBounds="3.625, 0.875, 2, 13.116681315104165">
       <DataClassMoniker Name="/StarahReestrDataContext/StrahReestr" />
       <nestedChildShapes>
-        <elementListCompartment Id="a7114a7c-9de8-4231-91b5-4ed3d030dc57" absoluteBounds="3.64, 1.335, 1.9700000000000002, 12.3643798828125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="a7114a7c-9de8-4231-91b5-4ed3d030dc57" absoluteBounds="3.64, 1.335, 1.9700000000000002, 12.556681315104166" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <associationConnector edgePoints="[(2.875 : 2.85175699869792); (3.625 : 2.85175699869792)]" fixedFrom="Algorithm" fixedTo="Algorithm">

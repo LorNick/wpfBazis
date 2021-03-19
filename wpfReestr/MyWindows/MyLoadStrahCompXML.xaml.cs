@@ -190,8 +190,6 @@ namespace wpfReestr
 
             }
             PART_RichTextBox.AppendText("Усё"); 
-        }
-
-        
+        }        
     }
 }

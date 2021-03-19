@@ -25,6 +25,9 @@
         /// <summary>Услуга оплачиваемая полностью (если меньше 4й дней)</summary>
         public int? Day3 { get; set; }
 
+        /// <summary>Коэффициент Доля заработной платы</summary>
+        public double? Dzp { get; set; }
+
         ///// <summary>План дней лечения химии</summary>
         //public int? Day3 { get; set; }
     }

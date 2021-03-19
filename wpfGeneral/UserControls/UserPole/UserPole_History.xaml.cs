@@ -190,6 +190,9 @@ namespace wpfGeneral.UserControls
                 PART_MenuItem_Restore.Visibility = PRI_IsDelete ? Visibility.Visible : Visibility.Collapsed;
             }
         }
+
+        /// <summary>СВОЙСТВО xLog (пока только для поликлиники и стационара)</summary>
+        public string PROP_xLog { get; set; }
         #endregion
 
 
@@ -308,13 +311,13 @@ namespace wpfGeneral.UserControls
                 PART_MenuItem_Delete.IsEnabled = PROP_DocumHistory?.PROP_IsUserDeleted == true;
                 PART_MenuItem_Delete.Visibility = PRI_IsDelete ? Visibility.Collapsed : Visibility.Visible;
                 PART_MenuItem_Restore.Visibility = PRI_IsDelete ? Visibility.Visible : Visibility.Collapsed;
-                PART_MenuItem_Log.IsEnabled = PROP_DocumHistory?.PROP_TipDocum != eTipDocum.Null && PROP_IsTexted;
+                //PART_MenuItem_Log.IsEnabled = PROP_DocumHistory?.PROP_TipDocum != eTipDocum.Null && PROP_IsTexted;
             }
             else
             {
                 PART_MenuItem_Delete.Visibility = Visibility.Collapsed;
                 PART_MenuItem_Restore.Visibility = Visibility.Collapsed;
-                PART_MenuItem_Log.Visibility = Visibility.Collapsed; 
+                //PART_MenuItem_Log.Visibility = Visibility.Collapsed; 
             }
            
         }
@@ -370,12 +373,28 @@ namespace wpfGeneral.UserControls
         /// <summary>СОБЫТИЕ Выбор контекстного меню Открытие окна логов документа</summary>     
         private void PART_MenuItem_Log_Click(object sender, RoutedEventArgs e)
         {
-            if (PROP_IsTexted)                               // если протокол, предполагаем, что это протокол
+            string _jLog;
+
+            // Для Apac и Apstac
+            if (!string.IsNullOrEmpty(PROP_xLog))
+                _jLog = PROP_xLog;
+            else
+            {
+                // Если протокола нет, то создаем
+                if (PROP_DocumHistory.PROP_Protokol == null)
+                    PROP_DocumHistory.PROP_Protokol = UserProtokol.MET_FactoryProtokol(PROP_Type, (int)PROP_Cod);
+
+                _jLog = PROP_DocumHistory.PROP_Protokol.PROP_xLog;
+            }
+
+            if (!string.IsNullOrEmpty(_jLog))
             {
                 // Открываем Форму Карточка Log
-                UserWindow_DocumLog _WinLog = new UserWindow_DocumLog(this);
+                UserWindow_DocumLog _WinLog = new UserWindow_DocumLog(_jLog);
                 _WinLog.Show();
             }
+            else
+                MessageBox.Show("А логов то и нет!", "Ошибочка вышла");            
         }
 
         /// <summary>СОБЫТИЕ Выбор контекстного меню Удалить протокол</summary>     

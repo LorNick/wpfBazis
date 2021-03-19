@@ -137,14 +137,14 @@ namespace wpfMVrPolicl
             }
 
             // Проверяем, есть ли свободная запись (повторно, а вдруг уже заняли)
-            if (!MySql.MET_QueryBool(MyQuery.RegistrPolTime_Select_2(_CodSetka, PROP_Server)))
+            if (!MySql.MET_QueryBool(MyQuery.MET_RnSetka_Time_Select_2(_CodSetka, PROP_Server)))
             {
                 MessageBox.Show("Пока вы думали, это время заняли!", "Задумались?");
                 return;
             }
 
             //  Проверяем не записан ли повторно пациент в этот кабинет
-            if (MySql.MET_QueryBool(MyQuery.RegistrPolTime_Select_3(MyGlo.KL, PUB_Element, PROP_Server)))
+            if (MySql.MET_QueryBool(MyQuery.MET_RnSetka_Time_Select_3(MyGlo.KL, PUB_Element, PROP_Server)))
             {
                 MessageBox.Show("Пациент уже записан в этот кабинет!", "Зачем?");
                 return;
@@ -159,7 +159,7 @@ namespace wpfMVrPolicl
             string _xLog = $@"{{""CrUser"": ""{MyGlo.UserName}"",""CrLPU"": ""БУЗОО КОД"",""CrProg"": ""wpfBazis"",""CrDate"": ""{DateTime.Now:yyyy-MM-dd hh:mm}""}}";
 
             // Сохраняем
-            if (!MySql.MET_QueryNo(MyQuery.RegistrRnTalon_Insert_1(_Cod, _CodSetka, MyGlo.KL, _FIO, _DR, _Rai, _xLog, PROP_Server)))
+            if (!MySql.MET_QueryNo(MyQuery.MET_RnTalon_Insert_1(_Cod, _CodSetka, MyGlo.KL, _FIO, _DR, _Rai, _xLog, PROP_Server)))
             {
                 MessageBox.Show("Записать не удалось!", "Ошибка");
                 return;
@@ -175,7 +175,7 @@ namespace wpfMVrPolicl
         private void MET_LoadTalon()
         {
             // Запрос
-            MySql.MET_DsAdapterFill(MyQuery.RegistrPolTalon_Select_1(MyGlo.KL, PROP_Server), "rnTalon");
+            MySql.MET_DsAdapterFill(MyQuery.MET_RnSetka_Time_Select_4(MyGlo.KL, PROP_Server), "rnTalon");
             // Cоздаем DataView для нашей таблицы
             PRI_DataViewTalon = new DataView(MyGlo.DataSet.Tables["rnTalon"]);
             // Отображаем таблицу
@@ -186,7 +186,7 @@ namespace wpfMVrPolicl
         private void MET_LoadElement()
         {
             // Запрос
-            MySql.MET_DsAdapterFill(MyQuery.RegistrPolElement_Select_1(PROP_Server, PROP_Depatment), "rnElement");
+            MySql.MET_DsAdapterFill(MyQuery.MET_RnElement_Select_1(PROP_Server, PROP_Depatment), "rnElement");
             // Cоздаем DataView для нашей таблице
             PRI_DataViewElement = new DataView(MyGlo.DataSet.Tables["rnElement"]);
             // Отображаем таблицу
@@ -197,7 +197,7 @@ namespace wpfMVrPolicl
         private void MET_LoadDate()
         {
             // Запрос
-            MySql.MET_DsAdapterFill(MyQuery.RegistrPolDate_Select_1(PUB_Element, PROP_Server), "rnDate");
+            MySql.MET_DsAdapterFill(MyQuery.MET_RnSetka_Date_Select_1(PUB_Element, PROP_Server), "rnDate");
             // Cоздаем DataView для нашей таблице
             PRI_DataViewDate = new DataView(MyGlo.DataSet.Tables["rnDate"]);
             // Отображаем таблицу
@@ -208,7 +208,7 @@ namespace wpfMVrPolicl
         private void MET_LoadTime()
         {
             // Запрос
-            MySql.MET_DsAdapterFill(MyQuery.RegistrPolTime_Select_1(PUB_Element, PUB_Date, PROP_Server), "rnTime");
+            MySql.MET_DsAdapterFill(MyQuery.MET_RnSetka_Time_Select_1(PUB_Element, PUB_Date, PROP_Server), "rnTime");
             // Cоздаем DataView для нашей таблице
             PRI_DataViewTime = new DataView(MyGlo.DataSet.Tables["rnTime"]);
             // Отображаем таблицу

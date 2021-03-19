@@ -43,7 +43,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
-            return MyQuery.s_ListDocum_Select_1(PRO_TableName, PRI_NomerShablon, PRI_VarID);
+            return MyQuery.MET_List_Select_1(PRO_TableName, PRI_NomerShablon, PRI_VarID);
         }
 
         /// <summary>МЕТОД Удаляем ненужные столбцы</summary>
@@ -75,10 +75,19 @@ namespace wpfGeneral.UserWindows
             // Если нету кода, то выходим
             if (pRow["Cod"].ToString() == "")
                 return false;
+            if (MessageBox.Show("Вы точно хотите удалить этот ответ? \n А может он кому то нужен!", "Удалить?", 
+                    MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                return false;
             // Код ответа
             int _Cod = Convert.ToInt32(pRow["Cod"]);
             // Удаляем
-            MySql.MET_QueryNo(MyQuery.s_ListDocum_Delete_1(PRO_TableName, _Cod));
+            MySql.MET_QueryNo(MyQuery.MET_List_Delete_1(PRO_TableName, _Cod));
+
+            // Записываем в логи
+            MyGlo.PUB_Logger.Info($"Удалили ответ в поле с VarId {PRI_VarID}," +
+                                          $" шаблона {PRI_NomerShablon}," +
+                                          $"\n таблицы {PRO_TableName}:" +
+                                          $"\n {pRow["Value"]}");
 
             return true;
         }
@@ -93,7 +102,7 @@ namespace wpfGeneral.UserWindows
 
             // Проверяем на наличие повторов
             // Если есть повтор, то не сохраняем
-            if (MySql.MET_QueryBool(MyQuery.s_ListDocum_Select_3(PRO_TableName, PRI_NomerShablon, PRI_VarID, pStrValue)))
+            if (MySql.MET_QueryBool(MyQuery.MET_List_Select_3(PRO_TableName, PRI_NomerShablon, PRI_VarID, pStrValue)))
             {
                 MessageBox.Show("Ошибка! Данный ответ уже есть в списке ответов");
                 return false;
@@ -102,15 +111,21 @@ namespace wpfGeneral.UserWindows
             if (pRow["Cod"].ToString() != "")
             {
                 _Cod = Convert.ToInt32(pRow["Cod"]);        // код ответа
-                MySql.MET_QueryNo(MyQuery.s_ListDocum_Update_1(PRO_TableName, _Cod, pStrValue));
+                MySql.MET_QueryNo(MyQuery.MET_List_Update_1(PRO_TableName, _Cod, pStrValue));
+
+                // Записываем в логи
+                MyGlo.PUB_Logger.Info($"Изменили ответ в поле с VarId {PRI_VarID}," +
+                                              $" шаблона {PRI_NomerShablon}," +
+                                              $"\n таблицы {PRO_TableName}:" +
+                                              $"\n {pRow["Value", DataRowVersion.Original]}");
                 return true;
             }
             // Insert Находим максимальный код
-            _Cod = MySql.MET_QueryInt(MyQuery.s_ListDocum_Select_2(PRO_TableName, PRI_NomerShablon)) + 1;
+            _Cod = MySql.MET_QueryInt(MyQuery.MET_List_MaxCod_Select_2(PRO_TableName, PRI_NomerShablon)) + 1;
             if (_Cod == 1)
                 _Cod = PRI_NomerShablon * 1000 + 1;                             // если это первый ответ в шаблоне то начинаем с нужного номера
             // Добавляем ответ в базу
-            MySql.MET_QueryNo(MyQuery.s_ListDocum_Insert_1(PRO_TableName, _Cod, PRI_NomerShablon, PRI_VarID, pStrValue));
+            MySql.MET_QueryNo(MyQuery.MET_List_Insert_1(PRO_TableName, _Cod, PRI_NomerShablon, PRI_VarID, pStrValue));
             // Добавляем данные в sqlDs
             pRow["Cod"] = _Cod;
             pRow["Value"] = pStrValue;

@@ -7,7 +7,6 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using wpfGeneral.UserModul;
-using wpfGeneral.UserWindows;
 using wpfStatic;
 
 namespace wpfGeneral.UserStruct

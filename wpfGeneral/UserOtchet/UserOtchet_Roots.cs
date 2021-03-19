@@ -150,7 +150,7 @@ namespace wpfGeneral.UserOtchet
         /// <param name="pMyDocumentViewer">Просмоторщик печати</param>
         /// <param name="pFlowDocument">Поток с нашим текстом</param>
         /// <param name="pPrintNow">Печатаем сразу</param> 
-        public override void MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow = false)
+        public override bool MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow = false)
         {
             // Сбрасываем фон
             MyGlo.BrushesOtchet = null;
@@ -171,6 +171,7 @@ namespace wpfGeneral.UserOtchet
             MET_PreiwPrint(pMyDocumentViewer, _FlowDocument, pPrintNow);
             // Возвращаем отчет на место
             pFlowDocument.Blocks.Add(this);
+            return true;
         }
     }
 }

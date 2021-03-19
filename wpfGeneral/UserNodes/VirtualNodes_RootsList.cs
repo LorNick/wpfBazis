@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Controls;
 using System.Windows.Media;
 using wpfGeneral.UserOtchet;
 using wpfGeneral.UserStruct;

@@ -149,8 +149,8 @@ namespace wpfGeneral.UserWindows
             _SPanel_1.Children.Add(PRI_FiltrDateK);
             // Level
             PRI_FiltrLevel = new UserPole_ComboBox();
-            PRI_FiltrLevel.PART_ComboBox.ItemsSource = new[] { "All", "Trace", "Debug", "Info", "Warn", "Error", "Fatal" };
-            PRI_FiltrLevel.PART_ComboBox.SelectedValue = "All";
+            PRI_FiltrLevel.PART_ComboBox.ItemsSource = new[] { "All", "Error+Fatal", "Trace", "Debug", "Info", "Warn", "Error", "Fatal" };
+            PRI_FiltrLevel.PART_ComboBox.SelectedValue = "Error+Fatal";
             PRI_FiltrLevel.PROP_WidthText = 100;
             PRI_FiltrLevel.PROP_Description = "Level";
             _SPanel_1.Children.Add(PRI_FiltrLevel);
@@ -271,8 +271,10 @@ namespace wpfGeneral.UserWindows
                 PRO_SqlWhere += $" and CompName like '%{PRI_FiltrCompName.PROP_Text}%'";
 
             // Фильтр по Level
-            if (PRI_FiltrLevel.PART_ComboBox.SelectedIndex != 0)
+            if (PRI_FiltrLevel.PART_ComboBox.SelectedIndex > 1)
                 PRO_SqlWhere += $" and LogLevel = '{PRI_FiltrLevel.PART_ComboBox.SelectedValue}'";
+            if (PRI_FiltrLevel.PART_ComboBox.SelectedIndex == 1)
+                PRO_SqlWhere += $" and LogLevel in ('Error', 'Fatal')";
 
             // Фильтр по Process
             if (PRI_FiltrProcess.PROP_Text != "")

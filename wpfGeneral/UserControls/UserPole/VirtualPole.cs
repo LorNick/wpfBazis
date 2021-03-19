@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using wpfGeneral.UserFromShablon;
+using wpfGeneral.UserFormShablon;
 using wpfGeneral.UserLua;
 using wpfGeneral.UserStruct;
 using wpfStatic;

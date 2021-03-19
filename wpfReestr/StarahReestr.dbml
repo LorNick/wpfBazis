@@ -128,6 +128,7 @@
       <Column Name="Kod_Ksg" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="DOCDATE" Type="System.DateTime" DbType="Date" CanBeNull="true" />
       <Column Name="DOCORG" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="KSG" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
       <Association Name="StrahFile_StrahReestr" Member="StrahFile" ThisKey="CodFile" OtherKey="Cod" Type="StrahFile" IsForeignKey="true" DeleteRule="CASCADE" />
     </Type>
   </Table>

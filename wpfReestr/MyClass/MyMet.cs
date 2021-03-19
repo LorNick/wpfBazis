@@ -275,7 +275,7 @@ namespace wpfReestr
             {
                 case "Decimal":
                     decimal _Dec = Convert.ToDecimal(pWhere);
-                    _Where = String.Format(CultureInfo.InvariantCulture, "{0} = {1}", PUB_NameK, _Dec);
+                    _Where = string.Format(CultureInfo.InvariantCulture, "{0} = {1}", PUB_NameK, _Dec);
                     break;
                 case "Byte":
                 case "Int32":                                                   // для чисел

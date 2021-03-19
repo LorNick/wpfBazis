@@ -27,8 +27,7 @@ namespace wpfGeneral.UserWindows
         private string PRI_Tip;
         private string PRI_D1 = "01/01/2018";
         private string PRI_D2 = "01/01/2018";
-
-
+        
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_FindPac()
         {            

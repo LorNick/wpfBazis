@@ -14,11 +14,11 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
-            MyGlo.IND = 127797613890180;
-            MyGlo.KL = 127330686847687;
-            MyGlo.Otd = 8;
+            MyGlo.IND = 128212783952037;
+            MyGlo.KL = 127503609896201;
+            MyGlo.Otd = 1;
 
-            String[] _mArgs = Environment.GetCommandLineArgs();
+            string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
                 // Нулевая строка - путь к программе
@@ -85,7 +85,7 @@ namespace wpfMVrStac
             UserProtokol.MET_FactoryProtokolArray(eTipDocum.Stac, MyGlo.IND);
             
             // ВЕТКА Ошибки Стационара (для реестров)
-            MySql.MET_DsAdapterFill(MyQuery.varErrorStac_Select_1(MyGlo.Otd, MyGlo.User), "ErrorStac");
+            MySql.MET_DsAdapterFill(MyQuery.MET_varErrorStac_Select_1(MyGlo.Otd, MyGlo.User), "ErrorStac");
             int _AllError = MyGlo.DataSet.Tables["ErrorStac"].Rows.Count;
             VirtualNodes _Node;
             if (_AllError > 0)
@@ -115,10 +115,14 @@ namespace wpfMVrStac
                 PROP_TipNodes = eTipNodes.Main,
                 Name = "eleTVItem_TekStac",
                 PROP_Text = "Текущий стационар",
-                PROP_ImageName = "mnStac",
                 PROP_ParentName = "eleTVItemObSved",
                 IsExpanded = true
             };
+            // Иконка в зависимости от типа стационара
+            if (MySql.MET_QueryInt(MyQuery.s_Department_Select_2(MyGlo.Otd)) == 1)
+                _Node.PROP_ImageName = "mnStac";
+            else
+                _Node.PROP_ImageName = "mnStacDnev";
             _Node.PROP_Docum = new UserDocument(_Node);
             _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
             _Node.MET_Inizial();

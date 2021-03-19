@@ -32,7 +32,7 @@ namespace wpfGeneral.UserOtchet
         protected override void MET_Otchet()
         {
             // Заполняем строку данными запроса
-            MySql.MET_DsAdapterFill(MyQuery.varRakReg_Select_2(MyGlo.KL), "KancReg");
+            MySql.MET_DsAdapterFill(MyQuery.MET_varRakReg_Select_2(MyGlo.KL), "KancReg");
                   
             // Номер амбулаторной карты
             xVopr = "Выписка из Канцер-Регистра";

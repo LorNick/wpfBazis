@@ -1556,6 +1556,8 @@ namespace wpfReestr
 		
 		private string _DOCORG;
 		
+		private string _KSG;
+		
 		private EntityRef<StrahFile> _StrahFile;
 		
     #region Определения метода расширяемости
@@ -1688,6 +1690,8 @@ namespace wpfReestr
     partial void OnDOCDATEChanged();
     partial void OnDOCORGChanging(string value);
     partial void OnDOCORGChanged();
+    partial void OnKSGChanging(string value);
+    partial void OnKSGChanged();
     #endregion
 		
 		public StrahReestr()
@@ -2956,6 +2960,26 @@ namespace wpfReestr
 					this._DOCORG = value;
 					this.SendPropertyChanged("DOCORG");
 					this.OnDOCORGChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KSG", DbType="NVarChar(50)")]
+		public string KSG
+		{
+			get
+			{
+				return this._KSG;
+			}
+			set
+			{
+				if ((this._KSG != value))
+				{
+					this.OnKSGChanging(value);
+					this.SendPropertyChanging();
+					this._KSG = value;
+					this.SendPropertyChanged("KSG");
+					this.OnKSGChanged();
 				}
 			}
 		}

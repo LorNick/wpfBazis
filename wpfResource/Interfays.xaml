@@ -176,6 +176,21 @@
         <Setter Property="TextAlignment" Value="Left"/>
     </Style>
 
+    <!--Стили для "telerik:RadDateTimePicker" (Календарь)-->
+    <Style TargetType="telerik:RadDateTimePicker">
+        <Setter Property="MaxWidth" Value="110"/>
+        <Setter Property="DisplayFormat" Value="Short"/>
+        <Setter Property="InputMode" Value="DatePicker"/>
+        <Setter Property="DateTimeWatermarkContent" Value="Введите дату"/>
+        <Setter Property="TodayButtonVisibility" Value="Visible"/>
+        <Setter Property="TodayButtonContent" Value="Сегодня"/>
+        <Style.Triggers>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="Background" Value="#FFFFFFC0"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!--Меняем системные цвета для выбранных элеметнов Дерева -->
     <SolidColorBrush Color="Gainsboro" x:Key="{x:Static SystemColors.HighlightBrushKey}" />
     <SolidColorBrush Color="Black" x:Key="{x:Static SystemColors.HighlightTextBrushKey}" />

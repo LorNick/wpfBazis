@@ -122,7 +122,7 @@ namespace wpfGeneral.UserOtchet
         /// <param name="pMyDocumentViewer">Просмоторщик печати</param> 
         /// <param name="pFlowDocument">Документ, который печатаем</param> 
         /// <param name="pPrintNow">Печатаем сразу</param> 
-        public virtual void MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow  = false)
+        public virtual bool MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow  = false)
         {
             MyGlo.BrushesOtchet = null;                                         // сбрасываем фон
             MET_Inizial(PROP_Nodes);                                            // формируем отчет (если надо)
@@ -131,6 +131,7 @@ namespace wpfGeneral.UserOtchet
             MET_ImageEmblema(_FlowDocument);                                    // рисуем эмблему
             MET_PreiwPrint(pMyDocumentViewer, _FlowDocument, pPrintNow);        // формируем объект для печати
             pFlowDocument.Blocks.Add(this);                                     // возвращаем отчет на место
+            return true;
         }
 
         /// <summary>МЕТОД Формируем объект для печати</summary>

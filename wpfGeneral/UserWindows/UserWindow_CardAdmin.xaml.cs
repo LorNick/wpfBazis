@@ -4,7 +4,9 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using Microsoft.Win32;
+using Newtonsoft.Json.Linq;
 using wpfGeneral.UserControls;
 using wpfGeneral.UserModul;
 using wpfGeneral.UserStruct;
@@ -123,6 +125,35 @@ namespace wpfGeneral.UserWindows
             get { return MyMet.MET_ParseInt(PART_xDelete.PROP_Text); }
             set { PART_xDelete.PROP_Text = value.ToString(); }
         }
+
+        // Строка KbolInfo
+        private UserKbolInfo PRI_KbolInfo;
+
+        /// <summary>СВОЙСТВО jTag (KbolInfo)</summary>
+        public string PROP_jTag
+        {
+            get { return PART_jTag.PROP_Text; }
+            set
+            {               
+                PART_jTag.PROP_Text = value;
+                PRI_KbolInfo.PROP_jTag = value;
+                PRI_KbolInfo.PROP_FlagChange = true;
+                PART_ButtonKbolInfo.IsEnabled = true;
+            }
+        }
+
+        /// <summary>СВОЙСТВО Oms (KbolInfo)</summary>
+        public bool PROP_Oms
+        {
+            get { return PART_CheckBoxOms.PROP_Checked; }
+            set
+            {               
+                PART_CheckBoxOms.PROP_Checked = value;   // сразу отображаем на экране
+                PRI_KbolInfo.PROP_Oms = value ? 1 : 0;
+                PRI_KbolInfo.PROP_FlagChange = true;
+                PART_ButtonKbolInfo.IsEnabled = true;
+            }
+        }
         #endregion
 
         /// <summary>КОНСТРУКТОР</summary>
@@ -178,7 +209,8 @@ namespace wpfGeneral.UserWindows
                 // Запись протокола
                 PROP_CodProtokol = _Protokol.PROP_Cod;
                 PROP_KLkbol = _Protokol.PROP_KL;
-                PROP_IND = _Protokol.PROP_CodApstac;
+                // Для kdl, IND будет равен коду протокола
+                PROP_IND = _Protokol.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Kdl ? PROP_CodProtokol : _Protokol.PROP_CodApstac;
                 PROP_Index = _Protokol.PROP_pIndex;
                 PROP_NumShablon = _Protokol.PROP_NumShablon;
                 PROP_Date = _Protokol.PROP_pDate;
@@ -188,9 +220,40 @@ namespace wpfGeneral.UserWindows
                 PROP_MyTipProtokol = _Protokol.PROP_TipProtokol;
                 PROP_xDelete = _Protokol.PROP_xDelete;
                 PROP_Tip = "протокол";                
-            }          
+            }
+
+            PRI_KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(PROP_MyTipProtokol.PROP_KbolInfo, PROP_IND, MyGlo.KL);
+            if (!PRI_KbolInfo.PROP_FlagNew && PRI_KbolInfo.PROP_jTag != null)
+            {               
+                // Берем сразу отформатированные теги
+                PROP_jTag = PRI_KbolInfo.PROP_Json.ToString();
+                PROP_Oms = PRI_KbolInfo.PROP_Oms == 1;
+                PART_CheckBoxOms.IsEnabled = PROP_MyTipProtokol.PROP_TipDocum == eTipDocum.Kdl;
+                PART_ButtonKbolInfo.IsEnabled = false;
+            }
+            else
+            {
+                PART_StacPanelKbolInfo.IsEnabled = false;
+                PROP_jTag = "Нет записи kbolInfo";
+            }
+
+            // Запрет на проверку правописания
+            PART_jTag.PART_TextBox.SpellCheck.IsEnabled = false;
         }
-        
+
+        /// <summary>СОБЫТИЕ Сохранить строку kbolInfo</summary>
+        private void PART_ButtonSaveKbolInfo_Click(object sender, RoutedEventArgs e)
+        {
+            if (PRI_KbolInfo.PROP_FlagChange)
+            {
+                if (PRI_KbolInfo.MET_UpdateSQL())
+                {
+                    PART_ButtonKbolInfo.IsEnabled = false;
+                    PRI_KbolInfo.PROP_FlagChange = false;
+                }
+            }
+        }
+
         /// <summary>СОБЫТИЕ МЕНЮ Поставить/убрать доступ на Редактирование протоколов в реестр</summary>
         private void PART_MenuItem_1_Click(object sender, RoutedEventArgs e)
         {
@@ -264,6 +327,18 @@ namespace wpfGeneral.UserWindows
             {
                 MessageBox.Show("Чет нету доступа к реестру");
             }
+        }
+
+        /// <summary>СОБЫТИЕ Нажали на галочку ОМС (только для гистологии)</summary>
+        private void PART_CheckBoxOms_IsChecked(object sender, RoutedPropertyChangedEventArgs<bool> e)
+        {
+            PROP_Oms = ((UserPole_CheckBox)sender).PROP_Checked;
+        }
+
+        /// <summary>СОБЫТИЕ Поменяли текст jTag</summary>
+        private void PART_jTag_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            PROP_jTag = ((UserPole_Text)sender).PROP_Text;
         }
     }                                
 }

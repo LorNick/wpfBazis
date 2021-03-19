@@ -5,8 +5,10 @@ using wpfGeneral.UserNodes;
 using wpfGeneral.UserControls;
 using wpfGeneral.UserStruct;
 using wpfStatic;
+using System.Windows.Input;
+using System.Windows;
 
-namespace wpfGeneral.UserFromShablon
+namespace wpfGeneral.UserFormShablon
 {
     /// <summary>КЛАСС виртуальная форма шаблона </summary>
     /// <remarks> Описание работы, создания шаблона
@@ -188,7 +190,7 @@ namespace wpfGeneral.UserFromShablon
                     break;
                 case 17:
                     _Pole = new UserPole_Calendar();
-                    break; 
+                    break;
                 default:
                     _Pole = new UserPole_Text();
                     break;
@@ -258,5 +260,14 @@ namespace wpfGeneral.UserFromShablon
             return null;
         }
 
+        /// <summary>МЕТОД Возвращаем поле на котором стоит фокус</summary>
+        public VirtualPole GetFocusedPole()
+        {
+            IInputElement _focusedElement = Keyboard.FocusedElement as UIElement;
+            if (((FrameworkElement)_focusedElement).Tag is VirtualPole)
+                return (VirtualPole)((FrameworkElement)_focusedElement).Tag;
+            else
+                return null;
+        }
     }
 }

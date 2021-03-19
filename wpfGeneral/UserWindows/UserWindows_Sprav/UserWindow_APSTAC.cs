@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -163,10 +162,8 @@ namespace wpfGeneral.UserWindows
 
             // Фильтр по дате  
             if (PRI_DatePicker_1.IsEnabled)
-            {
-                DateTime _Date = Convert.ToDateTime(PRI_DatePicker_1.Text);
-                PRO_SqlWhere += String.Format(" and a.DN <= '{0}' and (a.DK is NULL or a.DK >= '{0}')", _Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US")));
-            }
+               PRO_SqlWhere += $" and a.DN <= '{PRI_DatePicker_1.DisplayDate:MM.dd.yyyy}' and (a.DK is NULL or a.DK >= '{PRI_DatePicker_1.DisplayDate:MM.dd.yyyy}')";
+
             // Фильтр по отделению
             if (PRI_ComboBox_2.IsEnabled)
                 PRO_SqlWhere += $" and a.Otd = {PRI_ComboBox_2.SelectedValue}";

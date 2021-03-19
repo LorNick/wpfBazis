@@ -255,7 +255,8 @@ namespace wpfGeneral.UserWindows
               //  PRO_TextFilter = "";       // Надо с этой строкой разобраться, почему она здесь?      
             }
             // Вызываем дополнительный фильтр, куда добавляем фильтр по загруженным данным
-            MET_DopFilter();
+            else
+                MET_DopFilter();
         }
 
         /// <summary>МЕТОД Дополнительный фильтр по загруженным данным</summary>
@@ -414,6 +415,17 @@ namespace wpfGeneral.UserWindows
                     e.Column = _TemplateColumn;                  
                 }
 
+                // Отображаем иконки из словаря (как правило для удаления)
+                if (e.PropertyName == "IconDel")
+                {
+                    DataGridTemplateColumn _TemplateColumn = new DataGridTemplateColumn
+                    {
+                        Header = "IconDel",
+                        CellTemplate = (DataTemplate)Resources["icoDelDateCellTemplate"]
+                    };
+                    e.Column = _TemplateColumn;
+                }
+
                 // Отображаем Дату в нормальном виде
                 if (e.PropertyType == typeof(DateTime))
                 {                       
@@ -537,6 +549,7 @@ namespace wpfGeneral.UserWindows
     {        
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
+            if (value.ToString() == "") return null;
             try
             {
                 return (BitmapImage)Application.Current.FindResource(value.ToString());

@@ -11,10 +11,10 @@ namespace wpfGeneral.UserControls
     public partial class UserPole_Calendar
     {
         #region ---- СВОЙСТВО ----
-        /// <summary>СВОЙСТВО Изменялся ли текст</summary>
+        /// <value>СВОЙСТВО Изменялся ли текст</value>
         public bool PROP_BoolChangeText { get; set; }
-        
-        /// <summary>СВОЙСТВО Описание вопроса</summary>
+
+        /// <value>СВОЙСТВО Описание вопроса</value>
         public override string PROP_Description
         {
             get { return (string)PART_Label.Content; }
@@ -56,7 +56,6 @@ namespace wpfGeneral.UserControls
             get { return (DateTime)this.GetValue(DEPR_ValueMinDateProperty); }
             set { this.SetValue(DEPR_ValueMinDateProperty, value); }
         }
-
 
         /// <summary>СВОЙСТВО Цвет текста ответа</summary>
         public override Brush PROP_ForegroundText
@@ -116,6 +115,13 @@ namespace wpfGeneral.UserControls
                 this.HorizontalAlignment = HorizontalAlignment.Center;
             if (PROP_Format.MET_If("ar"))
                 this.HorizontalAlignment = HorizontalAlignment.Right;
+
+            // Если указанно в формате, что показываем 1, а не 2 месяца
+            if (PROP_Format.MET_If("m1"))
+            {
+                PART_Calendar.Columns = 1;
+                PART_Calendar.Width = 250;
+            }
 
             // Помечаем в календаре указанные даты
             foreach (var _Dat in PROP_Text.Split(';'))

@@ -13,6 +13,7 @@ using wpfGeneral.UserStruct;
 using Excel = Microsoft.Office.Interop.Excel;
 using wpfStatic;
 using Tel = Telerik.Windows.Controls;
+using wpfGeneral.UserControls;
 
 namespace wpfGeneral.UserWindows
 {
@@ -30,6 +31,14 @@ namespace wpfGeneral.UserWindows
         private CheckBox PRI_CheckBox_1;
         /// <summary>Кнопка загрузки шаблона на SQL филиала</summary>
         private Tel.RadButton PRI_ButtonFromToFilialSQL_1;
+        /// <summary>Начальная дата создания протоколов</summary>
+        private Tel.RadDateTimePicker PRI_DatePicker_1;
+        /// <summary>Конечная дата создания протоколов</summary>
+        private Tel.RadDateTimePicker PRI_DatePicker_2;
+        /// <summary>Код пользователя</summary>
+        private UserPole_Text PRI_UserCod;
+        /// <summary>Не показывать нулевые протоколы</summary>
+        private CheckBox PRI_CheckBox_2;
 
         private List<UserShablon> PRI_Shablons;
 
@@ -49,13 +58,15 @@ namespace wpfGeneral.UserWindows
             // Заголовок
             Title = "Редактор шаблонов:";
             // Размеры окна
-            Width = 750;
+            Width = 1000;
             MinWidth = Width;
             Height = 700;
             // Сортируем по Коду шаблона
             PRO_PoleSort = 0;
             // Спец поле (составное) по которому производится поиск
             PRO_PoleFiltr = "Names";
+            // Разрешаем выбирать записи
+            PROP_FlagButtonSelect = true;
 
             // Создаем фильтр
             MET_CreateFiltr();
@@ -89,7 +100,7 @@ namespace wpfGeneral.UserWindows
             PRI_ComboBox_1 = new ComboBox
             {
                 Width = 80,
-                ItemsSource = new[] {"apaN", "ast", "par", "kdl"},
+                ItemsSource = new[] { "apaN", "ast", "par", "kdl" },
                 SelectedValue = "apaN"
             };
             PRI_ComboBox_1.SelectionChanged += PART_SelectionChanged;
@@ -131,6 +142,45 @@ namespace wpfGeneral.UserWindows
             };
             PRI_ButtonFromToFilialSQL_1.Click += PRI_ButtonFromToFilialSQL_1_Click;
             _SPanel_1.Children.Add(PRI_ButtonFromToFilialSQL_1);
+
+            // ---- Настраиваем 2й фильтр
+            StackPanel _SPanel_2 = new StackPanel();
+            _SPanel_2.Orientation = Orientation.Horizontal;
+            _SPanel_2.Margin = new Thickness(0, 2, 0, 2);
+            _SPanel.Children.Add(_SPanel_2);
+            Label _Label_2 = new Label();
+            _Label_2.Content = "Протоколы от:";
+            _Label_2.Foreground = Brushes.Navy;
+            _SPanel_2.Children.Add(_Label_2);
+            // Дата с
+            PRI_DatePicker_1 = new Tel.RadDateTimePicker();
+            PRI_DatePicker_1.SelectedValue = DateTime.Parse("01/01/2008");
+            PRI_DatePicker_1.SelectionChanged += delegate { MET_SqlFilter(); };           
+            _SPanel_2.Children.Add(PRI_DatePicker_1);
+            Label _Label_3 = new Label();
+            _Label_3.Content = " по :";
+            _Label_3.Foreground = Brushes.Navy;
+            _SPanel_2.Children.Add(_Label_3);
+            // Дата по
+            PRI_DatePicker_2 = new Tel.RadDateTimePicker();           
+            PRI_DatePicker_2.SelectedValue = DateTime.Parse("01/01/2222");
+            PRI_DatePicker_2.SelectionChanged += delegate { MET_SqlFilter(); };
+            _SPanel_2.Children.Add(PRI_DatePicker_2);
+
+            // UserCod
+            PRI_UserCod = new UserPole_Text();
+            PRI_UserCod.PROP_MinWidthDescription = 90;
+            PRI_UserCod.PROP_WidthText = 100;
+            PRI_UserCod.PROP_Description = "UserCod";
+            _SPanel_2.Children.Add(PRI_UserCod);
+
+            // Скрыть нулевые протоколы
+            PRI_CheckBox_2 = new CheckBox();
+            PRI_CheckBox_2.Margin = new Thickness(10, 0, 0, 0);
+            PRI_CheckBox_2.Content = $"скрыть нулевые протоколы";
+            PRI_CheckBox_2.VerticalAlignment = VerticalAlignment.Center;           
+            PRI_CheckBox_2.Click += delegate { MET_SqlFilter(); };
+            _SPanel_2.Children.Add(PRI_CheckBox_2);
         }
         
         /// <summary>СОБЫТИЕ Нажали на кнопку "Выгрузка шаблона в Excel"</summary>
@@ -425,13 +475,18 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
-            return MyQuery.MET_ListShablon_Select_5(PRI_ComboBox_1.SelectedValue.ToString());
+            // Фильтр по UserCod
+            return MyQuery.MET_ListShablon_Select_5(PRI_ComboBox_1.SelectedValue.ToString(), 
+                PRI_DatePicker_1.DisplayDate, 
+                PRI_DatePicker_2.DisplayDate, 
+                PRI_UserCod.PROP_Text, 
+                PRI_CheckBox_2.IsChecked);
         }
         
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
-            string[] _mName = { "", "", "Cod", "TipObsled", "Name", "ProfilVr" };
+            string[] _mName = { "", "", "Cod", "TipObsled", "", "Name", "ProfilVr", "Cou", "Dmin", "Dmax" };
             return _mName[pIndex];
         }
 
@@ -445,7 +500,15 @@ namespace wpfGeneral.UserWindows
         protected override void MET_WithColumn()
         {
             PART_DataGrid.Columns[2].Width = 50;     // Cod
-            PART_DataGrid.Columns[4].Width = 500;    // Name
+            PART_DataGrid.Columns[4].Width = 20;     // IconDel
+            PART_DataGrid.Columns[5].Width = 500;    // Name
+        }
+
+        /// <summary>МЕТОД Создание фильтров для загрузки данных из SQL</summary>
+        protected override void MET_SqlFilter()
+        {
+            // Запрос
+            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
         /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
@@ -457,6 +520,40 @@ namespace wpfGeneral.UserWindows
                 return false;
             }
             return true;
+        }
+
+        /// <summary>МЕТОД Выбор данных</summary>
+        protected override void MET_Select()
+        {
+            if (!PROP_FlagButtonSelect || PART_DataGrid.SelectedItem == null)
+                return;
+
+            DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
+            int _CodShablon = Convert.ToInt16(_DataRowView.Row["Cod"]);
+            string _NameSha = Convert.ToString(_DataRowView.Row["Name"]);
+            string _ImageSha = Convert.ToString(_DataRowView.Row["Icon"]);
+            string _TipDoc = PRI_ComboBox_1.SelectedValue.ToString();
+            eTipDocum _eTip = eTipDocum.Null;
+            switch (_TipDoc)
+            {
+                case "apaN":
+                    _eTip = eTipDocum.Pol;
+                    break;
+                case "ast":
+                    _eTip = eTipDocum.Stac;
+                    break;
+                case "par":
+                    _eTip = eTipDocum.Paracl;
+                    break;
+                case "kdl":
+                    _eTip = eTipDocum.Kdl;
+                    break;
+            }
+
+            var _TipProtokol = new MyTipProtokol(_eTip);
+
+            UserWindow_EditProtokol _WinSpr = new UserWindow_EditProtokol(_TipProtokol, _CodShablon, _NameSha, _ImageSha, PRI_DatePicker_1.DisplayDate, PRI_DatePicker_2.DisplayDate, PRI_UserCod.PROP_Text);
+            _WinSpr.Show();
         }
     }
 }

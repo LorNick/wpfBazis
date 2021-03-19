@@ -210,7 +210,7 @@ namespace wpfGeneral.UserControls
             if (!PRI_FlagChange)
                 return true;
             // Если меняли диагноз,  то сохраняем его в базу посещений/стац карту
-            MySql.MET_QueryNo(MyQuery.varString_Update_1("APAC", "D", PROP_Cod, "Cod", MyGlo.IND));
+            MySql.MET_QueryNo(MyQuery.MET_varString_Update_1("APAC", "D", PROP_Cod, "Cod", MyGlo.IND));
             MyGlo.HashAPAC["D"] = PROP_Cod;
             return true;
         }
@@ -222,7 +222,7 @@ namespace wpfGeneral.UserControls
             if (!PRI_FlagChange)
                 return true;
             // Если меняли диагноз,  то сохраняем его в базу стац карты
-            MySql.MET_QueryNo(MyQuery.varString_Update_1("APSTAC", "D", PROP_Cod, "IND", MyGlo.IND));
+            MySql.MET_QueryNo(MyQuery.MET_varString_Update_1("APSTAC", "D", PROP_Cod, "IND", MyGlo.IND));
             MyGlo.HashAPSTAC["D"] = PROP_Cod;
             return true;
         }

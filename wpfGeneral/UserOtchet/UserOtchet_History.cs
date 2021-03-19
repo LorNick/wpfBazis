@@ -130,6 +130,7 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_CodApstac = MET_PoleDec("CodApstac");
                 _Pole.PROP_Kdl = MET_PoleStr("kdl");
                 _Pole.PROP_IsDelete = MET_PoleInt("xDelete") == 1;
+                _Pole.PROP_xLog = MET_PoleStr("xLog");
 
                 // В зависимости от типа: поликлинника/стационар/параклиника
                 switch (_Pole.PROP_Type)
@@ -157,7 +158,7 @@ namespace wpfGeneral.UserOtchet
                         _Pole.callbackOpenNew = MET_OpenPolicl;
                         break;
                     case eTipDocum.Stac:
-                        _Icon = "mnStac";
+                        _Icon = MET_PoleStr("ImageInform");
                         string _Dk = MET_PoleDat("Dk");
                         if (_Dk == "") _Dk = "(по сегодня)";
                         _Pole.PROP_Date = MET_PoleDat("Dp") + " - " + _Dk;

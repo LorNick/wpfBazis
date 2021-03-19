@@ -6,7 +6,6 @@ using wpfStatic;
 using wpfGeneral.UserControls;
 using wpfGeneral.UserStruct;
 using FastColoredTextBoxNS;
-using System.Collections.ObjectModel;
 
 namespace wpfGeneral.UserLua
 {

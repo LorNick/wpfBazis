@@ -23,8 +23,8 @@ namespace wpfMOtherLpu
 #if DEBUG
             // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ) - пока показываем   
             PUB_Menu = 1;
-            MyGlo.Otd = 55450501;
-            MyGlo.Lpu = 554505; // 554403; // БСМП2 - 554502, МСЧ 7 - 554403, Кардио - 554505
+            MyGlo.Otd = 30602060;
+            MyGlo.Lpu = 554512; //554505; // 554403; // БСМП2 - 554502, МСЧ 7 - 554403, Кардио - 554505
 #endif
 
             string[] _mArgs = Environment.GetCommandLineArgs();
@@ -140,7 +140,7 @@ namespace wpfMOtherLpu
                     _Node.MET_Inizial();
 
                     // ВЕТКА Канцер регистра
-                    if (MySql.MET_QueryBool(MyQuery.varIfRakReg_Select_1(MyGlo.KL)))
+                    if (MySql.MET_QueryBool(MyQuery.MET_varIfRakReg_Select_1(MyGlo.KL)))
                         // только если есть пациент в Канцер-Регистре
                     {
                         _Node = new UserNodes_Inform

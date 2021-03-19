@@ -38,6 +38,14 @@ namespace wpfGeneral.UserStruct
         /// <summary>СВОЙСТВО Тип протокола</summary>
         public MyTipProtokol PROP_TipProtokol { get; set; }
 
+        private MyFormat PRI_MyFormat;
+        /// <summary>СВОЙСТВО Значения поля PROP_xFormat</summary>
+        public MyFormat PROP_MyFormat
+        {
+            get { return PRI_MyFormat ?? (PRI_MyFormat = new MyFormat(PROP_xFormat)); }
+            set { PRI_MyFormat = value; }
+        }
+
         ///<summary>МЕТОД Конвертация данных ListShablon из DataReader</summary>
         /// <param name="pDataReader">Поток данных из SQL</param> 
         private void MET_LoadDataReader(IDataRecord pDataReader)

@@ -18,34 +18,47 @@ namespace wpfReestr
                         ,f.YEAR
                         ,f.MONTH
                         ,f.Korekt 
-                        ,f.NSCHET 
+                        ,f.NSCHET
+                        ,concat('mnNumber', iif(day(f.DSCHET) > 14, month(f.DSCHET),month(dateadd(m, -1, f.DSCHET)))) as NumberImage
                         ,f.DSCHET
                         ,case f.StrahComp
-                            when 0 then 'Все Областные'
+                            when 0 then 'mnSmoAll'
+                            when 1 then 'mnSmoAlfa'
+                            when 2 then 'mnSmoKapital'
+                            when 3 then 'mnSmoSogaz'
+                            when 4 then 'mnSmoInogor'
+                        end as StrahCompImage
+                        ,case f.StrahComp
+                            when 0 then 'Тестовые'
                             when 1 then 'Альфа (50)'
                             when 2 then 'Капитал МС (41)'
                             when 3 then 'СОГАЗ-Мед (44)'
-                            when 4 then 'Иногородние'
+                            when 4 then 'ТФОМС'
                         end as StrahComp 
-                        ,case f.VMP
-                            when 0 then 'без ВМП'
-                            when 1 then 'ВМП'
-                            when 2 then 'общий' 
+                        ,case f.VMP                          
+                            when 1 then 'ВМП'                           
                             when 3 then 'ЗНО' 
                             when 4 then 'без С'                        
-                        end as VMP                       
+                        end as VMP 
+                        ,case f.VMP
+                            when 1 then 'mnFileT'
+                            when 3 then 'mnFileC' 
+                            when 4 then 'mnFileH'                        
+                        end as TipImage
                         ,f.SUMMAV
                         ,pPaket
                         ,'pDate' = convert(nvarchar(11),f.pDate, 104) + ' (' + convert(nvarchar(5),f.pDate, 108) + ')'            
                         ,'pUpDate' = convert(nvarchar(11),f.pUpDate, 104) + ' (' + convert(nvarchar(5),f.pUpDate, 108) + ')'   
                         ,r.cou
                         ,pHide
+                        ,iif(pParent > 0, 'mnNaznach', 'mnDocuments') as ParetnImag
                         ,pParent
                 from dbo.StrahFile as f
                 left join (select count(Cod) as cou, CodFile
                            from dbo.StrahReestr
                            group by CodFile) as r
-                  on f.Cod = r.CodFile                
+                  on f.Cod = r.CodFile  
+                where f.Cod > 682
                 order by f.Cod desc";
             return _Return;
         }
@@ -62,40 +75,32 @@ namespace wpfReestr
             return _Return;
         }
 
-        /// <summary>Выбор родителя, для исправленного реестра (для свитка PART_ComboBoxParent)</summary>
+        /// <summary>Выбор родителя, для исправленного реестра 2021 (для свитка PART_ComboBoxParent)</summary>
         public static string StrahFile_Select_2()
         {
             string _Return = $@"
                 use Bazis;
                 set language Russian;
 
-                select 'Основной реестр'  as Visual, 99999 as Cod, 0 as StrahComp, 0 as VMP, cast(getdate() as date) as DateN, cast(getdate() as date) as DateK
-                union
-                select top (40) concat_ws(' - ' 
-		                ,Cod                       
-                        ,case VMP
-                            when 0 then 'без ВМП'
-                            when 1 then 'ВМП'
-                            when 2 then 'общий' 
-                            when 3 then 'ЗНО' 
-                            when 4 then 'без С'                        
-                        end
-                        ,case StrahComp           
-                            when 1 then 'Альфа (50)'
-                            when 2 then 'Капитал МС (41)'
-                            when 3 then 'СОГАЗ-Мед (44)'
-                            when 4 then 'Иногородние'
-                        end
-                        ,datename(year, DateN)
-		                ,datename(month, DateN)  
+                select top (40) 
+                        concat_ws(' - '
+                            ,concat(datename(year, dateadd(m, 1, DateN)), ' ',datename(month, dateadd(m, 1, DateN)))
+                            ,case VMP
+                                when 1 then '(T) ВМП'
+                                when 3 then '(C) ЗНО' 
+                                when 4 then '(H) Без С'                        
+                            end
+		                    ,concat('(', Cod)                         
+		                    ,concat(datename(year, DateN), ' ', datename(month, DateN), ')')  
 		                )  as Visual
-		                ,Cod
-                        ,StrahComp
-		                ,VMP
-		                ,DateN
-		                ,DateK
+		                ,Cod as ParentCod
+		                ,VMP as TipReestr
+		                ,DateN as DateNOld 
+		                ,DateK as DatekOld
+                        ,dateadd(m, 1, DateN) as DateNNew
+                        ,eomonth(DateN, 1) as DateKNew
                 from dbo.StrahFile
-                where StrahComp > 0 and NSCHET > 0 and pPaket > 0 and pParent = 0
+                where NSCHET > 0 and Cod > 1252 and StrahComp = 4 
                 order by Cod desc";
             return _Return;
         }
@@ -135,7 +140,6 @@ namespace wpfReestr
                       ,[DayN]
                       ,[DoTarif]
                       ,[SUM_LPU]
-                      ,[DoSumRea]            
                       ,[VPOLIS]
                       ,[SERIA]
                       ,[NUMBER]
@@ -146,11 +150,6 @@ namespace wpfReestr
                       ,[VOZRAST]
                       ,[SS]                   
                       ,[OS_SLUCH]
-                      ,[FAM_P]
-                      ,[IM_P]
-                      ,[OT_P]
-                      ,[W_P]
-                      ,[DR_P]
                       ,[MR]
                       ,[DOCTYPE]
                       ,[DOCSER]
@@ -166,31 +165,42 @@ namespace wpfReestr
                       ,VID_VME
                       ,[VID_HMP]
                       ,[METOD_HMP]
-                      ,Kod_Ksg
                       ,DOCDATE
                       ,DOCORG
+                      ,KSG
+                      ,case PLAT
+                            when 55050 then 'mnSmoAlfa'
+                            when 55041 then 'mnSmoKapital'
+                            when 55044 then 'mnSmoSogaz'
+                            else 'mnSmoInogor'
+                      end as StrahCompImageD
+                     ,iif(PR_NOV > 0, 'mnNaznach', 'mnDocuments') as ParetnImag
+                     ,case LPU_ST
+                            when 1 then 'mnStac'
+                            when 2 then 'mnStacDnev'
+                            when 3 then 'mnPosPolikl'
+                            when 4 then 'mnParacl'
+                            when 5 then 'mnMicroscope'
+                      end as LpuSTImage
                 from dbo.StrahReestr
                 where CodFile = {CodFile}";
             return _Return;
         }
 
-        /// <summary>Находим сумму поля (например - SUM_LPU) по фильтру в Страховых реестров</summary>
-        public static string StrahReestr_Select_2(int CodFile, string pWhere, string pPole)
+        /// <summary>Помечаем/Убираем выбранные записи реестров в поле xUpdate (например для печати)</summary>
+        public static string StrahReestr_Update_1(int pUpdate, int CodFile, string pWhere)
         {
-            if (pWhere.Length > 0)
-                pWhere += " and ";
-
             string _Return = $@"
-                select isnull(sum([{pPole}]),0) as summa                                 
-                from dbo.StrahReestr
-                where {pWhere} CodFile = {CodFile}";
+                update dbo.StrahReestr        
+                    set xUpdate   = {pUpdate}                             
+                where CodFile = {CodFile} {pWhere}";
             return _Return;
         }
 
-        /// <summary>Обновляем в файле Страховых реестров поле N_ZAP и NOM_ZAP (Только для ИСПРАВЛЕННЫХ файлов)</summary>
+        /// <summary>Обновляем в файле Страховых реестров поле N_ZAP и NOM_ZAP (новый 2021)</summary>
         /// <param name="pCodFile">Код реестра</param>
-        /// <param name="pParent">Код основного родительского реестра</param>
-        public static string StrahReestr_Update_1(int CodFile, int pParent)
+        /// <param name="pParent">Код основного родительского реестра Который исправляем</param>
+        public static string StrahReestr_Update_2(int CodFile, int pParent)
         {
             string _Return = $@"
                 use Bazis;
@@ -208,8 +218,7 @@ namespace wpfReestr
 	                  where Cod = @ParentMain
 	                 ) as f
                   on s.YEAR = f.YEAR and s.MONTH = f.MONTH
-                where s.StrahComp > 0 and s.pParent = 0 and s.NSCHET > 0 and s.pPaket > 0
-	                and ((f.VMP = 1 and s.VMP = 1) or (f.VMP > 1 and s.VMP > 1))
+                where s.StrahComp = 4 and s.NSCHET > 0 and s.Cod > 1252
 
                 update st1        
                     set N_ZAP = st2.N_ZAP
@@ -222,47 +231,14 @@ namespace wpfReestr
                 where st1.CodFile = @CodFile";
             return _Return;
         }
-
-        /// <summary>Обновляем в файле Страховых реестров поле N_ZAP и NOM_ZAP (Только для ОСНОВНОВНЫХ файлов)</summary>
-        /// <param name="pCodFile">Код реестра</param>
-        public static string StrahReestr_Update_2(int pCodFile)
-        {
-            string _Return = $@"
-                declare @Start as int;
-                select  @Start = min(N_ZAP) from dbo.StrahReestr where CodFile = {pCodFile};
-
-                update dbo.StrahReestr        
-                    set N_ZAP   = st2.N_ZAP 
-                       ,NOM_ZAP = st2.NOM_ZAP                             
-                from dbo.StrahReestr    as st1                
-                join (select row_number() over (order by FAMILY, [NAME], FATHER, VOZRAST, PLAT, SERIA, NUMBER) + @Start - 1 as NOM_ZAP
-                            ,row_number() over (order by FAMILY, [NAME], FATHER, VOZRAST, PLAT, SERIA, NUMBER) + @Start - 1 as N_ZAP   
-                         -- потом вполне возможно притдется вернуть эту строку     
-                         --   ,dense_rank() over (order by FAMILY, [NAME], FATHER, VOZRAST, PLAT, SERIA, NUMBER) + @Start - 1 as N_ZAP
-                            ,Cod 
-                      from dbo.StrahReestr                    
-                      where CodFile = {pCodFile}) as st2      
-                on st1.Cod = st2.Cod";
-            return _Return;
-        }
-
-        /// <summary>Помечаем/Убираем выбранные записи реестров в поле xUpdate (например для печати)</summary>
-        public static string StrahReestr_Update_4(int pUpdate, int CodFile, string pWhere)
-        {
-            string _Return = $@"
-                update dbo.StrahReestr        
-                    set xUpdate   = {pUpdate}                             
-                where CodFile = {CodFile} {pWhere}";
-            return _Return;
-        }
         #endregion
 
         #region ---- XML (Выгрузка в XML) ----
-        /// <summary>Выгрузка файла ЗНО ВЕРСИЯ 2019, приказ 285</summary>
-        public static string StrahReestrXML_Select_Main_3(int CodFile, string pMainFileName)
+        /// <summary>Выгрузка файла ЗНО ВЕРСИЯ 2021</summary>
+        public static string StrahReestrXML_Select_C_2021(int CodFile, string pMainFileName)
         {
             string _Return = $@"
-                    use Bazis;
+            use Bazis;
 
             --- Заголовок ZGLV ---
             select
@@ -277,13 +253,7 @@ namespace wpfReestr
                 ,[MONTH]    as 'SCHET/MONTH'
                 ,NSCHET     as 'SCHET/NSCHET'
                 ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'
-                ,case StrahComp 
-                    when 1 then '55050'
-                    when 2 then '55041'
-                    when 3 then '55044'
-                    else null
-                    end         as 'SCHET/PLAT'
-                ,SUMMAV         as 'SCHET/SUMMAV'
+                ,SUMMAV     as 'SCHET/SUMMAV'
             --- Запись ZAP ---  
                 ,(select      
                         N_ZAP               as 'ZAP/N_ZAP' 
@@ -293,9 +263,6 @@ namespace wpfReestr
                         ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                         ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                         ,NUMBER     as 'ZAP/PACIENT/NPOLIS'	
-                        ,iif(VPOLIS = 1, SMO_OK, null) as 'ZAP/PACIENT/ST_OKATO'
-                        ,PLAT       as 'ZAP/PACIENT/SMO'
-                        ,SMO_OK     as 'ZAP/PACIENT/SMO_OK'   		  
                         ,0          as 'ZAP/PACIENT/NOVOR'
             -- Законченный случай Z_SL ---
                         ,(select  
@@ -304,7 +271,7 @@ namespace wpfReestr
                             ,VIDPOM     as 'Z_SL/VIDPOM'
                             ,3          as 'Z_SL/FOR_POM'
                             ,json_value(NOM_USL, '$.NPR_MO')   as 'Z_SL/NPR_MO'                                 --- !!!
-                            ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.NPR_DATE'), 104 ), 20)  as 'Z_SL/NPR_DATE'    --- !!!
+                            ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.NPR_DATE'), 104), 20)  as 'Z_SL/NPR_DATE'    --- !!!
                             ,'555509'   as 'Z_SL/LPU'
                             ,convert(nvarchar(10), ARR_DATE, 20) as 'Z_SL/DATE_Z_1'
                             ,convert(nvarchar(10), EX_DATE, 20)  as 'Z_SL/DATE_Z_2'
@@ -380,7 +347,7 @@ namespace wpfReestr
                                     ,try_cast(dbo.jsonValReal(NOM_USL, 'SOD')  as decimal(6,2)) as 'ONK_SL/SOD'
                 --- БЛОК Диагноститческий блок B_DIAG --- 
                                     ,(select 
-                                            convert(date, DIAG_DATE, 104 )    as 'B_DIAG/DIAG_DATE'
+                                         convert(date, DIAG_DATE, 104 )    as 'B_DIAG/DIAG_DATE'
                                         ,DIAG_TIP       as 'B_DIAG/DIAG_TIP' 
                                         ,DIAG_CODE      as 'B_DIAG/DIAG_CODE'
                                         ,DIAG_RSLT      as 'B_DIAG/DIAG_RSLT'
@@ -436,10 +403,10 @@ namespace wpfReestr
 							            ,json_value(value, '$.LEK_TIP_L') as 'ONK_USL/LEK_TIP_L'
 							            ,json_value(value, '$.LEK_TIP_V') as 'ONK_USL/LEK_TIP_V'
 							            ,(select 
-								            json_value(value, '$.REGNUM') as 'LEK_PR/REGNUM'
+								             json_value(value, '$.REGNUM') as 'LEK_PR/REGNUM'
 								            ,json_value(value, '$.CODE_SH') as 'LEK_PR/CODE_SH'
 								            ,(select convert(nvarchar(10), convert(date, value, 104 ), 20) as DATE_INJ 
-								             from openjson(value, '$.DATE_INJ')	for xml path(''), type) as 'LEK_PR'
+								              from openjson(value, '$.DATE_INJ')	for xml path(''), type) as 'LEK_PR'
 							             from openjson(value, '$.LEK_PR')
 							             for xml path(''), type) as 'ONK_USL'
 							            ,json_value(value, '$.LUCH_TIP') as 'ONK_USL/LUCH_TIP' 
@@ -470,21 +437,16 @@ namespace wpfReestr
                                     ,cast(dbo.jsonValReal(NOM_USL, 'IT_SL') as decimal(8,5))            as 'KSG_KPG/IT_SL'     
             --- КСЛП для стационара SL_KOEF ---
                                     ,(select 
+                                                24      as 'SL_KOEF/IDSL'       
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl03') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
+                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl03') = 1
+                                        for xml path(''), type ) as 'KSG_KPG' 
+                                    ,(select 
                                                 10      as 'SL_KOEF/IDSL'       
                                             ,cast(dbo.jsonValReal(NOM_USL, 'Sl10') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
                                         where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl10') = 1
-                                        for xml path(''), type ) as 'KSG_KPG' 
-                                    ,(select 
-                                                13      as 'SL_KOEF/IDSL'       
-                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl13') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
-                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl13') = 1
-                                        for xml path(''), type ) as 'KSG_KPG' 
-                                    ,(select 
-                                                14      as 'SL_KOEF/IDSL'       
-                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl14') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
-                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl14') = 1
                                         for xml path(''), type ) as 'KSG_KPG'                                                                                                                                                                                                                                
-                                    where LPU_ST in (1, 2)
+                                     where LPU_ST in (1, 2)
                                     for xml path(''), type ) as 'SL'
             --- продолжаем Случай SL ---
                                 ,PRVS       as 'SL/PRVS'
@@ -575,7 +537,7 @@ namespace wpfReestr
 			                    max(stringvalue)
 			                    for name in (Usl, Tip, DatN, DatK, DopUsl, Frakc)
 			                    ) as dd
-			                    where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh'
+			                    where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh' and left(Usl, 3) <> 'gem'
                                 order by convert(date, DatN, 104), Cod -- Сортируем услуги по дате
 			                    for xml path(''), type ) as 'SL'
             --- Услуга Параклиники USL ---
@@ -612,9 +574,9 @@ namespace wpfReestr
             for xml path(''), root('ZL_LIST'),  type";
             return _Return;
         }
-        
-        /// <summary>Выгрузка ВМП Файла ВЕРСИЯ 2019, приказ 285</summary>
-        public static string StrahReestrXML_Select_VMP_2(int CodFile, string pMainFileName)
+
+        /// <summary>Выгрузка ВМП Файла ВЕРСИЯ 2021</summary>
+        public static string StrahReestrXML_Select_T_2021(int CodFile, string pMainFileName)
         {
             string _Return = $@"
                     use Bazis;
@@ -631,13 +593,7 @@ namespace wpfReestr
                         ,[YEAR]     as 'SCHET/YEAR'
                         ,[MONTH]    as 'SCHET/MONTH'
                         ,NSCHET     as 'SCHET/NSCHET'
-                        ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'
-                        ,case StrahComp 
-                            when 1 then '55050'
-                            when 2 then '55041'
-                            when 3 then '55044'
-                            else null
-                         end        as 'SCHET/PLAT'
+                        ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'                       
                         ,SUMMAV     as 'SCHET/SUMMAV'
                     --- Запись ZAP ---  
                         ,(select      
@@ -648,9 +604,6 @@ namespace wpfReestr
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                                 ,NUMBER     as 'ZAP/PACIENT/NPOLIS'	
-                                ,iif(VPOLIS = 1, SMO_OK, null) as 'ZAP/PACIENT/ST_OKATO'
-                                ,PLAT       as 'ZAP/PACIENT/SMO'
-                                ,SMO_OK     as 'ZAP/PACIENT/SMO_OK'   		  
                                 ,0          as 'ZAP/PACIENT/NOVOR'
                     -- Законченный случай Z_SL ---
                                 ,(select  
@@ -881,8 +834,8 @@ namespace wpfReestr
             return _Return;
         }
 
-        /// <summary>Выгрузка файла НЕ зно ВЕРСИЯ 2019, приказ 285</summary>
-        public static string StrahReestrXML_Select_Main_4(int CodFile, string pMainFileName)
+        /// <summary>Выгрузка файла НЕ зно ВЕРСИЯ 2021</summary>
+        public static string StrahReestrXML_Select_H_2021(int CodFile, string pMainFileName)
         {
             string _Return = $@"
                     use Bazis;
@@ -900,12 +853,6 @@ namespace wpfReestr
                         ,[MONTH]    as 'SCHET/MONTH'
                         ,NSCHET     as 'SCHET/NSCHET'
                         ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'
-                        ,case StrahComp 
-                            when 1 then '55050'
-                            when 2 then '55041'
-                            when 3 then '55044'
-                            else null
-                         end        as 'SCHET/PLAT'
                         ,SUMMAV     as 'SCHET/SUMMAV'
                     --- Запись ZAP ---  
                         ,(select      
@@ -916,9 +863,6 @@ namespace wpfReestr
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                                 ,NUMBER     as 'ZAP/PACIENT/NPOLIS'	
-                                ,iif(VPOLIS = 1, SMO_OK, null) as 'ZAP/PACIENT/ST_OKATO'
-                                ,PLAT       as 'ZAP/PACIENT/SMO'
-                                ,SMO_OK     as 'ZAP/PACIENT/SMO_OK'
                                 ,0          as 'ZAP/PACIENT/NOVOR'
                     -- Законченный случай Z_SL ---
                                 ,(select  
@@ -969,21 +913,16 @@ namespace wpfReestr
                                             ,cast(dbo.jsonValReal(NOM_USL, 'IT_SL') as decimal(8,5))            as 'KSG_KPG/IT_SL'     
                     --- КСЛП для стационара SL_KOEF ---
                                             ,(select 
+                                                     24      as 'SL_KOEF/IDSL'       
+                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl03') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
+                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl03') = 1
+                                                for xml path(''), type ) as 'KSG_KPG'  
+                                            ,(select 
                                                      10      as 'SL_KOEF/IDSL'       
                                                     ,cast(dbo.jsonValReal(NOM_USL, 'Sl10') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
                                                 where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl10') = 1
-                                                for xml path(''), type ) as 'KSG_KPG'  
-						                    ,(select 
-                                                     13      as 'SL_KOEF/IDSL'       
-                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl13') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
-                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl13') = 1
-                                                for xml path(''), type ) as 'KSG_KPG' 
-                                            ,(select 
-                                                     14      as 'SL_KOEF/IDSL'       
-                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl14') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'      
-                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl14') = 1
-                                                for xml path(''), type ) as 'KSG_KPG'                                                                                                                                                                                                                            
-                                            where LPU_ST in (1, 2)
+                                                for xml path(''), type ) as 'KSG_KPG'                                                                                                                                                                                                                          
+                                             where LPU_ST in (1, 2)
                                             for xml path(''), type ) as 'SL'
                     --- продолжаем Случай SL ---
                                         ,PRVS       as 'SL/PRVS'
@@ -1110,18 +1049,13 @@ namespace wpfReestr
                         ,POL                                as 'PERS/W'
                         ,convert(nvarchar(10), VOZRAST, 20) as 'PERS/DR'
                         ,iif(OS_SLUCH = '2', '1', null)     as 'PERS/DOST'                        
-                        ,iif(FAM_P = '', null, FAM_P)       as 'PERS/FAM_P'
-                        ,iif(IM_P = '', null, IM_P)         as 'PERS/IM_P'
-                        ,iif(OT_P = '', null, OT_P)         as 'PERS/OT_P'
-                        ,iif(W_P = 0, null, cast(W_P as char(1))) as 'PERS/W_P'
-                        ,iif(isnull(DR_P, '') = '', null, convert(nvarchar(10), DR_P, 20)) as 'PERS/DR_P'
                         ,iif(OT_P = 'НЕТ', '1', null)       as 'PERS/DOST_P'
                         ,replace(MR, '""', '&quot;')        as 'PERS/MR'
                         ,iif(DOCTYPE = 0, null, cast(DOCTYPE as char(2))) as 'PERS/DOCTYPE'                        
                         ,iif(DOCSER = '', null, DOCSER)     as 'PERS/DOCSER'
                         ,iif(DOCNUM = '', null, DOCNUM)     as 'PERS/DOCNUM'
-                        ,iif(DOCDATE is null, null, convert(nvarchar(10), DOCDATE, 20))  as 'PERS/DOCDATE'
-                        ,iif(DOCORG = '', null, DOCORG)     as 'PERS/DOCORG'
+                        ,iif(DOCDATE is null, null, convert(nvarchar(10), DOCDATE, 20))  as 'PERS/DOCDATE' -- убрать
+                        ,iif(DOCORG = '', null, DOCORG)     as 'PERS/DOCORG'        -- убрать
                         ,iif(SS = '', null, SS)             as 'PERS/SNILS'
                         ,OKATOG                             as 'PERS/OKATOG'
                         ,OKATOG                             as 'PERS/OKATOP'                     
@@ -1170,10 +1104,10 @@ namespace wpfReestr
         public static string DeleteFromExcel_Select_1()
         {
             string _Return = $@"
-                select count(*) as Cou, min(f.pParent) as Par, count(distinct z.Reestr) as Rees
+                select count(*) as Cou, count(distinct z.Reestr) as Rees --, min(f.pParent) as Par
                 from Bazis.dbo.StrahReestr	as r
                 join Bazis.dbo.StrahZero	as z  on r.CodFile = z.Reestr and r.NOM_ZAP = z.IDCase
-                join Bazis.dbo.StrahFile	as f  on z.Reestr = f.Cod";
+             --   join Bazis.dbo.StrahFile	as f  on z.Reestr = f.Cod";
             return _Return;
         }
 
@@ -1192,10 +1126,10 @@ namespace wpfReestr
         public static string ZeroFromExcel_Select_1()
         {
             string _Return = $@"
-                select count(*) as Cou, max(f.pParent) as Par, count(distinct z.Reestr) as Rees
+                select count(*) as Cou, count(distinct z.Reestr) as Rees --, max(f.pParent) as Par
                 from Bazis.dbo.StrahReestr	as r
                 join Bazis.dbo.StrahZero	as z  on r.CodFile = z.Reestr and r.NOM_ZAP = z.IDCase
-                join Bazis.dbo.StrahFile	as f  on z.Reestr = f.Cod";
+              --  join Bazis.dbo.StrahFile	as f  on z.Reestr = f.Cod";
             return _Return;
         }
 
@@ -1244,12 +1178,14 @@ namespace wpfReestr
 	                DS1 nvarchar(10),
 	                PRVS int,
 	                PROFIL int,
+                    VIDPOM int,
 	                SUM_LPU numeric(15,2),
 	                METOD_HMP nvarchar(5),
 	                NOM_USL nvarchar(max),					
 	                NOM_ZAP int,
 	                Cod int primary key,
-                    CodFile int                    
+                    CodFile int,
+                    PR_NOV int
                 );
 
                 insert @Reestr
@@ -1274,12 +1210,14 @@ namespace wpfReestr
 	                ,DS1
 	                ,PRVS
 	                ,PROFIL
+                    ,VIDPOM
 	                ,SUM_LPU
 	                ,METOD_HMP
 	                ,NOM_USL					
 	                ,NOM_ZAP
 	                ,Cod
                     ,CodFile 
+                    ,PR_NOV
                 from dbo.StrahReestr
                 where CodFile = @CodFile
 
@@ -1300,7 +1238,7 @@ namespace wpfReestr
                     ,r.KOL_USL  
                     ,r.DS1 
                     ,r.SUM_LPU                   
-                    ,iif(r.LPU_ST = 3, iif(json_value(r.NOM_USL, '$.P_Cel') = '3.0', 'Обращение', 'Разовое'), '') as Polik
+                    ,iif(r.LPU_ST = 3, iif(json_value(r.NOM_USL, '$.P_Cel') = '3.0', 'Обращение', iif(r.VIDPOM = 14, 'Телемедицина', 'Разовое')), '') as Polik
 	                ,r.PRVS
 	                ,r.PROFIL					
                     ,r.METOD_HMP                   
@@ -1313,7 +1251,9 @@ namespace wpfReestr
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[2].Usl'), ''), '') as Usl3
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[3].Usl'), ''), '') as Usl4
 	                ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.USL[4].Usl'), ''), '') as Usl5
-                    ,iif(s.Arhiv = 1, 'не в архиве', '') as Arhiv                    
+                    ,iif(s.Arhiv = 1, 'не в архиве', '') as Arhiv 
+                    ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.ONK_SL.ONK_USL[0].USL_TIP'), ''), '') as N013
+                    ,PR_NOV
                 from @Reestr as r
                 left join (select r.Cod    -- Поликлиника
                                  ,iif(r.LPU_1 = 55550900, '1я поликлиника', '2я поликлиника') as Podr
@@ -1346,147 +1286,242 @@ namespace wpfReestr
         }
         #endregion
 
-        #region ---- Для формирования реестра ----
-        /// <summary>Заготовка таблицы StrahReestr</summary>
-        /// <param name="pSelectAll">Фрагмент sql общих полей для вывода</param>
-        /// <param name="pWerePol">Фрагмента sql для поликлинники</param>
-        /// <param name="pWereStac">Фрагмента sql для стационара </param>
-        /// <param name="pWerePar">Фрагмента sql для параклиники </param>
-        public static string ReStrahReestr_Select_1(string pSelectAll, string pWerePol, string pWereStac, string pWerePar)
+        #region ---- Для формирования реестра ----        
+        /// <summary>Заготовка таблицы StrahReestr  (Новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReStrahReestr_Select_2(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
                 use Bazis;
-                select 3     as LPU_ST                                        -- тип подразделения (3 - поликлиника)
-                      ,cast(a.Cod as decimal) as Cod 
-                      ,a.DP   
-                      ,1 as Doubl
-                      {pSelectAll}                                              
-                from dbo.APAC as a                                              -- поликлиника
-                left join dbo.ErrorASU  as e    on a.PD = e.Cod                 -- справочник ошибок                      
-                join dbo.kbol           as k    on a.KL = k.KL 
-                left join dbo.s_Diag    as d    on d.KOD=a.D   
-                left join dbo.s_Docum   as do   on k.Doc = do.KOD  
-                left join dbo.KLADR  as kl
-                  on concat(right(concat('00', k.Obl),2), 
-			            right(concat('000', k.KR), 3),
-			            right(concat('000', k.Gorod), 3), 
-			            right(concat('000', k.NasP), 3), '00') = kl.CODE  
-                where {pWerePol}                                                -- условия поликлиники
-                union all                                                           
-                select iif(o.Tip = 1, 1, 2) as LPU_ST                           -- 1 кр. стационар, 2 дн. стационар 
-                      ,a.IND as Cod
-                      ,a.DN as DP
-                      ,1 as Doubl
-                      {pSelectAll}  
-                from dbo.APSTAC as a                                            -- стационар
-                left join dbo.ErrorASU  as e    on a.PD = e.Cod                 -- справочник ошибок
-                join dbo.s_Department   as o    on o.Cod = a.otd                -- отделения                  
-                join dbo.kbol           as k    on a.KL = k.KL 
-                left join dbo.s_Diag    as d    on d.KOD = a.D 
-                left join dbo.s_Docum   as do   on k.Doc = do.KOD
-                left join dbo.KLADR  as kl
-                  on concat(right(concat('00', k.Obl),2), 
-			            right(concat('000', k.KR), 3),
-			            right(concat('000', k.Gorod), 3), 
-			            right(concat('000', k.NasP), 3), '00') = kl.CODE
-                left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
-                  on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0                                        
-                {pWereStac}                                                             -- условия стационара
-                union all
-                select d.* from (
-                    select 4 as LPU_ST		-- тип подразделения (4 - параклиника, при выгрузке в XML превратить в 3)
-	                    ,cast(i.Cod as decimal) as Cod
-	                    ,p.pDate as DP
-                        ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
-	                    {pSelectAll}
-                    from dbo.parProtokol	as p
-                    join dbo.parObsledov	as o	on p.CodApstac = o.Cod
-                    join dbo.kbol			as k	on p.KL = k.KL
-                    join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap 
-                    join dbo.s_Diag			as d	on d.KOD = json_value(i.jTag, '$.Diag')
-                    join dbo.s_Docum		as do   on k.Doc = do.KOD 
-                    left join dbo.KLADR		as kl
-                        on concat(right(concat('00', k.Obl),2), 
-			                    right(concat('000', k.KR), 3),
-			                    right(concat('000', k.Gorod), 3), 
-			                    right(concat('000', k.NasP), 3), '00') = kl.CODE
-                    left join dbo.ErrorASU as e on json_value(i.jTag, '$.Error') = e.Cod
-                    where NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
-                    {pWerePar}                                                               -- условия параклиника
-                ) as d
-				where Dubl = 1  -- избавляемся от дублей
-                union all
-                select 5 as LPU_ST		-- тип подразделения (5 - гистология, при выгрузке в XML превратить в 3)
-	                  ,cast(i.Cod as decimal) as Cod
-	                  ,p.pDate as DP
-                      ,1 as Doubl
-	                {pSelectAll}
-				from dbo.kdlProtokol	as p
-				join dbo.kbol			as k	on p.KL = k.KL
-				join dbo.kbolInfo		as i	on i.Tab = 'kdl' and i.CodZap = p.Cod
-                join dbo.s_Diag			as d	on d.KOD = json_value(i.jTag, '$.Diag')
+
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                select d.LPU_ST
+                    ,d.Cod
+                    ,d.DP
+                    ,k.FAM
+                    ,k.I
+                    ,k.O 
+                    ,k.DR
+                    ,di.DStrah as D   
+                    ,k.Pol
+                    ,k.SNILS
+                    ,do.NewCod as Doc
+                    ,k.Bpl as MR
+                    ,k.Pasp_Ser
+                    ,k.Pasp_Nom
+                    ,k.Pasp_Kogda
+                    ,k.Pasp_Kem
+                    ,k.KL
+                    ,isnull(kl.OCATD,'52401000000') as OCATD
+                    ,d.Korekt
+                from (
+                    -- ## ПОЛИКЛИНИКА ##
+                    select 3     as LPU_ST                                          -- тип подразделения (3 - поликлиника)
+                            ,cast(a.Cod as decimal) as Cod 
+                            ,a.DP            
+                            ,a.KL
+                            ,a.D 
+                            ,iif(isnull(a.VZ10, 0) = 0, 0, 1) as Korekt             -- если исправления то 1, иначе 0
+                    from dbo.APAC as a                                              -- поликлиника
+                    left join dbo.ErrorASU  as e    on a.PD = e.Cod                 -- справочник ошибок                      
+                    where  @TipReestr in (3, 4)                                     -- только для С и Н реестров
+                            and (a.DateCloseTap between @DateNNew and @DateKNew     -- по дате посещения
+                              or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                                and isnull(a.VZ10, 0) > 0 
+                                and a.DateCloseTap between @DateNOld and @DateKOld))
+                            and a.OMS = 1                                           -- только ОМС
+                            and isnull(a.NumberFirstTap, 0) > 0 
+                            and isnull(a.xDelete, 0) = 0                     
+                            and ((@TipReestr = 3 and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0'))       -- берем ЗНО диагнозы для С реестров
+                                or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                            and isnull(e.FlagOut, 1) <> 0
+                    union all 
+    
+                    -- ## СТАЦИОНАР ##
+                    select iif(o.Tip = 1, 1, 2) as LPU_ST                           -- 1 кр. стационар, 2 дн. стационар 
+                            ,a.IND as Cod
+                            ,a.DN as DP           
+                            ,a.KL
+                            ,a.D
+                            ,iif(isnull(a.VZ10, 0) = 0, 0, 1) as Korekt             -- если исправления то 1, иначе 0
+                    from dbo.APSTAC as a                                            -- стационар
+                    join dbo.s_Department       as o    on o.Cod = a.otd            -- отделения                  
+                    left join dbo.astProtokol   as p                                -- находим протокол Метод ВМП (если есть)
+                        on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0 
+                    left join dbo.ErrorASU      as e    on a.PD = e.Cod             -- справочник ошибок     
+                    where  (a.DK between @DateNNew and @DateKNew                    -- по дате посещения
+                              or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                                and isnull(a.VZ10, 0) > 0 
+                                and a.DK between @DateNOld and @DateKOld))
+                            and isjson(a.xInfo) > 0
+                            and a.OMS = 1                                           -- только ОМС
+                            and a.FlagOut > 0                                       -- флаг выписки     
+                            and a.OtdOut = 0                                        -- отбрасываем переведенных в другие отделения
+                            and isnull(a.xDelete, 0) = 0
+                            and ((@TipReestr in (3, 4) and p.Cod is null)           -- отбрасываем ВМП, для реестров С и Н
+                               or (@TipReestr = 1 and p.Cod is not null))           -- берем только ВМП, для реестра Т
+                            and ((@TipReestr in (1, 3) and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0')) -- берем ЗНО диагнозы для С и Т реестров
+                                or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                            and isnull(e.FlagOut, 1) <> 0
+                    union all
+
+                    -- ## ПАРАКЛИНИКА ##
+                    select LPU_ST
+                          ,Cod
+                          ,DP         
+                          ,KL
+                          ,D
+                          ,Korekt
+                    from (
+                        select 4 as LPU_ST		                                    -- тип подразделения (4 - параклиника, при выгрузке в XML превратить в 3)
+	                        ,cast(i.Cod as decimal) as Cod
+	                        ,p.pDate as DP
+                            ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
+                            ,p.KL
+                            ,json_value(i.jTag, '$.Diag') as D
+                            ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt -- если исправления то 1, иначе 0
+                        from dbo.parProtokol	as p
+                        join dbo.parObsledov	as o	on p.CodApstac = o.Cod
+                        join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap 
+                        left join dbo.ErrorASU  as e    on json_value(i.jTag, '$.Error') = e.Cod
+                        where @TipReestr = 3                                        -- только для С реестра
+                            and NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
+                            and i.Oms = 1
+                            and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
+                                or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                                    and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0 
+                                    and p.pDate between @DateNOld and @DateKOld))
+                            and isjson(i.jTag) > 0                   
+                            and isnull(p.xDelete, 0) = 0
+                            and isnull(e.FlagOut, 1) <> 0
+                    ) as d
+                    where Dubl = 1                                                  -- избавляемся от дублей
+                    union all
+
+                    -- ## ГИСТОЛОГИЯ ##
+                    select 5 as LPU_ST		                                        -- тип подразделения (5 - гистология, при выгрузке в XML превратить в 3)
+	                        ,cast(i.Cod as decimal) as Cod
+	                        ,p.pDate as DP            
+                            ,p.KL
+                            ,json_value(i.jTag, '$.Diag') as D 
+                            ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt -- если исправления то 1, иначе 0
+                    from dbo.kdlProtokol	as p
+                    join dbo.kbolInfo		as i	on i.Tab = 'kdl' and i.CodZap = p.Cod
+                    where @TipReestr = 3                                            -- только для С реестра
+                            and NumShablon = 20001                   
+                            and i.Oms = 1
+                            and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
+                                or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                                    and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0 
+                                    and p.pDate between @DateNOld and @DateKOld))   
+                            and isjson(i.jTag) > 0                   
+                            and isnull(p.xDelete, 0) = 0
+                ) as d                             
+                join dbo.s_Diag         as di   on di.KOD = d.D
+                join dbo.kbol           as k    on d.KL = k.KL 
                 join dbo.s_Docum		as do   on k.Doc = do.KOD 
-                left join dbo.KLADR		as kl
-                    on concat(right(concat('00', k.Obl),2), 
-			                right(concat('000', k.KR), 3),
-			                right(concat('000', k.Gorod), 3), 
-			                right(concat('000', k.NasP), 3), '00') = kl.CODE
-                left join dbo.ErrorASU as e on json_value(i.jTag, '$.Error') = e.Cod
-                where NumShablon = 20001
-                {pWerePar}                                                               -- условия параклиника (гистология)
-                order by FAM, I, O, DR";
+                left join dbo.KLADR     as kl
+                  on concat(right(concat('00', k.Obl),2), 
+                            right(concat('000', k.KR), 3),
+		                    right(concat('000', k.Gorod), 3), 
+		                    right(concat('000', k.NasP), 3), '00') = kl.CODE
+                where Korekt = 1
+                order by k.FAM, k.I, k.O, k.DR, d.DP";
 
             return _Return;
         }
 
-        /// <summary>Загружаем данные поликлиники Apac 1</summary>
-        /// <param name="pWerePol">Фрагмента sql для поликлинники</param>
-        public static string ReApac_Select_1(string pWerePol)
+        #region ---- ПОЛИКЛИНИКА ---- 
+        /// <summary>Загружаем данные поликлиники Apac 1 (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReApac_Select_4(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
                     use Bazis
 
-                    select cast(a.Cod as decimal) as Cod 
-                          ,3 as LPU_ST
-                          ,a.Scom                          
-                          ,a1.Age
-                          ,a1.DP as DN	                     
-                          ,a.DP as DK                      
-                          ,a.REZOBR
-                          ,a.SN
-                          ,a.SS
-                          ,v.IDDOKT
-                          ,v.Podrazd
-                          ,v.PRVS                                                 -- специальность	
-	                      ,a.NumberFirstTap    
-                          ,s.PROFIL                                               -- профиль                         
-                          ,s.VIDPOM                                               -- вид помощи
-                          ,isnull(s.Tarif, 0) as Tarif                            -- тариф  
-	                      ,iif(a.Cod <> a.NumberFirstTap, (select count(*) 
-                                                           from dbo.APAC as a2
-                                                           where a2.NumberFirstTap = a.NumberFirstTap), 1) as uet3   
-                           ,iif(a.Cod <> a.NumberFirstTap, '3.0', '1.0') as P_CEL  -- цель посещения  
-	                       ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,		-- 1 - острый характер заболевания
-								iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DP) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
-									iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DP) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
-                    from dbo.APAC               as a                                 -- поликлиника
-                    join dbo.APAC               as a1   on a.NumberFirstTap = a1.Cod                  
-                    left join dbo.s_VrachPol    as v    on a.KV = v.KOD
-                    left join dbo.StrahStacSv   as s    on v.PRVS = s.PRVS and a.DP between s.DateN and s.DateK
-		                and ((s.Flag = 2 and a.Cod = a.NumberFirstTap) or (s.Flag = 8 and a.Cod <> a.NumberFirstTap))
-						and ((a1.Age > 17 and s.Child = 0) or (a1.Age < 18 and s.Child = 1))
-                    left join dbo.s_Diag        as d     on d.KOD = a.D
-                    where {pWerePol}";
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                select cast(a.Cod as decimal) as Cod 
+                        ,3 as LPU_ST
+                        ,a.Scom                          
+                        ,a1.Age
+                        ,a1.DP as DN	                     
+                        ,a.DP as DK                      
+                        ,a.REZOBR
+                        ,a.SN
+                        ,a.SS
+                        ,v.IDDOKT
+                        ,v.Podrazd
+                        ,v.PRVS                                                 -- специальность	
+	                    ,a.NumberFirstTap    
+                        ,s.PROFIL                                               -- профиль                         
+                        ,s.VIDPOM                                               -- вид помощи
+                        ,isnull(s.Tarif, 0) as Tarif                            -- тариф  
+	                    ,iif(a.Cod <> a.NumberFirstTap, (select count(*) 
+                                                        from dbo.APAC as a2
+                                                        where a2.NumberFirstTap = a.NumberFirstTap), 1) as uet3   
+                        ,iif(a.Cod <> a.NumberFirstTap, '3.0', '1.0') as P_CEL      -- цель посещения  
+	                    ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,		-- 1 - острый характер заболевания
+							iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DP) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
+								iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DP) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
+                from dbo.APAC               as a                                    -- поликлиника
+                join dbo.APAC               as a1   on a.NumberFirstTap = a1.Cod                  
+                left join dbo.s_VrachPol    as v    on a.KV = v.KOD
+                left join dbo.StrahTarif    as s    on v.PRVS = s.PRVS and a.DP between s.DateN and s.DateK
+		            and ((s.Flag = 2 and a.Cod = a.NumberFirstTap) or (s.Flag = 8 and a.Cod <> a.NumberFirstTap))
+					and ((a1.Age > 17 and s.Child = 0) or (a1.Age < 18 and s.Child = 1))
+                left join dbo.s_Diag        as d     on d.KOD = a.D
+                left join dbo.ErrorASU      as e    on a.PD = e.Cod                 -- справочник ошибок
+                where @TipReestr in (3, 4)                                          -- только для С и Н реестров
+                    and (a.DateCloseTap between @DateNNew and @DateKNew             -- по дате посещения
+                        or (@Main = 1                                               -- только для основного реестра, смотрим исправления за прошлый месяц
+                        and isnull(a.VZ10, 0) > 0 
+                        and a.DateCloseTap between @DateNOld and @DateKOld))
+                    and a.OMS = 1                                                   -- только ОМС
+                    and isnull(a.NumberFirstTap, 0) > 0 
+                    and isnull(a.xDelete, 0) = 0                     
+                    and ((@TipReestr = 3 and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0'))       -- берем ЗНО диагнозы для С реестров
+                        or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                    and isnull(e.FlagOut, 1) <> 0";
 
             return _Return;
         }
 
-        /// <summary>Загружаем данные поликлиники Apac 2</summary>
-        /// <param name="pWerePol">Фрагмента sql для поликлинники</param>
-        public static string ReApac_Select_2(string pWerePol)
+        /// <summary>Загружаем данные поликлиники Apac 2 (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReApac_Select_5(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
-                     select t.Num	                  
+                    use Bazis
+
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                select t.Num	                  
 	                  ,t.NumberFirstTap
 	                  ,t.DP
 	                  ,t.PRVS as PRVS_Usl
@@ -1511,12 +1546,24 @@ namespace wpfReestr
                           ,json_value(a2.xInfo, '$.LPUNapr') as NPR_MO          -- ЛПУ направления
                           ,try_cast(json_value(a2.xInfo, '$.DateNapr') as date) as NPR_DATE       -- дата направления
                           ,ki.jTag
-	                from dbo.APAC as a2
+	                from dbo.APAC            as a2
 	                left join dbo.s_VrachPol as v        on a2.KV = v.KOD
-	                join dbo.APAC            as a        on {pWerePol} and a.NumberFirstTap = a2.NumberFirstTap and a.IsCloseTap = 2
+	                join dbo.APAC            as a        on a.NumberFirstTap = a2.NumberFirstTap and a.IsCloseTap = 2
                     left join dbo.kbolInfo   as ki       on ki.Tab = 'pol' and a2.Cod = ki.CodZap 
+                    left join dbo.ErrorASU   as e        on a.PD = e.Cod            -- справочник ошибок
+                    where @TipReestr in (3, 4)                                      -- только для С и Н реестров
+                        and (a.DateCloseTap between @DateNNew and @DateKNew         -- по дате посещения
+                            or (@Main = 1                                           -- только для основного реестра, смотрим исправления за прошлый месяц
+                            and isnull(a.VZ10, 0) > 0 
+                            and a.DateCloseTap between @DateNOld and @DateKOld))
+                        and a.OMS = 1                                               -- только ОМС
+                        and isnull(a.NumberFirstTap, 0) > 0 
+                        and isnull(a.xDelete, 0) = 0                     
+                        and ((@TipReestr = 3 and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0'))       -- берем ЗНО диагнозы для С реестров
+                            or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                        and isnull(e.FlagOut, 1) <> 0
                 ) as t
-                left join dbo.StrahStacSv   as s                                                                          
+                left join dbo.StrahTarif   as s                                                                          
                   on t.PRVS = s.PRVS and t.DateCloseTap between s.DateN and s.DateK
 	                and ((s.Flag = 2 and uet3 = 1)
                       or (s.Flag = 8 and uet3 > 1 and Num = 1)
@@ -1528,26 +1575,47 @@ namespace wpfReestr
             return _Return;
         }
 
-        /// <summary>Загружаем данные поликлиники Apac 3 (консилиумы)</summary>
-        /// <param name="pWerePol">Фрагмента sql для поликлинники</param>
-        public static string ReApac_Select_3 (string pWerePol)
+        /// <summary>Загружаем данные поликлиники Apac 3 (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReApac_Select_6(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
-                -- Дата и цель последнего консилиума
-                use Bazis
+                    use Bazis
+
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                -- Дата и цель последнего консилиума               
                 select	 cast(a.Cod as decimal) as Cod
 		                ,iif(json_value(jTag, '$.Taktika_1') is not null, 1, iif(json_value(jTag, '$.Taktika_2') is not null, 2, 3)) as PR_CONS
-		                ,isnull(isnull(json_value(jTag, '$.Taktika_1'), json_value(jTag, '$.Taktika_2')), json_value(jTag, '$.Taktika_3')) as DT_CONS		
+		                ,left(isnull(isnull(json_value(jTag, '$.Taktika_1'), json_value(jTag, '$.Taktika_2')), json_value(jTag, '$.Taktika_3')), 10) as DT_CONS		
                 from (
 	                select   a.Cod
 			                ,kp.jTag
 			                ,row_number() over(partition by a.Cod order by isnull(a1.DP, s1.DK) desc) as Num
-	                from dbo.APAC               as a                                 
+	                from dbo.APAC           as a                                 
 	                left join dbo.kbolInfo as kp on kp.KL = a.KL
-	                left join dbo.APAC as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DP >= a1.DP
-	                left join dbo.APSTAC as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DP >= s1.DK
-	                where                                                         
-		                {pWerePol}
+	                left join dbo.APAC     as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DP >= a1.DP
+	                left join dbo.APSTAC   as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DP >= s1.DK                
+                    left join dbo.ErrorASU as e  on a.PD = e.Cod                    -- справочник ошибок
+                    where @TipReestr in (3, 4)                                      -- только для С и Н реестров
+                        and (a.DateCloseTap between @DateNNew and @DateKNew         -- по дате посещения
+                            or (@Main = 1                                           -- только для основного реестра, смотрим исправления за прошлый месяц
+                            and isnull(a.VZ10, 0) > 0 
+                            and a.DateCloseTap between @DateNOld and @DateKOld))
+                        and a.OMS = 1                                               -- только ОМС
+                        and isnull(a.NumberFirstTap, 0) > 0 
+                        and isnull(a.xDelete, 0) = 0                     
+                        and ((@TipReestr = 3 and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0'))       -- берем ЗНО диагнозы для С реестров
+                            or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                        and isnull(e.FlagOut, 1) <> 0   	               
 		                and isjson(kp.jTag) > 0
 		                and kp.jTag like '%Taktika_%'
 		                and (a1.DP is not null or s1.DK is not null)
@@ -1558,15 +1626,27 @@ namespace wpfReestr
 
             return _Return;
         }
+        #endregion
 
-        /// <summary>Загружаем данные стационара Apstac 1</summary>
-        /// <param name="pWereStac">Фрагмента sql для стационара </param>
-        public static string ReApstac_Select_1(string pWereStac)
+        #region ---- СТАЦИОНАР ---- 
+        /// <summary>Загружаем данные стационара Apstac 1 (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReApstac_Select_4(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
-                use Bazis;
+                    use Bazis
 
-                select *
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                 select *
                     from (
                         select dense_rank() over(PARTITION BY a.IND order by s.Tarif desc, v.Nom) as Rang         
                             ,a.IND
@@ -1601,181 +1681,254 @@ namespace wpfReestr
 		                    ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,		-- 1 - острый характер заболевания
 			                    iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DK) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
 				                    iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DK) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
-                         from dbo.APSTAC as a                                   -- стационар   
-                         left join dbo.ErrorASU	as e	on a.PD = e.Cod         -- справочник ошибок                                                  
-                         join dbo.s_Department  as o    on o.Cod = a.otd        -- отделения
-                         left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
-                           on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
-                         left join (select KOD, Nom, PRVSs, IDDOKT
-                               from (select KOD, IDDOKT, PRVS, PRVS_1, PRVS_2, PRVS_3, PRVS_4
-                                     from dbo.s_VrachStac) as pr 
-                               unpivot
-                               (PRVSs for Nom in (PRVS, PRVS_1, PRVS_2, PRVS_3, PRVS_4)) as un
+                            from dbo.APSTAC as a                                   -- стационар   
+                            left join dbo.ErrorASU	as e	on a.PD = e.Cod         -- справочник ошибок                                                  
+                            join dbo.s_Department   as o    on o.Cod = a.otd        -- отделения
+                            left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
+                              on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
+                            left join (select KOD, Nom, PRVSs, IDDOKT
+                                from (select KOD, IDDOKT, PRVS, PRVS_1, PRVS_2, PRVS_3, PRVS_4
+                                        from dbo.s_VrachStac) as pr 
+                                unpivot
+                                (PRVSs for Nom in (PRVS, PRVS_1, PRVS_2, PRVS_3, PRVS_4)) as un
                                 where  PRVSs <> ''   ) as v 
-                           on v.KOD = a.KV 
-                              and not((a.OTD in (17, 18) and PRVSs = 41)        -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102 
-                                   or (a.Age > 17 and PRVSs = 19)               -- если взрослый, то не берем специальность детскую онкологию 
-                                   or (p.Cod is not null and PRVSs not in (41, 57, 58)))      -- отсекаем для ВМП все специальности, кроме онкологии и радиологии                                                                                  
-                         left join dbo.StrahStacSv   as s                                                                          
-                           on v.PRVSs = s.PRVS and a.DK between s.DateN and s.DateK   
-							and ((s.Flag = 0 and o.Tip = 1) or (s.Flag = 1 and o.Tip = 2))   
-                         left join dbo.kbolInfo as ki
-                           on ki.Tab = 'stac' and a.IND = ki.CodZap    
-                         left join dbo.s_Diag        as d     on d.KOD = a.D                 
-                         {pWereStac}
-                         ) as dd     
+                              on v.KOD = a.KV 
+                                and not((a.OTD in (17, 18) and PRVSs = 41)        -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102 
+                                    or (a.Age > 17 and PRVSs = 19)               -- если взрослый, то не берем специальность детскую онкологию 
+                                    or (p.Cod is not null and PRVSs not in (41, 57, 58)))      -- отсекаем для ВМП все специальности, кроме онкологии и радиологии                                                                                  
+                            left join dbo.StrahTarif   as s                                                                          
+                               on v.PRVSs = s.PRVS and a.DK between s.DateN and s.DateK   
+		                            and ((s.Flag = 0 and o.Tip = 1) or (s.Flag = 1 and o.Tip = 2))   
+                            left join dbo.kbolInfo as ki
+                               on ki.Tab = 'stac' and a.IND = ki.CodZap    
+                            left join dbo.s_Diag        as d     on d.KOD = a.D                 
+                            where (a.DK between @DateNNew and @DateKNew                    -- по дате посещения
+                                    or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                                    and isnull(a.VZ10, 0) > 0 
+                                    and a.DK between @DateNOld and @DateKOld))
+                                and isjson(a.xInfo) > 0
+                                and a.OMS = 1                                           -- только ОМС
+                                and a.FlagOut > 0                                       -- флаг выписки     
+                                and a.OtdOut = 0                                        -- отбрасываем переведенных в другие отделения
+                                and isnull(a.xDelete, 0) = 0
+                                and ((@TipReestr in (3, 4) and p.Cod is null)           -- отбрасываем ВМП, для реестров С и Н
+                                    or (@TipReestr = 1 and p.Cod is not null))           -- берем только ВМП, для реестра Т
+                                and ((@TipReestr in (1, 3) and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0')) -- берем ЗНО диагнозы для С и Т реестров
+                                    or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                                and isnull(e.FlagOut, 1) <> 0
+                            ) as dd     
                     where Rang = 1  
                     order by IND";
 
             return _Return;
         }
 
-        /// <summary>Загружаем данные кодов КСГ в файл стационара Apstac 2</summary>
-        /// <param name="pWereStac">Фрагмента sql для стационара </param>
-        public static string ReApstac_Select_2(string pWereStac)
+        /// <summary>Загружаем данные кодов КСГ в файл стационара Apstac 2 (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReApstac_Select_5(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
-                use Bazis;
+                    use Bazis
 
-                declare @A as table (
-                                    IND decimal,		-- Код стационара			
-                                    D  nvarchar(5),		-- Диагноз стационара
-					                Dat date,			-- Дата выписки                    
-                                    UslOk tinyint,		-- 1 - круглосуточный, 2 - дневной
-                                    Det tinyint  		-- 5 - ребенок до 18 лет, 6 - взрослый					
-					                ) 
-                insert @A
-                select a.IND
-	                    ,a.D
-	                    ,a.DK
-	                    ,o.Tip as UslOk
-	                    ,iif(a.Age < 18, 5, 6) as Det   
-                from dbo.APSTAC as a
-                join dbo.s_Department as o  on o.Cod = a.otd 
-                left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
-                    on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
-                --where a.DK between '01/01/2019' and '01/21/2019' and a.OMS = 1 and a.FlagOut > 0  -- для проверки запроса
-                --  and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0') -- or left(a.D, 3) = 'D70'
-                {pWereStac}
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
 
-                                       
-                declare @T as table (
-                                    IND decimal,		-- Код стационара
-					                Tip nvarchar(4),	-- Тип услуги	
-					                NomUsl int,			-- Номер услуги стационара (1 - только диагноз, 11 - услуга)
-                                    D  nvarchar(5),		-- Диагноз стационара
-                                    Usl nvarchar(15),	-- Услуга стационара
-					                DopUsl nvarchar(15),-- Дополнительная услуга схема для лучевойхимии
-					                Frakc int,			-- Фракции, для радиологии
-                                    UslOk tinyint,		-- 1 - круглосуточный, 2 - дневной
-                                    Det tinyint,		-- 5 - ребенок до 18 лет, 6 - взрослый
-					                Dat date,   		-- Дата оказания услуги
-                                    DK date,            -- Дата выписки
-                                    xInfo nvarchar(max), -- поле xInfo из операций
-					                DayHim int          -- Плановое количество дней введения химии
-					                )    
+                 declare @A as table 
+                    (
+                        IND decimal,		-- Код стационара			
+                        D  nvarchar(5),		-- Диагноз стационара
+                        Dat date,			-- Дата выписки                    
+                        UslOk tinyint,		-- 1 - круглосуточный, 2 - дневной
+                        Det tinyint,  		-- 5 - ребенок до 18 лет, 6 - взрослый	
+                        uet3 int            -- Койко дни
+                    ) 
+                    insert @A
+                    select a.IND
+	                        ,a.D
+	                        ,a.DK
+	                        ,o.Tip as UslOk
+	                        ,iif(a.Age < 18, 5, 6) as Det 
+                            ,a.UET3
+                    from dbo.APSTAC as a
+                    join dbo.s_Department as o  on o.Cod = a.otd 
+                    left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
+                      on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
+                    left join dbo.ErrorASU      as e    on a.PD = e.Cod             -- справочник ошибок 
+                    where (a.DK between @DateNNew and @DateKNew                    -- по дате посещения
+                            or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                                and isnull(a.VZ10, 0) > 0 
+                                and a.DK between @DateNOld and @DateKOld))
+                        and isjson(a.xInfo) > 0
+                        and a.OMS = 1                                           -- только ОМС
+                        and a.FlagOut > 0                                       -- флаг выписки     
+                        and a.OtdOut = 0                                        -- отбрасываем переведенных в другие отделения
+                        and isnull(a.xDelete, 0) = 0
+                        and ((@TipReestr in (3, 4) and p.Cod is null)           -- отбрасываем ВМП, для реестров С и Н
+                            or (@TipReestr = 1 and p.Cod is not null))           -- берем только ВМП, для реестра Т
+                        and ((@TipReestr in (1, 3) and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0')) -- берем ЗНО диагнозы для С и Т реестров
+                            or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                        and isnull(e.FlagOut, 1) <> 0
+                        -- and a.KL =126545469028003
+                        
+                    declare @T as table (
+                                        IND decimal,		-- Код стационара
+					                    Tip nvarchar(4),	-- Тип услуги	
+					                    NomUsl int,			-- Номер услуги стационара (1 - только диагноз, 11 - услуга)
+                                        D  nvarchar(5),		-- Диагноз стационара
+                                        Usl nvarchar(15),	-- Услуга стационара
+					                    DopUsl nvarchar(15),-- Дополнительная услуга схема для лучевойхимии
+					                    Frakc int,			-- Фракции, для радиологии
+                                        UslOk tinyint,		-- 1 - круглосуточный, 2 - дневной
+                                        Det tinyint,		-- 5 - ребенок до 18 лет, 6 - взрослый
+					                    Dat date,   		-- Дата оказания услуги
+                                        DK date,            -- Дата выписки
+                                        xInfo nvarchar(max), -- поле xInfo из операций
+					                    DayHim int,          -- Плановое количество дней введения химии
+                                        Duration int         -- койко дни (1 – 1-3, 2 - 4-10, 3 - 11-20, 4 - 21-30)
+					                    )    
 
-                insert @T
-                select IND, Tip, NomUsl, D, Usl, DopUsl, Frakc, UslOk, DET, Dat, DK, xInfo, DayHim
-                from (
-                -- Код услуги стационара
-                select IND
-	                    ,1 as NomUsl     
-		                ,'диаг' as Tip
-                        ,D					  
-                        ,'' as Usl
-		                ,'' as DopUsl
-		                ,null as Frakc
-                        ,UslOk
-                        ,Det
-	                    ,null as Dat
-                        ,Dat as DK
-                        ,'' as xInfo
-                        ,0 as DayHim
-                from @A 
+                    insert @T
+                    select IND, Tip, NomUsl, D, Usl, DopUsl, Frakc, UslOk, DET, Dat, DK, xInfo, DayHim, Duration
+                    from (
+                    -- Код услуги стационара
+                    select IND
+	                        ,1 as NomUsl     
+		                    ,'диаг' as Tip
+                            ,D					  
+                            ,'' as Usl
+		                    ,'' as DopUsl
+		                    ,null as Frakc
+                            ,UslOk
+                            ,Det
+	                        ,null as Dat
+                            ,Dat as DK
+                            ,'' as xInfo
+                            ,0 as DayHim
+                            ,iif(left(D, 3) between 'C81' and 'C96' or left(D, 3) between 'D45' and 'D47', 
+                                case 
+                                    when uet3 < 4 then 1 
+                                    when uet3 between 4 and 10 then 2 
+                                    when uet3 between 11 and 20 then 3  
+                                    when uet3 between 21 and 30 then 4  
+                                    else 0
+                                end, 0) as Duration
+                    from @A 
 
-                union
-                -- Код Лечения
-                select r.IND 
-	                    ,row_number() over (partition by r.IND order by o.Cod) + 10 as NomUsl
-		                ,'опер' as Tip     
-                        ,r.D
-                        ,o.OPER as Usl
-		                ,isnull(json_value(o.xInfo, '$.Prep_HL'), '') as DopUsl
-		                ,json_value(o.xInfo, '$.Frakci') as Frakc
-                        ,r.UslOk		
-                        ,r.Det
-	                    ,o.Dat
-                        ,r.Dat as DK
-                        ,o.xInfo
-                        ,iif(isjson(vo.xInfo ) > 0, isnull(json_value(vo.xInfo, '$.dayv'), 0), 0) as DayHim
-                from @A as r
-                join dbo.Oper as o          on r.IND = o.IND  
-                join dbo.s_VidOper as vo    on o.Oper = vo.KOP and o.DAT between vo.xBeginDate and vo.xEndDate
-                where isnull(o.xDelete, 0) = 0  
-	                and isjson(o.xInfo )  > 0
-	                and json_value(o.xInfo, '$.Himia') is null		-- убираем химию, которая не идет в оплату
-                ) as r
+                    union
+                    -- Код Лечения
+                    select r.IND 
+	                        ,row_number() over (partition by r.IND order by o.Cod) + 10 as NomUsl
+		                    ,'опер' as Tip     
+                            ,r.D
+                            ,o.OPER as Usl
+		                    ,isnull(json_value(o.xInfo, '$.Prep_HL'), '') as DopUsl
+		                    ,json_value(o.xInfo, '$.Frakci') as Frakc
+                            ,r.UslOk		
+                            ,r.Det
+	                        ,o.Dat
+                            ,r.Dat as DK
+                            ,o.xInfo
+                            ,iif(isjson(vo.xInfo ) > 0, isnull(json_value(vo.xInfo, '$.dayv'), 0), 0) as DayHim
+                            ,iif(o.OPER like 'gem%', 
+                                case 
+                                    when uet3 < 4 then 1 
+                                    when uet3 between 4 and 10 then 2 
+                                    when uet3 between 11 and 20 then 3  
+                                    when uet3 between 21 and 30 then 4  
+                                    else 0
+                                end, 0) as Duration
+                    from @A as r
+                    join dbo.Oper as o          on r.IND = o.IND  
+                    join dbo.s_VidOper as vo    on o.Oper = vo.KOP and o.DAT between vo.xBeginDate and vo.xEndDate
+                    where isnull(o.xDelete, 0) = 0  
+	                    and isjson(o.xInfo )  > 0
+	                    and json_value(o.xInfo, '$.Himia') is null		-- убираем химию, которая не идет в оплату
+                    ) as r
 
 
-                select IND, Tip, Nom, Usl, Dat, DopUsl, FrakcT
-                    , KSG, Factor, UprFactor, KUSmo, Day3, xInfo, Frakc as FrakcText, DayHim
-                    -- ,Num2, D1, NomUsl, DopUslT,  -- для тестов
-                from(
-                select  row_number() over(partition by t.IND order by k.Factor desc, len(g.D1) desc) as Nom                            
-                         ,row_number() over(partition by t.IND, t.NomUsl order by k.Factor desc, len(g.D1) desc) as Num2
-	                    -- старая строка, должны потом скорей всего вернуть
-                        -- если есть и диагноз и услуга, а напротив только услуга, то берем ту где и услуга и диагноз
-                        -- ,row_number() over(partition by t.IND, t.NomUsl order by iif(len(g.D1) > 0 and len(g.Usl) > 0, 0, 1), k.Factor desc, len(g.D1) desc) as Num2
-                        ,t.Tip
-                        ,t.IND
-                        ,t.NomUsl
-                        ,t.Dat
-                        ,iif(t.Usl = '', g.D1, t.Usl) as Usl
-                        ,g.Age
-                        ,g.D1
-                        ,g.ksg
-                        ,g.DopUsl
-                        ,g.Frakc
-                        ,k.Factor
-                        ,k.UprFactor
-                        ,isnull(k.KUSmo, 0) as KUSmo
-                        ,k.Day3
-                        ,t.xInfo
-                        ,t.DopUsl as DopUslT
-                        ,t.Frakc as FrakcT
-                        ,t.DayHim
-                from @T as t
-                left join dbo.StrahKsgGroup2019 as g
-                    on t.UslOk = g.UslOk and t.Usl = g.Usl
-                        and t.DopUsl = g.DopUsl
-                        and(g.D1 = '' or t.D = g.D1 or left(t.D, 1) + '.' = g.D1 or left(t.D, 3) = g.D1 or 
-                            (left(t.D, 1) = 'C' and g.D1 = 'C00-C80') or (left(t.D, 1) = 'D' and g.D1 = 'D00-D09'))
-                        and t.DK between g.xBeginDate and g.xEndDate
-                left join dbo.StrahKsg as k
-                    on k.UslOk = t.UslOk and k.KSG = g.KSG and t.DK between k.xBeginDate and k.xEndDate
-                where(t.Det = g.Age or g.Age is null)
-                        and not(g.D1 = 'C00-C80' and not left(t.D, 3) between 'C00' and 'C80') -- отсекаем химию с диагнозами, которые не входят в диапазон C00 - C80
-                        and not(g.D1 = 'D00-D09' and not left(t.D, 3) between 'D00' and 'D09')
-                        and (g.Frakc = '' or (t.Frakc between left(right(g.Frakc, 5), 2) and right(g.Frakc, 2)))
-                ) as f
-                where not (NomUsl = 1 and Nom <> 1)     -- удаляем КСГ чисто по диагнозу, если они не выигрывали тендер по цене
-                    and Num2 = 1                        -- оставляем для каждой услуги, только выигрышную КСГ
-                order by IND, Nom";
+                    select IND, Tip, Nom, Usl, Dat, DopUsl, FrakcT
+                        , KSG, Factor, UprFactor, KUSmo, Day3, xInfo, Frakc as FrakcText, DayHim, Dzp 
+                         --,Num2, D1, NomUsl, DopUslT,  D, Duration, dur-- для тестов
+                    from(
+                    select  row_number() over(partition by t.IND order by k.Factor desc, len(g.D1) desc) as Nom                            
+                                ,row_number() over(partition by t.IND, t.NomUsl order by k.Factor desc, len(g.D1) desc) as Num2
+	                        -- старая строка, должны потом скорей всего вернуть
+                            -- если есть и диагноз и услуга, а напротив только услуга, то берем ту где и услуга и диагноз
+                            -- ,row_number() over(partition by t.IND, t.NomUsl order by iif(len(g.D1) > 0 and len(g.Usl) > 0, 0, 1), k.Factor desc, len(g.D1) desc) as Num2
+                            ,t.Tip
+                            ,t.IND
+                            ,t.NomUsl
+                            ,t.Dat
+                            ,iif(t.Usl = '', g.D1, t.Usl) as Usl
+                            ,g.Age
+                            ,g.D1
+                            ,g.ksg
+                            ,g.DopUsl
+                            ,g.Frakc
+                            ,k.Factor
+                            ,k.UprFactor
+                            ,isnull(k.KUSmo, 0) as KUSmo
+                            ,k.Day3
+                            ,t.xInfo
+                            ,t.DopUsl as DopUslT
+                            ,t.Frakc as FrakcT
+                            ,t.DayHim   
+                            ,k.Dzp
+                            --,t.D
+                            --,t.Duration
+                            --,g.Duration as dur
+                    from @T as t
+                    left join dbo.StrahKsgGroup2021 as g
+                        on t.UslOk = g.UslOk and t.Usl = g.Usl
+                            and t.DopUsl = g.DopUsl
+                            and(g.D1 = '' or t.D = g.D1 or left(t.D, 1) + '.' = g.D1 or left(t.D, 3) = g.D1 
+                                or (left(t.D, 1) = 'C' and g.D1 = 'C00-C80') or (left(t.D, 1) = 'D' and g.D1 = 'D00-D09')
+                                or (left(t.D, 1) = 'C' and g.D1 = 'C81-C96') or (left(t.D, 1) = 'D' and g.D1 = 'D45-D47'))
+                            and t.DK between g.xBeginDate and g.xEndDate
+                            and t.Duration = g.Duration
+                    left join dbo.StrahKsg as k
+                        on k.UslOk = t.UslOk and k.KSG = g.KSG and t.DK between k.xBeginDate and k.xEndDate
+                    where(t.Det = g.Age or g.Age is null)
+                            and not(g.D1 = 'C00-C80' and not left(t.D, 3) between 'C00' and 'C80') -- отсекаем химию с диагнозами, которые не входят в диапазон C00 - C80
+                            and not(g.D1 = 'D00-D09' and not left(t.D, 3) between 'D00' and 'D09')
+                            and not(g.D1 = 'C81-C96' and not left(t.D, 3) between 'C81' and 'C96')
+                            and not(g.D1 = 'D45-D47' and not left(t.D, 3) between 'D45' and 'D47')
+                            and (g.Frakc = '' or (t.Frakc between left(right(g.Frakc, 5), 2) and right(g.Frakc, 2)))
+                    ) as f
+                    where not (NomUsl = 1 and Nom <> 1)     -- удаляем КСГ чисто по диагнозу, если они не выигрывали тендер по цене
+                        and Num2 = 1                        -- оставляем для каждой услуги, только выигрышную КСГ
+                    order by IND, Nom";
 
             return _Return;
         }
 
-        /// <summary>Загружаем данные стационара Apstac 3 (консилиумы)</summary>
-        /// <param name="pWereStac">Фрагмента sql для стационара </param>
-        public static string ReApstac_Select_3(string pWereStac)
+        /// <summary>Загружаем данные стационара Apstac 3 (консилиумы) (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string ReApstac_Select_6(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
-                -- Дата и цель последнего консилиума
-                use Bazis
-                select	 IND
+                    use Bazis
+
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                select  IND
 		                ,iif(json_value(jTag, '$.Taktika_1') is not null, 1, iif(json_value(jTag, '$.Taktika_2') is not null, 2, 3)) as PR_CONS
-		                ,isnull(isnull(json_value(jTag, '$.Taktika_1'), json_value(jTag, '$.Taktika_2')), json_value(jTag, '$.Taktika_3')) as DT_CONS		
+		                ,left(isnull(isnull(json_value(jTag, '$.Taktika_1'), json_value(jTag, '$.Taktika_2')), json_value(jTag, '$.Taktika_3')), 10) as DT_CONS		
                 from (
 	                select   a.IND
 			                ,kp.jTag
@@ -1787,8 +1940,22 @@ namespace wpfReestr
 	                left join dbo.APAC      as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DK >= a1.DP
 	                left join dbo.APSTAC    as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DK >= s1.DK
                     left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
-                      on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
-	                {pWereStac}
+                        on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
+                    where (a.DK between @DateNNew and @DateKNew                 -- по дате посещения
+                            or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                                and isnull(a.VZ10, 0) > 0 
+                                and a.DK between @DateNOld and @DateKOld))
+                        and isjson(a.xInfo) > 0
+                        and a.OMS = 1                                           -- только ОМС
+                        and a.FlagOut > 0                                       -- флаг выписки     
+                        and a.OtdOut = 0                                        -- отбрасываем переведенных в другие отделения
+                        and isnull(a.xDelete, 0) = 0
+                        and ((@TipReestr in (3, 4) and p.Cod is null)           -- отбрасываем ВМП, для реестров С и Н
+                            or (@TipReestr = 1 and p.Cod is not null))          -- берем только ВМП, для реестра Т
+                        and ((@TipReestr in (1, 3) and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0')) -- берем ЗНО диагнозы для С и Т реестров
+                            or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
+                        and isnull(e.FlagOut, 1) <> 0
+
 		                and isjson(kp.jTag) > 0
 		                and kp.jTag like '%Taktika_%'
 		                and (a1.DP is not null or s1.DK is not null)
@@ -1800,6 +1967,33 @@ namespace wpfReestr
             return _Return;
         }
 
+        /// <summary>Загружаем данные по пациенту ВМП</summary>
+        /// <param name="pIND">Код стационара</param>
+        /// <param name="pPRVS">Специальность врача</param>
+        public static string ReVMP_Select_1(string pIND)
+        {
+            // Переделать на kbolInfo в замен astProtokol !!! 
+            string _Return = $@"
+                select distinct s.PROFIL                                    -- профиль врача
+                        ,s.PROFIL_K                                         -- профиль койки  
+                        ,s.CODE_USL                                         -- код услуги
+                        ,sv.IDHM as VID_VME                                 -- вид медицинского вмешательства                                               
+                        ,s.Tarif                                            -- тариф                                    
+                        ,sv.IDHM as METOD_HMP                               -- код метода ВМП
+                        ,sv.HVid as VID_HMP                                 -- код вида ВМП
+                        ,dbo.GetPole(8, p.Protokol) as TAL_NUM              -- номер талона ВМП
+                        ,cast(dbo.GetPoleD(9, p.Protokol) as date) as TAL_D -- дата талона ВМП                     
+                from dbo.APSTAC as a                                        -- стационар   
+                left join dbo.astProtokol   as p    on p.CodApstac = a.IND and p.NumShablon = 8013   --  метод ВМП находиться в 6м вопросе 8013 шаблона стационара   
+                left join dbo.StrahVMP      as sv   on p.Cod is not null and left(dbo.GetPole(6, p.Protokol), charindex('.', dbo.GetPole(6, p.Protokol)) - 1) = sv.IDHM and a.DK between sv.xBeginDate and sv.xEndDate
+                left join dbo.StrahTarif    as s    on s.Flag = 7 and sv.Hgr = s.VID_VME and a.DK between s.DateN and s.DateK                                                                                          
+                where a.IND = {pIND}";
+
+            return _Return;
+        }
+        #endregion
+
+        #region ---- ПАРАКЛИНИКА ---- 
         /// <summary>Загружаем данные параклиники parObsledov</summary>
         /// <param name="pWerePar">Фрагмента sql для параклиники </param>
         public static string RePar_Select_1(string pWerePar)
@@ -1865,29 +2059,97 @@ namespace wpfReestr
             return _Return;
         }
 
-        /// <summary>Загружаем данные по пациенту ВМП</summary>
-        /// <param name="pIND">Код стационара</param>
-        /// <param name="pPRVS">Специальность врача</param>
-        public static string ReVMP_Select_1(string pIND)
+        /// <summary>Загружаем данные параклиники parObsledov и гистологии (новый 2021)</summary>
+        /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
+        /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
+        /// <param name="pDateNNew">Начальная дата основного реестра</param>
+        /// <param name="pDateKNew">Конечная дата основного реестра</param>
+        public static string RePar_Select_2(int pTipReestr, int pMain, DateTime pDateNNew, DateTime pDateKNew)
         {
             string _Return = $@"
-                select s.PROFIL                                             -- профиль врача
-                        ,s.PROFIL_K                                         -- профиль койки  
-                        ,s.CODE_USL                                         -- код услуги
-                        ,sv.IDHM as VID_VME                                 -- вид медицинского вмешательства                                               
-                        ,s.Tarif                                            -- тариф                                    
-                        ,sv.IDHM as METOD_HMP                               -- код метода ВМП
-                        ,sv.HVid as VID_HMP                                 -- код вида ВМП
-                        ,dbo.GetPole(8, p.Protokol) as TAL_NUM                   -- номер талона ВМП
-                        ,cast(dbo.GetPoleD(9, p.Protokol) as date) as TAL_D      -- дата талона ВМП   
-                from dbo.APSTAC as a                                        -- стационар   
-                left join dbo.astProtokol   as p    on p.CodApstac = a.IND and p.NumShablon = 8013  
-                left join dbo.StrahVMP      as sv   on p.Cod is not null and left(dbo.GetPole(6, p.Protokol), 3) = sv.IDHM    --  метод ВМП находиться в 6м вопросе 8013 шаблона стационара                                                                       
-                left join dbo.StrahStacSv   as s    on s.Flag = 7 and sv.HVid = s.VID_VME and a.DK between s.DateN and s.DateK                                                                                           
-                where a.IND = {pIND}"; 
- 
+                    use Bazis
+
+                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
+                declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
+                declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
+                declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
+
+                 select d.* from (
+                    select cast(i.Cod as decimal) as Cod
+                        ,4 as LPU_ST
+	                    ,k.SCom
+	                    ,k.SN
+	                    ,k.SS
+	                    ,i.jTag
+	                    ,json_value(d.xInfo, '$.vrach')	as IDDOKT
+                        ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
+	                    ,s.PRVS
+	                    ,s.PROFIL
+	                    ,s.CODE_USL
+	                    ,s.VID_VME
+	                    ,s.VidPom
+	                    ,s.Tarif
+	                    ,isnull(l.KodOKPO, '555509') as NPR_MO
+                        ,convert(date, p.pDate, 104) as NPR_DATE
+                        ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
+                    from dbo.parProtokol	as p
+                    join dbo.parObsledov	as o	on p.CodApstac = o.Cod
+                    join dbo.kbol			as k	on p.KL = k.KL
+                    join dbo.kbolInfo		as i	on i.Tab = 'par' and o.Cod = i.CodZap  
+                    join dbo.s_UsersDostup  as d	on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.modul') = 15 and json_value(d.xInfo, '$.element') in (1, 6, 13) and d.isWork = 0
+                    join dbo.StrahTarif	as s	on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
+                    left join dbo.s_LPU		as l	on k.StrLPU = l.StrLPU 
+                    left join dbo.ErrorASU  as e    on json_value(i.jTag, '$.Error') = e.Cod
+                    where @TipReestr = 3                                        -- только для С
+                    and NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
+                    and i.Oms = 1
+                    and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
+                    or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                        and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0 
+                        and p.pDate between @DateNOld and @DateKOld))
+                    and isjson(i.jTag) > 0                   
+                    and isnull(p.xDelete, 0) = 0
+                    and isnull(e.FlagOut, 1) <> 0
+                ) as d
+                where Dubl = 1  -- избавляемся от дублей
+                union all
+                select cast(i.Cod as decimal) as Cod
+                        ,5 as LPU_ST
+		                ,k.SCom
+	                    ,k.SN
+	                    ,k.SS
+		                ,i.jTag
+		                ,json_value(d.xInfo, '$.vrach') as IDDOKT
+		                ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
+		                ,s.PRVS
+	                    ,s.PROFIL
+	                    ,s.CODE_USL
+	                    ,s.VID_VME
+	                    ,s.VidPom
+	                    ,s.Tarif
+		                ,json_value(i.jTag, '$.NPR_MO') as NPR_MO
+		                ,convert(date, json_value(i.jTag, '$.NPR_DATE'), 104) as NPR_DATE
+                        ,1 as Dubl
+                from dbo.kdlProtokol    as p
+                join dbo.kbol           as k on p.KL = k.KL
+                join dbo.kbolInfo       as i on i.Tab = 'kdl' and i.CodZap = p.Cod
+                join dbo.s_UsersDostup  as d on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.userrigth') = 'histologydoctor' and json_value(d.xInfo, '$.vrach') is not null and d.isWork = 0
+                join dbo.StrahTarif    as s on s.Flag = 11 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.VID_VME
+                where @TipReestr = 3                                        -- только для С
+                    and NumShablon = 20001                   
+                    and i.Oms = 1
+                    and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
+                    or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                        and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0 
+                        and p.pDate between @DateNOld and @DateKOld))   
+                    and isjson(i.jTag) > 0                   
+                    and isnull(p.xDelete, 0) = 0";
+
             return _Return;
         }
+        #endregion
 
         /// <summary>Загружаем Страховые компании</summary>
         public static string ReStrahComp_Select_1()
@@ -1899,21 +2161,6 @@ namespace wpfReestr
                       ,o.NewKod as OKATO  
                 from dbo.s_StrahComp as s
                 join dbo.s_Oblast    as o on o.kod = s.KodReg";
-
-            return _Return;
-        }
-
-        /// <summary>Загружаем справочник врачей из МИАЦ (для проверки действующих сертефикатов)</summary>
-        /// <param name="pDN">Дата начала периода реестра</param>
-        public static string ReStrahVrachMIAC_Select_1(DateTime pDN)
-        {
-            string _Return = $@"
-                select iddokt   
-                      ,prvs    
-                      ,data_n
-                      ,data_e
-                from dbo.StrahVrachMIAC
-                where data_e >= cast(dateadd(month, -2, '{pDN:MM.dd.yyyy}') as date)";   // сертефикат должен быть действителен 2 месяца назад (для разовой поликлиники)
 
             return _Return;
         }

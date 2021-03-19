@@ -130,6 +130,9 @@ namespace wpfGeneral.UserTab
                 case eVkladki.Report:
                     this.Background = Brushes.GreenYellow;
                     break;
+                case eVkladki.PDF:
+                    this.Background = Brushes.Silver;
+                    break;
             }
 
             // Настраиваем кнопку "Закрыть"

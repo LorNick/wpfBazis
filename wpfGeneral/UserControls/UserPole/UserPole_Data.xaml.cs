@@ -2,7 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Data;
+using System.Globalization;
 using wpfStatic;
+using System.Windows.Markup;
 
 namespace wpfGeneral.UserControls
 {
@@ -19,7 +22,7 @@ namespace wpfGeneral.UserControls
             get { return (DateTime?)this.GetValue(DEPR_DateProperty); }
             set { this.SetValue(DEPR_DateProperty, value); }
         }
-       
+
         /// <summary>СВОЙСТВО Описание вопроса</summary>
         public override string PROP_Description
         {
@@ -34,7 +37,7 @@ namespace wpfGeneral.UserControls
                     PART_Label.Padding = new Thickness(5, 0, 5, 0);
             }
         }
-
+        
         /// <summary>СВОЙСТВО Максимальное значение</summary>
         public override object PROP_ValueMax
         {
@@ -86,7 +89,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Минимальная Ширина описания</summary>
-        public override Double PROP_MinWidthDescription
+        public override double PROP_MinWidthDescription
         {
             get { return PART_Label.MinWidth; }
             set { PART_Label.MinWidth = value; }
@@ -97,7 +100,7 @@ namespace wpfGeneral.UserControls
         {
             get
             {
-                return (PART_DatePicker.BorderThickness.Equals(new Thickness(0)));
+                return PART_DatePicker.BorderThickness.Equals(new Thickness(0));
             }
             set
             {
@@ -107,7 +110,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Высота текстового поля</summary>
-        public override Double PROP_HeightText
+        public override double PROP_HeightText
         {
             get { return PART_DatePicker.Height; }
             set
@@ -136,7 +139,7 @@ namespace wpfGeneral.UserControls
         public UserPole_Data()
         {
             InitializeComponent();
-
+          
             PART_DatePicker.ContextMenu = MyGlo.ContextMenu;
             PART_DatePicker.Tag = this;
         }
@@ -145,7 +148,7 @@ namespace wpfGeneral.UserControls
         public override void MET_Inicial()
         {
             // Располагаем текст
-			this.HorizontalAlignment = HorizontalAlignment.Left;                
+            this.HorizontalAlignment = HorizontalAlignment.Left;                
             if (PROP_Format.MET_If("ac"))
                 this.HorizontalAlignment = HorizontalAlignment.Center;
             if (PROP_Format.MET_If("ar"))

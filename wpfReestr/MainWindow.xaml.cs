@@ -13,6 +13,7 @@ using System.Windows.Input;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using wpfGeneral.UserWindows;
+using System.Windows.Media.Imaging;
 using wpfStatic;
 using e = Microsoft.Office.Interop.Excel;
 using m = wpfStatic.MyMet;
@@ -27,6 +28,9 @@ namespace wpfReestr
         private const string PRI_Filtr2 = "Фильтр 2";
 
         private string PRI_Ver;
+
+        private int PRI_FindCod = 0;
+        private string PRI_FindText = "";
         
         /// <summary>Oбъявляем DataView Страховых файлов</summary>
         private DataView PRI_DVStrahFile;
@@ -42,15 +46,7 @@ namespace wpfReestr
         private int PRI_CodFile;
 
         /// <summary>СВОЙСТВО Скрывает, открывает скрытые реестры</summary>
-        public bool PROP_FlagHideStrahFile
-        {
-            get { return (bool)this.GetValue(PROP_FlagHideStrahFileProperty); }
-            set { this.SetValue(PROP_FlagHideStrahFileProperty, value); }
-        }
-
-        public static readonly DependencyProperty PROP_FlagHideStrahFileProperty =
-            DependencyProperty.Register("PROP_FlagHideStrahFile", typeof(bool), typeof(MainWindow),
-                        new PropertyMetadata(false, OnFlagHideStrahFile));
+        public bool PROP_FlagHideStrahFile { get; set; }
        
         /// <summary>КОНСТРУКТОР</summary>
         public MainWindow()
@@ -81,6 +77,8 @@ namespace wpfReestr
             MET_Create_StrahFile();
 
             PROP_FlagHideStrahFile = true;
+
+            MET_FiltrFile();
         }
 
         /// <summary>СОБЫТИЕ Выбор в меню</summary>
@@ -106,8 +104,13 @@ namespace wpfReestr
                     MET_DeleteFromExcel();
                     break;
                 case "_Обновить":
-                    // _Обновить
+                    // Обновить
                     MET_Update_StrahFile();
+                    break;
+                case "_Скрывать закрытые реестры":
+                    // Скрывать закрытые реестры
+                    PROP_FlagHideStrahFile = !PROP_FlagHideStrahFile;
+                    MET_FiltrFile();
                     break;
 
                 case "_Диагнозы МКБ-10":
@@ -122,14 +125,19 @@ namespace wpfReestr
                     break;
                 case "_Справочник связей и тарифов":
                     // Связи стационара
-                    _UseWinSpr = new UserWindow_StacSv();
+                    _UseWinSpr = new UserWindow_StrahTarif();
                     _UseWinSpr.Show();
-                    break;            
+                    break;
+                case "_Справочник врачей МИАЦ":
+                    // Справочник врачей МИАЦ
+                    _UseWinSpr = new UserWindow_StrahVrachMIAC();
+                    _UseWinSpr.Show();
+                    break;
 
-                case "_Формировать реестры":
-                    // Формируем реестры
-                    MyReestr _WinReestr = new MyReestr();
-                    _WinReestr.ShowDialog();
+                case "_Формировать реестры":                    
+                    // Формируем реестры 2021
+                    MyReestr _WinReestr2021 = new MyReestr();
+                    _WinReestr2021.ShowDialog();
                     // Пересчитываем файлы реестров
                     MET_Create_StrahFile();
                     break;
@@ -161,7 +169,7 @@ namespace wpfReestr
             }
         }
                   
-        #region ---- СОБЫТИЯ Страховых Реестров dataGrid1 ----
+        #region ---- СОБЫТИЯ Случаи dataGrid1 ----
         /// <summary>СОБЫТИЕ Сохраняем измения в ячейке в dataGrid1</summary>
         private void dataGrid1_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
@@ -331,7 +339,7 @@ namespace wpfReestr
                 {
                     DataRowView _DataRowView = (DataRowView) dataGrid1.CurrentItem;
 
-                    if (PART_ButtonFiltr1.Content.ToString() == PRI_Filtr1)
+                    if (PART_ButtonFiltr1.IsChecked == false)
                     {
                         try
                         {
@@ -343,7 +351,7 @@ namespace wpfReestr
                         {
                         }
                     }
-                    if (PART_ButtonFiltr2.Content.ToString() == PRI_Filtr2)
+                    if (PART_ButtonFiltr2.IsChecked == false)
                     {
                         try
                         {
@@ -361,94 +369,125 @@ namespace wpfReestr
                 }
             }
         }
-
-        /// <summary>СОБЫТИЕ Показываем по какому полю сортировака и поиск</summary>
-        private void dataGrid1_Sorting(object sender, DataGridSortingEventArgs e)
-        {
-            PART_LabelZap.Content = e.Column.Header.ToString();
-            PART_TextBox.Text = "";
-        }
-
-        /// <summary>СОБЫТИЕ Фильтруем по списку в зависимости от типа записи в dataGrid1</summary>
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {             
-           MET_Filter();
-        }
-
+        
         /// <summary>СОБЫТИЕ Находим данные по строке ввода Поиска (поиск по dataGrid1)</summary>
-        private void PART_TextBox_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            // Наше условие поиска
-            string _Text = (sender as TextBox)?.Text;
-            // Если есть символы в строке поиска
-            if (_Text?.Length > 0)
+        private void PART_TextBoxFindIDCase_SelectionChanged(object sender, RoutedEventArgs e)
+        {           
+            if (PRI_FindText != PART_TextBoxFindIDCase.Text)
             {
-                if (PRI_DVStrahReestr.Sort == null)
-                    PRI_DVStrahReestr.Sort = dataGrid1.Columns[3].SortMemberPath;
-                MyPole _Pole = new MyPole(PRI_DVStrahReestr.Sort, PRI_DVStrahReestr);
-                // строка условия
-                string _Where = _Pole.MET_FiltrPr(_Text);                       // строка условия
-                string _Colum = _Pole.PUB_Name;
-                try
-                {
-                    if (PRI_DVStrahReestr.Table.Select(_Where, _Colum).Length > 0) // если найдено по условию
-                    {
-                        // Находим запись, по условию и по колонке
-                        DataRow _Row = PRI_DVStrahReestr.Table.Select(_Where, _Colum)[0];
-                        // Номер записи
-                        int _Index = PRI_DVStrahReestr.Find(_Row[_Colum]);
-                        if (_Index != -1)
-                        {
-                            // Выделяем найденую запись
-                            dataGrid1.SelectedIndex = _Index;
-                            // Если запись не в начале и не в конце, то отображаем её по центру
-                            if ((_Index + 8) <= dataGrid1.Items.Count & _Index > 8)
-                                _Index += 8;
-                            //  Отображаем в таблице найденую запись
-                            dataGrid1.ScrollIntoView(dataGrid1.Items[_Index]);
-                        }
-                    }
-                }
-                catch { }  // если ввели некоректные данные для поиска (к примеру буквы в столбце чисел), то выходим
+                PRI_FindCod = 0;
+                PRI_FindText = PART_TextBoxFindIDCase.Text;
             }
         }
 
-        /// <summary>СОБЫТИЕ Нажали на кнопку "Фильтр 1" (фильтр по dataGrid1)</summary>
-        private void PART_ButtonFiltr1_Click(object sender, RoutedEventArgs e)
+        /// <summary>СОБЫТИЕ При фокусе строки поиска меняем на русский язык (ФИО или IDCASE) (поиск по dataGrid1)</summary>
+        private void PART_TextBoxFindIDCase_GotFocus_1(object sender, RoutedEventArgs e)
         {
-            if (PART_ButtonFiltr1.Content.ToString() == PRI_Filtr1 & PART_FilterPole1.Content.ToString() != "Поле")  
-                PART_ButtonFiltr1.Content = "Снять";         
-            else
-                PART_ButtonFiltr1.Content = PRI_Filtr1;    
-             MET_Filter();
+            m.MET_Lаng();
         }
 
-        /// <summary>СОБЫТИЕ Нажали на кнопку "Фильтр 2" (фильтр по dataGrid1)</summary>
-        private void PART_ButtonFiltr2_Click(object sender, RoutedEventArgs e)
+        /// <summary>СОБЫТИЕ Находим данные по строке ввода Поиска (поиск по dataGrid1)</summary>
+        private void PART_TextBoxFindIDCase_KeyDown(object sender, KeyEventArgs e)
         {
-            if (PART_ButtonFiltr2.Content.ToString() == PRI_Filtr2 & PART_FilterPole2.Content.ToString() != "Поле")
-                PART_ButtonFiltr2.Content = "Снять";
-            else
-                PART_ButtonFiltr2.Content = PRI_Filtr2;
-            MET_Filter();
+            if (PRI_DVStrahReestr == null)
+                return;
+
+            if (e.Key == Key.Return)
+            {
+                // Фильтр строке поиска ФИО или IDCASE             
+                if (!string.IsNullOrWhiteSpace(PART_TextBoxFindIDCase.Text))
+                {
+                    string _Text = PART_TextBoxFindIDCase.Text;
+                    string _Where;
+                    string _Colum;
+                    string _Sort = PRI_DVStrahReestr.Sort;
+
+
+                    try
+                    {
+                        // Если число, значить IDCASE
+                        int _Val = m.MET_ParseInt(_Text);
+                        if (_Val > 0)
+                        {                            
+                            _Where = $"((convert(NOM_ZAP, System.String) like '%{_Val.ToString("00000")}' and len(convert(NOM_ZAP, System.String)) = 8) or NOM_ZAP = {_Val})";
+                            _Colum = "NOM_ZAP";
+                        }
+                        else
+                        {
+                            _Where = $"FAMILY like '{_Text}%'";
+                            _Colum = "FAMILY";
+                        }
+                        dataGrid1.Items.SortDescriptions.Clear();   // Удаляем выбранную пользователем сортировку (оставляя её визуально)
+                        PRI_DVStrahReestr.Sort = dataGrid1.Columns[1].SortMemberPath;
+                        _Colum = "Cod";
+                        int _Cou = PRI_DVStrahReestr.Table.Select(_Where, _Colum).Length;
+                        if (_Cou > 0) // если найдено по условию
+                        {
+                           
+
+                            // Находим запись, по условию и по колонке
+                            DataRow _Row = PRI_DVStrahReestr.Table.Select(_Where, _Colum)[PRI_FindCod];
+
+                            if (_Cou > PRI_FindCod + 1)
+                                PRI_FindCod++;
+                            else
+                                PRI_FindCod = 0;
+
+                            // Номер записи
+                            int _Index = PRI_DVStrahReestr.Find(_Row[_Colum]);
+                            if (_Index != -1)
+                            {
+
+                                // Выделяем найденую запись
+                                dataGrid1.SelectedIndex = _Index;
+                                // Возвращаем сортировку на FIO
+                                PRI_DVStrahReestr.Sort = _Sort;
+                                // Отображаем в таблице найденую запись
+                                dataGrid1.Dispatcher.BeginInvoke((Action)(() =>
+                                {
+                                    dataGrid1.ScrollIntoView(dataGrid1.SelectedItem, dataGrid1.Columns[5]);
+                                }));
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }  // если ввели некоректные данные для поиска (к примеру буквы в столбце чисел), то выходим
+                       // Возвращаем сортировку на FIO
+                    PRI_DVStrahReestr.Sort = _Sort;
+                }
+            }       
         }
-       
+        
+        /// <summary>СОБЫТИЕ Находим данные по строке поиска (ФИО или IDCASE) при нажатии на Enter (поиск по dataGrid1)</summary>
+        private void PART_TextBoxFiltrFamIDCase_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                MET_Filter();
+            }            
+        }
+
         /// <summary>СОБЫТИЕ Смена фильтра Страховых реестра (фильтр по dataGrid1)</summary>
         private void proSqlDVStrahReestr_OnListChanged(object sender, ListChangedEventArgs args)
         {
             // Есть ли данный файл
             if (MyGlo.DataSet.Tables[PRI_NameTable] == null) return;
-            // Суммы
-            decimal _SumOs = MySql.MET_QueryDec(MyQuery.StrahReestr_Select_2(PRI_CodFile, PRI_Where, "SUM_LPU"));   // основная сумма           
-            decimal _KolUsl = MySql.MET_QueryDec(MyQuery.StrahReestr_Select_2(PRI_CodFile, PRI_Where, "KOL_USL"));  // койко дни/услуг
-            PART_Expander.Header = $"Фильтры:  Записей: {PRI_DVStrahReestr.Count:N0};     Сумма: {_SumOs:N2};     Услуг: {_KolUsl:N0};     ";
-            // Фильтр
-            if (PRI_DVStrahReestr.RowFilter.Length > 0)
-                PART_Expander.Header += $"Фильтр по: {PRI_DVStrahReestr.RowFilter}";
+            // Находим Сумму и Количество записей           
+            DataTable _Table = MyGlo.DataSet.Tables[PRI_NameTable];         
+            object _Summ = _Table.Compute("Sum(SUM_LPU)", PRI_DVStrahReestr.RowFilter);
+            PART_LabelCountZapAndSumm.Content = $"  Сумма: {_Summ:N2}   Записей: {PRI_DVStrahReestr.Count:N0}";
+        }
+
+        /// <summary>СОБЫТИЕ Нажали на кнопки фильтра dataGrid1</summary>
+        private void PART_RadToggleButtonDataGrid1_Click(object sender, RoutedEventArgs e)
+        {
+            MET_Filter();
         }
         #endregion         
 
-        #region ---- МЕТОДЫ Страховых Реестров dataGrid1 ----
+        #region ---- МЕТОДЫ Случаи dataGrid1 ----
         /// <summary>МЕТОД Создаем/отображаем таблицу Страховых Реестров</summary>
         private void MET_Create_StrahReestr()
         {
@@ -461,13 +500,9 @@ namespace wpfReestr
                 // Cоздаем DataView для нашей таблице
                 PRI_DVStrahReestr = new DataView(MyGlo.DataSet.Tables[PRI_NameTable]);
                 // Событие на изменения списка Страховых файлов
-                PRI_DVStrahReestr.ListChanged += proSqlDVStrahReestr_OnListChanged;
-                // Сразу покажим количество записей
-                PART_Expander.Header = "Фильтры (записей = " + PRI_DVStrahReestr.Count + ")";
-                // Cортировка по номеру поля (потом можно поменять на индивидуальную)    
-                PRI_DVStrahReestr.Sort = dataGrid1.Columns[3].SortMemberPath;
-                // Имя, по которому делаем поиск
-                PART_LabelZap.Content = dataGrid1.Columns[3].Header.ToString();
+                PRI_DVStrahReestr.ListChanged += proSqlDVStrahReestr_OnListChanged;               
+                // Cортировка по ФИО   
+                PRI_DVStrahReestr.Sort = dataGrid1.Columns[5].SortMemberPath;
                 // Отображаем таблицу                
                 dataGrid1.ItemsSource = PRI_DVStrahReestr;
             }
@@ -482,34 +517,91 @@ namespace wpfReestr
         private void MET_Filter()
         {
             if (PRI_DVStrahReestr == null)
-            {
-                return;
-            }
+                return;            
             MyPole _Pole;
-            PRI_Where = "";
+            PRI_Where = "1 = 1";
 
-            // Фильтр по типу записи
-            if (PART_ComboBoxTypeZap.SelectedIndex > 0)
-                MET_Where($"[LPU_ST] = {PART_ComboBoxTypeZap.SelectedIndex}");
 
-            // Фильтр по взрослые/дети
-            if (PART_ComboBoxChild.SelectedIndex > 0)
-                MET_Where($"[Det] = {PART_ComboBoxChild.SelectedIndex - 1}");
-          
-            // Фильтр по выделенному полю и кнопки "Фильтр 1/Снять"            
-            if (PART_ButtonFiltr1.Content.ToString() == "Снять")
+            // Впервые поданные или Повторно (исправленные) записи
+            if (PART_ToggleButtonDataGrid1Main.IsChecked == true || PART_ToggleButtonDataGrid1Corrected.IsChecked == true)
+            {
+                if (PART_ToggleButtonDataGrid1Main.IsChecked == false)
+                    PRI_Where += " and PR_NOV <> 0";
+                if (PART_ToggleButtonDataGrid1Corrected.IsChecked == false)
+                    PRI_Where += " and PR_NOV <> 1";
+            }
+
+            // По Услуге (LPU_ST)
+            if (PART_ToggleButtonDataGrid1Stac.IsChecked == true 
+                || PART_ToggleButtonDataGrid1StacDnev.IsChecked == true 
+                || PART_ToggleButtonDataGrid1PosPolikl.IsChecked == true
+                || PART_ToggleButtonDataGrid1Paracl.IsChecked == true
+                || PART_ToggleButtonDataGrid1Microscope.IsChecked == true)
+            {
+                if (PART_ToggleButtonDataGrid1Stac.IsChecked == false)
+                    PRI_Where += " and LPU_ST <> 1";
+                if (PART_ToggleButtonDataGrid1StacDnev.IsChecked == false)
+                    PRI_Where += " and LPU_ST <> 2";
+                if (PART_ToggleButtonDataGrid1PosPolikl.IsChecked == false)
+                    PRI_Where += " and LPU_ST <> 3";
+                if (PART_ToggleButtonDataGrid1Paracl.IsChecked == false)
+                    PRI_Where += " and LPU_ST <> 4";
+                if (PART_ToggleButtonDataGrid1Microscope.IsChecked == false)
+                    PRI_Where += " and LPU_ST <> 5";
+            }
+
+            // Cтраховые компании (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
+            if (PART_ToggleButtonDataGrid1SmoAlfa.IsChecked == true 
+                || PART_ToggleButtonDataGrid1SmoKapital.IsChecked == true 
+                || PART_ToggleButtonDataGrid1SmoSogaz.IsChecked == true
+                || PART_ToggleButtonDataGrid1SmoInogor.IsChecked == true)
+            {
+                if (PART_ToggleButtonDataGrid1SmoAlfa.IsChecked == false)
+                    PRI_Where += " and PLAT <> 55050";
+                if (PART_ToggleButtonDataGrid1SmoKapital.IsChecked == false)
+                    PRI_Where += " and PLAT <> 55041";
+                if (PART_ToggleButtonDataGrid1SmoSogaz.IsChecked == false)
+                    PRI_Where += " and PLAT <> 55044";
+                if (PART_ToggleButtonDataGrid1SmoInogor.IsChecked == false)
+                    PRI_Where += " and (PLAT > 55000 and PLAT < 55999)";
+            }
+
+            // Показать только Детей
+            if (PART_ToggleButtonDataGrid1Baby.IsChecked == true)
+            {
+                PRI_Where += " and Det = 1";
+            }
+
+            // Фильтр по выделенному полю и кнопки "Ф1"            
+            if (PART_ButtonFiltr1.IsChecked == true & PART_FilterPole2.Content.ToString() != "Поле")
             {
                 _Pole = new MyPole(PART_FilterPole1.Tag.ToString(), PRI_DVStrahReestr);
                 if (!_Pole.PUB_Error)
                     MET_Where(_Pole.MET_Filtr(PART_FilterZnach1.Content.ToString()));
             }
 
-            // Фильтр по выделенному полю и кнопки "Фильтр 2/Снять"            
-            if (PART_ButtonFiltr2.Content.ToString() == "Снять")
+            // Фильтр по выделенному полю и кнопки "Ф2"             
+            if (PART_ButtonFiltr2.IsChecked == true & PART_FilterPole2.Content.ToString() != "Поле")
             {
                 _Pole = new MyPole(PART_FilterPole2.Tag.ToString(), PRI_DVStrahReestr);
                 if (!_Pole.PUB_Error)
                     MET_Where(_Pole.MET_Filtr(PART_FilterZnach2.Content.ToString()));
+            }
+
+            // Фильтр строке поиска ФИО или IDCASE             
+            if (PART_ButtonFindFiltr.IsChecked == true && !string.IsNullOrWhiteSpace(PART_TextBoxFindIDCase.Text))
+            {
+                string _Text = PART_TextBoxFindIDCase.Text;
+                // Если число, значить IDCASE
+                int _Val = m.MET_ParseInt(_Text);
+                if (_Val > 0)
+                {
+                    PRI_Where += $" and ((convert(NOM_ZAP, System.String) like '%{_Val.ToString("00000")}' and len(convert(NOM_ZAP, System.String)) = 8) or NOM_ZAP = {_Val})"; 
+                }
+                else
+                {
+                    PRI_Where += $" and FAMILY like '{_Text}%'";
+                }
             }
 
             try
@@ -543,25 +635,27 @@ namespace wpfReestr
             int _Count = dataGrid1.Items.Count - 1;
             if (MessageBox.Show(String.Format("Вы точно хотите убрать/поставить метку у {0} записей?", _Count), "Внимание!", MessageBoxButton.YesNo) == MessageBoxResult.No) return;
             string _Where = PRI_Where.Length > 0 ? " and " + PRI_Where : "";
-            MySql.MET_QueryNo(MyQuery.StrahReestr_Update_4(pFlag, _Cod, _Where));  
+            MySql.MET_QueryNo(MyQuery.StrahReestr_Update_1(pFlag, _Cod, _Where));  
             // Чистим фильтры
             PRI_Where = "";
             MET_FiltrClear();
             MET_Update_StrahFile();
         }
 
-        /// <summary>МЕТОД Перерасчет Страховых Реестров</summary>
+        /// <summary>МЕТОД Перерасчет Страховых Реестров (пока только сумму, номера не персчитываем)</summary>
         private void MET_Update_StrahReestr()
         {
             // ---- Пересчитаем поле N_ZAP и NOM_ZAP
             int _Cod = MET_IntGrid2("Cod");
+            
             // Скрываем выбранную таблицу
             MyGlo.DataSet.Tables.Remove(PRI_NameTable);
-            // В зависмости от наличия родителя пересчитываем нумерацию
-            if (MET_IntGrid2("pParent") > 0)
-                MySql.MET_QueryNo(MyQuery.StrahReestr_Update_1(_Cod, MET_IntGrid2("pParent")));
-            else
-                MySql.MET_QueryNo(MyQuery.StrahReestr_Update_2(_Cod));
+            //// В зависмости от наличия родителя пересчитываем нумерацию
+            //if (MET_IntGrid2("pParent") > 0)
+            //    MySql.MET_QueryNo(MyQuery.StrahReestr_Update_1(_Cod, MET_IntGrid2("pParent")));
+            //else
+            //    MySql.MET_QueryNo(MyQuery.StrahReestr_Update_2(_Cod));
+
             // ---- Пересчитаем поле Сумму
             MySql.MET_QueryNo(MyQuery.StrahFile_Update_1(_Cod));   
             MET_Create_StrahFile();
@@ -572,23 +666,19 @@ namespace wpfReestr
         private void MET_FiltrClear()
         {
             // Чистим фильтр 1 
-            if (PART_FilterPole1.Content.ToString() != "Поле")
+            if (PART_ButtonFiltr1.IsChecked == true)
             {
-                PART_ButtonFiltr1.Content = PRI_Filtr1;
+                PART_ButtonFiltr1.IsChecked = false;
                 PART_FilterPole1.Content = "Поле";
                 PART_FilterZnach1.Content = "Значение";
             }
             // Чистим фильтр 2
-            if (PART_FilterPole2.Content.ToString() != "Поле")
+            if (PART_ButtonFiltr2.IsChecked == true)
             {
-                PART_ButtonFiltr2.Content = PRI_Filtr2;
+                PART_ButtonFiltr2.IsChecked = false;
                 PART_FilterPole2.Content = "Поле";
                 PART_FilterZnach2.Content = "Значение";
             }
-            // Сбрасываем тип записи
-            PART_ComboBoxTypeZap.SelectedIndex = 0;
-            // Сбрасываем взрослые/дети
-            PART_ComboBoxChild.SelectedIndex = 0;
         }
 
         /// <summary>МЕТОД Вытаскиваем строку из поля</summary>
@@ -608,7 +698,7 @@ namespace wpfReestr
         }
         #endregion
 
-        #region ---- СОБЫТИЯ Страховых Файлов dataGrid2 ----
+        #region ---- СОБЫТИЯ Файлы dataGrid2 ----
         /// <summary>СОБЫТИЕ Выбирае запись в dataGrid2</summary>
         private void dataGrid2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -695,20 +785,14 @@ namespace wpfReestr
             }
         }
 
-        /// <summary>СОБЫТИЕ Изменение свойства зависимостей PROP_FlagHideStrahFile (показываем/скрываем - закрытые реестры dataGrid2)</summary>
-        private static void OnFlagHideStrahFile(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        /// <summary>СОБЫТИЕ Нажали на кнопки фильтра dataGrid2</summary>
+        private void PART_RadToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow _MainWindow = (MainWindow)d;
-            if ((bool)e.NewValue)
-            {
-                _MainWindow.PRI_DVStrahFile.RowFilter = "pHide = 0";
-            }
-            else
-                _MainWindow.PRI_DVStrahFile.RowFilter = "";
-        }   
+            MET_FiltrFile();
+        }
         #endregion
 
-        #region ---- МЕТОДЫ Страховых Файлов dataGrid2 ----
+        #region ---- МЕТОДЫ Файлы dataGrid2 ----
         /// <summary>МЕТОД Создаем таблицу Страховых Файлов</summary>
         protected void MET_Create_StrahFile()
         {
@@ -753,43 +837,87 @@ namespace wpfReestr
             DataRowView _Row = (DataRowView)dataGrid2.SelectedItem;
             if (_Row == null) return 0;
             return Convert.ToInt32(_Row.Row[pNamePole]);
-        }       
+        }
+
+        /// <summary>МЕТОД Фильр Файлов</summary>       
+        private void MET_FiltrFile()
+        {
+            PRI_DVStrahFile.RowFilter = "1 = 1";
+            if (PROP_FlagHideStrahFile)
+                PRI_DVStrahFile.RowFilter += " and pHide = 0";
+
+            // Тип (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
+            if (PART_ToggleButtonFileC.IsChecked == true || PART_ToggleButtonFileH.IsChecked == true || PART_ToggleButtonFileT.IsChecked == true)
+            {
+                if (PART_ToggleButtonFileC.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and TipImage <> 'mnFileC'";
+                if (PART_ToggleButtonFileH.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and TipImage <> 'mnFileH'";
+                if (PART_ToggleButtonFileT.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and TipImage <> 'mnFileT'";
+            }
+
+            // Cтраховые компании (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
+            if (PART_ToggleButtonSmoAlfa.IsChecked == true || PART_ToggleButtonSmoKapital.IsChecked == true || PART_ToggleButtonSmoSogaz.IsChecked == true
+                                                           || PART_ToggleButtonSmoInogor.IsChecked == true || PART_ToggleButtonSmoAll.IsChecked == true)
+            {
+                if (PART_ToggleButtonSmoAlfa.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoAlfa'";
+                if (PART_ToggleButtonSmoKapital.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoKapital'";
+                if (PART_ToggleButtonSmoSogaz.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoSogaz'";
+                if (PART_ToggleButtonSmoInogor.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoInogor'";
+                if (PART_ToggleButtonSmoAll.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoAll'";
+            }
+
+            // Реестр основные/исправленные (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
+            if (PART_ToggleButtonMain.IsChecked == true || PART_ToggleButtonCorrected.IsChecked == true)
+            {
+                if (PART_ToggleButtonMain.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and ParetnImag <> 'mnDocuments'";
+                if (PART_ToggleButtonCorrected.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and ParetnImag <> 'mnNaznach'";              
+            }
+        }
         #endregion
 
         #region ---- МЕТОДЫ Общие ----
-         /// <summary>МЕТОД Обновить все данные</summary>
+        /// <summary>МЕТОД Обновить все данные</summary>
         protected void MET_Update_StrahFile()
         {
             MyGlo.DataSet.Tables.Clear();
             MET_Create_StrahFile();
         }        
 
-        /// <summary>МЕТОД Выгузка в XML</summary>
+        /// <summary>МЕТОД Выгузка в XML 2021</summary>
         private void MET_SaveXML()
         {
             try
             {
-                if(MET_IntGrid2("YEAR") < 2019 || MET_IntGrid2("Cod") < 680)
-                { 
-                    MessageBox.Show("Данная версия выгружает, только реестры начиная с 2019 года, начиная с 680 реестра");
+                if (MET_IntGrid2("YEAR") < 2019 || MET_IntGrid2("Cod") < 1256)
+                {
+                    MessageBox.Show("Данная версия выгружает, только реестры начиная с 2021 года, начиная с 1256 реестра");
                     return;
-                 }
+                }
 
                 Mouse.OverrideCursor = Cursors.Wait;
-                               
+
                 string _MainFileName = MET_NameFile(out string _PatFileName);
                 int _Cod = MET_IntGrid2("Cod");
                 // Формируем основной файл xml
                 switch (MET_StrGrid2("VMP"))
                 {
                     case "ЗНО":
-                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_Main_3(_Cod, _MainFileName), _MainFileName);
+                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_C_2021(_Cod, _MainFileName), _MainFileName);
                         break;
                     case "ВМП":
-                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_VMP_2(_Cod, _MainFileName), _MainFileName);
+                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_T_2021(_Cod, _MainFileName), _MainFileName);
                         break;
                     case "без С":
-                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_Main_4(_Cod, _MainFileName), _MainFileName);
+                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_H_2021(_Cod, _MainFileName), _MainFileName);
                         break;
                     default:
                         MessageBox.Show("Данная версия не выгружает такие файлы, обратитесь к...");
@@ -798,10 +926,10 @@ namespace wpfReestr
                 }
                 // Формируем файл xml с пациентами
                 MySql.MET_QueryXML(MyQuery.StrahReestrXMLPerson_Select_1(_Cod, _MainFileName, _PatFileName), _PatFileName);
-                
+
                 // Архивируем файлы xml
                 Process _Pro = new Process();
-            
+
                 _Pro.StartInfo.FileName = "7z.exe";
                 _Pro.StartInfo.WorkingDirectory = @"c:\1Reestrs\";
                 _Pro.StartInfo.Arguments = $"a -tzip {_MainFileName}.zip {_MainFileName}.xml {_PatFileName}.xml";
@@ -830,8 +958,8 @@ namespace wpfReestr
             // Код страховой
             switch (MET_StrGrid2("StrahComp"))
             {
-                case "Все Областные":
-                case "Иногородние":
+                case "Тестовые":
+                case "ТФОМС":
                     _MainFileName += "T55";
                     break;
                 case "Альфа (50)":
@@ -845,9 +973,9 @@ namespace wpfReestr
                     break;
             }
 
-            // Год, месяц, пакет
+            // Год, месяц, (пакет - пакет убрали)
             string _Month = MET_IntGrid2("MONTH") < 10 ? "0" + MET_StrGrid2("MONTH") : "" + MET_StrGrid2("MONTH");
-            _MainFileName += "_" + MET_StrGrid2("YEAR").Substring(2, 2) + _Month + MET_StrGrid2("pPaket");
+            _MainFileName += "_" + MET_StrGrid2("YEAR").Substring(2, 2) + _Month; // + MET_StrGrid2("pPaket");
 
             pPatFileName = _MainFileName;
             // Префикс файла для (C - ЗНО, H - без С, T - ВМП)
@@ -922,6 +1050,8 @@ namespace wpfReestr
             _Sheet.Cell("AB1").Value = "Услуга 4";
             _Sheet.Cell("AC1").Value = "Услуга 5";
             _Sheet.Cell("AD1").Value = "Архив";
+            _Sheet.Cell("AE1").Value = "N013";
+            _Sheet.Cell("AF1").Value = "Основной";
 
 
             // Заголовок
@@ -1018,11 +1148,11 @@ namespace wpfReestr
                 return;
             }
 
-            if ((int)_Hach["Par"] == 0)
-            {
-                MessageBox.Show($"В файле Excel есть строки с основными реестрами, а удалять можно только в исправленных!", "Ошибка");
-                return;
-            }
+            //if ((int)_Hach["Par"] == 0)
+            //{
+            //    MessageBox.Show($"В файле Excel есть строки с основными реестрами, а удалять можно только в исправленных!", "Ошибка");
+            //    return;
+            //}
 
             if (MessageBox.Show($"Вы точно хотите удалить {(int)_Hach["Cou"]} записей в {(int)_Hach["Rees"]} реестрах?", "Одумайтесь!",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -1081,11 +1211,11 @@ namespace wpfReestr
                 return;
             }
 
-            if ((int)_Hach["Par"] > 0)
-            {
-                MessageBox.Show($"В файле Excel есть строки с исправленными реестрами (например: {(int)_Hach["Par"]}), а обнулять можно только в основных!", "Ошибка");
-                return;
-            }
+            //if ((int)_Hach["Par"] > 0)
+            //{
+            //    MessageBox.Show($"В файле Excel есть строки с исправленными реестрами (например: {(int)_Hach["Par"]}), а обнулять можно только в основных!", "Ошибка");
+            //    return;
+            //}
 
             if (MessageBox.Show($"Вы точно хотите обнулить {(int)_Hach["Cou"]} записей в {(int)_Hach["Rees"]} реестрах?", "Одумайтесь!",
                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -1094,6 +1224,27 @@ namespace wpfReestr
                 MessageBox.Show($"Записей обнулено", "Это конец");
             }           
         }
-        #endregion       
-    }  
+        #endregion
+    }
+
+    ///<summary>КЛАСС Конвертор Возвращаем иконку из словаря по имени</summary>
+    class ConvertTextToImage : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                return (BitmapImage)Application.Current.FindResource(value.ToString());
+            }
+            catch
+            {
+                return new BitmapImage();
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

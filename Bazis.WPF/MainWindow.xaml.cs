@@ -24,6 +24,10 @@ using wpfMVrParacl;
 using wpfMVrPolicl;
 using wpfMVrStac;
 using wpfStatic;
+using System.IO;
+using Telerik.Windows.Documents.Fixed;
+using Microsoft.Win32;
+using System.Security.Cryptography;
 
 namespace wpfBazis
 {
@@ -210,6 +214,7 @@ namespace wpfBazis
                     _VirtualModul = new UserModul_Viewer();
                     break;
                 case eModul.OtherLpu:
+                case eModul.CAOP:
                     _VirtualModul = new UserModul_OtherLpu();
                     break;
                 case eModul.Laboratory:
@@ -398,13 +403,22 @@ namespace wpfBazis
                                   
         /// <summary>СОБЫТИЕ при выборе элемента дерева</summary> 
         private void PART_TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            // Открываем 1ю вкладку с отчетом
-            PART_TabControl.SelectedItem = PART_TabOtch;
+        {   
             // Выбранная ветка
             VirtualNodes _VirtualNodes = (VirtualNodes)PART_TreeView.SelectedItem;
             if (_VirtualNodes != null)
             {
+                // Если выбрали PDF элемент
+                if (_VirtualNodes is UserNodes_AddPdf)
+                {
+                    // Загружаем PDF файл и открываем вкладку с ним
+                    MET_LoadPdfFileFromServer(_VirtualNodes);
+                    return;
+                }
+
+                // Открываем 1ю вкладку с отчетом
+                PART_TabControl.SelectedItem = PART_TabOtch;
+
                 // Оформляем закладку отчета
                 PART_TabOtch.Header = _VirtualNodes.MET_Header(PART_TabOtch, eVkladki.Otchet);
                 PART_FDoc.Blocks.Clear();
@@ -486,14 +500,14 @@ namespace wpfBazis
                 case eTipNodes.Kdl_Add:                
                     _NameList = "kdlList";
                     break;
-                // Шаблоны документов
+                // Шаблоны документов (лист назначения)
                 case eTipNodes.EditDocum:
                     _NameList = "s_ListDocum";
                     break;
             }
 
             // Заполняем строку данными запроса         
-            MySql.MET_DsAdapterFill(MyQuery.s_ListDocum_Select_4(_NameList, _VirtualPole.PROP_Shablon, _VirtualPole.PROP_VarId), "List");
+            MySql.MET_DsAdapterFill(MyQuery.MET_List_Select_4(_NameList, _VirtualPole.PROP_Shablon, _VirtualPole.PROP_VarId), "List");
            
             // Всего ответов  
             _Count = MyGlo.DataSet.Tables["List"].Rows.Count;
@@ -587,7 +601,7 @@ namespace wpfBazis
                 case eTipNodes.Kdl_Add:
                     _NameList = "kdlList";
                     break;
-                // Шаблоны документов
+                // Шаблоны документов (лист назначения)
                 case eTipNodes.EditDocum:
                     _NameList = "s_ListDocum";
                     break;
@@ -603,17 +617,17 @@ namespace wpfBazis
             {
                 case "Добавить":
                     // Находим максимальный код
-                    int _Cod = MySql.MET_QueryInt(MyQuery.s_ListDocum_Select_2(_NameList, _NomerShablon)) + 1;
+                    int _Cod = MySql.MET_QueryInt(MyQuery.MET_List_MaxCod_Select_2(_NameList, _NomerShablon)) + 1;
                     if (_Cod == 1)
                         _Cod = _NomerShablon * 1000 + 1; // если это первый ответ в шаблоне то начинаем с нужного номера
 
                     // Проверяем на наличие повторов
                     // Если такого ответа ещё нету, то записываем его в базу
-                    if (MySql.MET_QueryBool(MyQuery.s_ListDocum_Select_3(_NameList, _NomerShablon, _VarID, _TextBox.Text)))
+                    if (MySql.MET_QueryBool(MyQuery.MET_List_Select_3(_NameList, _NomerShablon, _VarID, _TextBox.Text)))
                         MessageBox.Show("Ошибка! Данный ответ уже есть в списке ответов");
                     else
                     {
-                        MySql.MET_QueryNo(MyQuery.s_ListDocum_Insert_1(_NameList, _Cod, _NomerShablon, _VarID, _TextBox.Text));
+                        MySql.MET_QueryNo(MyQuery.MET_List_Insert_1(_NameList, _Cod, _NomerShablon, _VarID, _TextBox.Text));
                         MessageBox.Show("Новый ответ, успешно добавлен!");
                     }
                     break;
@@ -793,9 +807,10 @@ namespace wpfBazis
         /// <summary>МЕТОД "Просмотр печати"</summary> 
         /// <param name="pVirtualNodes">Выбранная ветка</param>
         private void MET_PreviewPrint(VirtualNodes pVirtualNodes)
-        {             
+        {
             // Создаем объект печати
-            pVirtualNodes.PROP_Docum.PROP_Otchet.MET_CreatePrint(PART_DocViewer, PART_FDoc);
+            if (!pVirtualNodes.PROP_Docum.PROP_Otchet.MET_CreatePrint(PART_DocViewer, PART_FDoc))
+                return;
             // Показываем вкладку просмотра печати
             PART_TabPrint.Visibility = Visibility.Visible;
             // Оформляем вкладку с печатью
@@ -891,6 +906,8 @@ namespace wpfBazis
             if (PRI_FormMyNodes == null) return;
             // Окно выбора шаблона
             VirtualWindow_Shablon _WinSpr = null;
+            // По умолчанию отображаем панель ToolBar
+            PART_ToolBarShablon.Visibility = Visibility.Visible;
 
             // Если нужно вызывать окно выбора шаблона
             switch (PRI_FormMyNodes.Name)
@@ -943,6 +960,19 @@ namespace wpfBazis
                     _WinSpr = new UserWindow_Shablon_Kdl("Шаблоны исследований:", "\\Issled");
                     break;
 
+                // Для документов PDF (kdl)
+                case "eleTVItem_Pdf":
+                    // Скрываем панель ToolBar, так как у нас будт своя панель
+                    PART_ToolBarShablon.Visibility = Visibility.Collapsed;
+                    //MET_SavePdfFileOnServer(PRI_FormMyNodes);
+                    //int _Max = ((VirtualModul)MyGlo.Modul).PUB_Protokol.Any() ? ((VirtualModul)MyGlo.Modul).PUB_Protokol.Max(p => p.PROP_pIndex) : 0;
+                    //PRI_FormMyNodes.PROP_shaIndex = ++_Max;
+                    //PRI_FormMyNodes.PROP_shaNomerShablon = 2000;
+                    //// Создаем форму
+                    //PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true, PRI_FormMyNodes.PROP_shaNomerShablon, "Документ PDF");
+                    //return;
+                    break;
+
                 // Иначе (если, сама ветка радактируется, то идем дальше, а если не редактируется, то выходим)
                 default:
                     if (PRI_FormMyNodes.PROP_TipNodes == eTipNodes.EditDocum ||
@@ -968,17 +998,21 @@ namespace wpfBazis
                 }
                 else
                     return;
-            }   
-            // Показываем вкладку формы
-            PART_TabForm.Visibility = Visibility.Visible;
-            // Открываем вкладку с формой
-            PART_TabControl.SelectedItem = PART_TabForm;
-            // Оформляем вкладку с печатью
-            PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabForm, eVkladki.Form, true);
+            }
             // Создаем форму
-            PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true, _NomerShablon, _Text);
-            // Скрываем-Открываем у отчета кнопку редактирования 
-            MET_MyNodesButton(PRI_FormMyNodes);
+            if (PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true, _NomerShablon, _Text))
+            {
+                // Показываем вкладку формы
+                PART_TabForm.Visibility = Visibility.Visible;
+                // Открываем вкладку с формой
+                PART_TabControl.SelectedItem = PART_TabForm;
+                // Оформляем вкладку с печатью
+                PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabForm, eVkladki.Form, true);
+                // Создаем форму
+                PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true, _NomerShablon, _Text);
+                // Скрываем-Открываем у отчета кнопку редактирования 
+                MET_MyNodesButton(PRI_FormMyNodes);
+            }
         }
 
         /// <summary>СОБЫТИЕ Нажали на кнопку "Обнулить форму"</summary>
@@ -1114,6 +1148,7 @@ namespace wpfBazis
                     _WinSpr = new UserWindow_KancerReg();                   
                     break;
                 case eModul.OtherLpu:
+                case eModul.CAOP:
                     // Открываем список Направлений в текущее ЛПУ
                     _WinSpr = new UserWindow_OtherLpu();
                     break;
@@ -1153,28 +1188,163 @@ namespace wpfBazis
         {
             // При переключении на вкладку Шаблона, ставим фокус на редактируемое поле (если такое было)
             if (PART_TabControl.SelectedItem.Equals(PART_TabForm) && PUB_FocusUI != null)
-                Dispatcher.BeginInvoke(new Action(() => { PUB_FocusUI.Focus(); }));             
+                Dispatcher.BeginInvoke(new Action(() => { PUB_FocusUI.Focus(); }));
 
-            // Выбрана ли вкладка отчета            
-            if (!PART_TabControl.SelectedItem.Equals(PART_TabOtch)) return;
-            // Выбранная ветка
-            VirtualNodes _VirtualNodes = (VirtualNodes)PART_TreeView.SelectedItem;
-            // Обновляем отчет, только если его меняли
-            if (_VirtualNodes != null && _VirtualNodes.PROP_Docum.PROP_Otchet.PROP_NewCreate)
+            // Выбрана ли вкладка отчета 
+            if (PART_TabControl.SelectedItem.Equals(PART_TabOtch))
             {
-                // Оформляем закладку отчета
-                PART_TabOtch.Header = _VirtualNodes.MET_Header(PART_TabOtch, eVkladki.Otchet);
-                PART_FDoc.Blocks.Clear();
-                // Сбрасываем глобальный фон
-                MyGlo.BrushesOtchet = Brushes.White;
-                // Создаем отчет
-                PART_FDoc.Blocks.Add(_VirtualNodes.PROP_Docum.PROP_Otchet.MET_Inizial(_VirtualNodes));
-                // Обнуляем полосу сдига текста по листу
-                PART_Slider.Value = 0;
-                // Скрываем-Открываем у отчета кнопку редактирования 
-                MET_MyNodesButton(_VirtualNodes);
+                // Выбранная ветка
+                VirtualNodes _VirtualNodes = (VirtualNodes)PART_TreeView.SelectedItem;
+                // Обновляем отчет, только если его меняли
+                if (_VirtualNodes != null && _VirtualNodes.PROP_Docum.PROP_Otchet.PROP_NewCreate)
+                {
+                    // Оформляем закладку отчета
+                    PART_TabOtch.Header = _VirtualNodes.MET_Header(PART_TabOtch, eVkladki.Otchet);
+                    PART_FDoc.Blocks.Clear();
+                    // Сбрасываем глобальный фон
+                    MyGlo.BrushesOtchet = Brushes.White;
+                    // Создаем отчет
+                    PART_FDoc.Blocks.Add(_VirtualNodes.PROP_Docum.PROP_Otchet.MET_Inizial(_VirtualNodes));
+                    // Обнуляем полосу сдига текста по листу
+                    PART_Slider.Value = 0;
+                    // Скрываем-Открываем у отчета кнопку редактирования 
+                    MET_MyNodesButton(_VirtualNodes);
+                }
             }
         }
-        #endregion  
+        #endregion
+
+        #region PDF Файлы
+        /// <summary>Веб клиент</summary>
+        private WebClient PRI_WebClient;
+
+        /// <summary>МЕТОД Загрузка PDF файла с сервера</summary>
+        private void MET_LoadPdfFileFromServer(VirtualNodes pNode)
+        {
+            string _Protokol = pNode.PROP_Docum?.PROP_Protokol?.PROP_Protokol;
+            if (string.IsNullOrEmpty(_Protokol))
+            {
+                MessageBox.Show("Протокол не найден!");
+                return;
+            }
+            string _Text = MyMet.MET_GetPole(2, _Protokol);
+           // string _Text = "9678edca819ef5c8a8970b6841e64d0f.pdf";
+            PRI_WebClient = new WebClient();
+            // URI сервера, функции и имя файла с расширением который необходимо скачать
+            var _uri = new Uri("http://192.168.0.6:81/api/Storage/Download/" + _Text);
+            try
+            {
+                // Заголовок с токеном для аутентификации в функции загрузки
+                PRI_WebClient.Headers.Add("auth-key", "wpfBazisDownloadAndUploadFileWebApi20201014");
+                // Событие по завершению загрузки
+                PRI_WebClient.DownloadDataCompleted += MET_DownloadDataCompleted;
+                // Асинхронная загрузка файла
+                PRI_WebClient.DownloadDataAsync(_uri);
+
+                // Оформляем закладку отчета
+                PART_TabPdfViewer.Header = pNode.MET_Header(PART_TabPdfViewer, eVkladki.PDF, true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>МЕТОД Завершение скачивание PDF файла с сервера</summary>
+        private void MET_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
+        {           
+            try
+            {
+                // Загружаем в поток рисунок
+                MemoryStream _Stream = new MemoryStream(e.Result);
+                pdfViewer.DocumentSource = new PdfDocumentSource(_Stream);
+
+                // Открываем 1ю вкладку с отчетом
+                PART_TabControl.SelectedItem = PART_TabPdfViewer;               
+                // Показываем вкладку формы
+                PART_TabPdfViewer.Visibility = Visibility.Visible;
+                // Открываем вкладку с формой
+                PART_TabControl.SelectedItem = PART_TabPdfViewer;               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}/n{ex.InnerException}");
+            }
+        }
+
+        /// <summary>МЕТОД Сохраняем PDF файл на сервер</summary>
+        private void MET_SavePdfFileOnServer(VirtualNodes pNode)
+        {
+            OpenFileDialog _OpenFileDialog = new OpenFileDialog();
+            _OpenFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
+
+            _OpenFileDialog.ShowDialog();
+                       
+            // Алгоритм нахождения MD5 
+            // Просто отображает Хэш на экране
+            FileStream stream = File.OpenRead(_OpenFileDialog.FileName);
+
+            MD5 _MD5 = new MD5CryptoServiceProvider();
+            byte[] _Hashenc = _MD5.ComputeHash(stream);
+            string _Result = "";
+
+            foreach (var _b in _Hashenc)
+            {
+                _Result += _b.ToString("x2");
+            }
+
+            PRI_WebClient = new WebClient();
+            // Завершение загрузки
+            PRI_WebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(MET_Completed);
+            // Прогресс загрузки
+            PRI_WebClient.UploadProgressChanged += new UploadProgressChangedEventHandler(MET_ProgressChanged);
+            // URI сервера и api
+            var uri = new Uri("http://192.168.0.6:81/api/Storage/UploadFile");
+            try
+            {                
+                // Заголовок с токеном для аутентификации в функции загрузки
+                PRI_WebClient.Headers.Add("auth-key", "wpfBazisDownloadAndUploadFileWebApi20201014");               
+                // Асинхронная загрузка файла
+                PRI_WebClient.UploadFileAsync(uri, _OpenFileDialog.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }  
+        }
+
+        /// <summary>МЕТОД Завершение сохранения PDF файла на сервер</summary>
+        private void MET_Completed(object sender, UploadFileCompletedEventArgs e)
+        {
+            if (e?.Error is WebException)
+            {
+                var _Response = (HttpWebResponse)((WebException)e.Error).Response;
+                switch (_Response.StatusCode)
+                {
+                    case HttpStatusCode.Conflict:
+                        MessageBox.Show($"Данный файл уже был загружен!", "Ошибка 409");
+                        break;
+                }
+                return;
+            }
+
+            MessageBox.Show("Файл Загружен!");
+        }
+
+        /// <summary>МЕТОД Прогесс сохранения PDF файла на сервер</summary>
+        private void MET_ProgressChanged(object sender, UploadProgressChangedEventArgs e)
+        {
+          //  this.progressBar.Value = e.ProgressPercentage;
+        }
+
+        ///// <summary>МЕТОД Создаем новую ветку</summary>
+        //private void MET_AddNewNode()
+        //{
+        //    int _Max = ((VirtualModul)MyGlo.Modul).PUB_Protokol.Any() ? ((VirtualModul)MyGlo.Modul).PUB_Protokol.Max(p => p.PROP_pIndex) : 0;
+
+        //    PRI_FormMyNodes.PROP_shaIndex = ++_Max;
+        //    PRI_FormMyNodes.PROP_shaNomerShablon = _WinSpr.PUB_Shablon;
+        //}
+        #endregion
     }
 }

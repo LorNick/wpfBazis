@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using wpfGeneral.UserControls;
-using wpfGeneral.UserFromShablon;
+using wpfGeneral.UserFormShablon;
 using wpfGeneral.UserNodes;
 using wpfGeneral.UserOtchet;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using wpfStatic;
 using System;
@@ -35,7 +34,10 @@ namespace wpfGeneral.UserStruct
         /// <summary>СВОЙСТВО Данные протокола из таблицы Protokol</summary>
         public UserProtokol PROP_Protokol { get; set; }
 
-        /// <summary>СВОЙСТВО Элементы документа</summary>
+        /// <summary>СВОЙСТВО Статистические данные из таблицы kbolInfo</summary>
+        public UserKbolInfo PROP_KbolInfo { get; set; }
+
+        /// <summary>СВОЙСТВО Элементы документа (в разработке)</summary>
         public List<UserElemet> PROP_Elements { get; set; }
 
         /// <summary>СВОЙСТВО Ветка</summary>
@@ -89,6 +91,7 @@ namespace wpfGeneral.UserStruct
             }
         }
 
+
         /// <summary>КОНСТРУКТОР</summary>
         /// <param name="pTipDocum">Тип документа (по умолчанию NULL=0, нет документа)</param> 
         public UserDocument(eTipDocum pTipDocum = eTipDocum.Null)
@@ -104,15 +107,5 @@ namespace wpfGeneral.UserStruct
             PROP_Nodes = pNodes;
             PROP_TipDocum = pTipDocum;
         }
-
-        ///// <summary>КОНСТРУКТОР</summary>
-        ///// <param name="pNodes">Ссылка на ветку</param>
-        ///// <param name="pNodes">Ссылка на ветку</param>
-        ///// <param name="pTipDocum">Тип документа (по умолчанию NULL=0, нет документа)</param> 
-        //public UserDocument(VirtualNodes pNodes, eTipDocum pTipDocum = eTipDocum.Null)
-        //{
-        //    PROP_Nodes = pNodes;
-        //    PROP_TipDocum = pTipDocum;
-        //}
     }
 }

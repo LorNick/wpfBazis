@@ -37,7 +37,7 @@ namespace wpfGeneral.UserWindows
             // Подсказка в строке поиска
             PART_TextBox.WatermarkContent = "Введите ФИО и год рождения (например: ИВАНО И НИ 28)";
             // Размеры окна
-            Height = 660;
+            Height = 720;
             MinWidth = Width;
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
@@ -66,7 +66,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
-            string[] _mName = { "", "ФИО пациента", "Дата рожд.", "Кто завел", "Когда" };
+            string[] _mName = { "", "ФИО пациента", "Дата рожд.", "Кто завел", "Когда", "Направил" };
             return _mName[pIndex];
         }
 
@@ -75,6 +75,7 @@ namespace wpfGeneral.UserWindows
         {
             PART_DataGrid.Columns[1].Width = 300;
             PART_DataGrid.Columns[3].Width = 140;
+           // PART_DataGrid.Columns[4].Width = 110;
         }
 
         /// <summary>МЕТОД Создание фильтров</summary>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -79,6 +78,9 @@ namespace wpfGeneral.UserControls
             }
         }
 
+        /// <summary>РЕГИСТРАЦИЯ Метода События при вводе текста</summary>
+        public event TextChangedEventHandler TextChanged;
+
         /// <summary>СВОЙСТВО Высота текстового поля</summary>
         public override double PROP_HeightText
         {
@@ -148,8 +150,8 @@ namespace wpfGeneral.UserControls
             PART_TextBox.Tag = this;
         }
 
-		///<summary>МЕТОД Инициализация поля</summary>
-		public override void MET_Inicial()
+        ///<summary>МЕТОД Инициализация поля</summary>
+        public override void MET_Inicial()
 		{
             // Ограничиваем 5000 символами
             PROP_MaxLength = 5000;
@@ -177,6 +179,9 @@ namespace wpfGeneral.UserControls
                 // Активируем кнопку "Сохранить"
                 MyGlo.callbackEvent_sEditShablon?.Invoke(true);
             }
+            // Вызываем TextChanged для новых форм (если есть, такое событие)
+            TextChanged?.Invoke(this, e);
+            
         }
 
         /// <summary>СОБЫТИЕ при вводе символа в TextBox</summary>

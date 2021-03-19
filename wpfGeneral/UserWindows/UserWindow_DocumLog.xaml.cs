@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Windows;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using wpfGeneral.UserControls;
 using wpfGeneral.UserStruct;
 using wpfStatic;
 
@@ -14,19 +10,20 @@ namespace wpfGeneral.UserWindows
     public partial class UserWindow_DocumLog
     {
         #region ---- СВОЙСТВО ----
-        /// <summary>СВОЙСТВО PoleHistory родительский элемент протокола</summary>
-        public UserPole_History PROP_PoleHistory { get; set; }
+        /// <summary>Строка логов</summary>
+        private string PRI_jLog { get; set; }
 
         /// <summary>СВОЙСТВО Список логов</summary>
         public List<UserLog> PROP_Logs { get; set; }
         #endregion	
 
         /// <summary>КОНСТРУКТОР</summary>
-        public UserWindow_DocumLog(UserPole_History pPoleHistory)
+        /// <param name="pLog">Текст лога</param> 
+        public UserWindow_DocumLog(string pLog)
         {
             InitializeComponent();
-            
-            PROP_PoleHistory = pPoleHistory;
+
+            PRI_jLog = pLog;
             WindowStyle = WindowStyle.ToolWindow;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
         }
@@ -36,17 +33,11 @@ namespace wpfGeneral.UserWindows
         private void UserWindows_Loaded(object sender, RoutedEventArgs e)
         {
             PROP_Logs = new List<UserLog>();
-           
-            // Если протокола нет, то создаем
-            if (PROP_PoleHistory.PROP_DocumHistory.PROP_Protokol == null)
-                PROP_PoleHistory.PROP_DocumHistory.PROP_Protokol = UserProtokol.MET_FactoryProtokol(PROP_PoleHistory.PROP_Type, (int)PROP_PoleHistory.PROP_Cod);
-            
-            string _jLog = PROP_PoleHistory.PROP_DocumHistory.PROP_Protokol.PROP_xLog;
 
             // Если есть логи
-            if (!string.IsNullOrEmpty(_jLog))
+            if (!string.IsNullOrEmpty(PRI_jLog))
             {
-                JObject _Json = JObject.Parse(_jLog);
+                JObject _Json = JObject.Parse(PRI_jLog);
                 foreach (var i in _Json["Log"].Children())
                 {
                     var _Log = new UserLog();

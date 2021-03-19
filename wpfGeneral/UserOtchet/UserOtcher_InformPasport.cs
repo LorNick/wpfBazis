@@ -1,6 +1,13 @@
 ﻿using System;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using wpfGeneral.UserNodes;
 using wpfStatic;
+using wpfGeneral.UserWindows;
+using System.Windows;
+using Newtonsoft.Json.Linq;
+using wpfGeneral.UserStruct;
+using System.Collections.Generic;
 
 namespace wpfGeneral.UserOtchet
 {
@@ -251,27 +258,71 @@ namespace wpfGeneral.UserOtchet
                 xParagraph = true;
                 MET_Print();
             }
-            // Служебная информация
-            xVopr = " Служебная информация:";
-            xParagraph = true;
-            MET_Print();
-            // Кто создал карту
-            xVopr = " Пользователь, создавший карту:";
-            xOtvet = MET_PoleStr("User");
-            xEnter = 1; xTab = 1;
-            MET_Print();
-            // Дата создания карты
-            if (MET_PoleStr("DataNew") != "")
-            {
-                xVopr = " Дата создания карты:";
-                xOtvet = MET_PoleDat("DataNew");
-                xEnter = 1; xTab = 1;
-                MET_Print();
-            }
-            // KL (только для администраторов)
+            // Служебная информация (только для администраторов)
             if (MyGlo.Admin)
             {
-                xVopr = " KL:";
+                xEnter = 1;
+                MET_Print();
+
+                // Служебная информация
+                xVopr = " Служебная информация:";
+                xParagraph = true;               
+                MET_Print();
+
+                // Если есть логи
+                if (!string.IsNullOrEmpty(MET_PoleStr("xLog")))
+                {
+                    JObject _Json = JObject.Parse(MET_PoleStr("xLog"));
+
+                    // Кто создал карту
+                    xVopr = " Пользователь, создавший карту:";
+                    try
+                    {
+                        xOtvet = MyMet.MET_UserName((int)_Json["Log"].First["User"]);
+                        xOtvet += "  (" + (string)_Json["Log"].First["Date"] + ")";
+                    }
+                    catch (Exception ex)
+                    {
+                        MyGlo.PUB_Logger.Fatal(ex, "Ошибка Лога kbol");
+                        return;
+                    }
+                    xEnter = 1; xTab = 1;
+                    MET_Print();
+
+                    // Кнопка логов
+                    xEnter = 1; xTab = 1;
+                    MET_Print();
+                    Button _ButtonLog = new Button();
+
+                    StackPanel _StackPanel = new StackPanel();
+                    _StackPanel.Orientation = Orientation.Horizontal;
+
+                    Image _Image = new Image();
+                    _Image.Height = 20;
+                    _Image.Width = 20;
+                    _Image.Source = (BitmapImage)FindResource("mnLog");
+                    _StackPanel.Children.Add(_Image);
+
+                    Label _Label = new Label();
+                    _Label.Content = "показать логи";
+                    _StackPanel.Children.Add(_Label);
+
+                    _ButtonLog.Content = _StackPanel;
+                    _ButtonLog.ToolTip = "Показать логи изменения карточки пациента";
+                    _ButtonLog.Focusable = false;
+                    _ButtonLog.Tag = 1;
+                    _ButtonLog.Click += delegate
+                    {                       
+                        // Открываем Форму Карточка Log
+                        UserWindow_DocumLog _WinLog = new UserWindow_DocumLog(MET_PoleStr("xLog"));
+                        _WinLog.Show();
+                    };
+
+                    PRO_Paragraph.Inlines.Add(_ButtonLog);
+                }
+                
+                // KL
+                xVopr = "  KL:";
                 xOtvet = MyGlo.KL.ToString();
                 xEnter = 1; xTab = 1;
                 MET_Print();

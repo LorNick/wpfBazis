@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using wpfGeneral.UserFromShablon;
+using wpfGeneral.UserFormShablon;
 using wpfGeneral.UserStruct;
 using wpfGeneral.UserTab;
 using wpfStatic;

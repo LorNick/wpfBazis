@@ -37,7 +37,11 @@ namespace wpfStatic
         /// <summary>Списки Kdl</summary>
         Kdl_RootsList,
         /// <summary>Добавочная ветка Kdl</summary>
-        Kdl_Add
+        Kdl_Add,
+        /// <summary>Списки Kdl PDF</summary>
+        Kdl_RootsPdf,
+        /// <summary>Добавочная ветка Kdl PDF</summary>
+        Kdl_AddPdf
     }
 
     /// <summary>Тип документа</summary>
@@ -51,7 +55,7 @@ namespace wpfStatic
         Stac,
         /// <summary>Протоколы параклиники par</summary>
         Paracl,
-        /// <summary>Протоколы исследований КДЛ kdl</summary>
+        /// <summary>Протоколы исследований КДЛ или другие документы kdl</summary>
         Kdl
     }
 
@@ -84,7 +88,9 @@ namespace wpfStatic
         /// <summary>Для других ЛПУ</summary>
         OtherLpu = 24,
         /// <summary>Лаборатория</summary>
-        Laboratory = 29
+        Laboratory = 29,
+        /// <summary>ЦАОП</summary>
+        CAOP = 30
     }
 
     /// <summary>Тип закладки</summary>
@@ -101,7 +107,9 @@ namespace wpfStatic
         /// <summary>Таблица</summary>
         Table = 5,
         /// <summary>Репорты</summary>
-        Report = 6
+        Report = 6,
+        /// <summary>PDF</summary>
+        PDF = 7
     }
 
     /// <summary>Тип Вопросов</summary>
@@ -140,7 +148,7 @@ namespace wpfStatic
         /// <summary>16. Справочники UserPole_Sprav</summary>
         Sprav = 16,
         /// <summary>17. Календарь UserPole_Calendar</summary>
-        Calendar = 17
+        Calendar = 17     
     }
 
     /// <summary>Тип Тегов (Нерабочие)</summary>
@@ -267,16 +275,17 @@ namespace wpfStatic
             TypeModul = eModul.Viewer;
 
 #if DEBUG
-            User =  60;
-           // Server = 2;
-            TypeModul = eModul.VrPolicl;
-          //   TypeModul = eModul.VrStac;
+            User = 60; // 5006;
+            // Server = 2;
+            //TypeModul = eModul.VrPolicl;
+                  TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
-           //  TypeModul = eModul.Viewer;
-            //TypeModul = eModul.VrPara;
+            //    TypeModul = eModul.Viewer;
+            //   TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
-           // TypeModul = eModul.OtherLpu;
-           // TypeModul = eModul.Laboratory;
+            //  TypeModul = eModul.OtherLpu;           
+            // TypeModul = eModul.Laboratory;
+            //TypeModul = eModul.CAOP;
 #endif
 
             string[] _mArgs = Environment.GetCommandLineArgs();           

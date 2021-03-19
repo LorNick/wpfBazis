@@ -90,75 +90,6 @@ namespace wpfGeneral.UserVariable
 	        return _Otdel * 100 + pNomer;
 	    }
 
-	    #region ---- Методы скриптов Lua ----
-        /// <summary>Функция Lua, выдает параметры из APSTAC (ast), APAC (apa), Kbol (kbol - по умолчанию)</summary>
-        /// <param name="pPole">Имя поля</param>
-        /// <param name="pTable">Имя таблицы</param>
-        private static object Read(string pPole, string pTable = "kbol")
-        {
-            switch (pTable)
-            {
-                case "ast":
-                    return MyGlo.HashAPSTAC[pPole];
-                case "apa":
-                    return MyGlo.HashAPAC[pPole];
-                case "kbol":
-                    return MyGlo.HashKBOL[pPole];
-            }
-            return "";
-        } // func Read
-
-        /// <summary>Функция для Lua расчет возраста на указанную дату</summary>
-        /// <param name="pDate">Дата на которую расчитываем возраст</param>
-        private static object Age(object pDate)
-        {
-            DateTime _DN = Convert.ToDateTime(pDate);
-            DateTime _DR = Convert.ToDateTime(MyGlo.DR);
-            int _Age = (int)((_DN.Subtract(_DR).Days * 0.99932) / 365); // 0.99932 - убераем високосные дни
-            return _Age;
-        } // func Age
-
-        /// <summary>Переменная для вызова порции языка Lua</summary>
-        private void Lua()
-	    {
-            try
-	        {
-                int _Start = PROP_Text.IndexOf("[Lua");
-                int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
-	            // Находим Lua код
-	            string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
-                // Lua код
-                string _Text = _mArr[1];
-	            try
-	            {
-                    var _Lua = new Lua();
-                    dynamic _Env = _Lua.CreateEnvironment();
-
-                    // Свойства текущего класса - пока отключил
-                    //g["Hash"] = this;
-                    // Подключаем функцию для считывания глобальных данных
-                    _Env.Read = new Func<string, string, object>(Read);
-                    // Расчет возраста на указанную дату
-                    _Env.Age = new Func<object, object>(Age);
-
-                    // Расчет порции кода
-                    dynamic _RezLua = _Env.dochunk(_Text);
-                    //
-                    PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), _RezLua.ToString());
-                }
-	            catch
-	            {
-                    PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), "Ошибка Lua");
-                }
-              
-	        }
-            catch
-	        {
-                PROP_Text = "";
-	        }
-        }
-        #endregion
-
         #region ---- Общие методы ----
         /// <summary>Новая строка</summary>
         private void n()
@@ -291,111 +222,8 @@ namespace wpfGeneral.UserVariable
 			string _Date = "";
             if (PROP_Protokol != null)
                 _Date = PROP_Protokol.PROP_pDate.ToShortDateString() + "г.";
-			PROP_Text = PROP_Text.Replace("[pDate]", _Date);
+			PROP_Text = PROP_Text.Replace("[pDate]", _Date);            
 		}
-        
-        /// <summary>Площадь тела</summary>
-        private void ST()
-        {
-            try
-            {
-                var _ST = new Func<string>(() =>
-                {
-                    // Рост
-                    string _Str = MET_StrRazdel(PROP_NomShabl, "Рост");                    
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Rost)) return ""; 
-
-                    // Вес                                                                                   
-                    _Str = MET_StrRazdel(PROP_NomShabl, "Вес");                    
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Ves)) return "";
-                    
-                    // Результат
-                    double _Rezult = Math.Sqrt(_Rost * _Ves / 3600);
-                    return $"ST: {_Rezult:####.##} кв.м";
-
-                });
-                PROP_Text = PROP_Text.Replace("[ST]", _ST());
-            }
-            catch
-            {
-                PROP_Text = PROP_Text.Replace("[ST]", "");
-            }
-        }
-
-        /// <summary>Клиренс креатинина</summary>
-        private void fKlirens()
-        {
-            try
-            {
-                var _Klirens = new Func<string>(() =>
-                {
-                    // Возраст
-                    string _Str = MET_StrRazdel(PROP_NomShabl, "Возраст");                    
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1, 3), out double _Age)) return ""; // берем 2 символа
-
-                    // Вес                                                                                   
-                    _Str = MET_StrRazdel(PROP_NomShabl, "Вес");                    
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Ves)) return "";
-
-                    // Креатин
-                    _Str = MET_StrRazdel(PROP_NomShabl, "Креатинин");                    
-                    if (!double.TryParse(_Str.Substring(_Str.IndexOf(":") + 1), out double _Kreatin)) return "";
-
-                    // Результат
-                    double _Rezult = (140 - _Age) * _Ves / (72 * (_Kreatin / 88.4));
-                    if (MyGlo.Pol == "Женский") _Rezult *= 0.85;
-                    return string.Format("{0:####.##}", _Rezult);
-
-                });
-                PROP_Text = PROP_Text.Replace("[fKlirens]", _Klirens());
-            }
-            catch
-            {
-                PROP_Text = PROP_Text.Replace("[fKlirens]", "");
-            }
-        }
-
-        /// <summary>Возраст относительно создания протокола pDate</summary>
-        private void kboAge()
-        {
-            try
-            {  
-                DateTime _DR = DateTime.Parse(MyGlo.DR);
-
-                string _Str = ((int)((PROP_Protokol.PROP_pDate.Subtract(_DR).Days * 0.99932) / 365)).ToString(); // 0.99932 - убераем високосные дни
-                if (_Str == "11" || _Str == "12" || _Str == "13" || _Str == "14")
-                    _Str += " лет";
-                else
-                    switch (_Str.Last())
-                    {
-                        case '1':
-                            _Str += " год";
-                            break;
-                        case '2':
-                        case '3':
-                        case '4':
-                            _Str += " года";
-                            break;
-                        default:
-                            _Str += " лет";
-                            break;
-                    }
-                PROP_Text = PROP_Text.Replace("[kboAge]", _Str);   
-            }
-            catch
-            {
-                PROP_Text = PROP_Text.Replace("[kboAge]", "");
-            }            
-        }
-
-        /// <summary>Возраст относительно текущей даты</summary>
-        private void kboAgeD()
-        {
-            DateTime _pDate = DateTime.Now;
-            DateTime _DR = DateTime.Parse(MyGlo.DR);
-
-            PROP_Text = PROP_Text.Replace("[kboAgeD]", MyMet.MET_Age(_DR, _pDate));
-        }
 
         /// <summary>Номер Амбулаторной карты</summary>
         private void kboNomAK()
@@ -403,14 +231,58 @@ namespace wpfGeneral.UserVariable
             PROP_Text = PROP_Text.Replace("[kboNomAK]", Convert.ToString(MyGlo.HashKBOL["NomAK"]));
         }
 
-        /// <summary>Заполнение Больничного листа</summary>
-        /// <remarks>Если работающий, то выдаем предупреждение, что бы заполнили данные о больничном листе</remarks>
-        private void kboBolList()
+        /// <summary>Тройная переменная - по шаблону и разделу (Razdel) [ShabRazdel|620|Диагноз]</summary>
+        private void ShabRazdel()
         {
-            if (MyMet.MET_ParseInt(MyGlo.HashKBOL["SP"]) == 1)
-                PROP_Text = PROP_Text.Replace("[kboBolList]", "ЗАПОЛНИТЕ СТРАХОВОЙ АНАМНЕЗ И ДАТУ ЯВКИ ПО БОЛЬНИЧНОМУ ЛИСТУ!");
-            else
-                PROP_Text = PROP_Text.Replace("[kboBolList]", "нет");
+            try
+            {
+                int _Start = PROP_Text.IndexOf("[ShabRazdel");
+                int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
+                string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
+                // Если номер шаблона меньше 100, то это номер для всех отделениий
+                int _Num = Convert.ToInt32(_mArr[1]);
+                _Num = _Num < 100 ? MET_NomShablon(_Num) : _Num;
+                PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), MET_StrRazdel(_Num, _mArr[2]));
+            }
+            catch
+            {
+            }
+        }
+
+        /// <summary>Тройная переменная - по шаблону и имени вопроса (Name) [ShabRazdel|101|Гистология]</summary>
+        private void ShabName()
+        {
+            try
+            {
+                int _Start = PROP_Text.IndexOf("[ShabName");
+                int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
+                string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
+                // Если номер шаблона меньше 100, то это номер для всех отделениий
+                int _Num = Convert.ToInt32(_mArr[1]);
+                _Num = _Num < 100 ? MET_NomShablon(_Num) : _Num;
+                PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), MET_StrRazdel(_Num, "", 0, _mArr[2]));
+            }
+            catch
+            {
+            }
+        }
+
+        /// <summary>Тройная переменная по шаблону и номеру вопроса (VarId) [ShabVarId|620|50]</summary>
+        private void ShabVarId()
+        {
+            try
+            {
+                int _Start = PROP_Text.IndexOf("[ShabVarId");
+                int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
+                string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
+                // Если номер шаблона меньше 100, то это номер для всех отделениий
+                int _Num = Convert.ToInt32(_mArr[1]);
+                _Num = _Num < 100 ? MET_NomShablon(_Num) : _Num;
+                PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), MET_StrRazdel(_Num, "", Convert.ToInt32(_mArr[2]), "", true));
+            }
+            catch
+            {
+            }
         }
 
         /// <summary>Переменная по поиску нахождению и выводу данных из всех протоколов указанного номера шаблона/типа протоколов</summary>
@@ -541,6 +413,7 @@ namespace wpfGeneral.UserVariable
         /// VarId17nc - (nc) только для ТЕКСТОВЫХ полей
         /// <para>Вид переменной: [fFormula||VarId17xd|+78.51*power(10,2) - 17 - |VarId35xd|]</para>  		 
         /// </remarks>
+        [Obsolete("Устарела, будет удалена")]
         private void fFormula()
         {
             try
@@ -578,58 +451,10 @@ namespace wpfGeneral.UserVariable
 		        PROP_Text = PROP_Text.Replace("[DateVip]", Convert.ToString(MyGlo.HashAPSTAC["DK"]).Substring(0, 10) + " г.");
 		}
 
-	    /// <summary>Гистология при поступлении (из этапного эпикриза)</summary>
-		private void GistPrOsmotrEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[GistPrOsmotrEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Гистология при поступлении"));
-		}
-
-		/// <summary>Номер операции</summary>
-		private void NomerOper()
+        /// <summary>Номер операции</summary>        
+        private void NomerOper()
 		{
 			PROP_Text = PROP_Text.Replace("NomerOper", MySql.MET_GetNextRef(34).ToString());
-		}
-
-		/// <summary>Операции (из этапного эпикриза)</summary>
-		private void OperEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[OperEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Операция"));
-		}
-
-		/// <summary>Послеоперационный период (из этапного эпикриза)</summary>
-		private void PoslOperEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[PoslOperEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Послеоперационный период"));
-		}
-
-		/// <summary>Гистология (из этапного эпикриза)</summary>
-		private void GistEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[GistEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Гистология"));
-		}
-
-		/// <summary>Консилиум (из этапного эпикриза)</summary>
-		private void KonsEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[KonsEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Консилиум"));
-		}
-
-		/// <summary>Химиотерапия (из этапного эпикриза)</summary>
-		private void HimiyEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[HimiyEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Химиотерапия"));
-		}
-
-		/// <summary>Status genitalis (из этапного эпикриза)</summary>
-		private void StatusEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[StatusEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Status"));
-		}
-
-		/// <summary>Полная строка диагноза (из этапного эпикриза)</summary>
-		private void DiagEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[DiagEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Диагноз"));
 		}
 
 		/// <summary>Полная строка диагноза (из приемного отделения)</summary>
@@ -692,12 +517,6 @@ namespace wpfGeneral.UserVariable
 			PROP_Text = PROP_Text.Replace("[astSquare]", Convert.ToString(MyGlo.HashAPSTAC["Square"]));
 		}
 
-		/// <summary>Давление пациента</summary>
-		private void astPressure()
-		{
-			PROP_Text = PROP_Text.Replace("[astPressure]", Convert.ToString(MyGlo.HashAPSTAC["Pressure"]));
-		}
-
 		/// <summary>Вид оплаты (ОМС, платное)</summary>
 		private void astOMS()
 		{
@@ -713,7 +532,7 @@ namespace wpfGeneral.UserVariable
 			{
 				DateTime _DN = Convert.ToDateTime(MyGlo.HashAPSTAC["DN"]);
 				DateTime _DR = Convert.ToDateTime(MyGlo.DR);
-				int _Age = (int)((_DN.Subtract(_DR).Days * 0.99932) / 365); // 0.99932 - убераем високосные дни
+				int _Age = (int)(_DN.Subtract(_DR).Days * 0.99932 / 365); // 0.99932 - убераем високосные дни
 				PROP_Text = PROP_Text.Replace("[astAge]", _Age.ToString());
 			}
 			catch
@@ -749,94 +568,16 @@ namespace wpfGeneral.UserVariable
             // Находим код отделения
             int _CodOtd = MySql.MET_QueryInt(MyQuery.APSTAC_Select_5(PROP_Protokol.PROP_CodApstac));
             // Наименование Отделения
-            _Str += MySql.MET_QueryStr(MyQuery.s_ListDocum_Select_5("s_ListDocum", 2, _CodOtd)) + "\n";
+            _Str += MySql.MET_QueryStr(MyQuery.MET_s_ListDocum_Select_2("2", _CodOtd)) + "\n";
             // Линия
             _Str += "_________________________________________________________________________________________";
             PROP_Text = PROP_Text.Replace("[astShapkaExtact]", _Str);
         }
 
-		/// <summary>Интраоперационный (из этапного эпикриза)</summary>
-		private void IntraEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[IntraEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Интраоперационно"));
-		}
-
-		/// <summary>Лучевая терапия (из этапного эпикриза)</summary>
-		private void LuchEtapEp()
-		{
-			PROP_Text = PROP_Text.Replace("[LuchEtapEp]", MET_StrRazdel(MET_NomShablon(12), "Лучевая терапия"));
-		}
-
-		/// <summary>An. Morbi (из первичного осмотра)</summary>
-		private void AnMorbiPrOsmotr()
-		{
-			PROP_Text = PROP_Text.Replace("[AnMorbiPrOsmotr]", MET_StrRazdel(MET_NomShablon(1), "An.morbi"));
-		}
-
-		/// <summary>Результаты обследований (из первичного осмотра)</summary>
-		private void RezObslPrOsmotr()
-		{
-			PROP_Text = PROP_Text.Replace("[RezObslPrOsmotr]", MET_StrRazdel(MET_NomShablon(1), "Результаты обследований"));
-		}
-
 		/// <summary>Находим значение с прошлого документа, этого же типа</summary>
 		private void LastDocum()
 		{
 			PROP_Text = PROP_Text.Replace("[LastDocum]", MET_StrRazdel(PROP_NomShabl, "", PROP_VarId, "", true));
-		}
-
-		/// <summary>Тройная переменная - по шаблону и разделу (Razdel) [ShabRazdel|620|Диагноз]</summary>
-		private void ShabRazdel()
-		{
-			try
-			{
-				int _Start = PROP_Text.IndexOf("[ShabRazdel");
-				int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
-				string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
-				// Если номер шаблона меньше 100, то это номер для всех отделениий
-				int _Num = Convert.ToInt32(_mArr[1]);
-				_Num = _Num < 100 ? MET_NomShablon(_Num) : _Num;
-				PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), MET_StrRazdel(_Num, _mArr[2]));
-			}
-			catch
-			{					
-			}
-		}
-
-        /// <summary>Тройная переменная - по шаблону и имени вопроса (Name) [ShabRazdel|101|Гистология]</summary>
-        private void ShabName()
-        {
-            try
-            {
-                int _Start = PROP_Text.IndexOf("[ShabName");
-                int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
-                string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
-                // Если номер шаблона меньше 100, то это номер для всех отделениий
-                int _Num = Convert.ToInt32(_mArr[1]);
-                _Num = _Num < 100 ? MET_NomShablon(_Num) : _Num;
-                PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), MET_StrRazdel(_Num, "", 0, _mArr[2]));
-            }
-            catch
-            {
-            }
-        }
-
-		/// <summary>Тройная переменная по шаблону и номеру вопроса (VarId) [ShabVarId|620|50]</summary>
-		private void ShabVarId()
-		{
-			try
-			{
-				int _Start = PROP_Text.IndexOf("[ShabVarId");
-				int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
-				string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
-				// Если номер шаблона меньше 100, то это номер для всех отделениий
-				int _Num = Convert.ToInt32(_mArr[1]);
-				_Num = _Num < 100 ? MET_NomShablon(_Num) : _Num;
-				PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), MET_StrRazdel(_Num, "", Convert.ToInt32(_mArr[2]), "", true));
-			}
-			catch
-			{
-			}
 		}
 
         /// <summary>Оплата по тарифу Стационара</summary>
@@ -845,7 +586,7 @@ namespace wpfGeneral.UserVariable
             string _SumTarif;
             try
             {
-                _SumTarif = MySql.MET_QueryStr(MyQuery.varSumTarifStac_Select_1(MyGlo.IND));
+                _SumTarif = MySql.MET_QueryStr(MyQuery.MET_varSumTarifStac_Select_1(MyGlo.IND));
             }
             catch
             {
@@ -956,53 +697,10 @@ namespace wpfGeneral.UserVariable
             }   
 		}
 
-        /// <summary>Дата посещения в поликлинику</summary>
-        private void apaDat()
-		{
-            PROP_Text = PROP_Text.Replace("[apaDat]", Convert.ToString(MyGlo.HashAPAC["DP"]).Substring(0, 10));
-		}
-
         /// <summary>Код диагноза посещения поликлиники</summary>
         private void apaMkb10()
         {
             PROP_Text = PROP_Text.Replace("[apaMkb10]", Convert.ToString(MyGlo.HashAPAC["D"]));
-        }
-
-        /// <summary>Код клинической группы посещения поликлиники</summary>
-        private void apaGroup()
-        {
-            PROP_Text = PROP_Text.Replace("[apaGroup]", Convert.ToString(MyGlo.HashAPAC["GrKlin"]));
-        }
-
-        /// <summary>Стадия посещения поликлиники</summary>
-        private void apaStage()
-        {
-            try
-            {
-                PROP_Text = PROP_Text.Replace("[apaStage]", Convert.ToString(MyGlo.HashAPAC["Stadia"]));
-            }
-            catch
-            {
-                PROP_Text = PROP_Text.Replace("[apaStage]", "");
-            }
-        }
-
-        /// <summary>Т посещения поликлиники</summary>
-        private void apaT()
-        {
-            PROP_Text = PROP_Text.Replace("[apaT]", Convert.ToString(MyGlo.HashAPAC["T"]));
-        }
-
-        /// <summary>N посещения поликлиники</summary>
-        private void apaN()
-        {
-            PROP_Text = PROP_Text.Replace("[apaN]", Convert.ToString(MyGlo.HashAPAC["N"]));
-        }
-
-        /// <summary>M посещения поликлиники</summary>
-        private void apaM()
-        {
-            PROP_Text = PROP_Text.Replace("[apaM]", Convert.ToString(MyGlo.HashAPAC["M"]));
         }
 
         /// <summary>Полный диагноз посещения поликлиники</summary>
@@ -1024,98 +722,13 @@ namespace wpfGeneral.UserVariable
             PROP_Text = PROP_Text.Replace("[apaDiag]", _Diag);
         }
 
-        /// <summary>Морфологический тип посещения поликлиники</summary>
-        private void apaMorph()
-        {
-            string _Morph;
-            try
-            {
-                _Morph = (string)MyGlo.HashAPAC["MorfTip"];
-                _Morph = MySql.MET_QueryStr(MyQuery.s_MorfTip_Select_2(_Morph));
-            }
-            catch
-            {
-                _Morph = "";
-            }
-            PROP_Text = PROP_Text.Replace("[apaMorph]", _Morph);
-        }
-
-        /// <summary>Вставляем текст в зависимости от кода отделения госпитализации OtdGosp</summary>
-        /// <remarks>
-        /// <para>Вид переменной: [apaNapS|Условие|Отд1,Отд2, ... |Текст]</para>  		 
-        /// <list type="table">
-        /// <listheader><term>Константа</term><description>Описание</description></listheader>
-        /// <item><term>apaNapS</term><description>константа (имя переменной)</description></item>		
-        /// <item><term>Условие</term><description>3 спец символа</description></item>
-        /// <item><term>- =</term><description>отделение госпитализации равно указанным отделениям</description> </item>
-        /// <item><term>- !</term><description>отделение госпитализации не равно указанным отделениям</description> </item>
-        /// <item><term>- ></term><description>отделеие госпитализации больше указанной госпитализации</description> </item>
-        /// <item><term>Отд1,Отд2, ... </term><description>перечень отделений</description> </item>		
-        /// <item><term>Текст</term><description>отображаемый текст, в случае правильного отделения</description></item>
-        /// </list>
-        /// </remarks>
-        private void apaNapS()
-        {  
-            try
-            {   
-                int _Start = PROP_Text.IndexOf("[apaNapS");
-                int _End = PROP_Text.IndexOf("]", _Start) - _Start + 1;
-                // 0 - условие, 1 -  перечень отделений, через запятую, 2 - текст который вставляем
-                string[] _mArr = PROP_Text.Substring(_Start + 1, _End - 2).Split('|');
-                // Подстановочный текст
-                string _Text = _mArr[3];
-                try
-                {
-                    // Отделение госпитализации
-                    int _OtdGosp = (int)MyGlo.HashAPAC["OtdGosp"];
-                    if (_OtdGosp == 0)
-                    {
-                        _Text = "";
-                        goto exit;
-                    }
-                    // Перечень отделений
-                    int[] _mOtd = _mArr[2].Split(',').Select(int.Parse).ToArray();
-                    // Условия
-                    switch (_mArr[1])
-                    {
-                        case "=":
-                            if (Array.IndexOf(_mOtd, _OtdGosp) == -1) 
-                                _Text = "";
-                            break;
-                        case "!":
-                            if (Array.IndexOf(_mOtd, _OtdGosp) != -1)
-                                _Text = "";
-                            break;
-                        case ">":
-                            if (_OtdGosp <= _mOtd[0])
-                                _Text = "";
-                            break;
-                        default:
-                            _Text = "";
-                            break;
-                    }           
-                exit:
-                    ;
-                }
-                catch
-                {
-                    _Text = "";
-                }
-                PROP_Text = PROP_Text.Replace(PROP_Text.Substring(_Start, _End), _Text);
-            }
-            catch
-            {   
-            }
-            
-        }
-
         /// <summary>Оплата по тарифу Поликлиники</summary>
         private void apaSumTarif()
         {
             string _SumTarif;
             try
             {
-                _SumTarif = MySql.MET_QueryStr(MyQuery.varSumTarifPol_Select_1(MyGlo.IND));
+                _SumTarif = MySql.MET_QueryStr(MyQuery.MET_varSumTarifPol_Select_1(MyGlo.IND));
             }
             catch
             {
@@ -1137,13 +750,7 @@ namespace wpfGeneral.UserVariable
         private void Apparat()
         {
             PROP_Text = PROP_Text.Replace("[Apparat]", MySql.MET_QueryStr(MyQuery.parObsledovt_Select_2((int)MyGlo.IND)));
-        }
-
-        /// <summary>Исследования</summary>
-        private void parIssledov()
-        {
-            PROP_Text = PROP_Text.Replace("[parIssledov]", MySql.MET_QueryStr(MyQuery.parObsledovt_Select_3((int)MyGlo.IND)));
-        }
+        }        
         #endregion
 				
 		/// <summary>МЕТОД Формируем строку по данным указанного шаблона, указанного раздела у соответствуюещго шаблона</summary>

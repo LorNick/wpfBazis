@@ -35,7 +35,7 @@ namespace wpfGeneral.UserControls
         {
             get
             {
-                return PART_TextBox == null ? null : PART_TextBox.Foreground;
+                return PART_TextBox?.Foreground;
             }
             set
             {
@@ -61,7 +61,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Ширина текста</summary>
-        public override Double PROP_WidthText
+        public override double PROP_WidthText
         {
             get { return PART_TextBox.Width; }
             set 
@@ -75,7 +75,7 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Минимальная Ширина описания</summary>
-        public override Double PROP_MinWidthDescription
+        public override double PROP_MinWidthDescription
         {
             get { return PART_Label.MinWidth; }
             set { PART_Label.MinWidth = value; }
@@ -114,7 +114,7 @@ namespace wpfGeneral.UserControls
         {
             get
             {
-                return (PART_TextBox.TextAlignment);
+                return PART_TextBox.TextAlignment;
             }
             set
             {
@@ -190,7 +190,7 @@ namespace wpfGeneral.UserControls
 
             TextBox _Text = (TextBox) sender;
             
-            if (Char.IsDigit(e.Text[0])) 
+            if (char.IsDigit(e.Text[0])) 
             { 
                // Это число
             }

@@ -12,6 +12,8 @@ namespace wpfReestr
         
         /// <summary>Итоговая сумма</summary>
         public double SUMV { get; set; }
+        /// <summary>Дети до 4 года (с 2021)</summary>
+        public double Sl03 { get; set; }
         /// <summary>Сверхдлительность</summary>
         public double Sl10 { get; set; }
         /// <summary>Дети до 1 года</summary>
@@ -26,6 +28,10 @@ namespace wpfReestr
         public double KOEF_UP { get; set; }
         /// <summary>Коэффициент подуровня</summary>
         public double KOEF_U { get; set; }
+        /// <summary>Коэффициент Дифференциации</summary>
+        public double KOEF_D { get; set; }
+        /// <summary>Коэффициент Доля заработной платы</summary>
+        public double KOEF_Dzp { get; set; }
         /// <summary>Короткий случай</summary>
         public double Short { get; set; }
         /// <summary>Итоговый коэффициент КСЛП</summary>

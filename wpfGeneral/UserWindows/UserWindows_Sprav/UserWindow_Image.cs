@@ -62,35 +62,9 @@ namespace wpfGeneral.UserWindows
         /// <param name="pStrValue">Данные которые сохраняем</param>
         /// <param name="pRow">Редактируемая строка</param>
         /// <param name="pColumn">Редактируемый столбец</param>
+        /// <remarks>Не реализованно</remarks>
         protected override bool MET_SqlEdit(DataRow pRow, string pStrValue, DataGridColumn pColumn)
-        {
-            //int lCod;                                       // код ответа
-
-            // ---- Проверяем на наличие повторов
-            // Если есть повтор, то не сохраняем
-            //if (MySql.metQueryInt(MyQuery.s_ListDocum_Select_3(proTabName, priShablon, priVarID, pStrValue)) > 0)
-            //{
-            //    MessageBox.Show("Ошибка! Данный ответ уже есть в списке ответов");
-            //    return false;
-            //}
-            //// ---- Update Если есть код ответа, значить строка старая и меняем ответ
-            //if (pRow["Cod"].ToString() != "")
-            //{
-            //    lCod = Convert.ToInt32(pRow["Cod"]);        // код ответа
-            //    MySql.metQueryNo(MyQuery.s_ListDocum_Update_1(proTabName, lCod, pStrValue));
-            //    return true;
-            //}
-            //// ----- Insert Находим максимальный код
-            //lCod = MySql.metQueryInt(MyQuery.s_ListDocum_Select_2(proTabName, priShablon)) + 1;
-            //if (lCod == 1)
-            //    lCod = priShablon * 1000 + 1;               // если это первый ответ в шаблоне то начинаем с нужного номера
-            //// ---- Добавляем ответ в базу
-            //MySql.metQueryNo(MyQuery.s_ListDocum_Insert_1(proTabName, lCod, priShablon, priVarID, pStrValue));
-            //// Добавляем данные в sqlDs
-            //pRow["Cod"] = lCod;
-            //pRow["Value"] = pStrValue;
-            //MyGlo.sqlDsBazis.Tables[proTabName].Rows.Add(pRow);
-
+        {           
             return true;
         }
 

@@ -12,14 +12,17 @@ using wpfGeneral.UserVariable;
 using wpfStatic;
 
 
-namespace wpfGeneral.UserFromShablon
+namespace wpfGeneral.UserFormShablon
 {
     /// <summary>КЛАСС для вывода Стандартного Шаблона на Форму</summary>
     public class UserFormShablon_Standart : VirtualFormShablon
     {
         /// <summary>Панель, куда добавляем поля</summary>
         private readonly StackPanel PRI_StackPanel = new StackPanel();
-        
+
+        /// <summary>Панель, куда добавляем поля</summary>
+        private UseFormShablon_Voice PRI_VoiceShablon;
+
         /// <summary>КОНСТРУКТОР (пустой)</summary>
         public UserFormShablon_Standart() { }
 
@@ -37,6 +40,11 @@ namespace wpfGeneral.UserFromShablon
             base.MET_Inizial(pNodes, pNew, pShablon, pText);   
             PROP_TipProtokol = new MyTipProtokol(PUB_VirtualNodes.PROP_shaTipProtokol.PROP_TipDocum);
             MET_CreateForm();
+
+            // Если шаблон содержит тег Voice, то начинаем работу со звуком
+            if (PROP_Docum.PROP_ListShablon.PROP_MyFormat.MET_If("Voice"))
+                PRI_VoiceShablon = new UseFormShablon_Voice(PROP_Docum);
+
             return this;
         }
      
@@ -75,7 +83,7 @@ namespace wpfGeneral.UserFromShablon
                 }
 
                 // ---- Дата осмотра
-                PROP_Format = new MyFormat(PROP_Docum.PROP_ListShablon.PROP_xFormat);
+                PROP_Format = PROP_Docum.PROP_ListShablon.PROP_MyFormat;
                 VirtualPole _Date = MET_CreateUserPole(3);
                 _Date.PROP_Necessarily = true;
                 _Date.PROP_Description = PROP_Format.MET_If("pDateT") ? PROP_Format.PROP_Value["pDateT"].ToString() : "Дата";
@@ -181,7 +189,6 @@ namespace wpfGeneral.UserFromShablon
             Children.Add(PRI_StackPanel);
 
             // Ещё раз пробегаем по полям и запускаем Lua код
-            // ReSharper disable once LoopCanBePartlyConvertedToQuery
             foreach (DictionaryEntry _DiEnt in PUB_HashPole)
             {
                 var _PoleLua = (VirtualPole) _DiEnt.Value;

@@ -34,6 +34,10 @@
                 <Image Source="{Binding Path=Icon, Converter={StaticResource ConvertTextToImage}}" Height="20" />              
             </DataTemplate>
 
+            <DataTemplate x:Key="icoDelDateCellTemplate">
+                <Image Source="{Binding Path=IconDel, Converter={StaticResource ConvertTextToImage}}" Height="20" />
+            </DataTemplate>
+
             <Style x:Key="WordWrapStyle" TargetType="{x:Type TextBlock}">
                 <Setter Property="TextWrapping" Value="Wrap"/>
             </Style>            

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Windows;
 using wpfGeneral.UserStruct;
-using wpfGeneral.UserFromShablon;
+using wpfGeneral.UserFormShablon;
 using wpfStatic;
 using Neo.IronLua;
 using wpfGeneral.UserControls;
-using System.Collections;
 
 namespace wpfGeneral.UserLua
 {
@@ -138,27 +137,8 @@ namespace wpfGeneral.UserLua
             // Код записи (Cod из Apac, IND  из Apstac, KL из kbol
             decimal _CodZap = MyGlo.IND;
             // Смотрим наличие указанной таблицы pTab
-            pTab = pTab == "" ? PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_Prefix : pTab;
-            switch (pTab)
-            {
-                case "apaN":
-                case "pol":
-                    pTab = "pol";
-                    break;
-                case "ast":
-                case "stac":
-                    pTab = "stac";
-                    break;
-                case "par":
-                    pTab = "par";
-                    break;
-                case "kbol":
-                    _CodZap = MyGlo.KL;
-                    break;
-                default:
-                    return false;
-            }
-
+            pTab = pTab == "" ? PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_KbolInfo : pTab;
+         
             UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(pTab, _CodZap, MyGlo.KL);
             _KbolInfo.MET_Change(pTag, _Value);
 
@@ -180,27 +160,8 @@ namespace wpfGeneral.UserLua
             // Код записи (Cod из Apac, IND  из Apstac, KL из kbol
             decimal _CodZap = MyGlo.IND;
             // Смотрим наличие указанной таблицы pTab
-            pTab = pTab == "" ? PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_Prefix : pTab;
-            switch (pTab)
-            {
-                case "apaN":
-                case "pol":
-                    pTab = "pol";
-                    break;
-                case "ast":
-                case "stac":
-                    pTab = "stac";
-                    break;
-                case "par":
-                    pTab = "par";
-                    break;
-                case "kbol":
-                    _CodZap = MyGlo.KL;
-                    break;
-                default:
-                    return false;
-            }
-
+            pTab = pTab == "" ? PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_KbolInfo : pTab;
+         
             UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(pTab, _CodZap, MyGlo.KL);
             _KbolInfo.MET_Delete(pTag);
            
@@ -215,25 +176,8 @@ namespace wpfGeneral.UserLua
             // Код записи (Cod из Apac, IND  из Apstac, Cod из parObsledov
             decimal _CodZap = MyGlo.IND;
             // Смотрим наличие указанной таблицы pTab
-            string pTab = PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_Prefix;
-            switch (pTab)
-            {
-                case "apaN":
-                case "pol":
-                    pTab = "pol";
-                    break;
-                case "ast":
-                case "stac":
-                    pTab = "stac";
-                    break;
-                case "par":
-                    pTab = "par";
-                    break;                               
-                default:
-                    return false;
-            }
-
-            UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(pTab, _CodZap, MyGlo.KL);
+            string _Tab = PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_KbolInfo;
+            UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(_Tab, _CodZap, MyGlo.KL);
             _KbolInfo.MET_ChangeOms(pOms);
 
             return true;
@@ -346,7 +290,7 @@ namespace wpfGeneral.UserLua
             return _Value;
         } // func lSqlToStr
 
-        /// <summary>Lua Функция. Сравниваем текстовые 2 даты</summary>
+        /// <summary>Lua Функция. Сравниваем текстовые 2 даты (в Разработке)</summary>
         /// <returns>Возвращаем -1 если первая дата меньше второй, 0 если даты равны, 1 если первая дата больше 2й, 99 если это не даты</returns>
         private int lDateIf(string pDate1, string pDate2)
         {
@@ -554,14 +498,5 @@ namespace wpfGeneral.UserLua
                                           $"\n таблицы {PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_Shablon}");
             }
         }
-
-        ///// <summary>МЕТОД Находим диагноз параклиники из полседнего посещения поликлиники или стационара</summary>
-        //public Hashtable  MET_ParDiag()
-        //{
-        //    Hashtable _HashDiag = new Hashtable();
-
-
-        //    return _HashDiag;
-        //}
     }
 }

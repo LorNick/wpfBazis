@@ -57,12 +57,34 @@ namespace wpfStatic
         }
 
         /// <summary>Выборка ВСЕХ строк шаблона ListShablon</summary>
-        public static string MET_ListShablon_Select_5(string pPrefix)
+        public static string MET_ListShablon_Select_5(string pPrefix, DateTime pDateN, DateTime pDateK, string pUserCod, bool? pZeroProtokol)
         {
+            string _UserCod = "";
+            // Фильтр по UserCod
+            if (pUserCod != "")
+                _UserCod = $" and xUserUp = {MyMet.MET_ParseInt(pUserCod)}";
+
+            string _ZeroProtokol = "";
+            if (pZeroProtokol == true)
+                _ZeroProtokol = $" and w.cou > 0";
+
             string _Query = $@"
-                select concat(Cod, ';', Name) as Names, Icon, Cod, TipObsled, Name, ProfilVr
-                from dbo.{pPrefix}ListShablon
-                where isnull(xDelete, 0) = 0";
+                select concat(Cod, ';', Name) as Names
+                        ,Icon as Icon
+                        ,Cod, TipObsled
+                        ,iif(charindex('\Del', s.xFormat) > 0, 'mnDelete', '') as IconDel
+                        ,Name, ProfilVr
+                        ,isnull(w.cou,0) as Cou
+	                    ,cast(w.Dmin as date) as Dmin
+	                    ,cast(w.Dmax as date) as Dmax
+                from dbo.{pPrefix}ListShablon as s
+                left join (select p.Numshablon, count(*) as cou, min(pDate) as Dmin,  max(pDate) as Dmax
+                           from dbo.{pPrefix}Protokol as p
+                           where p.xDelete = 0 and p.pDate between '{pDateN:MM.dd.yyyy}' and '{pDateK:MM.dd.yyyy}' {_UserCod} 
+                           group by p.NumShablon) as w
+                  on s.cod=w.NumShablon
+                where isnull(s.xDelete, 0) = 0 {_ZeroProtokol}
+                order by Cod";
             return _Query;
         }
         #endregion
@@ -247,7 +269,7 @@ namespace wpfStatic
             string _Query = $@"
                 select Protokol, NumShablon, pDate
                 from dbo.{pPrefix}Protokol    
-                where isnull(xDelete, 0) = 0 and p.KL = {KL} and CodApstac = {CodApstac} and NumShablon = {NumShablon}";
+                where isnull(xDelete, 0) = 0 and KL = {KL} and CodApstac = {CodApstac} and NumShablon = {NumShablon}";
              return _Query;
         }
 
@@ -264,32 +286,31 @@ namespace wpfStatic
              return _Query;
         }
 
-        /// <summary>Выборка протоколов Protokol для модуля List</summary>
-        public static string MET_Protokol_Select_4(int NumShablon, string pVopros = "")
+        /// <summary>Выборка списка протоколов Protokol</summary>
+        public static string MET_Protokol_Select_4(string pPrefix, int pNumSha, DateTime pDateN, DateTime pDateK, string pUserCod)
         {
-             string _Query = $@"
-                select 
-                     p.* {pVopros}
-                from 
-                (
-                    select *, 'Пол' as Tip
-                    from dbo.apaNProtokol as p
-                    where isnull(p.xDelete, 0) = 0 and p.NumShablon = {NumShablon}
-                    union
-                    select *, 'Стац'
-                    from dbo.astProtokol as p
-                    where isnull(p.xDelete, 0) = 0 and p.NumShablon = {NumShablon}
-                    union
-                    select *, 'Пар'
-                    from dbo.parProtokol as p
-                    where isnull(p.xDelete, 0) = 0 and p.NumShablon = {NumShablon}
-                    union
-                    select *, 'Кдл'
-                    from dbo.kdlProtokol as p
-                    where isnull(p.xDelete, 0) = 0 and p.NumShablon = {NumShablon}
-                ) as p
-                join dbo.kbol as k
-                  on k.KL = p.KL";
+            string _SqlWhere = "";
+            // Фильтр по UserCod
+            if (pUserCod != "")
+                _SqlWhere += $" and p.xUserUp = {MyMet.MET_ParseInt(pUserCod)}";           
+
+            string _Query = $@"
+                use Bazis;
+                select top 100 
+                    p.KL
+                    ,p.CodApstac
+                    ,iif(p.xDelete = 1, 'mnDelete', '') as Icon
+                    ,dbo.GetFIO(k.FAM, k.I, k.O) as FIO
+	                ,k.DR
+                    ,p.pDate
+                    ,p.xUserUp
+                    ,u.FIO as Users  
+                from dbo.{pPrefix}Protokol  as p with (nolock)
+                left join dbo.kbol          as k with (nolock) on p.KL = k.KL
+                left join dbo.s_Users       as u on p.xUserUp = u.Cod
+                where NumShablon = {pNumSha}
+                    and p.pDate between '{pDateN:MM.dd.yyyy}' and '{pDateK:MM.dd.yyyy}' {_SqlWhere}                  
+                order by pDate desc";
              return _Query;
         }
 
@@ -646,11 +667,12 @@ namespace wpfStatic
                       where p.NumShablon >= 20000 and a.Cod = p.CodApstac and isnull(p.xDelete, 0) = 0
                      ) as kdl
                     ,iif(a.IsCloseTap = 2, iif(a.Cod = a.NumberFirstTap, '(разовое)', '(обращение)'), '') as Metka
-                    ,(select  'консилиум' 
+                    ,(select top 1 'консилиум' 
                       from dbo.apaNProtokol as p 
                        where a.Cod = p.CodApstac and p.NumShablon%100 = 11 and p.NumShablon < 3000 and  isnull(p.xDelete, 0) = 0
                      ) as ImageInform
                     ,isnull(a.xDelete, 0) as xDelete
+                    ,a.xLog
                 from dbo.APAC               as a
                 left join dbo.s_VrachPol    as v    on a.Kv = v.KOD
                 left join dbo.s_ProfPol     as p    on v.SPCS = p.Cod
@@ -673,8 +695,9 @@ namespace wpfStatic
                       where p.NumShablon >= 20000 and a.IND = p.CodApstac and isnull(p.xDelete, 0) = 0
                      ) as kdl
                     ,'' as Metka
-                    ,'' as ImageInform
+                    ,iif(o.Tip = 1, 'mnStac', 'mnStacDnev') as ImageInform
                     ,isnull(a.xDelete, 0) as xDelete
+                    ,a.xLog
                 from dbo.APSTAC             as a
                 left join dbo.s_VrachStac   as v    on a.Kv = v.KOD
                 left join dbo.s_Department  as o    on a.Otd = o.Cod
@@ -694,6 +717,7 @@ namespace wpfStatic
                     ,'' as Metka
                     ,'' as ImageInform
                     ,isnull(p.xDelete, 0) as xDelete
+                    ,null as xLog
 				from dbo.parProtokol            as p
 				left join dbo.parListShablon    as l    on p.NumShablon = l.Cod
 				left join dbo.s_Users           as u    on p.xUserUp = u.Cod
@@ -821,6 +845,8 @@ namespace wpfStatic
         /// <summary>Выборка записи kbol по условию  (для других ЛПУ)</summary>
         public static string kbol_Select_5(string proSqlWhere, int pLpu, int pOtd)
         {
+            int _Modul = (int)MyGlo.TypeModul;
+
             string _Query = $@"
             use Bazis;
             
@@ -837,7 +863,15 @@ namespace wpfStatic
 	            set @ShabNaprPol = 9944;
 	            set @ShabNaprStac = 9944;
 	            set @ShabRez = 3;
-            end 
+            end
+
+            -- Для ЦАОП (пока здесь же)
+            if {(int)MyGlo.TypeModul} = 30
+            begin
+	            set @ShabNaprPol = 9958;
+	            set @ShabNaprStac = 0;
+	            set @ShabRez = 9;
+            end
 
             select  
 	            k.KL
@@ -928,7 +962,8 @@ namespace wpfStatic
 	                ,dbo.GetFIO(k.FAM, k.I, k.O) as FIO
 	                ,k.DR	
 	                ,p.Lab
-	                ,p.pDate	   
+	                ,p.pDate	
+                    ,d.DatNapr
                 from dbo.kbol as k with (nolock)
                 left join (
                     select r.KL, r.pDate, u.FIO as Lab
@@ -940,6 +975,19 @@ namespace wpfStatic
                     join dbo.s_Users as u on r.xUserUp = u.Cod
 	                where Num = 1  
                     ) as p on k.KL = p.KL
+                join (
+                    select KL, max(pDate) as DatNapr
+                    from (
+                        select KL, pDate, Cod
+                        from dbo.apaNProtokol as p
+                        where p.NumShablon = 9957 and xDelete = 0
+                        union 
+                        select KL, pDate, Cod
+                        from dbo.astProtokol as p
+                        where p.NumShablon = 9957 and xDelete = 0
+                    )  as d
+                    group by KL
+                ) as d on d.KL = k.KL
                 where not(k.DSmerti is not null and p.KL is null)                                   -- не показываем новых умерших пациентов без результата
                     and ((len(@F) = 0 and p.KL is not null and p.pDate = @Dat)                      -- если строка ФИО пустая
                         or 
@@ -1014,6 +1062,86 @@ namespace wpfStatic
                 update dbo.kbolInfo
                     set jTag = '{jTag}' 
                         ,Oms = {Oms}
+                where Cod = {Cod}";
+            return _Query;
+        }
+        #endregion
+
+        #region ---- List (списки apaNList, astList, parList, kdlList, s_ListDocum) ----
+        /// <summary>Варианты ответа 3м параметрам</summary>
+        public static string MET_List_Select_1(string TabName, int ID, int Nomer)
+        {
+            string _Query = $@"
+                select Cod, Value
+                from dbo.{TabName}
+                where ID = {ID} and Nomer = {Nomer}";
+            return _Query;
+        }
+
+        /// <summary>Находим максимальный код</summary>
+        public static string MET_List_MaxCod_Select_2(string TabName, int ID)
+        {
+            string _Query = $@"
+                select max(Cod)
+                from dbo.{TabName}
+                where ID = {ID}";
+            return _Query;
+        }
+
+        /// <summary>Ищем повторы по 4м параметрам</summary>
+        public static string MET_List_Select_3(string TabName, int ID, int Nomer, string Value)
+        {
+            string _Query = $@"
+                select Cod
+                from dbo.{TabName}
+                where ID = {ID} and Nomer = {Nomer} and Value = '{Value}'";
+            return _Query;
+        }
+
+        /// <summary>Выборка списка по 3м параметрам</summary>
+        /// <param name="TabName">Имя таблицы List</param>
+        ///  <param name="ID">Код шаблона</param>
+        ///  <param name="VarId">VarId вопроса</param>
+        ///  <param name="pSortList">Сортировка
+        ///         true - сортируе по порядку расположению в таблице List по полю Cod, 
+        ///         false - сортируем по алфавиту по полю Value (по умолчанию)</param>
+        public static string MET_List_Select_4(string TabName, int ID, int VarId, bool pSortList = false)
+        {
+            string _SortList = pSortList ? "Cod" : "Value";
+            string _Query = $@"
+                select *
+                from dbo.{TabName}
+                where ID = {ID} and Nomer = {VarId}
+                order by {_SortList}";
+            return _Query;
+        }
+
+        /// <summary>Удаляем вариант ответа</summary>
+        public static string MET_List_Delete_1(string TabName, int Cod)
+        {
+            string _Query = $@"
+                delete dbo.{TabName}
+                where Cod = {Cod}";
+            return _Query;
+        }
+
+        /// <summary>Добавляем вариант ответа</summary>
+        public static string MET_List_Insert_1(string TabName, int Cod, int ID, int Nomer, string Value)
+        {
+            string _Query = $@"
+                insert dbo.{TabName}
+                    (Cod, ID, Nomer, [Value], Flag)
+                values
+                    ({Cod}, {ID}, {Nomer}, '{Value}', 1)";
+            return _Query;
+        }
+
+        /// <summary>Меняем вариант ответа</summary>
+        public static string MET_List_Update_1(string TabName, int Cod, string Value)
+        {
+            string _Query = $@"
+                update dbo.{TabName}
+                  set Value = '{Value}'
                 where Cod = {Cod}";
             return _Query;
         }
@@ -1365,7 +1493,7 @@ namespace wpfStatic
         {
              string _Query = $@"
                 delete dbo.Oper
-                where astProtokol = {astProtokol} and xImport in (1, 3) and isnull(xDelete, 0) = 0";
+                where astProtokol = {astProtokol} and isnull(xDelete, 0) = 0 and ((xImport = 1 and {MyGlo.Server} in (2, 5)) or (xImport = 3 and {MyGlo.Server} in (3, 6)))";
              return _Query;
         }
 
@@ -1587,6 +1715,28 @@ namespace wpfStatic
         }
         #endregion
 
+        #region ---- s_List ----
+        /// <summary>Варианты ответа 3м параметрам</summary>
+        public static string MET_s_List_Select_1(string ID)
+        {
+            string _Query = $@"
+                select Cod, Value
+                from dbo.s_ListDocum
+                where ID = '{ID}' and Nomer > 0";
+            return _Query;
+        }
+
+        /// <summary>Выборка значения Value по 3м параметрам</summary>
+        public static string MET_s_List_Select_2(string ID, int Nomer)
+        {
+            string _Query = $@"
+                select Value
+                from dbo.s_ListDocum
+                where ID = '{ID}' and Nomer = {Nomer}";
+            return _Query;
+        }
+        #endregion
+
         #region ---- s_ListImage (список картинок) ----
         /// <summary>Выборка списка рисунков s_ListImage</summary>
         public static string s_ListImage_Select_1()
@@ -1639,96 +1789,27 @@ namespace wpfStatic
         }
         #endregion
 
-        #region ---- s_ListDocum (списки) ----
+        #region ---- s_ListDocum ----
         /// <summary>Варианты ответа 3м параметрам</summary>
-        public static string s_ListDocum_Select_1(string TabName, int ID, int Nomer)
+        public static string MET_s_ListDocum_Select_1(string ID)
         {
-             string _Query = $@"
-                select Cod, Value
-                from dbo.{TabName}
-                where ID = {ID} and Nomer = {Nomer}";
-             return _Query;
-        }
-
-        /// <summary>Находим максимальный код</summary>
-        public static string s_ListDocum_Select_2(string TabName, int ID)
-        {
-             string _Query = $@"
-                select max(Cod)
-                from dbo.{TabName}
-                where ID = {ID}";
-             return _Query;
-        }
-
-        /// <summary>Ищем повторы по 4м параметрам</summary>
-        public static string s_ListDocum_Select_3(string TabName, int ID, int Nomer, string Value)
-        {
-             string _Query = $@"
-                select Cod
-                from dbo.{TabName}
-                where ID = {ID} and Nomer = {Nomer} and Value = '{Value}'";
-             return _Query;
-        }
-
-        /// <summary>Выборка списка по 3м параметрам</summary>
-        /// <param name="TabName">Имя таблицы List</param>
-        ///  <param name="ID">Код шаблона</param>
-        ///  <param name="VarId">VarId вопроса</param>
-        ///  <param name="pSortList">Сортировка
-        ///         true - сортируе по порядку расположению в таблице List по полю Cod, 
-        ///         false - сортируем по алфавиту по полю Value (по умолчанию)</param>
-        public static string s_ListDocum_Select_4(string TabName, int ID, int VarId, bool pSortList = false)
-        {
-            string _SortList = pSortList ? "Cod" : "Value";
             string _Query = $@"
-                select *
-                from dbo.{TabName}
-                where ID = {ID} and Nomer = {VarId}
-                order by {_SortList}";
+                select Cod, Value
+                from dbo.s_ListDocum
+                where ID = '{ID}' and Nomer > 0";
             return _Query;
         }
 
-        /// <summary>Выборка значения по 3м параметрам</summary>
-        public static string s_ListDocum_Select_5(string TabName, int ID, int Nomer)
+        /// <summary>Выборка значения Value по 3м параметрам</summary>
+        public static string MET_s_ListDocum_Select_2(string ID, int Nomer)
         {
-             string _Query = $@"
+            string _Query = $@"
                 select Value
-                from dbo.{TabName}
-                where ID = {ID} and Nomer = {Nomer}";
-             return _Query;
-        }
-
-        /// <summary>Удаляем вариант ответа</summary>
-        public static string s_ListDocum_Delete_1(string TabName, int Cod)
-        {
-             string _Query = $@"
-                delete dbo.{TabName}
-                where Cod = {Cod}";
-             return _Query;
-        }
-
-        /// <summary>Добавляем вариант ответа</summary>
-        public static string s_ListDocum_Insert_1(string TabName, int Cod, int ID, int Nomer, string Value)
-        {
-             string _Query = $@"
-                insert dbo.{TabName}
-                    (Cod, ID, Nomer, [Value], Flag)
-                values
-                    ({Cod}, {ID}, {Nomer}, '{Value}', 1)";
-             return _Query;
-        }
-
-        /// <summary>Меняем вариант ответа</summary>
-        public static string s_ListDocum_Update_1(string TabName, int Cod, string Value)
-        {
-             string _Query = $@"
-                update dbo.{TabName}
-                  set Value = '{Value}'
-                where Cod = {Cod}";
-             return _Query;
+                from dbo.s_ListDocum
+                where ID = '{ID}' and Nomer = {Nomer}";
+            return _Query;
         }
         #endregion
-
 
         #region ---- s_MorfTip (справочник мрфологического типа) ----
         /// <summary>Справочник морфологического типа s_MorfTip</summary>
@@ -1752,7 +1833,7 @@ namespace wpfStatic
              return _Query;
         }
         #endregion
-
+                   
         #region ---- s_VidOper (справочник операций) ----
         /// <summary>Справочник операций s_VidOper</summary>
         public static string s_VidOper_Select_1(string pWhere)
@@ -1822,9 +1903,9 @@ namespace wpfStatic
         }
         #endregion
 
-        #region ---- StrahStacSv (Связь стационара по Специальности ....) ----
-        /// <summary>Справочник связей стационара</summary>
-        public static string StrahStacSv_Select_1()
+        #region ---- StrahTarif (Тарифы и связи) ----
+        /// <summary>Справочник Тарифы и связей</summary>
+        public static string StrahTarif_Select_1()
         {
             string _Return = @"
                 use Bazis;
@@ -1853,8 +1934,10 @@ namespace wpfStatic
 		                when 9 then concat(Flag, '-обр.пол.повт')
 		                when 7 then concat(Flag, '-ВМП')
 		                when 10 then concat(Flag, '-КТ')
+                        when 11 then concat(Flag, '-Гистология')
+		                when 12 then concat(Flag, '-Телемед.')
 	                  end as Flags     
-                from dbo.StrahStacSv) as d";
+                from dbo.StrahTarif) as d";
             return _Return;
         }
         #endregion
@@ -1907,7 +1990,7 @@ namespace wpfStatic
 
         #region ---- Разное ----
         /// <summary>Выбор квартала</summary>
-        public static string varKvartal_Select_1(DateTime pDateN, DateTime pDateK)
+        public static string MET_varKvartal_Select_1(DateTime pDateN, DateTime pDateK)
         {
              string _Query = $@"
                 select top(datediff(month,'{pDateN:MM.dd.yyyy}', '{pDateK:MM.dd.yyyy}')/3+2) 
@@ -1923,7 +2006,7 @@ namespace wpfStatic
         }
 
         /// <summary>Меняем поле строковое в какой либо таблице</summary>
-        public static string varString_Update_1(string TabName, string NamePoleValue, string Value, string NamePoleCod,  decimal Cod )
+        public static string MET_varString_Update_1(string TabName, string NamePoleValue, string Value, string NamePoleCod,  decimal Cod )
         {
              string _Query = $@"
                 update dbo.{TabName}
@@ -1933,7 +2016,7 @@ namespace wpfStatic
         }
 
         /// <summary>Находим отделение, для смены талона</summary>
-        public static string varOtd_Select_1(eTipDocum pTip, decimal pCod )
+        public static string MET_varOtd_Select_1(eTipDocum pTip, decimal pCod )
         {
             string _Query = "";
             // В зависимости от типа протокола ищем Отделение
@@ -1966,21 +2049,21 @@ namespace wpfStatic
         }
 
         /// <summary>Расчет Суммы тарифа Поликлиники</summary>
-        public static string varSumTarifPol_Select_1(decimal pInd)
+        public static string MET_varSumTarifPol_Select_1(decimal pInd)
         {
             string _Query = $"select cast(other.GetStrahTarifReport({pInd}, 1, 1) as nvarchar) as Summa";
             return _Query;
         }
 
         /// <summary>Расчет Суммы тарифа Стационара</summary>
-        public static string varSumTarifStac_Select_1(decimal pInd)
+        public static string MET_varSumTarifStac_Select_1(decimal pInd)
         {
             string _Query = $"select cast(other.GetStrahTarifReport({ pInd}, 2, 1) as nvarchar) as Summa";
             return _Query;
         }
 
         /// <summary>Проверяем наличие пациента в Канцер-Регистре</summary>
-        public static string varIfRakReg_Select_1(decimal KL)
+        public static string MET_varIfRakReg_Select_1(decimal KL)
         {
             string _Query = $@"
                 select 1
@@ -1990,7 +2073,7 @@ namespace wpfStatic
         }
 
         /// <summary>Выстаскиваем Все данный из Канцер Регистра</summary>
-        public static string varRakReg_Select_2(decimal KL)
+        public static string MET_varRakReg_Select_2(decimal KL)
         {
             string _Query = $@"
                 use RakReg; 
@@ -2119,7 +2202,7 @@ namespace wpfStatic
         }
 
         /// <summary>Ошибки Стационара</summary>
-        public static string varErrorStac_Select_1(int Otd, int User)
+        public static string MET_varErrorStac_Select_1(int Otd, int User)
         {
             string _Query = $@"
                 use Bazis;
@@ -2199,6 +2282,7 @@ namespace wpfStatic
                 select FIO
                       ,concat('Cod: ', Cod, char(13),
                               'KL: ', KL, char(13),
+                               iif(KL > 0, 'ФИО: ' + dbo.GetFIObyKL(KL) + char(13), ''),
                               'Password: ', Password, 
                               replace(cast((
                                   select 
@@ -2458,11 +2542,28 @@ namespace wpfStatic
                     order by FAM, DR, D1 ";
             return _Query;
         }
+
+        /// <summary>Cправочник врачей из МИАЦ (для проверки действующих сертефикатов, только наше ЛПУ 555509)</summary>
+        public static string MET_StrahVrachMIAC_Select_1()
+        {
+            string _Return = $@"
+                select distinct concat(family, ';', [name], ';', father, ';', right(year(vozrast), 2), ';',iddokt) as Filter
+                    ,iddokt
+                    ,dbo.GetFIO(family, [name], father) as FIO
+                    ,vozrast
+                    ,prvs
+                    ,data_n
+                    ,data_e
+                from dbo.StrahVrachMIAC
+                ";               
+
+            return _Return;
+        }
         #endregion
 
         #region ---- Регистратура в поликлинике ----
         /// <summary>Выбор Элемента расписания</summary>
-        public static string RegistrPolElement_Select_1(string pServer, int pDepatment)
+        public static string MET_RnElement_Select_1(string pServer, int pDepatment)
         {
              string _Query = $@"
                 select * from openquery({pServer},
@@ -2476,7 +2577,7 @@ namespace wpfStatic
         }
 
         /// <summary>Выбор даты расписания</summary>
-        public static string RegistrPolDate_Select_1(int Element, string pServer)
+        public static string MET_RnSetka_Date_Select_1(int Element, string pServer)
         {
              string _Query = $@"                
                 select * from openquery({pServer}, 
@@ -2500,7 +2601,7 @@ namespace wpfStatic
         }
 
         /// <summary>Выбор времени расписания</summary>
-        public static string RegistrPolTime_Select_1(int Element, DateTime? Date, string pServer = "")
+        public static string MET_RnSetka_Time_Select_1(int Element, DateTime? Date, string pServer = "")
         {
             string _Query = $@"
                 select * from openquery({pServer},
@@ -2514,7 +2615,7 @@ namespace wpfStatic
         }
 
         /// <summary>Проверка, свободно ли время расписания</summary>
-        public static string RegistrPolTime_Select_2(int Cod, string pServer)
+        public static string MET_RnSetka_Time_Select_2(int Cod, string pServer)
         {
             string _Query = $@"
                 select * from openquery({pServer},
@@ -2527,7 +2628,7 @@ namespace wpfStatic
         }
 
         /// <summary>Проверка, записан ли пациент в этот кабинет</summary>
-        public static string RegistrPolTime_Select_3(decimal KL, int Element, string pServer = "")
+        public static string MET_RnSetka_Time_Select_3(decimal KL, int Element, string pServer = "")
         {
             string _Query = $@"
                 select * from openquery({pServer},
@@ -2540,7 +2641,7 @@ namespace wpfStatic
         }
 
         /// <summary>Смотрим куда записан пациент</summary>
-        public static string RegistrPolTalon_Select_1(decimal KL, string pServer)
+        public static string MET_RnSetka_Time_Select_4(decimal KL, string pServer)
         {
             string _Query = $@"
                 select * from openquery({pServer},
@@ -2556,7 +2657,7 @@ namespace wpfStatic
         }
         
         /// <summary>Записываем пациента на прием в RтTalon</summary>
-        public static string RegistrRnTalon_Insert_1(int Cod, int CodSetka, decimal KL, string FIO, DateTime? DR, string Rai, string xLog, string pServer)
+        public static string MET_RnTalon_Insert_1(int Cod, int CodSetka, decimal KL, string FIO, DateTime? DR, string Rai, string xLog, string pServer)
         {
             string _Query = $@"
                 insert {pServer}.Bazis.dbo.RnTalon
@@ -2571,7 +2672,7 @@ namespace wpfStatic
         /// <summary>Выборка тегов</summary>
         /// <param name="pTables">Кто создал/изменил протокол</param> 
         /// <param name="pDop_Filter">Тип лога Создан, Изменён, Удалён</param> 
-        public static string s_Tags_Select_1(string pTables, string pDop_Filter = "")
+        public static string MET_s_Tags_Select_1(string pTables, string pDop_Filter = "")
         {
             string _Query = $@"
                 use Bazis;

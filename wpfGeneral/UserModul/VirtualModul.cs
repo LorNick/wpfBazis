@@ -96,7 +96,7 @@ namespace wpfGeneral.UserModul
                 _Node.MET_Inizial();
 
                 // ВЕТКА Канцер регистра
-                if (MySql.MET_QueryBool(MyQuery.varIfRakReg_Select_1(MyGlo.KL)))                // только если есть пациент в Канцер-Регистре
+                if (MySql.MET_QueryBool(MyQuery.MET_varIfRakReg_Select_1(MyGlo.KL)))                // только если есть пациент в Канцер-Регистре
                 {
                     _Node = new UserNodes_Inform
                     {
@@ -125,6 +125,25 @@ namespace wpfGeneral.UserModul
                 _Node.PROP_Docum = new UserDocument(_Node);
                 _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
+
+                // Тест. Пока только для админов
+                if (MyGlo.Admin)
+                {
+                    // ВЕТКА Pdf документы
+                    _Node = new UserNodes_RootPdf
+                    {
+                        PROP_TipNodes = eTipNodes.Kdl_RootsPdf,
+                        Name = "eleTVItem_Pdf",
+                        PROP_Text = "PDF документы",
+                        PROP_TextDefault = "PDF документы",
+                        PROP_ImageName = "mnPdfMain",
+                        PROP_ParentName = "eleTVItem_ObDocum"
+                    };
+                    ((UserNodes_RootPdf)_Node).PROP_shaTipObsled = 2;
+                    _Node.PROP_Docum = new UserDocument(_Node);
+                    _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
+                    _Node.MET_Inizial();
+                }
 
                 // ВЕТКА Телефоны
                 _Node = new UserNodes_Inform

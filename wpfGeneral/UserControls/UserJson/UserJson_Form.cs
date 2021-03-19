@@ -97,7 +97,7 @@ namespace wpfGeneral.UserControls
         public void MET_CreateTegs()
         {
             // Загружаем наши теги
-            MySql.MET_DsAdapterFill(MyQuery.s_Tags_Select_1(PROP_Tables, PROP_Dop_Filter), "s_Tegs");
+            MySql.MET_DsAdapterFill(MyQuery.MET_s_Tags_Select_1(PROP_Tables, PROP_Dop_Filter), "s_Tegs");
             DataTable _TableSQL = MyGlo.DataSet.Tables["s_Tegs"];
 
             PRI_Rows = MyGlo.DataSet.Tables["s_Tegs"].AsEnumerable();

@@ -4,7 +4,7 @@ using wpfStatic;
 
 namespace wpfGeneral.UserWindows
 {
-    /// <summary>КЛАСС Справочник Методов ВМП</summary>
+    /// <summary>КЛАСС Справочник МНН Препаратов</summary>
     public class UserWindow_LecMNN : VirtualUserWindow
     {
         /// <summary>СВОЙСТВО Наименование МНН препарата</summary>
@@ -21,6 +21,8 @@ namespace wpfGeneral.UserWindows
             PRO_TableName = "LecMNN";
             // Заголовок
             Title = "Справочник МНН Препаратов:";
+            // Подсказка в строке поиска
+            PART_TextBox.WatermarkContent = "Введите чать МНН лекарства и/или чать его номера через пробел";
             // Размеры окна
             MinWidth = Width;
             Height = 600;
@@ -35,7 +37,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
-            return MyQuery.s_ListDocum_Select_1("s_ListDocum", 4, 1);
+            return MyQuery.MET_s_ListDocum_Select_1("4");
         }
 
         /// <summary>МЕТОД Удаляем ненужные столбцы</summary>

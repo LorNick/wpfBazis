@@ -34,6 +34,7 @@
     <BitmapImage x:Key="mnPredOperEpikriz" UriSource="mnImag/mnPredOperEpikriz.ico" />    <!-- Предоперационный эпикриз -->
     <BitmapImage x:Key="mnAnest" UriSource="mnImag/mnAnest.ico" />              <!-- Шаблон Анестезиолога -->
     <BitmapImage x:Key="mnStac" UriSource="mnImag/mnStac.ico" />                <!-- Стационар -->
+    <BitmapImage x:Key="mnStacDnev" UriSource="mnImag/mnStacDnev.ico" />        <!-- Стационар Дневной-->
     <BitmapImage x:Key="mnDoc_1" UriSource="mnImag/mnDoc_1.ico" />              <!-- Осмотр -->
     <BitmapImage x:Key="mnDoc_2" UriSource="mnImag/mnDoc_2.ico" />              <!-- Протокол катетеризации -->
     <BitmapImage x:Key="mnNaznach" UriSource="mnImag/mnNaznach.ico" />          <!-- Назначения -->
@@ -84,4 +85,30 @@
     <BitmapImage x:Key="mnAngel" UriSource="mnImag/mnAngel.ico" />              <!-- Умер -->
     <BitmapImage x:Key="mnKons" UriSource="mnImag/mnKons.ico" />                <!-- Консилиум -->
     <BitmapImage x:Key="mnCito" UriSource="mnImag/mnCito.ico" />                <!-- Цитология -->
+    <BitmapImage x:Key="mnFileC" UriSource="mnImag/mnFileC.ico" />              <!-- Реестры Файл С (зно) -->
+    <BitmapImage x:Key="mnFileH" UriSource="mnImag/mnFileH.ico" />              <!-- Реестры Файл Н (не зно) -->
+    <BitmapImage x:Key="mnFileT" UriSource="mnImag/mnFileT.ico" />              <!-- Реестры Файл Т (вмп) -->
+    <BitmapImage x:Key="mnSmoAlfa" UriSource="mnImag/mnSmoAlfa.ico" />          <!-- Реестры страховая компания Альфа -->
+    <BitmapImage x:Key="mnSmoAll" UriSource="mnImag/mnSmoAll.ico" />            <!-- Реестры Все страховые компании -->
+    <BitmapImage x:Key="mnSmoInogor" UriSource="mnImag/mnSmoInogor.ico" />      <!-- Реестры иногородние страховые компании -->
+    <BitmapImage x:Key="mnSmoKapital" UriSource="mnImag/mnSmoKapital.ico" />    <!-- Реестры страховая компания Капитал -->
+    <BitmapImage x:Key="mnSmoSogaz" UriSource="mnImag/mnSmoSogaz.ico" />        <!-- Реестры страховая компания Согаз -->
+
+    <BitmapImage x:Key="mnNumber1" UriSource="mnImag/mnNumber1.png" />
+    <BitmapImage x:Key="mnNumber2" UriSource="mnImag/mnNumber2.png" />
+    <BitmapImage x:Key="mnNumber3" UriSource="mnImag/mnNumber3.png" />
+    <BitmapImage x:Key="mnNumber4" UriSource="mnImag/mnNumber4.png" />
+    <BitmapImage x:Key="mnNumber5" UriSource="mnImag/mnNumber5.png" />
+    <BitmapImage x:Key="mnNumber6" UriSource="mnImag/mnNumber6.png" />
+    <BitmapImage x:Key="mnNumber7" UriSource="mnImag/mnNumber7.png" />
+    <BitmapImage x:Key="mnNumber8" UriSource="mnImag/mnNumber8.png" />
+    <BitmapImage x:Key="mnNumber9" UriSource="mnImag/mnNumber9.png" />
+    <BitmapImage x:Key="mnNumber10" UriSource="mnImag/mnNumber10.png" />
+    <BitmapImage x:Key="mnNumber11" UriSource="mnImag/mnNumber11.png" />
+    <BitmapImage x:Key="mnNumber12" UriSource="mnImag/mnNumber12.png" />
+
+    <BitmapImage x:Key="mnBaby" UriSource="mnImag/mnBaby.png" />                <!-- Ребенок для реестров -->
+
+    <BitmapImage x:Key="mnPdf" UriSource="mnImag/mnPdf.png" />
+    <BitmapImage x:Key="mnPdfMain" UriSource="mnImag/mnPdfMain.png" />
 </ResourceDictionary>

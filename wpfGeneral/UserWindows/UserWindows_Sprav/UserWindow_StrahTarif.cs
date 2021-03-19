@@ -8,7 +8,7 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Справочник связей и тарифов 
     /// по Специальности, Профилю, Коду услуг, Флагу, Тарифу...</summary>
-    public class UserWindow_StacSv : VirtualUserWindow
+    public class UserWindow_StrahTarif : VirtualUserWindow
     {
         /// <summary>Дата на которую актуальны строки</summary>
         private DatePicker PRI_DatePicker_1;
@@ -22,14 +22,14 @@ namespace wpfGeneral.UserWindows
         public string PROP_Text { get; private set; }
         
         /// <summary>КОНСТРУКТОР</summary>
-        public UserWindow_StacSv()
+        public UserWindow_StrahTarif()
         {
             // Имя таблицы
             PRO_TableName = "StrahStacSv";
             // Заголовок
             Title = "Справочник связей и тарифов (для реестров):";
             Width = 1240;
-            Height = 600;
+            Height = 750;
             // Подсказка в строке поиска
             PART_TextBox.WatermarkContent = "Введите части слов через пробел (для полей Код услуг, Вид мед. вм., Флаг и Описание)";
             //Размеры
@@ -52,7 +52,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
-            return MyQuery.StrahStacSv_Select_1();
+            return MyQuery.StrahTarif_Select_1();
         }
 
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
@@ -108,7 +108,7 @@ namespace wpfGeneral.UserWindows
             PRI_DatePicker_1.IsEnabled = true;
             PRI_DatePicker_1.SelectedDateChanged += delegate { MET_DopFilter(); }; 
             _SPanel_1.Children.Add(PRI_DatePicker_1);            
-            // Check Отделения
+            // Check
             PRI_CheckBox_1 = new CheckBox();
             PRI_CheckBox_1.Margin = new Thickness(10, 0, 0, 0);
             PRI_CheckBox_1.Content = "учитывать фильтр по актульности";

@@ -117,7 +117,7 @@ namespace wpfGeneral.UserControls
           
             // Загружаем варианты ответов
             string _List = PROP_FormShablon.PROP_TipProtokol.PROP_List;
-            MySql.MET_DsAdapterFill(MyQuery.s_ListDocum_Select_4(_List, PROP_Shablon, PROP_VarId, PROP_SortList), Name);                             
+            MySql.MET_DsAdapterFill(MyQuery.MET_List_Select_4(_List, PROP_Shablon, PROP_VarId, PROP_SortList), Name);                             
             List<string> _ValueList = (from DataRow _Row in MyGlo.DataSet.Tables[Name].Rows select _Row["Value"].ToString()).ToList();
             PROP_ComboBox.ItemsSource = _ValueList;
 

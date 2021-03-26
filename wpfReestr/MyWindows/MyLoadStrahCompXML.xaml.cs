@@ -21,13 +21,10 @@ namespace wpfReestr
     {
         /// <summary>Наша база</summary>
         private StarahReestrDataContext PRI_Context;
-
         /// <summary>Список страховых компани</summary>
         private s_StrahComp PRI_StrahComp;
-
         /// <summary>Список областей</summary>
         private s_Oblast PRI_Oblast;
-
         /// <summary>Имя XML файла</summary>
         private string PRI_FileName;
 
@@ -39,7 +36,7 @@ namespace wpfReestr
 
         /// <summary>СОБЫТИЕ Выбор XML файла</summary>
         private void PART_ButtonOpenXML_Click(object sender, RoutedEventArgs e)
-        {  
+        {
             // Находим нужный файл
             var _DialogFileOpen = new Microsoft.Win32.OpenFileDialog
             {
@@ -60,17 +57,14 @@ namespace wpfReestr
 
         /// <summary>СОБЫТИЕ Нажали на кнопку Обновить Страховые компании</summary>
         private void PART_ButtonLoadFile_Click(object sender, RoutedEventArgs e)
-        {   
+        {
             string _Tf_okato = "";
             int _Smocod = 0;
             string _Nam_smok = "";
             string _D_end = "";
             string _Ogrn = "";
-
             PRI_Context = new StarahReestrDataContext(MySql.MET_ConSql());
-
             ((Paragraph) PART_RichTextBox.Document.Blocks.FirstBlock).LineHeight = 2;
-
             XmlTextReader _TextReader = new XmlTextReader(PRI_FileName);
             while (_TextReader.Read())
             {
@@ -92,7 +86,8 @@ namespace wpfReestr
                             break;
                         case "d_end":
                             _TextReader.Read();
-                            _D_end = _TextReader.Value == "" ? "" : "old";   
+                            _D_end = _TextReader.Value == "" ? "" : "old";
+
                             break;
                         case "Ogrn":
                             _TextReader.Read();
@@ -100,38 +95,28 @@ namespace wpfReestr
                             break;
                     }
                 }
-
                 if (_TextReader.NodeType == XmlNodeType.EndElement && _TextReader.Name == "insCompany")
                 {
-                   
-                    //}    
-
-                    // Связь с SQL, в принципе не очень то и нужен, только для разового сохраниения в  StrahFile  
+                    // Связь с SQL, в принципе не очень то и нужен, только для разового сохраниения в  StrahFile
                     try
                     {
-
                         bool _Er = false;
-
                         PRI_StrahComp = PRI_Context.s_StrahComp.Single(n => n.KOD == _Smocod);
-
                         if (_Nam_smok != PRI_StrahComp.TKOD)
                         {
                             _Er = true;
                             PART_RichTextBox.AppendText("Несовпадает название:\n");
                         }
-
                         if (_Ogrn != PRI_StrahComp.OGRN)
                         {
                             _Er = true;
                             PART_RichTextBox.AppendText("Несовпадает ОГРН:\n");
                         }
-
                         if (_D_end != PRI_StrahComp.NewTKod)
                         {
                             _Er = true;
                             PART_RichTextBox.AppendText("Несовпадает дата закрытия:\n");
                         }
-
                         if (_Er)
                         {
                             PART_RichTextBox.AppendText(_Smocod + "\n");
@@ -160,7 +145,6 @@ namespace wpfReestr
                         //    pHide = 0,
                         //    pParent = PROP_Parent
                         //};
-
                     }
                     catch(InvalidOperationException)
                     {
@@ -171,7 +155,6 @@ namespace wpfReestr
                         PRI_StrahComp.OGRN = _Ogrn;
                         PRI_StrahComp.NewTKod = _D_end;
                         PRI_StrahComp.TKOD = _Nam_smok;
-
                         try
                         {
                             PRI_Oblast = PRI_Context.s_Oblast.Single(n => n.NewKod == _Tf_okato);
@@ -180,16 +163,15 @@ namespace wpfReestr
                         catch (InvalidOperationException)
                         {
                             PART_RichTextBox.AppendText("область НЕ найдена \n\n");
-                        }  
-                    }      
+                        }
+                    }
                     catch
                     {
                         //
                     }
                 }
-
             }
-            PART_RichTextBox.AppendText("Усё"); 
-        }        
+            PART_RichTextBox.AppendText("Усё");
+        }
     }
 }

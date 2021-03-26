@@ -2,10 +2,12 @@
              xmlns="clr-namespace:wpfGeneral.UserControls"
              xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
-             mc:Ignorable="d"  
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              x:Name="UserPole"
              FontSize="14">
-    <p:TextBox Name="PART_TextBox" Text="UserPoleLabel" Foreground="Navy" TextWrapping="Wrap" VerticalContentAlignment="Center" IsReadOnly="True" Background="{x:Null}" Focusable="False"></p:TextBox>
+    <p:TextBox Name="PART_TextBox" Text="UserPoleLabel" Foreground="Navy" TextWrapping="Wrap" 
+               VerticalContentAlignment="Center" IsReadOnly="True" Background="{x:Null}" Focusable="False">        
+    </p:TextBox>
 </VirtualPole>

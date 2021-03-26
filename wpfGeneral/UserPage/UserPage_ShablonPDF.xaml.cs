@@ -1,15 +1,6 @@
 ﻿using System;
 using System.Collections;
-using System.Data;
-using System.Globalization;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
-using wpfGeneral.UserWindows;
-using wpfGeneral.UserControls;
-using wpfStatic;
 using wpfGeneral.UserNodes;
 using System.Net;
 using Microsoft.Win32;
@@ -39,7 +30,6 @@ namespace wpfGeneral.UserPage
         /// <summary>СОБЫТИЕ После загрузки окна</summary>
         private void UserPage_Loaded(object sender, RoutedEventArgs e)
         {
-
         }
 
         /// <summary>МЕТОД Сохраняем PDF файл на сервер</summary>
@@ -47,25 +37,19 @@ namespace wpfGeneral.UserPage
         {
             OpenFileDialog _OpenFileDialog = new OpenFileDialog();
             _OpenFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
-
             _OpenFileDialog.ShowDialog();
-
             if (string.IsNullOrWhiteSpace(_OpenFileDialog.FileName))
                 return false;
-
-            // Алгоритм нахождения MD5 
+            // Алгоритм нахождения MD5
             // Просто отображает Хэш на экране
             FileStream stream = File.OpenRead(_OpenFileDialog.FileName);
-
             MD5 _MD5 = new MD5CryptoServiceProvider();
             byte[] _Hashenc = _MD5.ComputeHash(stream);
             string _Result = "";
-
             foreach (var _b in _Hashenc)
             {
                 _Result += _b.ToString("x2");
             }
-
             PRI_WebClient = new WebClient();
             // Завершение загрузки
             PRI_WebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(MET_Completed);
@@ -97,12 +81,10 @@ namespace wpfGeneral.UserPage
                 {
                     case HttpStatusCode.Conflict:
                         MessageBox.Show($"Данный файл уже был загружен!", "Ошибка 409");
-                        
                         break;
                 }
                 return;
             }
-
             MessageBox.Show("Файл Загружен!");
         }
 

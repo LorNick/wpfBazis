@@ -12,7 +12,7 @@ namespace wpfMVrStac.UserOtchet
         ///<summary>МЕТОД Инициализация отчета</summary>
         /// <param name="pNodes">Ветка</param>
         public override VirtualOtchet MET_Inizial(VirtualNodes pNodes)
-        {   
+        {
             // Если НЕ нужно формировать отчет
             if (!PROP_NewCreate) return this;
             base.MET_Inizial(pNodes);
@@ -23,7 +23,7 @@ namespace wpfMVrStac.UserOtchet
             Blocks.Clear();
             // Если есть заполенный протокол
             if (PROP_Nodes.PROP_shaPresenceProtokol)
-                MET_Otchet();      // Формируем отчет               
+                MET_Otchet();      // Формируем отчет
             else
                 MET_NoOtchet();
             // Добавляем последний параграф в блок
@@ -36,11 +36,11 @@ namespace wpfMVrStac.UserOtchet
         /// <summary>МЕТОД Формируем отчет</summary>
         protected override void MET_Otchet()
         {
-            // Протокол Шаблона    
-            PROP_Docum.PROP_Protokol = UserProtokol.MET_FactoryProtokol(PROP_Docum.PROP_TipDocum, 
-                MyGlo.IND, PROP_Docum.PROP_ListShablon.PROP_Cod, PROP_Nodes.PROP_shaIndex); 
+            // Протокол Шаблона
+            PROP_Docum.PROP_Protokol = UserProtokol.MET_FactoryProtokol(PROP_Docum.PROP_TipDocum,
+                MyGlo.IND, PROP_Docum.PROP_ListShablon.PROP_Cod, PROP_Nodes.PROP_shaIndex);
             PRO_Paragraph = new Paragraph();
-            // Заполняем ответы           
+            // Заполняем ответы
             MET_Protokol();
         }
     }

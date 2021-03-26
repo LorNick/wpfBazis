@@ -10,7 +10,7 @@ namespace wpfMVrStac
 {
     /// <summary>КЛАСС Стартовый модуль Врача Стационара</summary>
     public class UserModul_VrStac : VirtualModul
-    {  
+    {
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
@@ -29,7 +29,7 @@ namespace wpfMVrStac
                     MyGlo.IND = Convert.ToDecimal(_mArgs[5]);
                 if (x == 6)
                     MyGlo.Otd = Convert.ToInt32(_mArgs[6]);
-            }            
+            }
         }
 
         /// <summary>МЕТОД Начальные данные</summary>
@@ -61,12 +61,12 @@ namespace wpfMVrStac
 
         /// <summary>МЕТОД Заголовок программы</summary>
         public override string MET_Title()
-        {   
+        {
             // Наименование модуля
             string _Title = "wpfBazis -- Врач стационара --";
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
-            // Отделение          
+            // Отделение
             _Title += " (" + MySql.MET_NameSpr(MyGlo.Otd, "s_Department", "Names", "Cod");
             // Пациент
             _Title += "  " + MyGlo.FIO + " " + MyGlo.DR;
@@ -80,10 +80,9 @@ namespace wpfMVrStac
         {
             // Заполняем основу дерево (паспорт + история)
             base.MET_CreateTree();
-            
             // Загружаем все протоколы Protokol текущего стационара (внутри загружаются и ListShablon и Shablon)
             UserProtokol.MET_FactoryProtokolArray(eTipDocum.Stac, MyGlo.IND);
-            
+
             // ВЕТКА Ошибки Стационара (для реестров)
             MySql.MET_DsAdapterFill(MyQuery.MET_varErrorStac_Select_1(MyGlo.Otd, MyGlo.User), "ErrorStac");
             int _AllError = MyGlo.DataSet.Tables["ErrorStac"].Rows.Count;
@@ -145,7 +144,6 @@ namespace wpfMVrStac
                 _Node.PROP_Docum = new UserDocument(_Node);
                 _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformPriem { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
-              
 
                 // ВЕТКА Осмотр при поступлении
                 _Node = new UserNodes_EditVrStac
@@ -177,7 +175,7 @@ namespace wpfMVrStac
                     _Node.PROP_Docum = new UserDocument(_Node, eTipDocum.Stac);
                     _Node.PROP_Docum.PROP_ListShablon = UserListShablon.MET_FactoryListShablon(eTipDocum.Stac, _Node.PROP_shaNomerShablon);
                     _Node.PROP_Docum.PROP_Otchet = new UserOtchet_EditVrStac { PROP_Docum = _Node.PROP_Docum };
-                    _Node.MET_Inizial();  
+                    _Node.MET_Inizial();
                 }
 
                 // ВЕТКА Назначения мед. препаратов
@@ -195,8 +193,7 @@ namespace wpfMVrStac
                 _Node.PROP_Docum.PROP_Otchet = new UserOtchet_NaznachMed { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
                 _Node.PROP_prnPadding = 2;
-                { 
-
+                {
                     // ВЕТКА Бланк листа назначений
                     _Node = new UserNodes_Inform
                     {
@@ -288,7 +285,7 @@ namespace wpfMVrStac
                 _Node2.PROP_Docum = new UserDocument(_Node2);
                 _Node2.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node2.PROP_Docum };
                 _Node2.MET_Inizial();
-            }   
+            }
         }
     }
 }

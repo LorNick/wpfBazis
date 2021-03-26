@@ -18,8 +18,9 @@ using Newtonsoft.Json.Linq;
 namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Виртуальной формы справочников</summary>
-    public partial class UserWindow_Test 
-    {           
+    public partial class UserWindow_Test
+    {
+
         //#region ---- СВОЙСТВО ----
         /////// <summary>СВОЙСТВО Дата создания DateUp</summary>
         ////public DateTime? PROP_DateUp
@@ -27,13 +28,13 @@ namespace wpfGeneral.UserWindows
         ////    get { return PART_DateUp.PROP_Date; }
         ////    set { PART_DateUp.PROP_Date = value; }
         ////}
-        //#endregion	
+        //#endregion
 
-		/// <summary>КОНСТРУКТОР</summary>
+        /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_Test()
         {
             InitializeComponent();
-        }              
+        }
 
         string ip = "ws://localhost:33999";
         /// <summary>WebSocket</summary>
@@ -52,7 +53,6 @@ namespace wpfGeneral.UserWindows
             websocket.Closed += new EventHandler(websocket_Closed);
             websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived);
             websocket.DataReceived += new EventHandler<DataReceivedEventArgs>(websocket_MessageReceived);
-
             websocket.Open();
         }
 
@@ -80,8 +80,7 @@ namespace wpfGeneral.UserWindows
                   }
                 }
                 ";
-
-            websocket.Send(_M);        
+            websocket.Send(_M);
         }
 
         private void websocket_MessageReceived(object sender, EventArgs e)
@@ -96,11 +95,11 @@ namespace wpfGeneral.UserWindows
         }
 
         private void websocket_Error(object sender, ErrorEventArgs e)
-        {           
+        {
             MET_LogAdd("Ошибка", e.ToString());
         }
 
-        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
+        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static bool MET_Access()
         {
             if (!MyGlo.Admin)
@@ -130,7 +129,6 @@ namespace wpfGeneral.UserWindows
             Dispatcher.BeginInvoke(DispatcherPriority.Normal, (ThreadStart)delegate ()
             {
                 PART_Log.Text = $"{DateTime.Now.ToLongTimeString()} {pType}:  {pText}\n{PART_Log.Text}";
-
                 if ((pText.StartsWith("{") && pText.EndsWith("}")) || (pText.StartsWith("[") && pText.EndsWith("]")))
                 {
                     try
@@ -158,5 +156,5 @@ namespace wpfGeneral.UserWindows
                 }
             });
         }
-    }                                
+    }
 }

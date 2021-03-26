@@ -2,10 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Data;
-using System.Globalization;
 using wpfStatic;
-using System.Windows.Markup;
 
 namespace wpfGeneral.UserControls
 {
@@ -37,7 +34,7 @@ namespace wpfGeneral.UserControls
                     PART_Label.Padding = new Thickness(5, 0, 5, 0);
             }
         }
-        
+
         /// <summary>СВОЙСТВО Максимальное значение</summary>
         public override object PROP_ValueMax
         {
@@ -50,8 +47,8 @@ namespace wpfGeneral.UserControls
         {
             get { return (DateTime)this.GetValue(DEPR_ValueMaxDateProperty); }
             set { this.SetValue(DEPR_ValueMaxDateProperty, value); }
-        }   
-           
+        }
+
         /// <summary>СВОЙСТВО Минимальное значение</summary>
         public override object PROP_ValueMin
         {
@@ -64,9 +61,8 @@ namespace wpfGeneral.UserControls
         {
             get { return (DateTime)this.GetValue(DEPR_ValueMinDateProperty); }
             set { this.SetValue(DEPR_ValueMinDateProperty, value); }
-        }   
+        }
 
-      
         /// <summary>СВОЙСТВО Цвет текста ответа</summary>
         public override Brush PROP_ForegroundText
         {
@@ -139,7 +135,7 @@ namespace wpfGeneral.UserControls
         public UserPole_Data()
         {
             InitializeComponent();
-          
+
             PART_DatePicker.ContextMenu = MyGlo.ContextMenu;
             PART_DatePicker.Tag = this;
         }
@@ -148,7 +144,7 @@ namespace wpfGeneral.UserControls
         public override void MET_Inicial()
         {
             // Располагаем текст
-            this.HorizontalAlignment = HorizontalAlignment.Left;                
+            this.HorizontalAlignment = HorizontalAlignment.Left;
             if (PROP_Format.MET_If("ac"))
                 this.HorizontalAlignment = HorizontalAlignment.Center;
             if (PROP_Format.MET_If("ar"))
@@ -159,8 +155,7 @@ namespace wpfGeneral.UserControls
         private void PART_DatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (Equals(PROP_ForegroundText, Brushes.Gray))
-                    PROP_ForegroundText = Brushes.Black;
-
+                PROP_ForegroundText = Brushes.Black;
             // Если есть шаблон
             if (this.PROP_FormShablon?.PROP_Created ?? false)
             {
@@ -169,7 +164,6 @@ namespace wpfGeneral.UserControls
                 // Запускаем Lua фунцкию, на изменение записи
                 this.PROP_Lua?.MET_OnChange();
             }
-
             MET_Changed?.Invoke(); // Если нужно выловить событие изменение поля
         }
 

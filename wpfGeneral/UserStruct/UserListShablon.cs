@@ -9,7 +9,7 @@ using wpfStatic;
 namespace wpfGeneral.UserStruct
 {
     /// <summary>КЛАСС Информация о Шаблоне</summary>
-    public class UserListShablon 
+    public class UserListShablon
     {
         /// <summary>СВОЙСТВО Код шаблона</summary>
         public int PROP_Cod { get; set; }
@@ -28,7 +28,7 @@ namespace wpfGeneral.UserStruct
 
         /// <summary>СВОЙСТВО Краткое наименование шаблона (для дерева)</summary>
         public string PROP_NameKr { get; set; }
-                                   
+
         /// <summary>СВОЙСТВО Формат шаблонов</summary>
         public string PROP_xFormat { get; set; }
 
@@ -47,7 +47,7 @@ namespace wpfGeneral.UserStruct
         }
 
         ///<summary>МЕТОД Конвертация данных ListShablon из DataReader</summary>
-        /// <param name="pDataReader">Поток данных из SQL</param> 
+        /// <param name="pDataReader">Поток данных из SQL</param>
         private void MET_LoadDataReader(IDataRecord pDataReader)
         {
             try
@@ -66,9 +66,9 @@ namespace wpfGeneral.UserStruct
                 MyGlo.callbackEvent_sError(ex);
             }
         }
-        
+
         ///<summary>МЕТОД Фабрика объекта ListShablon</summary>
-        /// <param name="pTip">Тип протокола</param> 
+        /// <param name="pTip">Тип протокола</param>
         /// <param name="pCodShablon">Код шаблона</param>
         public static UserListShablon MET_FactoryListShablon(eTipDocum pTip, int pCodShablon)
         {
@@ -76,7 +76,7 @@ namespace wpfGeneral.UserStruct
             List<UserListShablon>_ListShablons = ((VirtualModul)MyGlo.Modul).PUB_ListShablons;
             //  Ищем в коллекции ListShablon по типу и номеру шаблона
             UserListShablon _Value = _ListShablons.FirstOrDefault(p => p.PROP_Cod == pCodShablon && p.PROP_TipProtokol.PROP_TipDocum == pTip);
-            // Если не нашли, то пытаемся ListShablon создать 
+            // Если не нашли, то пытаемся ListShablon создать
             if (_Value == null)
             {
                 _Value = new UserListShablon();
@@ -102,7 +102,7 @@ namespace wpfGeneral.UserStruct
         }
 
         /// <summary>МЕТОД Фабрика Массовая загрузка всех объектов ListShablon для загруженной коллекции Protokol</summary>
-        /// <param name="pTip">Тип протокола</param> 
+        /// <param name="pTip">Тип протокола</param>
         /// <remarks>Делается как правило разово из MET_FactoryProtokolArray</remarks>
         public static bool MET_FactoryListShablonArray(eTipDocum pTip)
         {

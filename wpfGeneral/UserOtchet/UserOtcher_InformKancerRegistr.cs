@@ -33,7 +33,6 @@ namespace wpfGeneral.UserOtchet
         {
             // Заполняем строку данными запроса
             MySql.MET_DsAdapterFill(MyQuery.MET_varRakReg_Select_2(MyGlo.KL), "KancReg");
-                  
             // Номер амбулаторной карты
             xVopr = "Выписка из Канцер-Регистра";
             xAligment = 2; xParagraph = true;
@@ -41,14 +40,14 @@ namespace wpfGeneral.UserOtchet
             // ФИО
             xVopr = " Пациент:";
             xOtvet = MyGlo.FIO;
-            xEnter = 1; 
+            xEnter = 1;
             MET_Print();
             // Дата рождения
             xVopr = "     дата рождения:";
             xOtvet = MyGlo.DR;
-            xEnter = 1; 
+            xEnter = 1;
             MET_Print();
-            // Дата смерти                                         
+            // Дата смерти
             xVopr = " умер:";
             xTab = 1;
             MET_RowValue("1_Паспорт", "DSmert");
@@ -58,7 +57,7 @@ namespace wpfGeneral.UserOtchet
             MET_RowValue("1_Паспорт", "Death");
             // Дата взятия на учет в Канцер Регистр
             xVopr = "     дата взятия на учет:";
-            xEnter = 1; 
+            xEnter = 1;
             MET_RowValue("1_Паспорт", "DReg");
             // Дата снятия с учета
             xVopr = " снят с учета:";
@@ -66,7 +65,7 @@ namespace wpfGeneral.UserOtchet
             MET_RowValue("1_Паспорт", "DUnReg");
             // Причина снятия с учета
             xVopr = "        причина снятия с учета:";
-            xEnter = 1; 
+            xEnter = 1;
             MET_RowValue("1_Паспорт", "Snjat", 1, 2);
             // Адрес пациента
             xVopr = " Aдрес:";
@@ -82,24 +81,23 @@ namespace wpfGeneral.UserOtchet
             MET_RowValue("1_Паспорт", "KlGr", 1, 2);
             // Дата последнего наблюдения пациента
             xVopr = " Последнее наблюдение:";
-            xEnter = 2; 
+            xEnter = 2;
             MET_RowValue("1_Паспорт", "DNabl");
             // Дата последнего наблюдения пациента
             xVopr = "     состояние:";
             xEnter = 1;
-            MET_RowValue("1_Паспорт", "Sost", 1, 2);
-               
+            MET_RowValue("1_Паспорт", "Sost", 1, 2);    
             // Диагноз
             int _Cod = 1;
             while (MET_IfRowCod("2_Диагноз", _Cod))
-            {   
+            {
                 // МКБ-10
                 xVopr = " Диагноз:";
-                xEnter = _Cod == 1 ? 2 : 1; 
+                xEnter = _Cod == 1 ? 2 : 1;
                 MET_RowValue("2_Диагноз", "MKB", _Cod);
                 // Морфология
                 xVopr = "     морфология:";
-                xEnter = 1; 
+                xEnter = 1;
                 MET_RowValue("2_Диагноз", "Morph", _Cod);
                 // Стадия
                 xVopr = "     стадия:";
@@ -109,7 +107,6 @@ namespace wpfGeneral.UserOtchet
                 xVopr = "     дата установления:";
                 xEnter = 1;
                 MET_RowValue("2_Диагноз", "DDate", _Cod);
-
                 _Cod++;
             }
 
@@ -129,7 +126,6 @@ namespace wpfGeneral.UserOtchet
                 xVopr = "     место проведения:";
                 xEnter = 1;
                 MET_RowValue("3_Операции", "OpLpu", _Cod);
-              
                 _Cod++;
             }
 
@@ -152,7 +148,6 @@ namespace wpfGeneral.UserOtchet
                 xVopr = "     место проведения:";
                 xEnter = 1;
                 MET_RowValue("4_Лучевое", "RayLpu", _Cod);
-
                 _Cod++;
             }
 
@@ -175,7 +170,6 @@ namespace wpfGeneral.UserOtchet
                 xVopr = "     место проведения:";
                 xEnter = 1;
                 MET_RowValue("5_Химия", "ChemLpu", _Cod);
-
                 _Cod++;
             }
 
@@ -198,10 +192,8 @@ namespace wpfGeneral.UserOtchet
                 xVopr = "     место проведения:";
                 xEnter = 1;
                 MET_RowValue("6_Гормоны", "HormLpu", _Cod);
-
                 _Cod++;
             }
-            
         }
 
         ///<summary>МЕТОД Проверяем наличие следующих данных</summary>

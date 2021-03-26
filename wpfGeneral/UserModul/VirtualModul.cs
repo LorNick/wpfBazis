@@ -46,9 +46,9 @@ namespace wpfGeneral.UserModul
             // Загружаем все протоколы Protokol таблицы kdl, по KL пациента
             UserProtokol.MET_FactoryProtokolArray(eTipDocum.Kdl, MyGlo.KL, "KL");
 
-            // ВЕТКА Общие сведенья 
+            // ВЕТКА Общие сведенья
             VirtualNodes _Node = new UserNodes_Inform
-            {       
+            {
                 PROP_TipNodes = eTipNodes.Main,
                 Name = "eleTVItemObSved",
                 PROP_Text = "Общие сведения",
@@ -59,7 +59,6 @@ namespace wpfGeneral.UserModul
             _Node.PROP_Docum = new UserDocument(_Node);
             _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformCreate { PROP_Docum = _Node.PROP_Docum };
             _Node.MET_Inizial();
-
             {
                 // ВЕТКА Паспортная часть (Сразу ставим на нем фокус)
                 _Node = new UserNodes_Inform
@@ -107,7 +106,8 @@ namespace wpfGeneral.UserModul
                         PROP_ParentName = "eleTVItemObSved"
                     };
                     _Node.PROP_Docum = new UserDocument(_Node);
-                    _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformKancerRegistr { PROP_Docum = _Node.PROP_Docum };   
+                    _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformKancerRegistr { PROP_Docum = _Node.PROP_Docum };
+
                     _Node.MET_Inizial();
                 }
 
@@ -173,7 +173,7 @@ namespace wpfGeneral.UserModul
                     _Node.PROP_Docum.PROP_Otchet = new UserOtcher_Staff {PROP_Docum = _Node.PROP_Docum};
                     _Node.MET_Inizial();
                 }
-            } 
+            }
         }
     }
 }

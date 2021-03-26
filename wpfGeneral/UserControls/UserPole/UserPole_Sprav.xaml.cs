@@ -32,23 +32,21 @@ namespace wpfGeneral.UserControls
                     PART_TextDiag.ClearValue(Border.BorderBrushProperty);
             }
         }
-       
 
         /// <summary>ДЕЛЕГАТ простой </summary>
         public delegate void DelegVoid();
         /// <summary>ДЕЛЕГАТ с bool</summary>
         public delegate bool DelegBool();
-
         /// <summary>МЕТОД Делегата Инициализации</summary>
         private DelegVoid PRI_DelegInicial;
         /// <summary>МЕТОД Делегата Нажатие на кнопку открытия справочника</summary>
         private DelegVoid PRI_DelegButtonSelect;
         /// <summary>МЕТОД Делегата Сохранение шаблона</summary>
-        private DelegBool PRI_DelegSave;  
-
+        private DelegBool PRI_DelegSave;
         /// <summary>Меняли ли код</summary>
         private bool PRI_FlagChange;
-        // <summary>Создаем контекстное меню</summary>       
+
+        /// <summary>Создаем контекстное меню</summary>
         private readonly ContextMenu PRI_ContextMenu = new ContextMenu();
 
         /// <summary>КОНСТРУКТОР</summary>
@@ -132,7 +130,7 @@ namespace wpfGeneral.UserControls
                     PRI_DelegInicial = delegate { };
                     PRI_DelegButtonSelect = MET_ButtonSelect_MorfTip;
                     PRI_DelegSave = () => true;
-                    break; 
+                    break;
             }
             PRI_DelegInicial();
         }
@@ -142,12 +140,13 @@ namespace wpfGeneral.UserControls
         {
             PRI_DelegButtonSelect();
         }
-        
+
         ///<summary>МЕТОД Действие при сохранении</summary>
         public override bool MET_Save()
         {
             return PRI_DelegSave();
-        }     
+        }
+
 
         #region ---- Диагноз  -----
         ///<summary>МЕТОД Инициализация поля Диагноза поликлиники</summary>
@@ -158,7 +157,7 @@ namespace wpfGeneral.UserControls
             if (PROP_Text == "")
             {
                 PROP_Text = PROP_DefaultText;
-            }  
+            }
         }
 
         ///<summary>МЕТОД Инициализация поля Диагноза стационара</summary>
@@ -175,7 +174,7 @@ namespace wpfGeneral.UserControls
         ///<summary>МЕТОД Нажали на кнопку выбора Диагноза</summary>
         private void MET_ButtonSelect_Diag()
         {
-            // Справочник Диагнозов                   
+            // Справочник Диагнозов
             UserWindow_Diag _WinSpr = new UserWindow_Diag(PROP_FilterNach)
             {
                 WindowStyle = WindowStyle.ToolWindow,
@@ -206,7 +205,7 @@ namespace wpfGeneral.UserControls
         ///<summary>МЕТОД Действие при сохранении Диагноза Поликлиники</summary>
         private bool MET_Save_ApaDiag()
         {
-            // Если не меняли диагноз, то выходим 
+            // Если не меняли диагноз, то выходим
             if (!PRI_FlagChange)
                 return true;
             // Если меняли диагноз,  то сохраняем его в базу посещений/стац карту
@@ -218,7 +217,7 @@ namespace wpfGeneral.UserControls
         ///<summary>МЕТОД Действие при сохранении Диагноза виписки Стационара</summary>
         private bool MET_Save_AstDiag()
         {
-            // Если не меняли диагноз, то выходим 
+            // Если не меняли диагноз, то выходим
             if (!PRI_FlagChange)
                 return true;
             // Если меняли диагноз,  то сохраняем его в базу стац карты
@@ -232,7 +231,7 @@ namespace wpfGeneral.UserControls
         ///<summary>МЕТОД Нажали на кнопку выбора Отделения стационара</summary>
         private void MET_ButtonSelect_Otdel()
         {
-            // Справочник Отделений                   
+            // Справочник Отделений
             UserWindow_Department _WinSpr = new UserWindow_Department(" and Tip in (1, 2)")
             {
                 WindowStyle = WindowStyle.ToolWindow,
@@ -259,13 +258,14 @@ namespace wpfGeneral.UserControls
                 }
             }
         }
-        #endregion ----  
+        #endregion ----
+
 
         #region ---- Подразделения  -----
         ///<summary>МЕТОД Нажали на кнопку выбора Подразделения</summary>
         private void MET_ButtonSelect_Department()
         {
-            // Справочник Подразделений                   
+            // Справочник Подразделений
             UserWindow_Department _WinSpr = new UserWindow_Department
             {
                 WindowStyle = WindowStyle.ToolWindow,
@@ -308,15 +308,13 @@ namespace wpfGeneral.UserControls
             {
                 _Diag = "";
             }
-            
             // Если диагноза нет, то выходим
             if (_Diag == "")
             {
                 MessageBox.Show("Предварительно нужно выбрать диагноз!", "Ошибка!");
                 return;
             }
-
-            // Справочник Метода ВМП                  
+            // Справочник Метода ВМП
             UserWindow_MetodVMP _WinSpr = new UserWindow_MetodVMP(_Diag)
             {
                 WindowStyle = WindowStyle.ToolWindow,
@@ -351,7 +349,7 @@ namespace wpfGeneral.UserControls
         {
             // Находим дату создания протокола из первого поля шаблона с pDate
             DateTime PRI_Date = DateTime.Parse(PROP_FormShablon.GetPole("DateOsmotr").PROP_Text);
-            // Справочник Отделений                   
+            // Справочник Отделений
             UserWindow_Oper _WinSpr = new UserWindow_Oper(PRI_Date, PROP_Shablon)
             {
                 WindowStyle = WindowStyle.ToolWindow,
@@ -378,13 +376,14 @@ namespace wpfGeneral.UserControls
                 }
             }
         }
-        #endregion ---- 
+        #endregion ----
+
 
         #region ---- МНН Лекарственных препаратов  -----
         ///<summary>МЕТОД Нажали на кнопку выбора МНН Лекарственных препаратов</summary>
         private void MET_ButtonSelect_LecMNN()
         {
-            // Справочник МНН препаратов                   
+            // Справочник МНН препаратов
             UserWindow_LecMNN _WinSpr = new UserWindow_LecMNN
             {
                 WindowStyle = WindowStyle.ToolWindow,
@@ -397,7 +396,6 @@ namespace wpfGeneral.UserControls
             {
                 // Текст
                 PROP_Text = _WinSpr.PROP_Value;
-               
                 //  Поменяли поле
                 PRI_FlagChange = true;
                 // Если есть шаблон
@@ -416,7 +414,7 @@ namespace wpfGeneral.UserControls
         ///<summary>МЕТОД Нажали на кнопку выбора Морфологический тип</summary>
         private void MET_ButtonSelect_MorfTip()
         {
-            // Справочник Морфологический тип                   
+            // Справочник Морфологический тип
             UserWindow_MorfTip _WinSpr = new UserWindow_MorfTip
             {
                 WindowStyle = WindowStyle.ToolWindow,

@@ -8,7 +8,7 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Выбор шаблонов стационара</summary>
     public class UserWindow_Shablon_Stac : VirtualWindow_Shablon
-    {  
+    {
         private ComboBox PRI_ComboBox_1;
         private CheckBox PRI_CheckBox_1;
 
@@ -32,7 +32,7 @@ namespace wpfGeneral.UserWindows
             PRI_Profil_1 = pProfil_1;
             PRI_Profil_2 = pProfil_2;
             // Только один протокол в шаблоне (по умолчанию отключен)
-            PRI_OneShablon = pOneShablon;            
+            PRI_OneShablon = pOneShablon;
             // Сортируем по полю Наименование
             PRO_PoleSort = 1;
             // Поле поиска
@@ -40,9 +40,9 @@ namespace wpfGeneral.UserWindows
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
             // Создаем фильтр
-            MET_CreateFiltr();           
+            MET_CreateFiltr();
             // Открываем таблицу
-            MET_OpenForm();         
+            MET_OpenForm();
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
         }
@@ -80,7 +80,7 @@ namespace wpfGeneral.UserWindows
             PRI_ComboBox_1.DisplayMemberPath = "Names";
             PRI_ComboBox_1.SelectedValuePath = "Cod";
             PRI_ComboBox_1.SelectedValue = MyGlo.Otd;
-            PRI_ComboBox_1.SelectionChanged += delegate { if (PRI_ComboBox_1.SelectedValue == null) return; MET_SqlFilter(); }; 
+            PRI_ComboBox_1.SelectionChanged += delegate { if (PRI_ComboBox_1.SelectedValue == null) return; MET_SqlFilter(); };
             _SPanel_1.Children.Add(PRI_ComboBox_1);
             // Check Отделения
             PRI_CheckBox_1 = new CheckBox();
@@ -97,17 +97,14 @@ namespace wpfGeneral.UserWindows
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = $"and TipObsled between {PRI_Profil_1} and {PRI_Profil_2}";
-
             // Только один протокол для шаблона
             if (PRI_OneShablon)
                 PRO_SqlWhere += $" and Cod not in (select NumShablon from dbo.astProtokol where CodApstac = {MyGlo.IND} and isnull(xDelete, 0) = 0)";
-
             // Фильтр по отделению
             if (PRI_ComboBox_1.IsEnabled)
                 PRO_SqlWhere += $" and (dbo.jsonIfArray(xInfo, 'Otdel', '{PRI_ComboBox_1.SelectedValue}') = 1 or dbo.jsonIf(xInfo, 'Otdel') = 0)";
-
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
-        }           
+        }
     }
 }

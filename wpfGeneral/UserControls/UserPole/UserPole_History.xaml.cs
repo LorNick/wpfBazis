@@ -22,12 +22,11 @@ namespace wpfGeneral.UserControls
         /// <summary>Переменная делегата (открытие вкладки в первый раз)</summary>
         public callbackEvent callbackOpenNew;
 
-        /// <summary>Очередь элементов истории (если есть подэлементы)</summary>     
+        /// <summary>Очередь элементов истории (если есть подэлементы)</summary>
         public readonly Queue PROP_PoleHistory = new Queue();
 
         /// <summary>Очередь элементов истории (если есть подэлементы)</summary>
         public RichTextBox PUB_RichTextBox;
-
 
         #region ---- СВОЙСТВО ----
         /// <summary>СВОЙСТВО Описание вопроса</summary>
@@ -195,7 +194,6 @@ namespace wpfGeneral.UserControls
         public string PROP_xLog { get; set; }
         #endregion
 
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserPole_History()
         {
@@ -317,11 +315,10 @@ namespace wpfGeneral.UserControls
             {
                 PART_MenuItem_Delete.Visibility = Visibility.Collapsed;
                 PART_MenuItem_Restore.Visibility = Visibility.Collapsed;
-                //PART_MenuItem_Log.Visibility = Visibility.Collapsed; 
+                //PART_MenuItem_Log.Visibility = Visibility.Collapsed;
             }
-           
         }
-        
+
         /// <summary>СОБЫТИЕ Открытие Expander</summary>
         private void PART_Expander_Expanded(object sender, RoutedEventArgs e)
         {
@@ -335,14 +332,14 @@ namespace wpfGeneral.UserControls
             // Открываем Форму Карточка Администратора
             UserWindow_CardAdmin _WinCardAdmin = new UserWindow_CardAdmin
             {
-                PROP_PoleHistory = this,      
+                PROP_PoleHistory = this,
                 WindowStyle = WindowStyle.ToolWindow,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
             _WinCardAdmin.Show();
         }
 
-        /// <summary>СОБЫТИЕ Выбор контекстного меню Редактировать</summary>     
+        /// <summary>СОБЫТИЕ Выбор контекстного меню Редактировать</summary>
         private void PART_MenuItem_Edit_Click(object sender, RoutedEventArgs e)
         {
             MyTipProtokol _MyTipProtokol;
@@ -370,7 +367,7 @@ namespace wpfGeneral.UserControls
             MyMet.MET_EditWindows(_MyTipProtokol.PROP_TipDocum, _IND, MyGlo.KL);
         }
 
-        /// <summary>СОБЫТИЕ Выбор контекстного меню Открытие окна логов документа</summary>     
+        /// <summary>СОБЫТИЕ Выбор контекстного меню Открытие окна логов документа</summary>
         private void PART_MenuItem_Log_Click(object sender, RoutedEventArgs e)
         {
             string _jLog;
@@ -394,28 +391,28 @@ namespace wpfGeneral.UserControls
                 _WinLog.Show();
             }
             else
-                MessageBox.Show("А логов то и нет!", "Ошибочка вышла");            
+                MessageBox.Show("А логов то и нет!", "Ошибочка вышла");
         }
 
-        /// <summary>СОБЫТИЕ Выбор контекстного меню Удалить протокол</summary>     
+        /// <summary>СОБЫТИЕ Выбор контекстного меню Удалить протокол</summary>
         private void PART_MenuItem_Delete_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Вы точно хотите удалить этот протокол?", "Удалить", MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
-            {                
+            {
                 PROP_DocumHistory.PROP_Protokol.OnDelete?.Invoke();
-            }                                
+            }
         }
 
-        /// <summary>СОБЫТИЕ Выбор контекстного меню Восстаовить протокол</summary>     
+        /// <summary>СОБЫТИЕ Выбор контекстного меню Восстаовить протокол</summary>
         private void PART_MenuItem_Restore_Click(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show("Вы точно хотите восстановить этот протокол?", "Восстановить", MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
             {
-                PROP_DocumHistory.PROP_Protokol.OnRestore?.Invoke();               
-            }           
+                PROP_DocumHistory.PROP_Protokol.OnRestore?.Invoke();
+            }
         }
-        #endregion       
+        #endregion
     }
 }

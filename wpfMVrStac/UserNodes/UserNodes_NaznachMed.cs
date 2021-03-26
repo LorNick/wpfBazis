@@ -7,7 +7,7 @@ namespace wpfMVrStac
 {
     /// <summary>КЛАСС Ветка для Редактируемых веток Врача Стационара</summary>
     public class UserNodes_NaznachMed : VirtualNodes
-    {   
+    {
         /// <summary>СВОЙСТВО (шаблона) Разрешение редактирования шаблона</summary>
         public override bool PROP_shaButtonEdit { get { return PROP_shaPresenceProtokol; } }
 
@@ -21,7 +21,6 @@ namespace wpfMVrStac
             base.MET_Inizial();
             // Наличине данных
             PROP_shaPresenceProtokol = MET_PresenceProtokol();
-           
             // Закрываем кнопки сохранения и очистить
             PROP_shaButtonSvaveSha = Visibility.Collapsed;
             PROP_shaButtonClearSha = Visibility.Collapsed;
@@ -34,8 +33,8 @@ namespace wpfMVrStac
         }
 
         /// <summary>МЕТОД Отображение формы</summary>
-        /// <param name="pGrid">Сюда добавляем шабллон</param> 
-        /// <param name="pNew">ture - Новый шаблон, false - Старый шаблон</param> 
+        /// <param name="pGrid">Сюда добавляем шабллон</param>
+        /// <param name="pNew">ture - Новый шаблон, false - Старый шаблон</param>
         /// <param name="pShablon">Номер шаблона</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
         public override bool MET_ShowShablon(Grid pGrid, bool pNew, int pShablon = 0, string pText = "")

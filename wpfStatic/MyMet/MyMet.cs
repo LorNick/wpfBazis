@@ -59,7 +59,7 @@ namespace wpfStatic
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(string pStr)
-        {            
+        {
             int.TryParse(pStr, out int _Result);
             return _Result;
         }
@@ -68,7 +68,7 @@ namespace wpfStatic
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(object pObject)
-        {            
+        {
             int.TryParse(pObject.ToString(), out int _Result);
             return _Result;
         }
@@ -77,7 +77,7 @@ namespace wpfStatic
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(string pStr)
-        {            
+        {
             decimal.TryParse(pStr, out decimal _Result);
             return _Result;
         }
@@ -86,7 +86,7 @@ namespace wpfStatic
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(object pObject)
-        {           
+        {
             decimal.TryParse(pObject.ToString(), out decimal _Result);
             return _Result;
         }
@@ -95,7 +95,7 @@ namespace wpfStatic
         /// <param name="pStr">Строка с датой</param>
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(string pStr)
-        {            
+        {
             DateTime.TryParse(pStr, out DateTime _Result);
             return _Result;
         }
@@ -105,7 +105,7 @@ namespace wpfStatic
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(object pObject)
         {
-            if (pObject.ToString() == "") return null;            
+            if (pObject.ToString() == "") return null;
             DateTime.TryParse(pObject.ToString(), out DateTime _Result);
             return _Result;
         }
@@ -118,13 +118,13 @@ namespace wpfStatic
             var _DateTime = MET_ParseDat(pObject);
             var _Result = _DateTime == null ? "" : _DateTime.Value.ToShortDateString() + " г.";
             return _Result;
-        } 
+        }
 
         /// <summary>МЕТОД Парсим объект строки в реальное число</summary>
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static double MET_ParseRea(object pObject)
-        {            
+        {
             double.TryParse(pObject.ToString(), out double _Result);
             return _Result;
         }
@@ -135,7 +135,7 @@ namespace wpfStatic
         public static string MET_Ver()
         {
             string _Ver = Assembly.GetEntryAssembly().GetName().Version.ToString().Substring(4);
-            return _Ver;                                                          
+            return _Ver;
         }
 
         /// <summary>МЕТОД Логирование</summary>
@@ -185,7 +185,7 @@ namespace wpfStatic
         {
             string _Value;
             try
-            {   
+            {
                 _Value = ((int)((pToDay.Subtract(pDob).Days * 0.99932) / 365)).ToString(); // 0.99932 - убераем високосные дни
                 if (_Value == "11" || _Value == "12" || _Value == "13" || _Value == "14")
                     _Value += " лет";
@@ -221,7 +221,7 @@ namespace wpfStatic
             return _NameOtd;
         }
 
-        /// <summary>Наименование отделения из s_Department текущего отделения по MyGlo.Otd</summary>        
+        /// <summary>Наименование отделения из s_Department текущего отделения по MyGlo.Otd</summary>
         /// <returns>Возвращаем наименование текущего отделения</returns>
         public static string MET_NameOtd()
         {
@@ -259,7 +259,6 @@ namespace wpfStatic
             Process[] _Processes = Process.GetProcesses();
             // Выбираем только наши
             IEnumerable<Process> _ProcsBazis = _Processes.Where(p => p.ProcessName == "wpfBazis" && pTitle == p.MainWindowTitle);
-
             pCountWindows = _Processes.Count(p => p.ProcessName == "wpfBazis");
             // Если нашли подобный просесс, то true
             foreach (var _Process in _ProcsBazis)
@@ -282,33 +281,29 @@ namespace wpfStatic
         /// <returns>true - открыли новое окно, false - несмогли</returns>
         /// <remarks>ВНИМАНИЕ!!! В режиме Debug показывает НЕ то что вы указали тут в парамметрах, а то что указано в стартовых параметрах модуля!</remarks>
         public static bool MET_EditWindows(eTipDocum pTipProtokol, decimal pIND, decimal pKL, string pStartFile = "")
-        {            
-
+        {
             int[] _Modul = { 22, 4, 16, 15, 22 };
             Process _Process = new Process();
             ProcessStartInfo _StartInfo = new ProcessStartInfo();
-            _StartInfo.FileName = pStartFile == "" ? MyGlo.PathExe : pStartFile;           
+            _StartInfo.FileName = pStartFile == "" ? MyGlo.PathExe : pStartFile;
             // Отделение
             string _Otd = "";
             if (!(pTipProtokol == eTipDocum.Null || pTipProtokol == eTipDocum.Kdl || pIND == 0))
-                _Otd = MySql.MET_QueryInt(MyQuery.MET_varOtd_Select_1(pTipProtokol, pIND)).ToString();           
+                _Otd = MySql.MET_QueryInt(MyQuery.MET_varOtd_Select_1(pTipProtokol, pIND)).ToString();
             _StartInfo.Arguments = $"{MyGlo.Server} {MyGlo.User} {_Modul[(int)pTipProtokol]} {pKL} {pIND} {_Otd}";
             _Process.StartInfo = _StartInfo;
-            _Process.Start(); 
+            _Process.Start();
             return true;
         }
 
         /// <summary>МЕТОД Парсим телефон в нормальный вид</summary>
-        /// <param name="pPhone">Строка нового окна</param>        
+        /// <param name="pPhone">Строка нового окна</param>
         /// <returns>Возвращаем номер телефона в нормальном виде, иначе пустую строку</returns>
         public static string MET_TryPhon(string pPhone)
         {
             string _ReturnPhone = "";
-
             decimal.TryParse(string.Join("", pPhone.Where(c => char.IsDigit(c))), out decimal _Value);
-
             _ReturnPhone = _Value.ToString();
-
             switch(_ReturnPhone.Length)
             {
                 case 5:
@@ -320,28 +315,27 @@ namespace wpfStatic
                 case 10:
                     _ReturnPhone = $"8 {_Value:### ###-##-##}";
                     break;
-                case 11:                    
+                case 11:
                     _ReturnPhone = $"{_Value:# ### ###-##-##}";
                     break;
                 default:
                     _ReturnPhone = "";
                     break;
             }
-
             return _ReturnPhone;
         }
 
         /// <summary>МЕТОД Проверяем наличие нужной версии .NET Framework (по умолчанию 4.6.1), начиная с 4.5</summary>
-        /// <param name="pVersion">Строка версии .Net</param>        
+        /// <param name="pVersion">Строка версии .Net</param>
         /// <returns>Если установелнная нужная (или выше) версия, то true</returns>
         public static bool MET_GetVersionNet45(string pVersion = "4.6.1")
         {
             const string _subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
             int _Ver = 0;
-            using (var _ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(_subkey)) 
+            using (var _ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(_subkey))
             {
                 if (_ndpKey != null && _ndpKey.GetValue("Release") != null)
-                    _Ver = (int)_ndpKey.GetValue("Release"); 
+                    _Ver = (int)_ndpKey.GetValue("Release");
                 else
                     return false;
             }
@@ -380,9 +374,9 @@ namespace wpfStatic
                     _releaseKey = 378389;
                     break;
             }
-                        
             return _Ver >= _releaseKey;
         }
         #endregion
-    } 
+    }
+
 }

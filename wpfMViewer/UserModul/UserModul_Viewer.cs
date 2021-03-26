@@ -9,17 +9,16 @@ using wpfStatic;
 
 namespace wpfMViewer
 {
-	/// <summary>КЛАСС Модуля Работы со списком протоколов</summary>
-	public class UserModul_Viewer : VirtualModul
-	{   
-		/// <summary>МЕТОД Считываем параметры командной строки</summary>
+    /// <summary>КЛАСС Модуля Работы со списком протоколов</summary>
+    public class UserModul_Viewer : VirtualModul
+    {
+        /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
-		{
-		    MyGlo.KL = MyGlo.DataSet.Tables["s_Users"].AsEnumerable()
+        {
+            MyGlo.KL = MyGlo.DataSet.Tables["s_Users"].AsEnumerable()
                 .FirstOrDefault(p => p.Field<int>("Cod") == MyGlo.User)?.Field<decimal>("KL") ?? 0;
             MyGlo.Otd = 0;
             MyGlo.IND = 1;
-		   
             string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
@@ -36,19 +35,18 @@ namespace wpfMViewer
             }
 
 #if DEBUG
-            // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ)    
+            // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ)
             PUB_Menu = 1;
             MyGlo.KL = 128782448018955; // 89350339824030;
 #endif
-		}
+        }
 
-		/// <summary>МЕТОД Начальные данные</summary>
-		public override void MET_NachDan()
-		{
+        /// <summary>МЕТОД Начальные данные</summary>
+        public override void MET_NachDan()
+        {
             // Если нет пациента - выходим
-		    if (MyGlo.KL == 0)
-		        return;
-
+            if (MyGlo.KL == 0)
+                return;
             // Заполняем hasKBOL
             MyGlo.HashKBOL = MySql.MET_QueryHash(MyQuery.kbol_Select_1(MyGlo.KL));
             // Заполняем HashLastDiag
@@ -58,32 +56,30 @@ namespace wpfMViewer
             // Дата рождения пациента
             MyGlo.DR = MyMet.MET_StrDat(MyGlo.HashKBOL["DR"]);
             // Пол пациента
-            MyGlo.Pol = Convert.ToInt16(MyGlo.HashKBOL["POL"]) == 1 ? "Мужской" : "Женский"; 
+            MyGlo.Pol = Convert.ToInt16(MyGlo.HashKBOL["POL"]) == 1 ? "Мужской" : "Женский";
             // Обнуляем историю болезни
             MyGlo.HashOtchet.Clear();
-		}
+        }
 
-		/// <summary>МЕТОД Заголовок программы</summary>
-		public override string MET_Title()
-		{  
+        /// <summary>МЕТОД Заголовок программы</summary>
+        public override string MET_Title()
+        {
             // Наименование модуля
             string _Title = "wpfBazis -- История болезни --";
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
-
             // Пациент
             _Title += MyGlo.KL > 0 ? "  (" + MyGlo.FIO + " " + MyGlo.DR : " ( ";
             // Показываем имя пользователя
             _Title += " - " + MyGlo.UserName + ")";
             return _Title;
-		}
+        }
 
         /// <summary>МЕТОД Формируем дерево</summary>
         public override void MET_CreateTree()
         {
             // Преварительно чистим  дерево
             MyGlo.TreeView.Items.Clear();
-
             if (MyGlo.KL > 0)
             {
                 // Заполняем основу дерево (паспорт + история)
@@ -122,5 +118,5 @@ namespace wpfMViewer
                 }
             }
         }
-	}
+    }
 }

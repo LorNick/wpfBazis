@@ -25,7 +25,8 @@ namespace wpfStatic
         /// <summary>Списки Стационара (операции)</summary>
         Stac_RootsList,
         /// <summary>Добавочная ветка Стационара</summary>
-        Stac_Add,   
+        Stac_Add,
+
         /// <summary>Списки Параклиники</summary>
         Para_RootsList,
         /// <summary>Добавочная ветка Параклиники</summary>
@@ -69,7 +70,7 @@ namespace wpfStatic
         /// <summary>Старый шаблон</summary>
         Old,
     }
-   
+
     /// <summary>Модули доступа</summary>
     public enum eModul
     {
@@ -80,10 +81,10 @@ namespace wpfStatic
         /// <summary>Параклиника (Врач)</summary>
         VrPara = 15,
         /// <summary>Стационар (Врач)</summary>
-        VrStac = 16,               
+        VrStac = 16,
         /// <summary>Канцер регистр</summary>
         KancerReg = 21,
-		/// <summary>Просмоторщик Истории болезни</summary>
+        /// <summary>Просмоторщик Истории болезни</summary>
         Viewer = 22,
         /// <summary>Для других ЛПУ</summary>
         OtherLpu = 24,
@@ -148,7 +149,7 @@ namespace wpfStatic
         /// <summary>16. Справочники UserPole_Sprav</summary>
         Sprav = 16,
         /// <summary>17. Календарь UserPole_Calendar</summary>
-        Calendar = 17     
+        Calendar = 17
     }
 
     /// <summary>Тип Тегов (Нерабочие)</summary>
@@ -167,13 +168,14 @@ namespace wpfStatic
         /// <summary>6. Объект object</summary>
         Object = 6,
         /// <summary>7. Массив array (может включать в себя любой из выше перечисленных элементов)</summary>
-        Array = 7       
+        Array = 7
     }
-    #endregion 
-
+    #endregion
+    
     /// <summary>КЛАСС для Глобальных переменных</summary>
-    public static class MyGlo 
-    {                                   
+    public static class MyGlo
+    {
+
         #region ---- Public ----
         /// <summary>Тип делегата</summary>
         public delegate void callbackEvent_Error(Exception pException);
@@ -184,7 +186,7 @@ namespace wpfStatic
         public delegate void callbackEvent(bool pEnable);
         /// <summary>Переменная делегата (нужно ли сохранять шаблон)</summary>
         public static callbackEvent callbackEvent_sEditShablon;
-        
+
         /// <summary>Переменная делегата (обновляем окно, с новыми данными)</summary>
         public static callbackEvent callbackEvent_sReloadWindows;
 
@@ -220,24 +222,25 @@ namespace wpfStatic
         /// <summary>История болезни</summary>
         public static Hashtable HashOtchet = new Hashtable();
         /// <summary>Цвет отчетов</summary>
-        public static Brush BrushesOtchet; 
+        public static Brush BrushesOtchet;
+
         /// <summary>Код сервера (3- главный, 5 - филиал)</summary>
         public static int Server;
         /// <summary>Корпус (1- главный, 2 - филиал)</summary>
-        public static int Korpus; 
+        public static int Korpus;
+
         /// <summary>Код пациента</summary>
         public static decimal KL;
         /// <summary>Полное ФИО пациента (КРИВКО Николай Васильевич)</summary>
         public static string FIO;
         /// <summary>Дата рождения</summary>
-        public static string DR;         
+        public static string DR;
         /// <summary>Код пользователя</summary>
         public static int User;
         /// <summary>Имя пользователя</summary>
         public static string UserName;
         /// <summary>Пол (Мужской, Женский)</summary>
         public static string Pol;
-
         /// <summary>Код ЛПУ</summary>
         public static int Lpu;
         /// <summary>Стационар - Номер отделения (otd), поликлиника - код специальности (SPRS), параклиника - код элемента кабинета (parEL:Cod) (нужно отсюда убрать)</summary>
@@ -254,18 +257,15 @@ namespace wpfStatic
         public static bool Admin;
         /// <summary>Показать удаленые протоколы</summary>
         public static bool ShowDeletedProtokol;
-
         /// <summary>Путь к wpfBazis</summary>
         public static string PathExe;
         /// <summary>Доступ на редактирование протоколов (берется из реестра)</summary>
         public static bool FlagEdit;
-
         /// <summary>Создаем логгер</summary>
         public static Logger PUB_Logger = LogManager.GetCurrentClassLogger();
-
         /// <summary>Наша база</summary>
         public static BazisDataContext PUB_Context;
-        #endregion 
+        #endregion
 
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public static void MET_ComStr()
@@ -273,7 +273,6 @@ namespace wpfStatic
             User = 848;    // пользователь "_"
             Server = 3;    // 1 - локальная база 2 - филиал от главного, 3 - главный, 5 - филиал, 6 - главный из вне
             TypeModul = eModul.Viewer;
-
 #if DEBUG
             User = 60; // 5006;
             // Server = 2;
@@ -283,12 +282,12 @@ namespace wpfStatic
             //    TypeModul = eModul.Viewer;
             //   TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
-            //  TypeModul = eModul.OtherLpu;           
+            //  TypeModul = eModul.OtherLpu;
             // TypeModul = eModul.Laboratory;
             //TypeModul = eModul.CAOP;
 #endif
 
-            string[] _mArgs = Environment.GetCommandLineArgs();           
+            string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
                 // Нулевая строка - путь к программе
@@ -299,24 +298,17 @@ namespace wpfStatic
                 if (x == 3)
                     TypeModul = (eModul)Convert.ToInt32(_mArgs[3]);
             }
-
             PUB_Context = new BazisDataContext(MySql.MET_ConSql());
-
             // Заполняем таблицу пользователей s_Users
             MySql.MET_DsAdapterFill("select * from dbo.s_Users", "s_Users");
-
             // Заполняем таблицу доступа текущего пользователя s_UsersDostup
             MySql.MET_DsAdapterFill($"select * from dbo.s_UsersDostup where UserCod = {User}", "s_UsersDostup");
-
             // ФИО пользователя
             UserName = MyMet.MET_UserName(User);
-
             // Поля логирования (есть ещё дубляж в основной форме)
             MyMet.MET_Log();
-
             // Корпус
             Korpus = MySql.MET_QueryInt(MyQuery.z_ConsttKorpus_Select_1());
-               
             // Разрешение на Редактирование протоколов/Администратора из реестра
             using (var _Key = Registry.CurrentUser.OpenSubKey("Software\\wpfBazis"))
             {
@@ -328,5 +320,5 @@ namespace wpfStatic
                 }
             }
         }
-    }       
+    }
 }

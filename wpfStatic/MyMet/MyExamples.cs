@@ -14,14 +14,19 @@ namespace wpfStatic
     // Telerik RadDateTimePicker
     //  <!--<telerik:RadDateTimePicker
     //              Name = "PART_DatePicker"
-    //              MaxWidth="110" 
+    //              MaxWidth="110"
+
     //              HorizontalAlignment="Left"
     //              DisplayFormat="Short"
-    //              InputMode="DatePicker" 
+    //              InputMode="DatePicker"
+
     //              TodayButtonVisibility="Visible"
     //              TodayButtonContent="Сегодня"
-    //              DateTimeWatermarkContent="Введите дату"                     
-    //              SelectedValue="{p:Binding ElementName=UserPole, Path=PROP_Text, Converter={ConvertTextToDateTime}, Mode=TwoWay}" 
+    //              DateTimeWatermarkContent="Введите дату"
+
+
+    //              SelectedValue="{p:Binding ElementName=UserPole, Path=PROP_Text, Converter={ConvertTextToDateTime}, Mode=TwoWay}"
+
     //              DisplayDate="{p:Binding ElementName=UserPole, Path=PROP_Date}"
     //              DisplayDateStart="{p:Binding ElementName=UserPole, Path=PROP_ValueMinDate}"
     //              DisplayDateEnd="{p:Binding ElementName=UserPole, Path=PROP_ValueMaxDate}"

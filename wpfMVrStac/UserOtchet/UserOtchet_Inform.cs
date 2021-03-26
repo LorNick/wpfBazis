@@ -31,7 +31,6 @@ namespace wpfMVrStac
             // Заполняем строку данными запроса
             MySql.MET_DsAdapterFill(MyQuery.APSTAC_Select_2(MyGlo.IND), "Shablon");
             PRO_RowShablon = MyGlo.DataSet.Tables["Shablon"].Rows[0];
-
             // Номер карты стационара
             xVopr = "Карта стационара №";
             xOtvet = MET_PoleStr("NSTAC");
@@ -119,7 +118,7 @@ namespace wpfMVrStac
             {
                 xVopr = " Переведен из другого отделения:";
                 int _OtdIn = MET_PoleInt("OtdIn");
-                xOtvet = $"{_OtdIn}. {MyMet.MET_NameOtd(_OtdIn)}";               
+                xOtvet = $"{_OtdIn}. {MyMet.MET_NameOtd(_OtdIn)}";
                 xEnter = 1;
                 MET_Print();
             }
@@ -128,7 +127,7 @@ namespace wpfMVrStac
             {
                 xVopr = " Переведен из другого отделения:";
                 int _OtdOut = MET_PoleInt("OtdOut");
-                xOtvet = $"{_OtdOut}. {MyMet.MET_NameOtd(_OtdOut)}";               
+                xOtvet = $"{_OtdOut}. {MyMet.MET_NameOtd(_OtdOut)}";
                 xEnter = 1;
                 MET_Print();
             }

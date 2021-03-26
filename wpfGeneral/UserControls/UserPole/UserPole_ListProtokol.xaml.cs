@@ -25,9 +25,10 @@ namespace wpfGeneral.UserControls
                 // Если открыт, то расскрываем Expander, иначе закрываем его
                 if (value == "Открыт")
                     PART_Expander.IsExpanded = true;
-                else 
+                else
+
                     PART_Expander.IsExpanded = false;
-            }            
+            }
         }
         #endregion
 

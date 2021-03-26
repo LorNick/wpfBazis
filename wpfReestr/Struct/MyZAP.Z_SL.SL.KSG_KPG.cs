@@ -4,14 +4,14 @@ using Newtonsoft.Json;
 namespace wpfReestr
 {
     /// <summary>КЛАСС Сведенния о КСГ</summary>
-    /// <remarks>Справочник Q018; тип файла C, H; путь ZL_LIST/ZAP/Z_SL/SL/KSG_KPG</remarks>   
+    /// <remarks>Справочник Q018; тип файла C, H; путь ZL_LIST/ZAP/Z_SL/SL/KSG_KPG</remarks>
     public class MyKSG_KPG
     {
         /// <summary>Номер КСГ (Справочник V023; из json NOM_USL)</summary>
         public string N_KSG { get; set; }
 
         [JsonIgnore]
-        /// <summary>Год определения КСГ (в XML ставим текущий год)</summary>       
+        /// <summary>Год определения КСГ (в XML ставим текущий год)</summary>
         public int VER_KSG { get; set; }
 
         [JsonIgnore]

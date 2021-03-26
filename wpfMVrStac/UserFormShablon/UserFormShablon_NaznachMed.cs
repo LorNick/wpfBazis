@@ -27,13 +27,13 @@ namespace wpfMVrStac
 
         /// <summary>МЕТОД Формируем форму Шаблона</summary>
         public override void MET_CreateForm()
-        {   
+        {
             Frame _Frame = new Frame();                                         // фрейм, для  мед. назначений
             UserPage_NaznachMed _Page = new UserPage_NaznachMed();              // создаем лист мед. назначений
             _Frame.Navigate(_Page);                                             // помещаем лист мед. назначений на фрейм
-            _Page.PUB_Node = PUB_VirtualNodes;        
-            PUB_HashPole = _Page.PUB_HashPole;                                  // наша коллекция полей  
+            _Page.PUB_Node = PUB_VirtualNodes;
+            PUB_HashPole = _Page.PUB_HashPole;                                  // наша коллекция полей
             this.Children.Add(_Frame);                                          // добавляем фрейм на вкладку
-        } 
+        }
     }
 }

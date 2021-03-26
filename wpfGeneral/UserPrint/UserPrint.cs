@@ -4,28 +4,26 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-
 using System.Windows.Media;
 
 namespace wpfGeneral.UserPrints
 {
     /// <summary>КЛАСС для печати</summary>
     public class UserPrint : DocumentPaginator
-    {  
+    {
         /// <summary>Разделитель на страницы</summary>
         private readonly DocumentPaginator PRI_DocPag;
         /// <summary>Начальная страница</summary>
         private readonly int PRI_StartIndex;
         /// <summary>Конечная страница</summary>
         private readonly int PRI_EndIndex;
-       
 
         #region ---- СВОЙСТВА ----
-        /// <summary>СВОЙСТВО Получение значения, 
+        /// <summary>СВОЙСТВО Получение значения,
         /// указывающего на то, является ли PageCount общим числом страниц,
         /// при переопределении в производном классе. (название не менять)</summary>
         public override bool IsPageCountValid => PRI_DocPag.IsPageCountValid;
-       
+
         /// <summary>СВОЙСТВО Номер старницы</summary>
         public override int PageCount
         {
@@ -48,7 +46,6 @@ namespace wpfGeneral.UserPrints
 
         /// <summary>СВОЙСТВО Источник</summary>
         public override IDocumentPaginatorSource Source => PRI_DocPag.Source;
-
         #endregion
 
         /// <summary>КОНСТРУКТОР</summary>
@@ -73,10 +70,8 @@ namespace wpfGeneral.UserPrints
                     break;
             }
            // pFlowDoc.ColumnWidth = 200;
-           
-         
             // Формируем документ
-            PRI_DocPag = ((IDocumentPaginatorSource)pFlowDoc).DocumentPaginator; 
+            PRI_DocPag = ((IDocumentPaginatorSource)pFlowDoc).DocumentPaginator;
         }
 
         /// <summary>КОНСТРУКТОР</summary>
@@ -85,7 +80,6 @@ namespace wpfGeneral.UserPrints
             PRI_StartIndex = pPageRange.PageFrom - 1;
             PRI_EndIndex = pPageRange.PageTo - 1;
             PRI_DocPag = pPaginator;
-
             // Adjust the _endIndex
             PRI_EndIndex = Math.Min(PRI_EndIndex, PRI_DocPag.PageCount - 1);
         }
@@ -96,7 +90,6 @@ namespace wpfGeneral.UserPrints
         {
             // Размер странцы (максимальный, всё равно усекается отступами)
             PageSize = new Size(794, 1130);
-      
             // Извлекаем запрашиваемую страницу
             DocumentPage _Page = PRI_DocPag.GetPage(pPageNumber + PRI_StartIndex);
 
@@ -122,7 +115,6 @@ namespace wpfGeneral.UserPrints
                 }
                 return new DocumentPage(_Container, _Page.Size, _Page.BleedBox, _Page.ContentBox);
             }
-
             return _Page;
         }
     }
@@ -134,12 +126,10 @@ namespace wpfGeneral.UserPrints
     {
         /// <summary>МЕТОД Печать</summary>
         protected override void OnPrintCommand()
-        {      
+        {
             PrintDialog _PrintDialog = new PrintDialog();
             _PrintDialog.PrintQueue = LocalPrintServer.GetDefaultPrintQueue();
             _PrintDialog.UserPageRangeEnabled = true;
-            
-
             if (_PrintDialog.ShowDialog() == true)
             {
                 try
@@ -179,5 +169,6 @@ namespace wpfGeneral.UserPrints
                 MessageBox.Show("Ошибка Печати");
             }
         }
-    }  
+    }
+
 }

@@ -43,13 +43,12 @@ namespace wpfReestr
 
             // Версия редакции 3.2 (январь 2020)
             // Имя поля в таблице StrahReestr (Описание)
-
-            // PLAT (Код страховой компании)                               далее в  MET_CalcAll() 
+            // PLAT (Код страховой компании)                               далее в  MET_CalcAll()
             PRI_StrahReestr.PLAT = m.MET_PoleStr("Scom", _RowApac);
 
             // LPU_1 (Подразделения МО)
             int _Podrazd = m.MET_PoleInt("Podrazd", _RowApac);
-            PRI_StrahReestr.LPU_1 = _Podrazd == 3 ? 55550900 : 55550901;                // главный/филиал         
+            PRI_StrahReestr.LPU_1 = _Podrazd == 3 ? 55550900 : 55550901;                // главный/филиал
 
             // ORDER (Направление на госпитализацию, 1 - плановая, 2 - экстренная (у нас нету), 0 - поликлиника)
             PRI_StrahReestr.ORDER = 0;
@@ -71,7 +70,8 @@ namespace wpfReestr
             string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
             PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}2{_Prof}");
 
-            // DET (Детский профиль, если ребёнок то 1 иначе 0)   далее в  MET_CalcAll() 
+            // DET (Детский профиль, если ребёнок то 1 иначе 0)   далее в  MET_CalcAll()
+
             PRI_Age = m.MET_PoleInt("Age", _RowApac);
 
             // PRVS (Специальность врача, справочник V004)
@@ -86,7 +86,7 @@ namespace wpfReestr
             // EX_DATE -> DATE_2 -> DATE_OUT (Дата окончания)
             PRI_StrahReestr.EX_DATE = m.MET_PoleDate("DK", _RowApac);
 
-            // DS1 -> DS (Диагноз)                                             
+            // DS1 -> DS (Диагноз)
             PRI_StrahReestr.DS1 = m.MET_PoleStr("D", PRI_RowReestr);
             // Проверка
             if (PRI_StrahReestr.DS1.Length < 3)
@@ -98,10 +98,10 @@ namespace wpfReestr
                 return;
             }
 
-            // DS2 (Сопутствующий Диагноз - не заполняем) 
+            // DS2 (Сопутствующий Диагноз - не заполняем)
             PRI_StrahReestr.DS2 = "";
 
-            // PACIENTID -> NHISTORY (Номер истории болезни/талона)       
+            // PACIENTID -> NHISTORY (Номер истории болезни/талона)
             PRI_StrahReestr.PACIENTID = m.MET_PoleStr("Cod", PRI_RowReestr);
 
             // RES_G -> RSLT(Результат обращения/госпитализации, справочник V009)
@@ -141,7 +141,7 @@ namespace wpfReestr
             // SUM_LPU (Сумма услуги)
             PRI_StrahReestr.SUM_LPU = PRI_StrahReestr.TARIF;
 
-            // VPOLIS (Тип полиса 1 - старый, 2 - временный, 3 - новый)   далее в  MET_CalcAll() 
+            // VPOLIS (Тип полиса 1 - старый, 2 - временный, 3 - новый)   далее в  MET_CalcAll()
             PRI_NPolis = m.MET_PoleStr("SN", _RowApac);
 
             // SERIA -> SPOLIS (Серия полиса)
@@ -191,7 +191,6 @@ namespace wpfReestr
                 {
                     // ЛПУ направления
                     PRI_Sl.NPR_MO = m.MET_PoleInt("NPR_MO", _PolRow);
-
 
                     if (PRI_ErrorRow) return; // Критическая ошибка - выходим
 
@@ -310,7 +309,7 @@ namespace wpfReestr
                             PRI_Sl.ONK_SL = new MyONK_SL();
 
                             // DS1_T - Повод обращения (N018)
-                            // 0 - первичное лечение  
+                            // 0 - первичное лечение
                             // 1 - рецедив с метастазами, 2 - прогресирование с метастазами, 21, 22 - то-же но без метастаз)
                             // 3 - динамическое наблюдение
                             // 4 - диспансерное наблюдение
@@ -456,7 +455,7 @@ namespace wpfReestr
                             var _Sv = PRI_StrahStacSv.FirstOrDefault(e => e.Flag == 12 && e.CODE_USL == PRI_Sl.USL[PRI_CouUsl - 1].Code_Usl
                                     && PRI_StrahReestr.ARR_DATE >= e.DateN && PRI_StrahReestr.ARR_DATE <= e.DateK);
 
-                            // Тарифы                        
+                            // Тарифы
                             PRI_StrahReestr.SUM_LPU = _Sv.Tarif;
                             PRI_StrahReestr.TARIF = PRI_StrahReestr.SUM_LPU;
 
@@ -485,7 +484,6 @@ namespace wpfReestr
                                 PRI_ErrorRow = true;
                                 return;
                             }
-
                         }
                     }
                 }
@@ -505,7 +503,6 @@ namespace wpfReestr
                     PRI_StrahReestr.NOM_USL = "Ошибка json";
                 }
             }
-
             MET_CalcAll();
         }
     }

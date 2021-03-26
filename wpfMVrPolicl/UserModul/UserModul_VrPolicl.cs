@@ -9,7 +9,7 @@ namespace wpfMVrPolicl
 {
     /// <summary>КЛАСС Стартовый модуль Врача Поликлиники</summary>
     public sealed class UserModul_VrPolicl : VirtualModul
-    {  
+    {
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
@@ -47,12 +47,12 @@ namespace wpfMVrPolicl
             // Пол пациента
             MyGlo.Pol = Convert.ToInt16(MyGlo.HashKBOL["POL"]) == 1 ? "Мужской" : "Женский";
             // Обнуляем историю болезни
-            MyGlo.HashOtchet.Clear();       
+            MyGlo.HashOtchet.Clear();
         }
 
         /// <summary>МЕТОД Заголовок программы</summary>
         public override string MET_Title()
-        {  
+        {
             // Наименование модуля
             string _Title = "wpfBazis -- Врач поликлиники --";
             // Номер версии
@@ -69,12 +69,10 @@ namespace wpfMVrPolicl
         {
             // Заполняем основу дерево (паспорт + история)
             base.MET_CreateTree();
-            
+
             // Загружаем все протоколы Protokol текущей поликлиники (внутри загружаются и ListShablon и Shablon)
             UserProtokol.MET_FactoryProtokolArray(eTipDocum.Pol, MyGlo.IND);
-
             VirtualNodes _Node;
-
             // Временно скрыта для врачей по приказу начальника, из за конфликта Тарасевич-Плахотенко (сентябрь 2019)
             // Пока открыл (июль 2020)
             //if (MyGlo.Admin)

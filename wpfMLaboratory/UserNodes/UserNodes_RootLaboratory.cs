@@ -39,18 +39,18 @@ namespace wpfMLaboratory
             var _p = ((VirtualModul) MyGlo.Modul).PUB_Protokol;
 
             // Протоколы исследования с номерами 1000 до 1999
-            var _k = _p.Where(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Kdl 
+            var _k = _p.Where(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Kdl
+
                     && p.PROP_NumShablon >= 1000 && p.PROP_NumShablon <= 1999
                     && p.PROP_KL == MyGlo.KL).ToList()
                 .OrderBy(p => p.PROP_pDate).ThenBy(p => p.PROP_Cod);
-
             return _k;
         }
 
         ///<summary>МЕТОД Создание подветки</summary>
         protected override UserNodes_Add MET_TypeNodesAdd()
         {
-            return new UserNodes_Add(); 
+            return new UserNodes_Add();
         }
     }
 }

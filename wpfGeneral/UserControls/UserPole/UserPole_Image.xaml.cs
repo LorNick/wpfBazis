@@ -10,7 +10,6 @@ using wpfStatic;
 namespace wpfGeneral.UserControls
 {
     /// <summary>КЛАСС для поля Картинок (Image)</summary>
-    // ReSharper disable once RedundantExtendsListEntry
     public sealed partial class UserPole_Image : VirtualPole
     {
         private readonly int PRI_Height;
@@ -23,8 +22,8 @@ namespace wpfGeneral.UserControls
         public override string PROP_Description
         {
             get { return (string)PART_Label.Content; }
-            set 
-            { 
+            set
+            {
                 PART_Label.Content = value;
                 // Если описания нету, то убираем пустой отступ
                 if (value == "")
@@ -61,8 +60,6 @@ namespace wpfGeneral.UserControls
             PRI_Width = 140;
             PRI_Opacity = 1;
             PART_Border.Background = Brushes.White;
-
-            
         }
 
         /// <summary>КОНСТРУКТОР для отчета</summary>
@@ -74,7 +71,6 @@ namespace wpfGeneral.UserControls
             MET_LoadDataSet();
             PART_Label.Visibility = Visibility.Collapsed;
             PROP_Format = pFormat;
-            
             if (PROP_Format.MET_If("xH"))
                 PRI_Height = (int)(MyMet.MET_ParseInt(PROP_Format.PROP_Value["xH"]) * 3.4);
             if (PROP_Format.MET_If("xW"))
@@ -139,7 +135,7 @@ namespace wpfGeneral.UserControls
                     _NewImage.Width = PRI_Width;
                     _NewImage.Opacity = PRI_Opacity;
                     _NewImage.Source = MET_LoadImag(Convert.ToInt32(s));
-                    PART_WrapPanel.Children.Add(_NewImage);  
+                    PART_WrapPanel.Children.Add(_NewImage);
                 }
             }
         }
@@ -164,7 +160,6 @@ namespace wpfGeneral.UserControls
             // Разделитель
             Separator _Separator = new Separator();
             PART_ContextMenu.Items.Add(_Separator);
-            
             // Всего рисунков
             int _Count = MyGlo.DataSet.Tables["s_ListImage"].Rows.Count;
             // Массив строк

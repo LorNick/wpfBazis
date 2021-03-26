@@ -1,23 +1,22 @@
-﻿<VirtualPole x:Class="wpfGeneral.UserControls.UserPole_Data"            
+﻿<VirtualPole x:Class="wpfGeneral.UserControls.UserPole_Data"
              xmlns="clr-namespace:wpfGeneral.UserControls"
              xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"                           
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              x:Name="UserPole"
-             mc:Ignorable="d" 
-             FontSize="14">    
-    
+             mc:Ignorable="d"
+             FontSize="14">
     <p:BulletDecorator Margin="0,2,2,2" VerticalAlignment="Center">
         <p:BulletDecorator.Bullet>
             <p:Label Name="PART_Label" Height="24" Foreground="Navy" Content="UserPoleData" Padding="5,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" />
         </p:BulletDecorator.Bullet>
-        <p:DatePicker Name="PART_DatePicker" 
-                      MaxWidth="110"  
-                      HorizontalAlignment="Left" 
+        <p:DatePicker Name="PART_DatePicker"
+                      MaxWidth="110"
+                      HorizontalAlignment="Left"
                       SelectedDateFormat="Short"
                       Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}"
-                      SelectedDate="{p:Binding ElementName=UserPole, Path=PROP_Date}" 
+                      SelectedDate="{p:Binding ElementName=UserPole, Path=PROP_Date}"
                       DisplayDateStart="{p:Binding ElementName=UserPole, Path=PROP_ValueMinDate}"
                       DisplayDateEnd="{p:Binding ElementName=UserPole, Path=PROP_ValueMaxDate}"
                       SelectedDateChanged="PART_DatePicker_SelectedDateChanged"/>

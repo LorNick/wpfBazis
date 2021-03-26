@@ -27,7 +27,7 @@ namespace wpfReestr
 
         /// <summary>Тип лучевой терапии (Справочник N017; при USL_TIP = (3, 4); из json NOM_USL)</summary>
         public int LUCH_TIP { get; set; }
-                
+
         /// <summary>Количество фракций проведения лучевой терапии (при USL_TIP = (3, 4))</summary>
         /// <remarks>В онко услугу не пишется, пишется в случай и в KOL_USL</remarks>
         public int K_FR { get; set; }

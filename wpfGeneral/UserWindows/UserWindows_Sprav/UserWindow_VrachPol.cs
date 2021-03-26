@@ -13,7 +13,6 @@ namespace wpfGeneral.UserWindows
         /// <summary>ФИО Врача</summary>
         public string PUB_Name = "";
 
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_VrachPol()
         {
@@ -25,7 +24,7 @@ namespace wpfGeneral.UserWindows
             MinWidth = Width;
             // Сортируем по полю ФИО
             PRO_PoleSort = 1;
-            // Показываем в подсказке 
+            // Показываем в подсказке
             PRO_PoleBarPanel = 2;
             // Поле поиска
             PRO_PoleFiltr = "Filter";
@@ -57,7 +56,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Устанавливаем Ширину колонок</summary>
         protected override void MET_WithColumn()
         {
-            PART_DataGrid.Columns[1].Width = 60;        // ФИО  
+            PART_DataGrid.Columns[1].Width = 60;        // ФИО
             PART_DataGrid.Columns[2].Width = 200;       // Дата р.
         }
 
@@ -66,7 +65,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             try
             {
                 DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;

@@ -9,14 +9,13 @@ namespace wpfMVrParacl
 {
     /// <summary>КЛАСС Модуля Врача Параклиники</summary>
     public class UserModul_VrParacl : VirtualModul
-    {   
+    {
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
             MyGlo.KL = 125069331097215;
             MyGlo.IND = 480177;
             MyGlo.Otd = 2;
-
             string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
@@ -50,12 +49,12 @@ namespace wpfMVrParacl
 
         /// <summary>МЕТОД Заголовок программы</summary>
         public override string MET_Title()
-        {   
+        {
             // Наименование модуля
             string _Title = "wpfBazis -- Врач параклиники --";
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
-            // Элемент расписания 
+            // Элемент расписания
             _Title += " (" + MySql.MET_NameSpr(MyGlo.Otd, "parElement", "FIO", "Cod") + " ";
             // Пациент
             _Title += "  " + MyGlo.FIO + " " + MyGlo.DR;
@@ -69,12 +68,9 @@ namespace wpfMVrParacl
         {
             // Заполняем основу дерево (паспорт + история)
             base.MET_CreateTree();
-            
             // Загружаем все протоколы Protokol текущей параклиники (внутри загружаются и ListShablon и Shablon)
             UserProtokol.MET_FactoryProtokolArray(eTipDocum.Paracl, MyGlo.IND);
-
             VirtualNodes _Node;
-            
             // ВЕТКА Параклинические исследования
             _Node = new UserNodes_RootsListParacl
             {

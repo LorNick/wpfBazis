@@ -17,8 +17,8 @@ namespace wpfGeneral.UserControls
         public override string PROP_Description
         {
             get { return (string)PART_Label.Content; }
-            set 
-            { 
+            set
+            {
                 PART_Label.Content = value;
                 // Если описания нету, то убираем пустой отступ
                 if (value == "")
@@ -85,7 +85,7 @@ namespace wpfGeneral.UserControls
                     PART_Border.BorderBrush = Brushes.Gray;
             }
         }
-        
+
         /// <summary>СВОЙСТВО ComboBox</summary>
         public RadComboBox PROP_ComboBox => PART_ComboBox;
 
@@ -100,27 +100,24 @@ namespace wpfGeneral.UserControls
 
             PART_ComboBox.ContextMenu = MyGlo.ContextMenu;
             PART_ComboBox.Tag = this;
-        }        
+        }
 
         ///<summary>МЕТОД Инициализация поля</summary>
         public override void MET_Inicial()
         {
             // Располагаем текст
-			PROP_TextAlignment = TextAlignment.Left;
+            PROP_TextAlignment = TextAlignment.Left;
             if (PROP_Format.MET_If("fac"))
                 PROP_TextAlignment = TextAlignment.Center;
             if (PROP_Format.MET_If("far"))
                 PROP_TextAlignment = TextAlignment.Right;
-
             // Сортировка нисподающего списка (по умолчанию по алфавиту, иначе по порядку List)
             PROP_SortList = PROP_Format.MET_If("sortlist");
-          
             // Загружаем варианты ответов
             string _List = PROP_FormShablon.PROP_TipProtokol.PROP_List;
-            MySql.MET_DsAdapterFill(MyQuery.MET_List_Select_4(_List, PROP_Shablon, PROP_VarId, PROP_SortList), Name);                             
+            MySql.MET_DsAdapterFill(MyQuery.MET_List_Select_4(_List, PROP_Shablon, PROP_VarId, PROP_SortList), Name);
             List<string> _ValueList = (from DataRow _Row in MyGlo.DataSet.Tables[Name].Rows select _Row["Value"].ToString()).ToList();
             PROP_ComboBox.ItemsSource = _ValueList;
-
             // Начальное значение
             PROP_ComboBox.SelectedValue = PROP_Text;
         }

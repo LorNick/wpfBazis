@@ -41,7 +41,7 @@ namespace wpfGeneral.UserWindows
             // Показываем в подсказке
             PRO_PoleBarPanel = 1;
         }
-                
+
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
@@ -106,23 +106,18 @@ namespace wpfGeneral.UserWindows
             _SPanel_1.Children.Add(PRI_CheckBox_1);
         }
 
-
         /// <summary>МЕТОД Фильтруем данные для больших таблиц</summary>
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = $"\nwhere isnull(k.xDelete, 0) = 0 and p.pDate >= '{PRI_DatePicker_1.SelectedDate:yyyy-MM-dd}'";
-
             // Фильтр по наличию выписки
             if (PRI_CheckBox_1.IsChecked == true)
                 PRO_SqlWhere += " and iif(p3.pDate > p.pDate, p3.pDate, null) is null";
-
             // ФИО пациента
             if (PRO_TextFilter.Length > 0)
                 PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
-           
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
-
             // Выделяем первую строку
             if (PRO_DataView != null && PRO_DataView.Table.Rows.Count != -1)
                 PART_DataGrid.SelectedIndex = 0;
@@ -133,7 +128,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список пациентов
             try
             {
@@ -146,5 +140,5 @@ namespace wpfGeneral.UserWindows
             }
             Close();
         }
-    } 
+    }
 }

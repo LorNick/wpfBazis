@@ -34,7 +34,8 @@ namespace wpfGeneral.UserStruct
         public string Ver { get; set; }
 
         /// <summary>МЕТОД Создаем логи xLog (Создан)</summary>
-        /// <param name="pUser">Кто создал документ (по умолчанию MyGlo.User)</param>  
+        /// <param name="pUser">Кто создал документ (по умолчанию MyGlo.User)</param>
+
         /// <param name="pDate">Дата лога (по умолчанию текущее время)</param>
         /// <param name="pVer">Версия программы (по умолчанию текущее версия)</param>
         /// <remarks>Работа с json https://www.newtonsoft.com/json/help/html/QueryingLINQtoJSON.htm </remarks>
@@ -43,7 +44,6 @@ namespace wpfGeneral.UserStruct
             if (pUser == 0) pUser = MyGlo.User;
             if (pDate == "") pDate = DateTime.Now.ToString("dd.MM.yyyy H:mm");
             if (pVer == "") pVer = MyMet.MET_Ver();
-
             var _ListLogs = new List<UserLog>();
             UserLog _Log = new UserLog
             {
@@ -54,7 +54,6 @@ namespace wpfGeneral.UserStruct
                 Ver = pVer
             };
             _ListLogs.Add(_Log);
-
             string _xLog = JsonConvert.SerializeObject(_ListLogs,
                             Formatting.None,
                             new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
@@ -65,8 +64,8 @@ namespace wpfGeneral.UserStruct
         /// <summary>МЕТОД Изменяем логи xLog (Изменён, Удалён)</summary>
         /// <param name="pLog">Строка текущего лога</param>
         /// <param name="pDate">Дата лога</param>
-        /// <param name="pTip">Тип лога Создан, Изменён, Удалён</param> 
-        /// <param name="pUser">Кто изменил/удалил документ</param> 
+        /// <param name="pTip">Тип лога Создан, Изменён, Удалён</param>
+        /// <param name="pUser">Кто изменил/удалил документ</param>
         /// <param name="pVer">Версия программы (по умолчанию текущее версия)</param>
         /// <remarks>Работа с json https://www.newtonsoft.com/json/help/html/QueryingLINQtoJSON.htm </remarks>
         public static string MET_LogAdd(string pLog, DateTime pDate, string pTip = "Изменён", int pUser = 0, string pVer = "")
@@ -76,8 +75,7 @@ namespace wpfGeneral.UserStruct
 
             // Если Создан лог
             if (string.IsNullOrEmpty(pLog))
-                return MET_CreateLogs(pUser, DateTime.Now.ToString("dd.MM.yyyy H:mm"), pVer);            
-
+                return MET_CreateLogs(pUser, DateTime.Now.ToString("dd.MM.yyyy H:mm"), pVer);
             var _ListLogs = new List<UserLog>();
             UserLog _Log;
             JObject _Json = JObject.Parse(pLog);
@@ -93,7 +91,6 @@ namespace wpfGeneral.UserStruct
                 };
                 _ListLogs.Add(_Log);
             }
-
             // Берем последний лог и смотрим тип, кто и когда его менял
             _Log = _ListLogs.LastOrDefault();
             if (_Log != null && _Log.Tip == pTip && _Log.User == pUser && _Log.Ver == MyMet.MET_Ver()
@@ -115,7 +112,6 @@ namespace wpfGeneral.UserStruct
                 };
                 _ListLogs.Add(_Log);
             }
-
             string _xLog = JsonConvert.SerializeObject(_ListLogs,
                             Formatting.None,
                             new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });

@@ -11,7 +11,7 @@ namespace wpfGeneral.UserNodes
     {
         /// <summary>Тип ветки для ребенка</summary>
         protected eTipNodes PRO_TipNodeChild;
-       
+
         /// <summary>СВОЙСТВО. Дополнительны Типы документов</summary>
         public int PROP_shaTipObsled { get; set; }
 
@@ -62,7 +62,6 @@ namespace wpfGeneral.UserNodes
 
             // По умолчанию, в данной ветки можно создавать новые протоколы
             PROP_shaButtonNew = true;
-
             // По умолчанию ветка пустая
             PROP_shaCountNodesChild = 0;
             // Загружаем протоколы данной ветки
@@ -75,7 +74,6 @@ namespace wpfGeneral.UserNodes
                 _Node.PROP_Docum.PROP_ListShablon = UserListShablon.MET_FactoryListShablon(_pro.PROP_TipProtokol.PROP_TipDocum, _pro.PROP_NumShablon);
                 _Node.PROP_Docum.PROP_Protokol = _pro;
                 _Node.PROP_Docum.PROP_Otchet = MET_OtchetChild(_Node.PROP_Docum);
-
                 _Node.PROP_TipNodes = PRO_TipNodeChild;                             // тип
                 _Node.Name = Name + "_Child" + _pro.PROP_pIndex;                    // имя
                 _Node.PROP_ParentName = Name;                                       // имя родителя
@@ -83,22 +81,18 @@ namespace wpfGeneral.UserNodes
                 _Node.PROP_shaIndex = _pro.PROP_pIndex;                             // индекс
                 _Node.PROP_ImageName = _Node.PROP_Docum.PROP_ListShablon.PROP_Icon; // иконка
                 _Node.PROP_Text = _Node.PROP_Docum.PROP_ListShablon.PROP_NameKr;    // описание ветки
-                _Node.PROP_TextDefault = _Node.PROP_Text; 
+                _Node.PROP_TextDefault = _Node.PROP_Text;
                 _Node.PROP_shaIND = _pro.PROP_CodApstac;
                 _Node.PROP_Data = _pro.PROP_pDate;                                  // дата ветки
                 _Node.PROP_shaTipProtokol = _pro.PROP_TipProtokol;                   // тип протокола
                 _Node.PROP_TextDown = _pro.PROP_pDate.ToString().Substring(0, 10) + " " + _pro.PROP_UserName;    // нижний текст ветки
-                
                 _Node.MET_Inizial();
-
                 // Если протокол удаленый, то помечаем его
                 _Node.MET_Delete(_pro.PROP_xDelete == 1);
                 _Node.PROP_shaPresenceProtokol = true;
-
                 // Настраиваем дополнительные параметры для новой подветки
                 MET_PropertyNodeAdd(_Node);
             }
-
         }
 
         /// <summary>МЕТОД Создание НОВОЙ подветки</summary>
@@ -106,53 +100,45 @@ namespace wpfGeneral.UserNodes
         {
             // Создаем подветку
             UserNodes_Add _Node = MET_TypeNodesAdd();
-
             _Node.PROP_Docum = new UserDocument(_Node, PROP_Docum.PROP_Protokol.PROP_TipProtokol.PROP_TipDocum);
             _Node.PROP_Docum.PROP_ListShablon = PROP_Docum.PROP_ListShablon;
             _Node.PROP_Docum.PROP_FormShablon = PROP_Docum.PROP_FormShablon;
             _Node.PROP_Docum.PROP_Protokol = PROP_Docum.PROP_Protokol;
             _Node.PROP_Docum.PROP_Otchet = MET_OtchetChild(_Node.PROP_Docum);
-
             _Node.PROP_TipNodes = PRO_TipNodeChild;                                 // тип
-
             _Node.PROP_shaIndex = PROP_shaIndex;                                    // индекс
             _Node.Name = Name + "_Child" + _Node.PROP_shaIndex;                     // имя
             _Node.PROP_shaNomerShablon = _Node.PROP_Docum.PROP_Protokol.PROP_NumShablon;  // номер шаблона
-            
             _Node.PROP_ImageName = _Node.PROP_Docum.PROP_ListShablon.PROP_Icon;     // иконка
             _Node.PROP_Text = _Node.PROP_Docum.PROP_ListShablon.PROP_NameKr;        // описание ветки
             _Node.PROP_TextDefault = _Node.PROP_Text;
             _Node.PROP_shaIND = _Node.PROP_Docum.PROP_Protokol.PROP_CodApstac;
             _Node.PROP_Data = _Node.PROP_Docum.PROP_Protokol.PROP_pDate;            // дата ветки
             _Node.PROP_shaTipProtokol = _Node.PROP_Docum.PROP_Protokol.PROP_TipProtokol;  // тип протокола
-            _Node.PROP_TextDown = _Node.PROP_Docum.PROP_Protokol.PROP_pDate.ToString().Substring(0, 10) 
-                + " " + _Node.PROP_Docum.PROP_Protokol.PROP_UserName;               // нижний текст ветки            
+            _Node.PROP_TextDown = _Node.PROP_Docum.PROP_Protokol.PROP_pDate.ToString().Substring(0, 10)
+                + " " + _Node.PROP_Docum.PROP_Protokol.PROP_UserName;               // нижний текст ветки
             _Node.PROP_ParentName = Name;                                           // имя родителя
-         
             _Node.MET_Inizial();
-            
             // Снимаем выделения редактируемой ветки
             Background = Brushes.White;
             var _Otchet = PROP_Docum.PROP_Otchet;   // запоминаем отчет
             PROP_Docum = new UserDocument { PROP_Nodes = this };
             PROP_Docum.PROP_Otchet = _Otchet;
             PROP_shaNomerShablon = 0;
-
             // Настраиваем дополнительные параметры для новой подветки
             MET_PropertyNodeAdd(_Node);
-
             return _Node;
         }
 
         /// <summary>МЕТОД Настраиваем дополнительные параметры для НОВОЙ подветки</summary>
         protected virtual void MET_PropertyNodeAdd(VirtualNodes pNodes) { }
-        
+
         ///<summary>МЕТОД Отчет подветки</summary>
         protected abstract VirtualOtchet MET_OtchetChild(UserDocument pDocument);
 
         ///<summary>МЕТОД Запрос на поиск подветок</summary>
         protected abstract IEnumerable<UserProtokol> MET_LoadProtokol();
-        
+
         ///<summary>МЕТОД Тип подветки</summary>
         protected virtual UserNodes_Add MET_TypeNodesAdd()
         {

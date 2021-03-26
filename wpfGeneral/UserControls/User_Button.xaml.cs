@@ -2,10 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using wpfStatic;
 
 namespace wpfGeneral.UserControls
 {
@@ -22,17 +19,13 @@ namespace wpfGeneral.UserControls
         public static readonly DependencyProperty DEPR_FlagButtonSelectProperty =
             DependencyProperty.Register("PROP_FlagButtonSelect", typeof(string), typeof(User_Button), new PropertyMetadata("mnAnest.ico"));
 
-      
         /// <summary>КОНСТРУКТОР</summary>
         public User_Button()
         {
             InitializeComponent();
-
-       //     PART_TextBox.ContextMenu = MyGlo.ContextMenu;
         }
-
     }
-   
+
     /// <summary>КЛАСС Конвертр (Пытаемся прицыпить иконку к нопке)</summary>
     public class IconImageConverter : IValueConverter
     {
@@ -42,7 +35,6 @@ namespace wpfGeneral.UserControls
                            object parameter,
                            System.Globalization.CultureInfo culture)
         {
-            // if value isn't null, we can safely do the conversion. 
             if (value != null)
             {
                 string imageName = value.ToString();

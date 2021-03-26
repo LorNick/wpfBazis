@@ -1,23 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using wpfGeneral.UserModul;
-using wpfGeneral.UserStruct;
-using Excel = Microsoft.Office.Interop.Excel;
 using wpfStatic;
-using Tel = Telerik.Windows.Controls;
 
 namespace wpfGeneral.UserWindows
 {
-
     /// <summary>КЛАСС Редактор протоколов (показывает списко последних протоколов, выбранного шаблона)</summary>
     public class UserWindow_EditProtokol: VirtualUserWindow
     {
@@ -30,8 +18,7 @@ namespace wpfGeneral.UserWindows
         ///// <summary>Загружать шаблон сразу в SQL</summary>
         //private CheckBox PRI_CheckBox_1;
         ///// <summary>Кнопка загрузки шаблона на SQL филиала</summary>
-        //private Tel.RadButton PRI_ButtonFromToFilialSQL_1;
-             
+        //private Tel.RadButton PRI_ButtonFromToFilialSQL_1
 
         /// <summary>Тип шаблона</summary>
         private readonly MyTipProtokol PRI_Tip;
@@ -51,7 +38,6 @@ namespace wpfGeneral.UserWindows
         //private static extern bool ShowWindow(IntPtr handle, int cmdShow);      // Отображает данное окно впереди, даже если было свернуто
         //[DllImport("user32.dll", SetLastError = true)]
         //static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_EditProtokol(MyTipProtokol pTipSha, int pNumSha, string pNameSha, string pImageSha, DateTime pDN, DateTime pDK, string pUserCod)
@@ -79,7 +65,6 @@ namespace wpfGeneral.UserWindows
             PRO_PoleSort = 3;
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
-
             // Создаем фильтр
            // MET_CreateFiltr();
             // Открываем таблицу
@@ -93,7 +78,7 @@ namespace wpfGeneral.UserWindows
         {
             return MyQuery.MET_Protokol_Select_4(PRI_Tip.PROP_Prefix, PRI_NumSha, PRI_DN, PRI_DK, PRI_UserCod);
         }
-        
+
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
@@ -111,13 +96,13 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Устанавливаем Ширину колонок</summary>
         protected override void MET_WithColumn()
         {
-            PART_DataGrid.Columns[2].Width = 24;    // Иконка - удаление протокола 
-            PART_DataGrid.Columns[3].Width = 300;   // Пациент 
+            PART_DataGrid.Columns[2].Width = 24;    // Иконка - удаление протокола
+            PART_DataGrid.Columns[3].Width = 300;   // Пациент
             PART_DataGrid.Columns[6].Width = 60;    // Код Пользователя
             PART_DataGrid.Columns[7].Width = 150;   // Пользователь
         }
 
-        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
+        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static new bool MET_Access()
         {
             if (!MyGlo.Admin)
@@ -138,10 +123,8 @@ namespace wpfGeneral.UserWindows
                 DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
                 if (_DataRowView == null)
                     return;
-
                 decimal _KL = Convert.ToDecimal(_DataRowView.Row["KL"]);
                 decimal _IND = Convert.ToDecimal(_DataRowView.Row["CodApstac"]);
-                
                 // Пытаемся открыть новую копию программы, для редактирования протоколов
                 MyMet.MET_EditWindows(PRI_Tip.PROP_TipDocum, _IND, _KL);
                 PROP_Return = true;

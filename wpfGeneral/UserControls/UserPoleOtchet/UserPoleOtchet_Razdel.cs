@@ -18,13 +18,12 @@ namespace wpfGeneral.UserControls
             }
         }
 
-        /// <summary>МЕТОД Выводим в отчет</summary>        
+        /// <summary>МЕТОД Выводим в отчет</summary>
         public override TextElement MET_Print()
         {
             // В разделе печатаем только Вопрос
             Run _OutText = new Run(PROP_OutText);
             MET_FormatVopros(_OutText);
-
             Span _Span = new Span();
             _Span.Inlines.Add(_OutText);
             TextElement _TextElement = MET_FormatVoprosOtvet(_Span);

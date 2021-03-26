@@ -18,13 +18,10 @@ namespace wpfGeneral.UserWindows
 
         /// <summary>Код ЛС</summary>
         public int PUB_Cod;
-        
         /// <summary>Наименование ЛС</summary>
         public string PUB_NameVrach = "";
-        
         /// <summary>Ед. измерения</summary>
         public string PUB_BazeMeas = "";
-        
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_Zay_NaznachMedLS(int pType = 0)
@@ -42,7 +39,7 @@ namespace wpfGeneral.UserWindows
             // Поле поиска
             PRO_PoleFiltr = "Filter";
             // Создаем фильтр
-            MET_CreateFiltr();           
+            MET_CreateFiltr();
             // Открываем таблицу
             MET_OpenForm();
             // Фильтр
@@ -57,9 +54,9 @@ namespace wpfGeneral.UserWindows
             switch (PRI_Type)
             {
                 case 1:
-                    return MyQuery.lnzLS_Select_2(PRO_SqlWhere);                // по торговому наименванию                
+                    return MyQuery.lnzLS_Select_2(PRO_SqlWhere);                // по торговому наименванию
                 default:
-                    return MyQuery.lnzLS_Select_1(PRO_SqlWhere);                // с групировкой по наименованию врача                
+                    return MyQuery.lnzLS_Select_1(PRO_SqlWhere);                // с групировкой по наименованию врача
             }
         }
 
@@ -76,7 +73,7 @@ namespace wpfGeneral.UserWindows
         {
             string[] _mName = { "", "", "", "Наименование", "Ед. измерения", "Группа" };
             return _mName[pIndex];
-        }        
+        }
 
         /// <summary>МЕТОД Создание фильтров</summary>
         private void MET_CreateFiltr()
@@ -118,20 +115,18 @@ namespace wpfGeneral.UserWindows
 
         /// <summary>МЕТОД Дополнительный фильтр по загруженным данным</summary>
         protected override void MET_DopFilter()
-        {           
+        {
             // Фильтр по профилю исследования
             if (PRI_ComboBox_1.IsEnabled & PRI_ComboBox_1.SelectedValue != null & PRI_CheckBox_1.IsChecked == true)
                 PRO_Where = $" Grou = {PRI_ComboBox_1.SelectedValue}";
-
             MET_Filter();
-        }      
+        }
 
         /// <summary>МЕТОД Выбор данных</summary>
         protected override void MET_Select()
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             try
             {
                 DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;

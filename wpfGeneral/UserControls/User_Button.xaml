@@ -13,15 +13,9 @@
             <userControls:IconImageConverter x:Key="YesNoToBooleanConverter" />
         </ResourceDictionary>
     </Button.Resources>
-    
+
     <StackPanel Orientation="Horizontal" >
         <Image Name="PART_Image" Source="{Binding Path=PROP_Image, Converter={StaticResource YesNoToBooleanConverter}}"></Image>
-        <!--<Image Name="PART_Image" Source="pack://application:,,,/wpfResource;component/mnImag/mnAnest.ico"></Image>-->
         <Label Content="Удалить" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>
-        </StackPanel>
-
-    
-    <!--Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}"--> 
-         
-  
+    </StackPanel>
 </Button>

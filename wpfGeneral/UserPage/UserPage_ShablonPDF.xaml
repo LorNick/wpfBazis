@@ -1,11 +1,10 @@
 ﻿<Page x:Class="wpfGeneral.UserPage.UserPage_ShablonPDF"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"   
-      xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"     
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
       xmlns:my="clr-namespace:wpfGeneral.UserControls"
       x:Name="UserPage"
       FontSize="14" Loaded="UserPage_Loaded">
-    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -14,9 +13,9 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <my:UserPole_ComboBox x:Name="PART_PdfComboBox" PROP_Description="Наименование документа:"/>
-        <telerik:RadPdfViewerToolBar  RadPdfViewer="{Binding ElementName=PART_PdfViewer, Mode=OneTime}" 
-                                                      SignaturePanel="{Binding ElementName=signaturePanel, Mode=OneTime}" Grid.Row="1"
-                                                      HasOpenButton="False" HasSignatureButton="False"/>
+        <telerik:RadPdfViewerToolBar  RadPdfViewer="{Binding ElementName=PART_PdfViewer, Mode=OneTime}"
+                                      SignaturePanel="{Binding ElementName=signaturePanel, Mode=OneTime}" Grid.Row="1"
+                                      HasOpenButton="False" HasSignatureButton="False"/>
         <telerik:SignaturePanel  x:Name="PART_SignaturePanel" PdfViewer="{Binding ElementName=PART_PdfViewer, Mode=OneWay}" Grid.Row="2"/>
         <telerik:RadPdfViewer x:Name="PART_PdfViewer" Grid.Row="3" DataContext="{Binding CommandDescriptors, ElementName=PART_PdfViewer}"/>
     </Grid>

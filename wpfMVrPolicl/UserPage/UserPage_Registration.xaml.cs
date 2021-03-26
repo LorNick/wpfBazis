@@ -17,12 +17,11 @@ namespace wpfMVrPolicl
         private DataView PRI_DataViewTime;
         /// <summary>Oбъявляем DataView для Talon</summary>
         private DataView PRI_DataViewTalon;
-       
         /// <summary>Элемент расписания</summary>
         public int PUB_Element;
         /// <summary>Дата расписания</summary>
         public DateTime? PUB_Date = DateTime.Now;
-      
+
         /// <summary>СВОЙСТВО Сервер 1 - главный, 2 - филиал</summary>
         public string PROP_Server
         {
@@ -54,7 +53,7 @@ namespace wpfMVrPolicl
                 return MyMet.MET_ParseInt(_DataRowView.Row["Cod"]);
             }
         }
-              
+
         /// <summary>КОНСТРУКТОР</summary>
         public UserPage_Registration()
         {
@@ -69,7 +68,7 @@ namespace wpfMVrPolicl
             MET_LoadDate();
             // Загружаем Время
             MET_LoadTime();
-        }   
+        }
 
         /// <summary>СОБЫТИЕ Смена Корпуса</summary>
         private void PART_RadioButtonKorpus_ItemsChanged(object sender, RoutedEventArgs e)
@@ -101,7 +100,6 @@ namespace wpfMVrPolicl
             MyGlo.DataSet.Tables["rnDate"].Clear();                             // чистим даты
             MyGlo.DataSet.Tables["rnTime"].Clear();                             // чистим время
             if (PART_DataGridElement.SelectedIndex < 0) return;                 // если элемент не выбран - выходим
-            
             // Выбранная запись
             DataRowView _DataRowView = (DataRowView)PART_DataGridElement.SelectedItem;
             // Код элемента
@@ -115,7 +113,6 @@ namespace wpfMVrPolicl
         {
             MyGlo.DataSet.Tables["rnTime"].Clear();                             // чистим время
             if (PART_DataGridDate.SelectedIndex < 0) return;                    // если ничего не выбрали - выходим
-
             // Выбранная запись
             DataRowView _DataRowView = (DataRowView)PART_DataGridDate.SelectedItem;
             // Наша дата
@@ -135,21 +132,18 @@ namespace wpfMVrPolicl
                 MessageBox.Show("Нужно выбрать время!", "Сосредоточтесь");
                 return;
             }
-
             // Проверяем, есть ли свободная запись (повторно, а вдруг уже заняли)
             if (!MySql.MET_QueryBool(MyQuery.MET_RnSetka_Time_Select_2(_CodSetka, PROP_Server)))
             {
                 MessageBox.Show("Пока вы думали, это время заняли!", "Задумались?");
                 return;
             }
-
             //  Проверяем не записан ли повторно пациент в этот кабинет
             if (MySql.MET_QueryBool(MyQuery.MET_RnSetka_Time_Select_3(MyGlo.KL, PUB_Element, PROP_Server)))
             {
                 MessageBox.Show("Пациент уже записан в этот кабинет!", "Зачем?");
                 return;
             }
-            
             // Заполняем RsTalon
             int _Cod = MySql.MET_GetNextRef(67);
             string _FIO = (string)MyGlo.HashKBOL["FAM"];                        // ФИО
@@ -157,19 +151,17 @@ namespace wpfMVrPolicl
             string _Rai = MyGlo.HashKBOL["KRName"].ToString();                  // Район
             if (_Rai == "") _Rai = (string)MyGlo.HashKBOL["NasPName"];          // Населенный пункт
             string _xLog = $@"{{""CrUser"": ""{MyGlo.UserName}"",""CrLPU"": ""БУЗОО КОД"",""CrProg"": ""wpfBazis"",""CrDate"": ""{DateTime.Now:yyyy-MM-dd hh:mm}""}}";
-
             // Сохраняем
             if (!MySql.MET_QueryNo(MyQuery.MET_RnTalon_Insert_1(_Cod, _CodSetka, MyGlo.KL, _FIO, _DR, _Rai, _xLog, PROP_Server)))
             {
                 MessageBox.Show("Записать не удалось!", "Ошибка");
                 return;
             }
-
             // Обновляем время (убрав, только что занятую позицию)
             MET_LoadTime();
             // Показываем куда записан пациент
             MET_LoadTalon();
-        }                                                                                                
+        }
 
         /// <summary>МЕТОД Показываем куда записан пациент</summary>
         private void MET_LoadTalon()
@@ -213,6 +205,6 @@ namespace wpfMVrPolicl
             PRI_DataViewTime = new DataView(MyGlo.DataSet.Tables["rnTime"]);
             // Отображаем таблицу
             PART_DataGridTime.ItemsSource = PRI_DataViewTime;
-        }      
+        }
     }
 }

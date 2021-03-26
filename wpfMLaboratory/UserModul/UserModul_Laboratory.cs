@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Data;
-using System.Linq;
 using System.Windows;
-using wpfGeneral;
 using wpfGeneral.UserModul;
 using wpfGeneral.UserNodes;
 using wpfGeneral.UserOtchet;
@@ -18,15 +14,14 @@ namespace wpfMLaboratory
     {
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
-		{
-        
+        {
 #if DEBUG
-            // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ) - пока показываем   
+            // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ) - пока показываем
+
             //PUB_Menu = 1;
             //MyGlo.Otd = 55450501;
             //MyGlo.Lpu = 554505; // 554403; // БСМП2 - 554502, МСЧ 7 - 554403, Кардио - 554505
 #endif
-
             string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
@@ -41,11 +36,10 @@ namespace wpfMLaboratory
 
         /// <summary>МЕТОД Начальные данные</summary>
         public override void MET_NachDan()
-		{
+        {
             // Если нет пациента - выходим
             if (MyGlo.KL == 0)
                 return;
-
             // Заполняем hasKBOL
             MyGlo.HashKBOL = MySql.MET_QueryHash(MyQuery.kbol_Select_1(MyGlo.KL));
             // Заполняем HashLastDiag
@@ -60,9 +54,9 @@ namespace wpfMLaboratory
             MyGlo.HashOtchet.Clear();
         }
 
-		/// <summary>МЕТОД Заголовок программы</summary>
-		public override string MET_Title()
-		{   
+        /// <summary>МЕТОД Заголовок программы</summary>
+        public override string MET_Title()
+        {
             // Наименование модуля
              string _Title = "wpfBazis -- Лаборатория --";
             // Номер версии
@@ -70,7 +64,7 @@ namespace wpfMLaboratory
             // Показываем имя пользователя
             _Title += " (" + MyGlo.UserName + ")";
             return _Title;
-		}
+        }
 
         /// <summary>МЕТОД Формируем дерево</summary>
         public override void MET_CreateTree()
@@ -84,8 +78,8 @@ namespace wpfMLaboratory
                 UserProtokol.MET_ClearProtokol();
                 // Загружаем все протоколы Protokol таблицы kdl, по KL пациента
                 UserProtokol.MET_FactoryProtokolArray(eTipDocum.Kdl, MyGlo.KL, "KL");
-               
-                // ВЕТКА Общие сведенья 
+
+                // ВЕТКА Общие сведенья
                 VirtualNodes _Node = new UserNodes_Inform
                 {
                     PROP_TipNodes = eTipNodes.Main,
@@ -98,7 +92,6 @@ namespace wpfMLaboratory
                 _Node.PROP_Docum = new UserDocument(_Node);
                 _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformCreate { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
-
                 {
                     // ВЕТКА Паспортная часть (Сразу ставим на нем фокус)
                     _Node = new UserNodes_Inform

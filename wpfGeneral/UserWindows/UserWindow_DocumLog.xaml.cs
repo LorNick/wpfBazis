@@ -15,10 +15,10 @@ namespace wpfGeneral.UserWindows
 
         /// <summary>СВОЙСТВО Список логов</summary>
         public List<UserLog> PROP_Logs { get; set; }
-        #endregion	
+        #endregion
 
         /// <summary>КОНСТРУКТОР</summary>
-        /// <param name="pLog">Текст лога</param> 
+        /// <param name="pLog">Текст лога</param>
         public UserWindow_DocumLog(string pLog)
         {
             InitializeComponent();
@@ -33,7 +33,6 @@ namespace wpfGeneral.UserWindows
         private void UserWindows_Loaded(object sender, RoutedEventArgs e)
         {
             PROP_Logs = new List<UserLog>();
-
             // Если есть логи
             if (!string.IsNullOrEmpty(PRI_jLog))
             {
@@ -47,10 +46,10 @@ namespace wpfGeneral.UserWindows
                     _Log.User = (int)i["User"];
                     _Log.UserName = MyMet.MET_UserName((int)i["User"]);
                     _Log.Ver = (string)i["Ver"];
-
                     PROP_Logs.Add(_Log);
                 }
             }
-            PART_ListView.ItemsSource = PROP_Logs;}
+            PART_ListView.ItemsSource = PROP_Logs;
+        }
     }
 }

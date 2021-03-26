@@ -9,7 +9,7 @@ namespace wpfReestr
     {
         /// <summary>КСГ (временная)</summary>
         public string KSG { get; set; }
-        
+
         /// <summary>Итоговая сумма</summary>
         public double SUMV { get; set; }
         /// <summary>Дети до 4 года (с 2021)</summary>
@@ -52,6 +52,10 @@ namespace wpfReestr
         public string TAL_D { get; set; }
         /// <summary>Номер талона ВМП</summary>
         public string TAL_NUM { get; set; }
+        /// <summary>Модель пациента ВМП</summary>
+        public string IDMODP { get; set; }
+        /// <summary>Номер группы ВМП</summary>
+        public string HGR{ get; set; }
         /// <summary>Характер заболевания (1 - острое, 2 - хроническое впервые до года, 3 - хроническое повторно в прошлом году и ранее)</summary>
         public int C_ZAB { get; set; }
 
@@ -76,7 +80,7 @@ namespace wpfReestr
         public string Taktika_2 { get; set; }
         /// <summary>ONK_SL (У) Консилиум (Изменена тактика лечения)</summary>
         public string Taktika_3 { get; set; }
-        
+
         /// <summary>Список Блоков направлений (УМ, S)</summary>
         public List<MyNAPR> NAPR { get; set; }
 
@@ -121,7 +125,7 @@ namespace wpfReestr
         [JsonIgnore]
         /// <summary>Профиль мед помощи (Справочник V002; из StrahReestr)</summary>
         public string PROFIL { get; set; }
-                
+
         /// <summary>Профиль койки (Справочник V020; обязательный для стационара; из json NOM_USL)</summary>
         public string PROFIL_K { get; set; }
 
@@ -137,15 +141,15 @@ namespace wpfReestr
         public string NHISTORY { get; set; }
 
         [JsonIgnore]
-        /// <summary>Признак поступления/перевода (только для стационара USL_OK = 1 или 2; 1 - самостоятельно, по умолчанию, 4 - перевод; в XML ставим 1)</summary>        
+        /// <summary>Признак поступления/перевода (только для стационара USL_OK = 1 или 2; 1 - самостоятельно, по умолчанию, 4 - перевод; в XML ставим 1)</summary>
         public int P_PER { get; set; }
 
         [JsonIgnore]
-        /// <summary>Дата начала лечения (из StrahReestr поля ARR_DATE)</summary>       
+        /// <summary>Дата начала лечения (из StrahReestr поля ARR_DATE)</summary>
         public DateTime DATE_1 { get; set; }
 
         [JsonIgnore]
-        /// <summary>Дата окончания лечения (из StrahReestr поля EX_DATE)</summary>       
+        /// <summary>Дата окончания лечения (из StrahReestr поля EX_DATE)</summary>
         public DateTime DATE_2 { get; set; }
 
         [JsonIgnore]
@@ -168,7 +172,7 @@ namespace wpfReestr
         /// <remarks>клиническая группа 1a и 1b</remarks>
         public int DS_ONK { get; set; }
 
-        /// <summary>Диспансерное наблюдение (заполняем при P_CEL = 1.3; из json NOM_USL)</summary>        
+        /// <summary>Диспансерное наблюдение (заполняем при P_CEL = 1.3; из json NOM_USL)</summary>
         public int DN { get; set; }
 
         /// <summary>Список Блоков направлений (из json NOM_USL)</summary>
@@ -185,19 +189,19 @@ namespace wpfReestr
         public MyKSG_KPG KSG_KPG { get; set; }
 
         [JsonIgnore]
-        /// <summary>Специальность врача (Справочник V021 поле IDSPEC; из StrahReestr)</summary>        
+        /// <summary>Специальность врача (Справочник V021 поле IDSPEC; из StrahReestr)</summary>
         public int PRVS { get; set; }
 
         [JsonIgnore]
-        /// <summary>Наименование справочника Специальность врача (в XML ставим "V021")</summary>        
+        /// <summary>Наименование справочника Специальность врача (в XML ставим "V021")</summary>
         public string VERS_SPEC { get; set; } = "V021";
 
         [JsonIgnore]
-        /// <summary>Код врача (Справочник spr_medspec (StrahVrachMIAC); из StrahReestr)</summary>        
+        /// <summary>Код врача (Справочник spr_medspec (StrahVrachMIAC); из StrahReestr)</summary>
         public string IDDOKT { get; set; }
 
         [JsonIgnore]
-        /// <summary>Количество единиц оплаты (в XML ставим 1)</summary>        
+        /// <summary>Количество единиц оплаты (в XML ставим 1)</summary>
         public int ED_COL { get; set; }
 
         [JsonIgnore]

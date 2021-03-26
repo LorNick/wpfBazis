@@ -16,34 +16,26 @@ namespace wpfMVrStac
 {
     /// <summary>КЛАСС Страница Листа назначений</summary>
     public sealed partial class UserPage_NaznachMed
-    {   
+    {
         /// <summary>Список полей</summary>
         public SortedList PUB_HashPole;
         /// <summary>Ветка</summary>
         public VirtualNodes PUB_Node;
-       
-        
+
         /// <summary>Текущая таблица</summary>
         private readonly DataTable PRI_Table;
-
         /// <summary>Нужно ли заного генерировать Грид (походу нужно убрать)</summary>
         private bool PRI_FlagGreate;
-
         /// <summary>Kоличество дней (полей в календаре)</summary>
-        private readonly int PRI_Day;   
-     
+        private readonly int PRI_Day;
         /// <summary>Грид Компонентов</summary>
         private DataGrid PRI_DaGrKomp;
-
         /// <summary>Текущая строка Грида (любого)</summary>
         private DataRowView PRI_Row;
-
         /// <summary>DataView таблицы назначений</summary>
         private readonly DataView PRI_DaViNazn;
-
         /// <summary>DataView таблицы компонентнов</summary>
         private DataView PRI_DaViKomp;
-       
 
         #region ---- Свойства ----
         /// <summary>СВОЙСТВО Флаг видимости поля текста назначения</summary>
@@ -51,31 +43,31 @@ namespace wpfMVrStac
         {
             get { return (Visibility)this.GetValue(DEPR_FlagCompStrProperty); }
             set { this.SetValue(DEPR_FlagCompStrProperty, value); }
-        }                 
+        }
 
         /// <summary>СВОЙСТВО Флаг видимости таблицы компонентов назначения</summary>
         public Visibility PROP_FlagCompTab
         {
             get { return (Visibility)this.GetValue(DEPR_FlagCompTabProperty); }
             set { this.SetValue(DEPR_FlagCompTabProperty, value); }
-        }         
+        }
 
         /// <summary>СВОЙСТВО Дата поступления</summary>
         public DateTime PROP_DateN
         {
             get { return (DateTime)this.GetValue(DEPR_DateNProperty); }
             set { this.SetValue(DEPR_DateNProperty, value); }
-        }             
+        }
 
         /// <summary>СВОЙСТВО Конечная дата</summary>
         public DateTime PROP_DateK
         {
             get { return (DateTime)this.GetValue(DEPR_DateKProperty); }
             set { this.SetValue(DEPR_DateKProperty, value); }
-        }              
+        }
         #endregion
 
-        #region ---- РЕГИСТРАЦИЯ ----       
+        #region ---- РЕГИСТРАЦИЯ ----
         /// <summary>РЕГИСТРАЦИЯ Свойства PROP_FlagCompStr</summary>
         public static readonly DependencyProperty DEPR_FlagCompStrProperty =
             DependencyProperty.Register("PROP_FlagCompStr", typeof(Visibility), typeof(UserPage_NaznachMed));
@@ -97,18 +89,16 @@ namespace wpfMVrStac
         public UserPage_NaznachMed()
         {
             InitializeComponent();
-            
+
             const string _TabName = "lnzVrachLS_Form";
             if (MyGlo.DataSet.Tables[_TabName] != null)
             {
-                MyGlo.DataSet.Tables[_TabName].Reset();             
+                MyGlo.DataSet.Tables[_TabName].Reset();
             }
-            
             string _Name;
             // Запрос
             MySql.MET_DsAdapterFill(MyQuery.lnzVrachLS_Select_1(MyGlo.IND), _TabName);
             PRI_Table = MyGlo.DataSet.Tables[_TabName];
-            
             PROP_DateN = Convert.ToDateTime(MyGlo.HashAPSTAC["DN"]);
             // Конечная дата
             if (Convert.ToString(MyGlo.HashAPSTAC["DK"]) == "")
@@ -120,11 +110,9 @@ namespace wpfMVrStac
                 PROP_DateK = Convert.ToDateTime(MyGlo.HashAPSTAC["DK"]);
             }
             PRI_Day = (PROP_DateK - PROP_DateN).Days + 1;
-
             // Создаем столбцы с датой
             for (int i = 0; i < PRI_Day; i++)
-            {                
-                //
+            {
                 _Name = "d" + i;
                 if (PRI_Table != null)
                 {
@@ -133,10 +121,8 @@ namespace wpfMVrStac
                     _Column.Caption = PROP_DateN.Add(_TimeSpan).ToShortDateString();
                 }
             }
-
             // Cоздаем DataView для нашей таблице
             PRI_DaViNazn = new DataView(PRI_Table);
-
             foreach (DataRowView _Row in PRI_DaViNazn)
             {
                 PRI_Row = _Row;
@@ -148,16 +134,14 @@ namespace wpfMVrStac
                     PRI_Row[_Name] = MET_PoleInt("Amt");
                 }
             }
-
             // Если новый лист назначения, то сразу добавляем новое назначение
             if (PRI_Table != null && PRI_Table.Rows.Count == 0)
                 MET_AddNaznLS();
-
             // Отображаем таблицу
             eleDataGrid.ItemsSource = PRI_DaViNazn;
             PUB_HashPole = new SortedList();                                    // список полей
         }
-           
+
         /// <summary>МЕТОД Формируем поля</summary>
         /// <param name="pVirtualPole">Поле</param>
         /// <param name="pText">Текст ответа</param>
@@ -174,7 +158,6 @@ namespace wpfMVrStac
             Visual _ChildVisual;                                                // ребенок
             VirtualPole _Pole;                                                  // моё поле
             string _Name;                                                       // имя поля
-
             int _V = VisualTreeHelper.GetChildrenCount(pVisual);                // сколько детей
             for (int i = 0; i < _V; i++)
             {
@@ -191,18 +174,17 @@ namespace wpfMVrStac
                 }
                 else
                 {
-                    // Enumerate children of the child visual object.                    
+                    // Enumerate children of the child visual object.
                     if (_ChildVisual is Expander)
                         _ChildVisual = (Visual)(_ChildVisual as Expander).Content;
                     MET_EnumVisual(_ChildVisual);
                 }
             }
         }
-            
-        /// <summary>МЕТОД Формируем поля</summary>        
-        private void MET_FormatNazn()
-        { 
 
+        /// <summary>МЕТОД Формируем поля</summary>
+        private void MET_FormatNazn()
+        {
             // Наименование компонента
             string _NameLS = "";
             string _Poi = "";
@@ -213,14 +195,11 @@ namespace wpfMVrStac
                 _Poi = ",\n";
             }
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-            
             // Дата отмены
             if (MET_PoleStr("DelNote") == "" || (MET_PoleDat("DelDate") < MET_PoleDat("DateN") | MET_PoleDat("DelDate") > MET_PoleDat("DateK")))
-                PRI_Row["DelDate"] = PRI_Row["DateK"]; 
-
+                PRI_Row["DelDate"] = PRI_Row["DateK"];
             if (_NameLS != "")
-                PRI_Row["NameLS"] = _NameLS;  
-            
+                PRI_Row["NameLS"] = _NameLS;
             // Чистим строку
             for (int i = 0; i < PRI_Day; i++)
             {
@@ -241,7 +220,7 @@ namespace wpfMVrStac
 
         /// <summary>СОБЫТИЕ После загрузки окна</summary>
         private void Page_Loaded(object sender, RoutedEventArgs e)
-        {      
+        {
             if (!PRI_FlagGreate && eleDataGrid.Columns.Count > 1)
             {
                 // Удаляем ненужные столбцы
@@ -284,15 +263,14 @@ namespace wpfMVrStac
             {
                 PROP_FlagButtonSelect = true,
                 PROP_Modal = true,
-                WindowStyle = WindowStyle.ToolWindow  
+                WindowStyle = WindowStyle.ToolWindow
             };
-           
             _WinSpr.ShowDialog();
             if (_WinSpr.PROP_Return)
             {
                 // Находим запись
                 PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-                DataRowView _Row = PRI_DaViKomp.AddNew();                  
+                DataRowView _Row = PRI_DaViKomp.AddNew();
                 if (MET_PoleInt("Cod") == -1) MET_FormatNazn();
                 _Row["CodVrachLS"] = MET_PoleInt("Cod");
                 _Row["CodLS"] = _WinSpr.PUB_Cod;
@@ -324,7 +302,7 @@ namespace wpfMVrStac
 
         /// <summary>СОБЫТИЕ Нажали на кнопку Удалить Назначение</summary>
         private void PART_DeleteNaz_Click(object sender, RoutedEventArgs e)
-        {                      
+        {
             // Находим запись
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (PRI_Row != null)
@@ -332,7 +310,7 @@ namespace wpfMVrStac
                 // Удаляем компоненты назначения
                 MySql.MET_QueryNo(MyQuery.lnzKompLS_Delete_2(MET_PoleInt("Cod")));
                 // Удаляем назначение
-                MySql.MET_QueryNo(MyQuery.lnzVrachLS_Delete_1(MET_PoleInt("Cod")));                
+                MySql.MET_QueryNo(MyQuery.lnzVrachLS_Delete_1(MET_PoleInt("Cod")));
                 // Удалеяем строку в таблице
                 PRI_Row.Delete();
                 // Обновляем отчет
@@ -352,7 +330,7 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Добавление Назначений ЛС</summary>
         private void MET_AddNaznLS()
         {
-            // Добавляем данные в sqlDs   
+            // Добавляем данные в sqlDs
             PRI_Row = PRI_DaViNazn.AddNew();
             PRI_Row["Cod"] = -1;
             PRI_Row["DateN"] = PROP_DateK > DateTime.Today ? DateTime.Today : Convert.ToDateTime(MyGlo.HashAPSTAC["DN"]);
@@ -374,7 +352,7 @@ namespace wpfMVrStac
             UserPole_Text _Pole = (UserPole_Text)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Text == MET_PoleStr("Kurs")) return;
-            try 
+            try
             {
                 int _D = Convert.ToInt16(_Pole.PROP_Text);
                 if (_D < 1 | _D > 99)
@@ -387,7 +365,7 @@ namespace wpfMVrStac
             {
                 _Pole.PROP_Text = MET_PoleStr("Kurs");
                 return;
-            }             
+            }
             PRI_Row["Kurs"] = Convert.ToInt16(_Pole.PROP_Text);
             PRI_Row["DateK"] = MET_PoleDat("DateN").AddDays((MET_PoleDou("Kurs") - 1) * MET_PoleInt("Period"));
             MET_FormatNazn();
@@ -405,8 +383,7 @@ namespace wpfMVrStac
                 return;
             }
             PRI_Row["DateN"] = _Pole.PROP_Date;
-            PRI_Row["DateK"] = _Pole.PROP_Date.GetValueOrDefault().Date.AddDays((MET_PoleInt("Kurs") - 1) * MET_PoleInt("Period"));
-           
+            PRI_Row["DateK"] = _Pole.PROP_Date.GetValueOrDefault().Date.AddDays((MET_PoleInt("Kurs") - 1) * MET_PoleInt("Period"));    
             MET_FormatNazn();
         }
 
@@ -423,9 +400,8 @@ namespace wpfMVrStac
             }
             PRI_Row["Kurs"] = ((_Pole.PROP_Date - MET_PoleDat("DateN")).GetValueOrDefault().Days + 1) / MET_PoleInt("Period");
             PRI_Row["DateK"] = _Pole.PROP_Date;
-           
             MET_FormatNazn();
-        }   
+        }
 
         /// <summary>СОБЫТИЕ Изменили схему приема</summary>
         private void PART_Pole_5_LostFocus(object sender, RoutedEventArgs e)
@@ -446,9 +422,9 @@ namespace wpfMVrStac
             {
                 _Pole.PROP_Text = MET_PoleStr("Amt");
                 return;
-            }            
+            }
             PRI_Row["Amt"] = _Pole.PROP_Text;
-            MET_FormatNazn();             
+            MET_FormatNazn();
         }
 
         /// <summary>СОБЫТИЕ Изменили периодичность</summary>
@@ -470,12 +446,12 @@ namespace wpfMVrStac
             {
                 _Pole.PROP_Text = MET_PoleStr("Period");
                 return;
-            }              
+            }
             PRI_Row["Period"] = Convert.ToInt16(_Pole.PROP_Text);
             PRI_Row["DateK"] = (MET_PoleDat("DateN")).AddDays((MET_PoleInt("Kurs") - 1) * MET_PoleInt("Period"));
             MET_FormatNazn();
         }
-        
+
         /// <summary>СОБЫТИЕ Изменили текст способа приема</summary>
         private void PART_Pole_6_LostFocus(object sender, RoutedEventArgs e)
         {
@@ -514,7 +490,7 @@ namespace wpfMVrStac
             {
                 _Pole.PROP_Date = MET_PoleDat("DelDate");
                 return;
-            }            
+            }
             MET_FormatNazn();
         }
 
@@ -536,11 +512,11 @@ namespace wpfMVrStac
 
         /// <summary>СОБЫТИЕ Выбор строки назначения</summary>
         private void eleDataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {            
+        {
             if (eleDataGrid.SelectedItem != null)
             {
                 PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-                int _Cod = MET_PoleInt("Cod");                
+                int _Cod = MET_PoleInt("Cod");
                 MySql.MET_DsAdapterFill(MyQuery.lnzKompLS_Select_1(_Cod), "lnzKompLS");
                 // Cоздаем DataView для нашей таблице
                 PRI_DaViKomp = new DataView(MyGlo.DataSet.Tables["lnzKompLS"]);
@@ -571,11 +547,11 @@ namespace wpfMVrStac
             PRI_Row = pRow;
             int _Cod;
             int _CodVrachLS = MET_PoleInt("CodVrachLS");
-            decimal _CodApstac = MyGlo.IND; 
+            decimal _CodApstac = MyGlo.IND;
+
             int _CodLS = MET_PoleInt("CodLS");
             string _NameKomp = MET_PoleStr("NameKomp");
             double _Doza = MET_PoleDou("Doza");
-
             //---- Update Если есть код ответа, значить строка старая и меняем ответ
             if (MET_PoleStr("Cod") != "")
             {
@@ -583,13 +559,12 @@ namespace wpfMVrStac
                 MySql.MET_QueryNo(MyQuery.lnzKompLS_Update_1(_Cod, _CodVrachLS, _CodLS, _NameKomp, _Doza));
                 return;
             }
-
             // ----- Insert Находим максимальный код
             _Cod = MySql.MET_GetNextRef(31);
             PRI_Row["Cod"] = _Cod;
             PRI_Row["CodApstac"] = _CodApstac;
             // Добавляем ответ в базу
-            MySql.MET_QueryNo(MyQuery.lnzKompLS_Insert_1(_Cod, _CodVrachLS, _CodApstac, _CodLS, _NameKomp, _Doza)); 
+            MySql.MET_QueryNo(MyQuery.lnzKompLS_Insert_1(_Cod, _CodVrachLS, _CodApstac, _CodLS, _NameKomp, _Doza));
         }
 
         /// <summary>МЕТОД Добавление Изменение Назначений ЛС</summary>
@@ -610,8 +585,7 @@ namespace wpfMVrStac
             int _DelUserVrach = MET_PoleInt("DelUserVrach");
             DateTime _DelDate = MET_PoleDat("DelDate");
             string _DelNote = MET_PoleStr("DelNote");
-            DateTime _xDateUp = DateTime.Today; 
-            
+            DateTime _xDateUp = DateTime.Today;
             //---- Update Если есть код ответа, значить строка старая и меняем ответ
             if (MET_PoleStr("Cod") != "-1")
             {
@@ -621,7 +595,6 @@ namespace wpfMVrStac
                 PUB_Node.PROP_Docum.PROP_Otchet.PROP_NewCreate = true;
                 return;
             }
-            
             // ----- Insert Находим максимальный код
             _Cod = MySql.MET_GetNextRef(30);
             PRI_Row["Cod"] = _Cod;
@@ -634,7 +607,7 @@ namespace wpfMVrStac
                                              _FlagDrug, _FlagPac, _UserVrach, _DelUserVrach, _DelDate, _DelNote, _pDate, _xDateUp));
             PUB_Node.PROP_Docum.PROP_Otchet.PROP_NewCreate = true;
             if (!PUB_Node.PROP_shaPresenceProtokol)
-                PUB_Node.PROP_shaPresenceProtokol = true;  
+                PUB_Node.PROP_shaPresenceProtokol = true;
         }
 
         /// <summary>СОБЫТИЕ Редактируем дозу компонентов</summary>
@@ -642,9 +615,9 @@ namespace wpfMVrStac
         {
             DataGrid _DataGrid = (DataGrid)sender;
             TextBox _TextBox = (TextBox)e.EditingElement;
-            PRI_Row = (DataRowView)_DataGrid.SelectedItem;          
+            PRI_Row = (DataRowView)_DataGrid.SelectedItem;
             try
-            {                 
+            {
                 // Позволяем ставить десятичную и точку, и запятую
                 _TextBox.Text = _TextBox.Text.Replace(",", ".");
                 // Проверяем на правильность ввода, с учетом инглишь кодировки (десятичная точка)
@@ -739,7 +712,7 @@ namespace wpfMVrStac
             catch { }
             return false;
         }
-        #endregion             
+        #endregion
     }
 
     /// <summary>КЛАСС Конвертер (Пример) </summary>
@@ -750,7 +723,7 @@ namespace wpfMVrStac
             // Все проверки для краткости выкинул
             return (string)value == "Цефсон 1гр" ?
                 new SolidColorBrush(Colors.Azure)
-                : new SolidColorBrush(Colors.Red);           
+                : new SolidColorBrush(Colors.Red);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -846,6 +819,5 @@ namespace wpfMVrStac
             string[] splitValues = ((string)value).Split(' ');
             return splitValues;
         }
-
-    } 
+    }
 }

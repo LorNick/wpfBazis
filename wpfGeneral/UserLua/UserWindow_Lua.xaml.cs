@@ -40,25 +40,23 @@ namespace wpfGeneral.UserLua
         }
 
         /// <summary>КОНСТРУКТОР</summary>
-        /// <param name="pPole">Поле с которым работаем</param>        
+        /// <param name="pPole">Поле с которым работаем</param>
         public UserWindow_Lua(VirtualPole pPole)
         {
             InitializeComponent();
 
             PART_Log.PART_TextBox.MaxHeight = 80;
             PART_Log.VerticalAlignment = VerticalAlignment.Stretch;
-                        
             // Родительское окно
             if (Owner == null)
                 Owner = Application.Current.MainWindow;
-
             // Настраиваем положение окна
             Left = 0;
             if (Owner != null)
             {
                 Top = 15;
                 Height = Owner.Height + Owner.Top - 15;
-                Owner.Left = Width - 15;                
+                Owner.Left = Width - 15;
 #if DEBUG
                 //   Left = Owner.Left + Owner.Width + 500;
 #endif
@@ -67,8 +65,8 @@ namespace wpfGeneral.UserLua
             // Находим вопрос шаблона
             PRI_Pole = pPole;
             PRI_Document = pPole.PROP_Docum;
-            PRI_Shablon = PRI_Document.PROP_Shablon.Find(x => x.PROP_VarId == pPole.PROP_VarId);            
-            this.DataContext = PRI_Shablon;          
+            PRI_Shablon = PRI_Document.PROP_Shablon.Find(x => x.PROP_VarId == pPole.PROP_VarId);
+            this.DataContext = PRI_Shablon;
 
             // Настраиваем Lua поле
             PRI_Regular = @"(lPole|Pole|lMessage|lKbolInfoAdd|lKbolInfoDel|lPolePDate|";
@@ -80,7 +78,7 @@ namespace wpfGeneral.UserLua
 
             PART_FCTextBox = new FastColoredTextBox();
             PART_FCTextBox.Language = FastColoredTextBoxNS.Language.Lua;
-            PART_FCTextBox.TextChanged += Ts_TextChanged;          
+            PART_FCTextBox.TextChanged += Ts_TextChanged;
             PART_FCTextBox.WordWrap = true;
             PART_WindowsFormsHostFCTB.Child = PART_FCTextBox;
 
@@ -90,8 +88,8 @@ namespace wpfGeneral.UserLua
 
             // Делегаты для функции lLog
             MyGlo.callbackEvent_sLuaLog = MET_LogAdd;
-        }      
-        
+        }
+
         /// <summary>СОБЫТИЕ После загрузки окна</summary>
         private void UserWindows_Loaded(object sender, RoutedEventArgs e)
         {
@@ -108,13 +106,12 @@ namespace wpfGeneral.UserLua
             e.ChangedRange.ClearFoldingMarkers();
             // Маркер для свертывания кода
             e.ChangedRange.SetFoldingMarkers("if", "end");
-            e.ChangedRange.SetFoldingMarkers(@"function\b", @"end;\b");  
+            e.ChangedRange.SetFoldingMarkers(@"function\b", @"end;\b");
             // Ставим стиль для ключевых слов (не забывать его обновлять, по мере добавления)
             e.ChangedRange.ClearStyle(PRI_Style);
             e.ChangedRange.SetStyle(PRI_Style, PRI_Regular);
             // Меняем высоту окна
             PART_WindowsFormsHostFCTB.Height = PART_FCTextBox.LinesCount * 16;
-
             PRI_Shablon.PROP_xLua = PART_FCTextBox.Text;
         }
 
@@ -140,16 +137,15 @@ namespace wpfGeneral.UserLua
         private void PART_ButtonReturn_Click(object sender, RoutedEventArgs e)
         {
             int _Cou = PRI_Shablon.MET_SaveSQL();
-            MET_LogAdd($"Сохранено {_Cou} вопросов в SQL");            
+            MET_LogAdd($"Сохранено {_Cou} вопросов в SQL");
         }
 
         /// <summary>СОБЫТИЕ Переходим на нижний вопрос (или на первый, если был последний)</summary>
         private void PART_ButtonDown_Click(object sender, RoutedEventArgs e)
         {
             PRI_Shablon = PRI_Document.PROP_Shablon.Find(x => PRI_Document.PROP_Shablon.Max(i => i.PROP_Nomer) == PRI_Shablon.PROP_Nomer
-                ? x.PROP_Nomer == PRI_Document.PROP_Shablon.Min(i => i.PROP_Nomer) 
+                ? x.PROP_Nomer == PRI_Document.PROP_Shablon.Min(i => i.PROP_Nomer)
                     : x.PROP_Nomer == PRI_Shablon.PROP_Nomer + 1);
-
             MET_SelectedShablon();
             PART_RadListBox.SelectedValue = PRI_Shablon;
         }
@@ -160,19 +156,16 @@ namespace wpfGeneral.UserLua
             PRI_Shablon.PROP_xLua = PART_FCTextBox.Text;
             PRI_Pole.PROP_Lua.PROP_ChankText = PRI_Shablon.PROP_xLua;
             PRI_Pole.PROP_Lua.MET_StartLua();
-
-            MET_LogAdd("Предварительное сохрание кода Lua");          
+            MET_LogAdd("Предварительное сохрание кода Lua");
         }
 
         /// <summary>СОБЫТИЕ Переходим на верхний вопрос (или на последний, если был первый)</summary>
         private void PART_ButtonUp_Click(object sender, RoutedEventArgs e)
         {
-            PRI_Shablon = PRI_Document.PROP_Shablon.Find(x => PRI_Document.PROP_Shablon.Min(i => i.PROP_Nomer) == PRI_Shablon.PROP_Nomer 
-                ? x.PROP_Nomer == PRI_Document.PROP_Shablon.Max(i => i.PROP_Nomer) 
+            PRI_Shablon = PRI_Document.PROP_Shablon.Find(x => PRI_Document.PROP_Shablon.Min(i => i.PROP_Nomer) == PRI_Shablon.PROP_Nomer
+                ? x.PROP_Nomer == PRI_Document.PROP_Shablon.Max(i => i.PROP_Nomer)
                     : x.PROP_Nomer == PRI_Shablon.PROP_Nomer - 1);
-
             MET_SelectedShablon();
-
             PART_RadListBox.SelectedValue = PRI_Shablon;
         }
 
@@ -180,14 +173,12 @@ namespace wpfGeneral.UserLua
         private void PART_ButtonTest_Click(object sender, RoutedEventArgs e)
         {
             Lua _Lua = new Lua();
-            
             LuaCompileOptions _Options = new LuaCompileOptions();
             _Options.DebugEngine = new LuaStackTraceDebugger();
             try
             {
                 _Lua.CompileChunk(PART_FCTextBox.Text, "Test.lua", _Options);
                 MET_LogAdd("Успех");
-
             }
             catch (LuaParseException ex)
             {
@@ -196,7 +187,7 @@ namespace wpfGeneral.UserLua
             catch (Exception er)
             {
                 MET_LogAdd($"Ошибка: {er.Message}");
-            }            
+            }
         }
 
         /// <summary>СОБЫТИЕ Нажали на кнопку Отображаем/скрываем панель вопросов</summary>
@@ -204,13 +195,13 @@ namespace wpfGeneral.UserLua
         {
             if ((string)PART_ButtonVisualPanelVarId.Tag == "0")
             {
-                Width += 300;             
+                Width += 300;
                 PART_ColumnVarId.Width = new GridLength(300, GridUnitType.Pixel);
                 PART_ButtonVisualPanelVarId.Tag = "1";
             }
             else
             {
-                Width -= 300;             
+                Width -= 300;
                 PART_ColumnVarId.Width = new GridLength(0, GridUnitType.Pixel);
                 PART_ButtonVisualPanelVarId.Tag = "0";
             }
@@ -243,15 +234,14 @@ namespace wpfGeneral.UserLua
                 PART_Log.PROP_Text = DateTime.Now.ToLongTimeString() + " :  " + pText + '\n' + PART_Log.PROP_Text;
         }
 
-        /// <summary>СОБЫТИЕ  Выбор нового вопроса из боковой панели</summary>  
+        /// <summary>СОБЫТИЕ  Выбор нового вопроса из боковой панели</summary>
         private void PART_RadListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             PRI_Shablon = (UserShablon)PART_RadListBox.SelectedValue;
-
             MET_SelectedShablon();
         }
 
-        /// <summary>МЕТОД Выбираем вопрос</summary>       
+        /// <summary>МЕТОД Выбираем вопрос</summary>
         private void MET_SelectedShablon()
         {
             PRI_Pole = PRI_Document.PROP_FormShablon.GetPole(PRI_Shablon.PROP_VarId);

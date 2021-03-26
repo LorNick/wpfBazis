@@ -13,7 +13,7 @@ namespace wpfGeneral.UserOtchet
     {
         /// <summary>Очередь элементов истории</summary>
         protected List<UserPole_History> PRO_PoleHistory;
-      
+
         /// <summary>МЕТОД Инициализация отчета</summary>
         /// <param name="pNodes">Ветка</param>
         public override VirtualOtchet MET_Inizial(VirtualNodes pNodes)
@@ -25,7 +25,8 @@ namespace wpfGeneral.UserOtchet
         /// <summary>МЕТОД Создаем объект для печати</summary>
         /// <param name="pMyDocumentViewer">Просмоторщик печати</param>
         /// <param name="pFlowDocument">Поток с нашим текстом</param>
-        /// <param name="pPrintNow">Печатаем сразу</param> 
+        /// <param name="pPrintNow">Печатаем сразу</param>
+
         public override bool MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow = false)
         {
             if (PRO_PoleHistory.Count == 0)
@@ -45,7 +46,7 @@ namespace wpfGeneral.UserOtchet
             foreach (UserPole_History _MyPole in PRO_PoleHistory)
                 _MyPole.MET_StacPanel(_FlowDocument);                           // если есть информация, то заносим её в _FlowDocument
             // Добавляем отступы
-            _FlowDocument.Blocks.FirstBlock.Padding = 
+            _FlowDocument.Blocks.FirstBlock.Padding =
                 new Thickness(Blocks.FirstBlock.Padding.Left, PROP_Otstup, Blocks.FirstBlock.Padding.Right, Blocks.FirstBlock.Padding.Bottom);
             // Рисуем эмблему
             MET_ImageEmblema(_FlowDocument);

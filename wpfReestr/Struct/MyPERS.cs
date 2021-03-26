@@ -27,22 +27,22 @@ namespace wpfReestr
         /// <summary>Код надежости идентификации пациета (Если отчества нет то ставит 1; из StrahReestr поля OS_SLUCH)</summary>
         public string DOST { get; set; }
 
-        /// <summary>Место рождения пациета из паспорта (из StrahReestr)</summary>        
+        /// <summary>Место рождения пациета из паспорта (из StrahReestr)</summary>
         public string MR { get; set; }
 
-        /// <summary>Тип документа удостоверяющего личность (Справочник F011; из StrahReestr)</summary>        
+        /// <summary>Тип документа удостоверяющего личность (Справочник F011; из StrahReestr)</summary>
         public decimal? DOCTYPE { get; set; }
 
-        /// <summary>Серия документа удостоверяющего личность (из StrahReestr)</summary>        
+        /// <summary>Серия документа удостоверяющего личность (из StrahReestr)</summary>
         public string DOCSER { get; set; }
 
-        /// <summary>Номер документа удостоверяющего личность (из StrahReestr)</summary>        
+        /// <summary>Номер документа удостоверяющего личность (из StrahReestr)</summary>
         public string DOCNUM { get; set; }
 
-        /// <summary>Дата выдачи документа удостоверяющего личность (из StrahReestr)</summary>       
+        /// <summary>Дата выдачи документа удостоверяющего личность (из StrahReestr)</summary>
         public DateTime? DOCDATE { get; set; }
 
-        /// <summary>Кем выдан документ удостоверяющего личность (из StrahReestr)</summary>       
+        /// <summary>Кем выдан документ удостоверяющего личность (из StrahReestr)</summary>
         public string DOCORG { get; set; }
 
         /// <summary>СНИЛС (из StrahReestr поля SS)</summary>

@@ -2,16 +2,15 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Отображение-скрытие полей" Height="660" Width="900"
-        ShowInTaskbar="false"        
-        FontFamily="Tahoma" FontSize="14" 
+        ShowInTaskbar="false"
+        FontFamily="Tahoma" FontSize="14"
         WindowStartupLocation="CenterScreen"
         WindowStyle="ToolWindow"
-        Loaded="Window_Loaded"         
+        Loaded="Window_Loaded"
         StateChanged="Window_StateChanged">
     <Grid Name="PART_Grid">
         <ScrollViewer>
             <StackPanel Name="PART_StackPanel">
-            
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -54,9 +54,7 @@ namespace wpfMVrStac
             MET_Print();
             xParagraph = true;
             MET_Print();
-
             PRO_Paragraph.Inlines.Add(new LineBreak());                         // разрыв строки
-            
             // Заполняем строку данными запроса
             foreach (DataRow _Row in MyGlo.DataSet.Tables["ErrorStac"].Rows)
             {

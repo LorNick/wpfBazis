@@ -47,8 +47,8 @@ namespace wpfGeneral.UserStruct
         public bool PROP_FlagChange { get; set; }
 
         ///<summary>МЕТОД Загрузка данных KbolInfo из SQL</summary>
-        /// <param name="pTab">Флаг связанной таблицы (kbol, apaN, ast)</param> 
-        /// <param name="pCodZap">Код записи (KL из kbol, IND из АPSTAC, Cod из APAC ...)</param> 
+        /// <param name="pTab">Флаг связанной таблицы (kbol, apaN, ast)</param>
+        /// <param name="pCodZap">Код записи (KL из kbol, IND из АPSTAC, Cod из APAC ...)</param>
         public bool MET_LoadSQL(string pTab, decimal pCodZap)
         {
             bool _Value;
@@ -80,19 +80,16 @@ namespace wpfGeneral.UserStruct
                 MyGlo.callbackEvent_sError(ex);
                 _Value = false;
             }
-
             return _Value;
         }
-        
+
         ///<summary>МЕТОД Сохраняем строку KbolInfo в SQL</summary>
         public bool MET_SaveSQL()
         {
             // Если запись не меняли, выходим
             if (!PROP_FlagChange)
                 return false;
-
             PROP_jTag = PROP_Json.ToString();
-
             // Если новая запись
             if (PROP_FlagNew)
             {
@@ -114,32 +111,28 @@ namespace wpfGeneral.UserStruct
             // Если запись не меняли, выходим
             if (!PROP_FlagChange)
                 return false;
-
             // Если новая запись, тоже выходим
             if (PROP_FlagNew)
                 return false;
-
             // Проверяем json строку  на правильность
             try
             {
-                PROP_Json = JObject.Parse(PROP_jTag);               
+                PROP_Json = JObject.Parse(PROP_jTag);
             }
             catch (JsonReaderException)
             {
                 MessageBox.Show($"Не корректная json строка!", "Ошибка");
                 return false;
             }
-
             MySql.MET_QueryNo(MyQuery.MET_kbolInfo_Update_1(PROP_Cod, PROP_jTag, PROP_Oms));
-
             PROP_FlagChange = false;
             MessageBox.Show($"Успешно сохранено!");
             return true;
         }
 
         ///<summary>МЕТОД Меняем данные KbolInfo (строка)</summary>
-        /// <param name="pTag">Имя тега</param> 
-        /// <param name="pValue">Значение</param> 
+        /// <param name="pTag">Имя тега</param>
+        /// <param name="pValue">Значение</param>
         public bool MET_Change(string pTag, dynamic pValue)
         {
             // Находим старое значение тега, если этот тег есть (не null)
@@ -162,7 +155,7 @@ namespace wpfGeneral.UserStruct
         }
 
         ///<summary>МЕТОД Удаляем данный тег KbolInfo (строка)</summary>
-        /// <param name="pTag">Имя тега</param> 
+        /// <param name="pTag">Имя тега</param>
         public bool MET_Delete(string pTag)
         {
             // Если данный тег в наличии, то удаляем его
@@ -176,15 +169,15 @@ namespace wpfGeneral.UserStruct
         }
 
         ///<summary>МЕТОД Меняем поле Oms в KbolInfo</summary>
-        /// <param name="pOms">Признак подачи в реестр ОМС</param> 
+        /// <param name="pOms">Признак подачи в реестр ОМС</param>
         public void MET_ChangeOms(int pOms)
         {
             // Если данный тег в наличии, то удаляем его
             if (PROP_Oms != pOms)
             {
                 PROP_Oms = pOms;
-                PROP_FlagChange = true;               
-            }           
+                PROP_FlagChange = true;
+            }
         }
 
         ///<summary>МЕТОД Cохраняем объекты KbolInfo в SQL</summary>
@@ -197,10 +190,10 @@ namespace wpfGeneral.UserStruct
                 _Value.MET_SaveSQL();
             }
         }
-        
+
         ///<summary>МЕТОД Фабрика объекта KbolInfo</summary>
-        /// <param name="pTab">Флаг связанной таблицы (apaN, ast, par, kdl)</param> 
-        /// <param name="pCodZap">Код записи (IND из АPSTAC, Cod из APAC ...)</param> 
+        /// <param name="pTab">Флаг связанной таблицы (apaN, ast, par, kdl)</param>
+        /// <param name="pCodZap">Код записи (IND из АPSTAC, Cod из APAC ...)</param>
         /// <param name="pKL">Код пациента</param>
         public static UserKbolInfo MET_FactoryKbolInfo(string pTab, decimal pCodZap, decimal pKL)
         {
@@ -208,9 +201,8 @@ namespace wpfGeneral.UserStruct
             List<UserKbolInfo> _KbolInfo = ((VirtualModul)MyGlo.Modul).PUB_KbolInfo;
             //  Ищем в коллекции KbolInfo по типу, коду Apstac/Apac.., номеру шаблона и индексу
             UserKbolInfo _Value = _KbolInfo.FirstOrDefault(p => p.PROP_Tab == pTab && p.PROP_CodZap == pCodZap);
-            // Если не нашли, то пытаемся KbolInfo создать 
-            if (_Value == null)
-            {
+            // Если не нашли, то пытаемся KbolInfo создать
+            if (_Value == null)            {
                 _Value = new UserKbolInfo();
                 // Загружаем данные из SQL
                 if (_Value.MET_LoadSQL(pTab, pCodZap))

@@ -28,9 +28,8 @@ namespace wpfGeneral.UserOtchet
         protected override void MET_Otchet()
         {
             PRO_Paragraph = new Paragraph();
-            
-            // Заполняем ответы           
-            MET_Protokol(); 
+            // Заполняем ответы
+            MET_Protokol();
         }
     }
 }

@@ -11,13 +11,13 @@ namespace wpfGeneral.UserControls
         private string PRI_Text;
         #endregion ----
 
-        #region  ---- СОБЫТИЯ ---- 
+        #region  ---- СОБЫТИЯ ----
         ///<summary>Создаем событие</summary>
         public event RoutedEventHandler ItemsChanged
         {
             add { AddHandler(ItemsChangedEvent, value); }
             remove { RemoveHandler(ItemsChangedEvent, value); }
-        }            
+        }
         #endregion ----
 
         #region ---- СВОЙСТВО ----
@@ -26,10 +26,10 @@ namespace wpfGeneral.UserControls
         public FreezableCollection<ListBoxItem> PROP_Items
         {
             get { return (FreezableCollection<ListBoxItem>)GetValue(DEPR_ItemsProperty); }
-            set 
-            { 
-                SetValue(DEPR_ItemsProperty, value); 
-                PART_ListBox.ItemsSource = PROP_Items;               
+            set
+            {
+                SetValue(DEPR_ItemsProperty, value);
+                PART_ListBox.ItemsSource = PROP_Items;
             }
         }
 
@@ -68,7 +68,7 @@ namespace wpfGeneral.UserControls
         {
             get { return PRI_Text; }
             set
-            {              
+            {
                 try
                 {
                     PRI_Text = value;
@@ -82,7 +82,7 @@ namespace wpfGeneral.UserControls
                 {
                 }
             }
-        }      
+        }
         #endregion ----
 
         #region ---- РЕГИСТРАЦИЯ ----
@@ -98,8 +98,8 @@ namespace wpfGeneral.UserControls
         public static readonly DependencyProperty DEPR_Orientation =
             DependencyProperty.Register(
               "PROP_Orientation",
-              typeof(Orientation), 
-              typeof(UserPole_RadioButton), 
+              typeof(Orientation),
+              typeof(UserPole_RadioButton),
               new PropertyMetadata(Orientation.Horizontal));
 
         /// <summary>РЕГИСТРАЦИЯ RadioButton</summary>
@@ -118,7 +118,7 @@ namespace wpfGeneral.UserControls
             // Обнуляем текущую коллекцию
             SetValue(DEPR_ItemsPropertyKey, new FreezableCollection<ListBoxItem>());
             // Подписываемся на событие изменения коллекции
-            PROP_Items.Changed += PROP_Items_Changed;  
+            PROP_Items.Changed += PROP_Items_Changed;
         }
 
         ///<summary>Создаем событие</summary>
@@ -152,6 +152,6 @@ namespace wpfGeneral.UserControls
                 if (PROP_Text != "" & _ListBoxItem.Tag.ToString() == PROP_Text)
                     PART_ListBox.SelectedItem = _ListBoxItem;
             }
-        }       
+        }
     }
 }

@@ -47,7 +47,7 @@ namespace wpfMVrStac
                     break;
                 case 130:                                                       // Шаблоны Анестезиолога
                     _Tip_2 = 139;
-                    break;                                                      
+                    break;
                 case 110:                                                       // Обходы и консилиумы
                     _Tip_2 = 119;
                     break;
@@ -63,7 +63,6 @@ namespace wpfMVrStac
                 _p.Join(_l.Where(k => k.PROP_TipObsled >= _Tip_1 && k.PROP_TipObsled <= _Tip_2 && k.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Stac), a => a.PROP_NumShablon,
                     b => b.PROP_Cod, (a, b) => a).Where(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Stac
                                                              && p.PROP_CodApstac == MyGlo.IND).ToList().OrderBy(p => p.PROP_pDate).ThenBy(p => p.PROP_Cod);
-
             return _k;
         }
 

@@ -14,17 +14,17 @@ namespace wpfGeneral.UserControls
     public partial class UserPole_MultyList
     {
         #region ---- ЗАКРЫТЫЕ ПОЛЯ ----
-        /// <summary>Создаем контекстное меню</summary>       
+        /// <summary>Создаем контекстное меню</summary>
         private readonly ContextMenu PRI_ContextMenu = new ContextMenu();
-        /// <summary>Коды операций (максимум 11 операций)</summary> 
+        /// <summary>Коды операций (максимум 11 операций)</summary>
         private readonly string[] PRI_mCodOper = new string[10];
-        /// <summary>Дата операции</summary> 
+        /// <summary>Дата операции</summary>
         private DateTime? PRI_Date;
-        /// <summary>Количество операций</summary> 
+        /// <summary>Количество операций</summary>
         private int PRI_Count;
-        /// <summary>Добавляли ли операции</summary> 
+        /// <summary>Добавляли ли операции</summary>
         private bool PRI_Insert;
-        /// <summary>Если false - то не добавляем операции в таблицу операций (т.е. есть старые операции, в этом стационаре, не привязанные к протоколам)</summary>        
+        /// <summary>Если false - то не добавляем операции в таблицу операций (т.е. есть старые операции, в этом стационаре, не привязанные к протоколам)</summary>
         private bool PRI_FlagNew = true;
         #endregion
 
@@ -33,8 +33,8 @@ namespace wpfGeneral.UserControls
         public override string PROP_Description
         {
             get { return (string)PART_Label.Content; }
-            set 
-            { 
+            set
+            {
                 PART_Label.Content = value;
                 // Если описания нету, то убираем пустой отступ
                 if (value == "")
@@ -83,7 +83,7 @@ namespace wpfGeneral.UserControls
         public override Double PROP_WidthText
         {
             get { return PART_TextBox.Width; }
-            set 
+            set
             {
                 PART_TextBox.Width = value;
                 if (double.IsNaN(PART_TextBox.Width))
@@ -104,14 +104,14 @@ namespace wpfGeneral.UserControls
         public override byte PROP_PometkaText
         {
             get { return PRO_PometkaText; }
-            set 
-            { 
+            set
+            {
+
                 PRO_PometkaText = value;
                 if (PRO_PometkaText == 1)
                     PART_TextBox.BorderBrush = Brushes.Red;
                 else
                     PART_TextBox.ClearValue(Border.BorderBrushProperty);
-
             }
         }
 
@@ -130,7 +130,6 @@ namespace wpfGeneral.UserControls
             // Инициализация конекстного меню
             PART_TextBox.ContextMenu = PRI_ContextMenu;
             PRI_ContextMenu.Opened += MET_ContextMenu_Opened;
-
             PART_TextBox.Tag = this;
         }
 
@@ -173,7 +172,6 @@ namespace wpfGeneral.UserControls
                     if (PROP_DefaultText.Length == 10 || PROP_DefaultText.Length == 14)
                     {
                         // Пытаемся найти её в справочнике услуг s_VidOper
-
                         MySql.MET_DsAdapterFill(MyQuery.s_VidOper_Select_1($" and KOP = '{PROP_DefaultText}'"), "Oper");
                         if (MyGlo.DataSet.Tables["Oper"].Rows.Count > 0)
                         {
@@ -218,7 +216,7 @@ namespace wpfGeneral.UserControls
             MenuItem _MenuItem = new MenuItem();
             _MenuItem.Header = "Выбрать КОД из справочника";
             _MenuItem.Click += MET_MenuItem_Click;
-            _ConMen.Items.Add(_MenuItem);           
+            _ConMen.Items.Add(_MenuItem);
             // Создаем пункт меню "Изменить"
             _MenuItem = new MenuItem();
             _MenuItem.Header = "Удалить операции";
@@ -232,19 +230,18 @@ namespace wpfGeneral.UserControls
             _MenuItem.Command = ApplicationCommands.Copy;
             _ConMen.Items.Add(_MenuItem);
         }
-                 
+
         /// <summary>СОБЫТИЕ Вставляем выбранное значение из контектсного меню</summary>
         private void MET_MenuItem_Click(object sender, EventArgs e)
-        {             
+        {
             // Выбранный пункт меню
             string _Text = (sender as MenuItem)?.Header.ToString();
-            
             switch (_Text)
             {
                 case "Выбрать КОД из справочника":
                     // Находим дату создания протокола из первого поля шаблона с pDate
                     PRI_Date = DateTime.Parse(PROP_FormShablon.GetPole("DateOsmotr").PROP_Text);
-                    // Справочник Операций                   
+                    // Справочник Операций
                     UserWindow_Oper _WinSpr = new UserWindow_Oper((DateTime)PRI_Date, PROP_Shablon)
                     {
                         WindowStyle = WindowStyle.ToolWindow,
@@ -257,7 +254,7 @@ namespace wpfGeneral.UserControls
                     {
                         // Текст
                         if (PROP_Text.Length > 0)
-                            PROP_Text += "\n" +_WinSpr.PROP_Cod + " - " + _WinSpr.PROP_Text;   
+                            PROP_Text += "\n" +_WinSpr.PROP_Cod + " - " + _WinSpr.PROP_Text;
                         else
                             PROP_Text = _WinSpr.PROP_Cod + " - " + _WinSpr.PROP_Text;
                         // Код операции
@@ -266,7 +263,7 @@ namespace wpfGeneral.UserControls
                         PRI_Count++;
                         // Флаг новой операции
                         PRI_Insert = true;
-                    }                     
+                    }
                     break;
                 case "Удалить операции":
                     if (MessageBox.Show("Вы точно хотите удалить все операции?", "Внимание!", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -274,21 +271,21 @@ namespace wpfGeneral.UserControls
                         // Чистим текст
                         PROP_Text = "";
                         // Обнуляем количество операций
-                        PRI_Count = 0;                         
+                        PRI_Count = 0;
                     }
-                    break;              
+                    break;
             }
         }
 
-        ///<summary>МЕТОД Действие при сохранении</summary>        
-        public override bool MET_Save() 
-        {               
+        ///<summary>МЕТОД Действие при сохранении</summary>
+        public override bool MET_Save()
+        {
             // Если операции добавляли или сменили дату операции или меняем данные xInfo
             if ((PRI_Insert | PROP_FormShablon.PUB_VirtualNodes.PROP_Data != PRI_Date | PROP_xInfo != PROP_Json?.ToString()) & PRI_FlagNew)
             {
                 // Удаляем старые кода операций, если они не были синхронизированны
                 MySql.MET_QueryNo(MyQuery.Oper_Delete_1(PROP_FormShablon.PROP_Cod));
-                // Помечаем для удаления старые кода, которые были синхронизированы                
+                // Помечаем для удаления старые кода, которые были синхронизированы
                 MySql.MET_QueryNo(MyQuery.Oper_Update_1(PROP_FormShablon.PROP_Cod));
                 // Создаем строку тегов
                 PROP_xInfo = PROP_Json?.ToString();
@@ -298,14 +295,14 @@ namespace wpfGeneral.UserControls
                     MySql.MET_QueryNo(MyQuery.Oper_Insert_1(MySql.MET_GetNextRef(5), MyGlo.KL, MyGlo.IND, PROP_FormShablon.PUB_VirtualNodes.PROP_Data,
                                                            MyGlo.Otd, PRI_mCodOper[i], PROP_FormShablon.PROP_Cod, PROP_xInfo));
                 }
-                PRI_Insert = false;              
+                PRI_Insert = false;
             }
-            return true; 
+            return true;
         }
 
         ///<summary>МЕТОД Меняем данные xInfo</summary>
-        /// <param name="pTag">Имя тега</param> 
-        /// <param name="pValue">Значение</param> 
+        /// <param name="pTag">Имя тега</param>
+        /// <param name="pValue">Значение</param>
         public bool MET_ChangeInfo(string pTag, dynamic pValue)
         {
             // Находим старое значение тега, если этот тег есть (не null)
@@ -323,15 +320,15 @@ namespace wpfGeneral.UserControls
         }
 
         ///<summary>МЕТОД Удаляем тег из xInfo</summary>
-        /// <param name="pTag">Имя тега</param> 
+        /// <param name="pTag">Имя тега</param>
         /// <returns>Возвращаем успех или не успех удаления тега</returns>
         public bool MET_DeleteInfo(string pTag)
         {
             return PROP_Json.Remove(pTag);
         }
-        
+
         ///<summary>МЕТОД Проверка на допустимость данных и полноте заполнения</summary>
-        public override bool MET_Verification() 
+        public override bool MET_Verification()
         {
             if (PROP_Text.Length == 0)
             {
@@ -339,7 +336,7 @@ namespace wpfGeneral.UserControls
                 this.Focus();
                 return false;
             }
-            return true; 
+            return true;
         }
     }
 }

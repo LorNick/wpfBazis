@@ -9,7 +9,9 @@ namespace wpfGeneral.UserControls
     /// <summary>КЛАСС для сборного поля Json (VirtualJson)</summary>
     public partial class UserJson_Menu : VirtualJson
     {
-        #region ---- СВОЙСТВО ----               
+        #region ---- СВОЙСТВО ----
+
+
         /// <summary>СВОЙСТВО Описание вопроса</summary>
         public override string PROP_Tag
         {
@@ -35,18 +37,18 @@ namespace wpfGeneral.UserControls
             //PART_TextBox.Tag = this;
         }
 
-		/////<summary>МЕТОД Инициализация поля</summary>
-		//public void MET_Inicial()
-		//{
+        /////<summary>МЕТОД Инициализация поля</summary>
+        //public void MET_Inicial()
+        //{
   //          // Ограничиваем 5000 символами
   // //         PROP_MaxLength = 5000;
-		//	//// Располагаем текст
-		//	//PROP_TextAlignment = TextAlignment.Left;
-		//	//if (PROP_Format.PROP_Value.ContainsKey("fac"))
-		//	//	PROP_TextAlignment = TextAlignment.Center;
-		//	//if (PROP_Format.PROP_Value.ContainsKey("far"))
-		//	//	PROP_TextAlignment = TextAlignment.Right;
-		//}
+        //    //// Располагаем текст
+        //    //PROP_TextAlignment = TextAlignment.Left;
+        //    //if (PROP_Format.PROP_Value.ContainsKey("fac"))
+        //    //    PROP_TextAlignment = TextAlignment.Center;
+        //    //if (PROP_Format.PROP_Value.ContainsKey("far"))
+        //    //    PROP_TextAlignment = TextAlignment.Right;
+        //}
 
         /// <summary>СОБЫТИЕ при вводе символа в TextBox</summary>
         private void PART_TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -76,7 +78,9 @@ namespace wpfGeneral.UserControls
         //        case "#":
         //        case "'":
         //            e.Handled = true;
-        //            break;            
+        //            break;
+
+
         //    }
         //}
 

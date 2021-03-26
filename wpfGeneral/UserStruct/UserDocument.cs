@@ -22,7 +22,7 @@ namespace wpfGeneral.UserStruct
         /// <summary>СВОЙСТВО Вопросы из таблицы Shablon</summary>
         public List<UserShablon> PROP_Shablon
         {
-            get 
+            get
             {
                 return PRI_Shablons ??
                        (PRI_Shablons =
@@ -30,7 +30,7 @@ namespace wpfGeneral.UserStruct
             }
             set { PRI_Shablons = value; }
         }
-     
+
         /// <summary>СВОЙСТВО Данные протокола из таблицы Protokol</summary>
         public UserProtokol PROP_Protokol { get; set; }
 
@@ -53,7 +53,7 @@ namespace wpfGeneral.UserStruct
         public VirtualOtchet PROP_Otchet { get; set; }
 
         /// <summary>СВОЙСТВО Может ли текущий пользователь удалить данный протокол</summary>
-        /// <remarks>Разрешает удалять админу или редактору. 
+        /// <remarks>Разрешает удалять админу или редактору.
         /// Обычные пользователи могут удалять только свои протоколы с pDate за неделю.
         /// Тут есть лазейки, может пересохранить документ под собой и поменть дату.</remarks>
         public bool PROP_IsUserDeleted
@@ -75,7 +75,6 @@ namespace wpfGeneral.UserStruct
                             return _Value;
                         try
                         {
-
                             var _J = JObject.Parse(PROP_ListShablon.PROP_xInfo);
                             _Value = _J.ContainsKey("IsUserDeleted")
                                 && PROP_Protokol.PROP_xUserUp == MyGlo.User
@@ -93,7 +92,7 @@ namespace wpfGeneral.UserStruct
 
 
         /// <summary>КОНСТРУКТОР</summary>
-        /// <param name="pTipDocum">Тип документа (по умолчанию NULL=0, нет документа)</param> 
+        /// <param name="pTipDocum">Тип документа (по умолчанию NULL=0, нет документа)</param>
         public UserDocument(eTipDocum pTipDocum = eTipDocum.Null)
         {
             PROP_TipDocum = pTipDocum;
@@ -101,7 +100,7 @@ namespace wpfGeneral.UserStruct
 
         /// <summary>КОНСТРУКТОР</summary>
         /// <param name="pNodes">Ссылка на ветку</param>
-        /// <param name="pTipDocum">Тип документа (по умолчанию NULL=0, нет документа)</param> 
+        /// <param name="pTipDocum">Тип документа (по умолчанию NULL=0, нет документа)</param>
         public UserDocument(VirtualNodes pNodes, eTipDocum pTipDocum = eTipDocum.Null)
         {
             PROP_Nodes = pNodes;

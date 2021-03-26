@@ -2,23 +2,23 @@
              xmlns="clr-namespace:wpfGeneral.UserControls"
              xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              x:Name="UserPole"
              mc:Ignorable="d"
              FontSize="14">
-        <p:BulletDecorator VerticalAlignment="Center">
-            <p:BulletDecorator.Bullet>
-                <p:StackPanel Orientation="Horizontal">
-                    <p:Label Name="PART_Label" Height="24" HorizontalAlignment="Left"  
-                             Foreground="Navy" Content="Диагноз" VerticalContentAlignment="Center" 
-                             Padding="5,0" HorizontalContentAlignment="Right" />
-                    <p:Button Name="PART_ButtonSelect" Content="..." Width="30" Margin="2" 
-                              BorderBrush="LightBlue" Click="PART_ButtonSelect_Click"/>
-                </p:StackPanel>
-            </p:BulletDecorator.Bullet>
-            <p:TextBox Name="PART_TextDiag" Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}" 
-                       AcceptsReturn="True" IsReadOnly="True"  TextWrapping="Wrap" Margin="2" MinWidth="60"  
-                       VerticalContentAlignment="Stretch"></p:TextBox>
-        </p:BulletDecorator>
+    <p:BulletDecorator VerticalAlignment="Center">
+        <p:BulletDecorator.Bullet>
+            <p:StackPanel Orientation="Horizontal">
+                <p:Label Name="PART_Label" Height="24" HorizontalAlignment="Left"
+                            Foreground="Navy" Content="Диагноз" VerticalContentAlignment="Center"
+                            Padding="5,0" HorizontalContentAlignment="Right" />
+                <p:Button Name="PART_ButtonSelect" Content="..." Width="30" Margin="2"
+                            BorderBrush="LightBlue" Click="PART_ButtonSelect_Click"/>
+            </p:StackPanel>
+        </p:BulletDecorator.Bullet>
+        <p:TextBox Name="PART_TextDiag" Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}"
+                    AcceptsReturn="True" IsReadOnly="True"  TextWrapping="Wrap" Margin="2" MinWidth="60"
+                    VerticalContentAlignment="Stretch"></p:TextBox>
+    </p:BulletDecorator>
 </VirtualPole>

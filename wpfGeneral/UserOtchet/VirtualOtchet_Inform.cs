@@ -24,7 +24,7 @@ namespace wpfGeneral.UserOtchet
 
         /// <summary>МЕТОД Формируем отчет</summary>
         protected override void MET_Otchet()
-        {             
+        {
             xVopr = "Отчет в разработке";
             xAligment = 2; xParagraph = true;
             MET_Print();

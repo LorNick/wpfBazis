@@ -5,18 +5,18 @@ namespace wpfStatic
     /// <summary>КЛАСС Форматирование xFormat</summary>
     /// <remarks>Используется в таблицах ListShablon, Shablon </remarks>
     public class MyFormat
-    {   
+    {
         /// <summary>Набор параметров</summary>
         public Hashtable PROP_Value { get; private set; }
-        
-        /// <summary>КОНСТРУКТОР</summary>          
+
+        /// <summary>КОНСТРУКТОР</summary>
         public MyFormat()
         {
             MET_Initial("");
         }
 
         /// <summary>КОНСТРУКТОР</summary>
-        /// <param name="pFormat">Строка формата</param>       
+        /// <param name="pFormat">Строка формата</param>
         public MyFormat(string pFormat)
         {
             MET_Initial(pFormat);
@@ -54,7 +54,7 @@ namespace wpfStatic
                     }
                 }
             }
-        } 
+        }
 
         /// <summary>МЕТОД Есть ли такой параметр?</summary>
         /// <param name="pParamentr">Сам параметр</param>

@@ -34,7 +34,6 @@ namespace wpfBazis
             }
             // Версия программы и IP серевера
             PART_Ver.Text = "Версия " + MyMet.MET_Ver() + _Server;
-
             // Если включен режим Админа
             if (MyGlo.Admin)
             {
@@ -51,10 +50,8 @@ namespace wpfBazis
                 PART_Bazis.Foreground = new SolidColorBrush(Colors.Red);
             else
                 PART_Bazis.Foreground = new SolidColorBrush(Colors.Black);
-
             if (PRI_Flag > 2)
                 PRI_Flag = 0;
-
             MyGlo.Admin = false;                                               // режим админа выключен
         }
 

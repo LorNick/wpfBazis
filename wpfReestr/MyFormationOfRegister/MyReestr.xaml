@@ -3,37 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         Title="Подготовка Страховых реестров 2021" Height="440" Width="430"
-        ShowInTaskbar="false"        
-        FontFamily="Tahoma" FontSize="14" 
+        ShowInTaskbar="false"
+        FontFamily="Tahoma" FontSize="14"
         WindowStartupLocation="CenterScreen"
-        Loaded="Window_Loaded"         
+        Loaded="Window_Loaded"
         Name="PART_UserPage"
         WindowStyle="ToolWindow" ResizeMode="NoResize">
-
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="b2v" />
     </Window.Resources>
-    
     <Grid DataContext="{Binding}">
         <Grid.Resources>
             <Style TargetType="{x:Type TextBox}">
                 <Setter Property="Width" Value="100"/>
-                <Setter Property="BorderBrush" Value="#FFB9BFBF"/> 
-                <Setter Property="HorizontalContentAlignment" Value="Center"/> 
+                <Setter Property="BorderBrush" Value="#FFB9BFBF"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
                 <Style.Triggers>
                     <Trigger Property="IsFocused" Value="True">
                         <Setter Property="Background" Value="#FFFFFFC0"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>
-
             <Style TargetType="{x:Type DatePicker}">
                 <Setter Property="Width" Value="110"/>
             </Style>
         </Grid.Resources>
-        
         <StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="5">                
+            <StackPanel Orientation="Horizontal" Margin="5">
                 <Label Name="PART_Info" Margin="10,0,0,0" Foreground="#FF2E57E2">Записей: 0</Label>
             </StackPanel>
             <GroupBox Header="Счет:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
@@ -45,10 +41,10 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0">Номер:</Label>
-                    <TextBox Name="PART_Schet" Text="{Binding ElementName=PART_UserPage, Path=PROP_Schet}" 
+                    <TextBox Name="PART_Schet" Text="{Binding ElementName=PART_UserPage, Path=PROP_Schet}"
                              Grid.Column="1" HorizontalAlignment="Left"/>
                     <Label Grid.Column="2" HorizontalAlignment="Right" >от:</Label>
-                    <DatePicker Name="PART_DateSchet" 
+                    <DatePicker Name="PART_DateSchet"
                                 SelectedDate="{Binding ElementName=PART_UserPage, Path=PROP_DateSchet, Mode=TwoWay}"
                                 Grid.Column="3" HorizontalAlignment="Left" />
                 </Grid>
@@ -56,7 +52,7 @@
             <GroupBox Name="PART_GroupBoxMainTest" Header="Основной/Тестовый реестр:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>                        
+                        <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <RadioButton Grid.Column="0" Tag="1" Name="PART_Main_1" IsChecked="True" Click="RadioButtonMainTest_Click">
@@ -70,17 +66,17 @@
                             <Image Source="{StaticResource mnSmoAll}" Height="20"/>
                             <TextBlock Text="Тестовый реестр" Padding="0" Margin="2, 0" />
                         </StackPanel>
-                    </RadioButton> 
+                    </RadioButton>
                 </Grid>
             </GroupBox>
-            <GroupBox Name="PART_GroupBoxPeriodMain" Header="Месяц сдачи. Тип реестра. Родитель реестра:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5, 19, 5, 19"                       
+            <GroupBox Name="PART_GroupBoxPeriodMain" Header="Месяц сдачи. Тип реестра. Родитель реестра:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5, 19, 5, 19"
                       Visibility="{Binding IsChecked, ElementName=PART_Main_1, Converter={StaticResource b2v}}">
                 <StackPanel Orientation="Horizontal">
                     <Label>Месяц:</Label>
                     <ComboBox Name="PART_ComboBoxMainMonth" Width="340" SelectionChanged="PART_ComboBoxMainMonth_SelectionChanged" />
                 </StackPanel>
             </GroupBox>
-            <GroupBox Name="PART_GroupBoxPeriodTest" Header="Период:" BorderBrush="#FF359FE2" Margin="3" Padding="5" Foreground="#FF359FE2"                       
+            <GroupBox Name="PART_GroupBoxPeriodTest" Header="Период:" BorderBrush="#FF359FE2" Margin="3" Padding="5" Foreground="#FF359FE2"
                       Visibility="{Binding IsChecked, ElementName=PART_Test_2, Converter={StaticResource b2v}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -113,12 +109,12 @@
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <RadioButton Grid.Column="0" Tag="3" Name="PART_VMPRadio_3" IsChecked="True"                                  
+                    <RadioButton Grid.Column="0" Tag="3" Name="PART_VMPRadio_3" IsChecked="True"
                                  Click="RadioButtonTipReestr_Click">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{StaticResource mnFileC}" Height="20"/>
                             <TextBlock Text="ЗНО" Padding="0" Margin="2, 0" />
-                        </StackPanel>                       
+                        </StackPanel>
                     </RadioButton>
                     <RadioButton Grid.Column="1" Tag="4" Name="PART_VMPRadio_4" Click="RadioButtonTipReestr_Click">
                         <StackPanel Orientation="Horizontal" >
@@ -133,14 +129,14 @@
                         </StackPanel>
                     </RadioButton>
                 </Grid>
-            </GroupBox>           
+            </GroupBox>
             <Grid>
                 <ProgressBar Name="PART_ProgressBar" Height="30" Margin="5,0"/>
                 <Label Name="PART_ProgressLabel"
                        VerticalAlignment="Top" HorizontalAlignment="Center"
                        Content="{Binding ElementName=PART_UserPage, Path=PROP_ProgressLabel, Mode=TwoWay}"/>
             </Grid>
-            <telerik:RadButton Name="PART_ButtonStart" 
+            <telerik:RadButton Name="PART_ButtonStart"
                     Content="Формирование реестра" Height="40" Margin="100,8" Click="PART_ButtonStart_Click"/>
         </StackPanel>
     </Grid>

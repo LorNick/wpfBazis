@@ -45,7 +45,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {

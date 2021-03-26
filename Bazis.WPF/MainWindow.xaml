@@ -1,15 +1,15 @@
 ﻿<Window x:Class="wpfBazis.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"  
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:my1="clr-namespace:wpfGeneral.UserPrints;assembly=wpfGeneral"
-        xmlns:my2="clr-namespace:wpfGeneral.UserControls;assembly=wpfGeneral"  
+        xmlns:my2="clr-namespace:wpfGeneral.UserControls;assembly=wpfGeneral"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-        Title="wpfBazis" 
+        Title="wpfBazis"
         Height="700" Width="1100" FontFamily="Tahoma" FontSize="14"
-        Icon="{DynamicResource mnStac}" 
-        TextOptions.TextRenderingMode="ClearType"   
+        Icon="{DynamicResource mnStac}"
+        TextOptions.TextRenderingMode="ClearType"
         WindowStartupLocation="CenterScreen"
-        Loaded="Window_Loaded" 
+        Loaded="Window_Loaded"
         Closing="Form_Closing" >
     <Grid>
         <Grid.RowDefinitions>
@@ -117,7 +117,7 @@
                             <FlowDocument Name="PART_FDoc" Background="White" IsOptimalParagraphEnabled="True">
                             </FlowDocument>
                         </FlowDocumentScrollViewer>
-                        <Slider HorizontalAlignment="Left" Name="PART_Slider" Grid.Row="1" VerticalAlignment="Top" Width="25" Orientation="Vertical" TickPlacement="TopLeft" 
+                        <Slider HorizontalAlignment="Left" Name="PART_Slider" Grid.Row="1" VerticalAlignment="Top" Width="25" Orientation="Vertical" TickPlacement="TopLeft"
                                 Height="700" Maximum="25" SmallChange="0.5" IsSnapToTickEnabled="True" IsSelectionRangeEnabled="True" AutoToolTipPlacement="BottomRight" IsDirectionReversed="True"
                                 ValueChanged="PART_Slider_ValueChanged" Grid.ColumnSpan="2" Margin="0,0,0,-116" />
                     </Grid>
@@ -175,7 +175,7 @@
                                 </StackPanel>
                             </Button>
                             <Separator></Separator>
-                            <ToggleButton Click="PART_Button_Language_Click" 
+                            <ToggleButton Click="PART_Button_Language_Click"
                                           IsChecked="{Binding Source={StaticResource LabelLang}, Path=Tag}"
                                           Style="{StaticResource StyleToggleButton}">
                                 <StackPanel Orientation="Horizontal">
@@ -198,11 +198,11 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>                                                 
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <my2:UserPole_ComboBox Name="PART_PdfComboBox" PROP_Description="Наименование документа:"/>
-                        <telerik:RadPdfViewerToolBar  RadPdfViewer="{Binding ElementName=pdfViewer, Mode=OneTime}" 
+                        <telerik:RadPdfViewerToolBar  RadPdfViewer="{Binding ElementName=pdfViewer, Mode=OneTime}"
                                                       SignaturePanel="{Binding ElementName=signaturePanel, Mode=OneTime}" Grid.Row="1"
                                                       HasOpenButton="False" HasSignatureButton="False"/>
                         <telerik:SignaturePanel  x:Name="signaturePanel" PdfViewer="{Binding ElementName=pdfViewer, Mode=OneWay}" Grid.Row="2"/>

@@ -50,7 +50,6 @@ namespace wpfGeneral.UserStruct
         /// <summary>СВОЙСТВО Теги (в json)</summary>
         public string PROP_xInfo { get; set; }
 
-
         /// <summary>СВОЙСТВО Тип протокола</summary>
         public MyTipProtokol PROP_TipProtokol { get; set; }
 
@@ -66,7 +65,7 @@ namespace wpfGeneral.UserStruct
         /// <summary>Переменная делегата Отмена Удаления протокола</summary>
         public callbackEvent OnRestore;
 
-        /// <summary>КОНСТРУКТОР</summary>       
+        /// <summary>КОНСТРУКТОР</summary>
         public UserProtokol()
         {
             OnDelete = new callbackEvent(MET_Delete);
@@ -74,7 +73,7 @@ namespace wpfGeneral.UserStruct
         }
 
         ///<summary>МЕТОД Конвертация данных Protokol из DataReader</summary>
-        /// <param name="pDataReader">Поток данных из SQL</param> 
+        /// <param name="pDataReader">Поток данных из SQL</param>
         private void MET_LoadDataReader(IDataRecord pDataReader)
         {
             try
@@ -101,39 +100,36 @@ namespace wpfGeneral.UserStruct
         }
 
         /// <summary>МЕТОД Сохраняем протокол</summary>
-        /// <param name="pProtokol">Текст протокола</param> 
-        /// <param name="pxDateUp">Дата изменения протокола</param> 
-        /// <param name="pxUserUp">Кто изменил протокол</param> 
-        /// <param name="pDate">Дата события протокола</param> 
-        /// <param name="pxDelete">Признак удаления протокола</param> 
+        /// <param name="pProtokol">Текст протокола</param>
+        /// <param name="pxDateUp">Дата изменения протокола</param>
+        /// <param name="pxUserUp">Кто изменил протокол</param>
+        /// <param name="pDate">Дата события протокола</param>
+        /// <param name="pxDelete">Признак удаления протокола</param>
         public void MET_Save(string pProtokol, DateTime pxDateUp, int pxUserUp, DateTime pDate, int pxDelete = 0)
-        {                           
-            PROP_Protokol = pProtokol;  
+        {
+            PROP_Protokol = pProtokol;
             PROP_xDateUp = pxDateUp;
-            PROP_xUserUp = pxUserUp;    
+            PROP_xUserUp = pxUserUp;
             PROP_pDate = pDate;
             PROP_xDelete = pxDelete;
         }
 
-        /// <summary>МЕТОД Удаляем протокол</summary>        
+        /// <summary>МЕТОД Удаляем протокол</summary>
         public void MET_Delete()
         {
             if (PROP_xDelete == 0)
             {
-                PROP_xDelete = 1;                            
-
+                PROP_xDelete = 1;
                 // Обновим логи
                 MET_ChangeLogs(MyGlo.User, "Удалён");
-
                 string _StrSql = MyQuery.MET_Protokol_Update_2(PROP_Cod, PROP_xDelete, PROP_xDateUp, PROP_xUserUp,
                         PROP_TipProtokol.PROP_Prefix, PROP_xLog);
-
                 // Обновим протокол в SQL
-                MySql.MET_QueryNo(_StrSql);              
+                MySql.MET_QueryNo(_StrSql);
             }
         }
 
-        /// <summary>МЕТОД Отмена Удаления протокола</summary>        
+        /// <summary>МЕТОД Отмена Удаления протокола</summary>
         public void MET_Restore()
         {
             if (PROP_xDelete == 1)
@@ -143,18 +139,16 @@ namespace wpfGeneral.UserStruct
                 PROP_xUserUp = MyGlo.User;
                 // Обновим логи
                 MET_ChangeLogs(MyGlo.User, "Изменён");
-
                 string _StrSql = MyQuery.MET_Protokol_Update_2(PROP_Cod, PROP_xDelete, PROP_xDateUp, PROP_xUserUp,
                         PROP_TipProtokol.PROP_Prefix, PROP_xLog);
-
                 // Обновим протокол в SQL
                 MySql.MET_QueryNo(_StrSql);
             }
         }
 
         /// <summary>МЕТОД Изменяем логи xLog</summary>
-        /// <param name="pUser">Кто создал/изменил протокол</param> 
-        /// <param name="pTipLog">Тип лога Создан, Изменён, Удалён</param> 
+        /// <param name="pUser">Кто создал/изменил протокол</param>
+        /// <param name="pTipLog">Тип лога Создан, Изменён, Удалён</param>
         public void MET_ChangeLogs1(int pUser, string pTipLog)
         {
             string _jLog = PROP_xLog;
@@ -173,7 +167,6 @@ namespace wpfGeneral.UserStruct
                     Ver = ""
                 };
                 _ListLogs.Add(_Log);
-
                 // Если ВОЗМОЖНО менялся протокол
                 if (PROP_xDateUp > PROP_pDate)
                 {
@@ -205,7 +198,6 @@ namespace wpfGeneral.UserStruct
                     _ListLogs.Add(_Log);
                 }
             }
-
             // Берем последний лог и смотрим тип, кто и когда его менял
             _Log = _ListLogs.LastOrDefault();
             if (_Log != null && _Log.Tip == pTipLog && _Log.User == pUser && _Log.Ver == MyMet.MET_Ver()
@@ -227,7 +219,6 @@ namespace wpfGeneral.UserStruct
                 };
                 _ListLogs.Add(_Log);
             }
-
             PROP_xLog = JsonConvert.SerializeObject(_ListLogs,
                             Formatting.None,
                             new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore });
@@ -235,31 +226,29 @@ namespace wpfGeneral.UserStruct
         }
 
         /// <summary>МЕТОД Изменяем логи xLog</summary>
-        /// <param name="pUser">Кто создал/изменил протокол</param> 
-        /// <param name="pTipLog">Тип лога Создан, Изменён, Удалён</param> 
+        /// <param name="pUser">Кто создал/изменил протокол</param>
+        /// <param name="pTipLog">Тип лога Создан, Изменён, Удалён</param>
         public void MET_ChangeLogs(int pUser, string pTipLog)
         {
             string _jLog = PROP_xLog;
-          
             // Если нет логов и это НЕ создание протокола
             if (string.IsNullOrEmpty(PROP_xLog) && pTipLog != "Создан")
             {
                 // СОЗДАЕМ первый лог (если изменили протокол вытаскиваем информацию из xDateUp, pDate)
                 PROP_xLog = UserLog.MET_LogAdd("", PROP_pDate < PROP_xDateUp ? PROP_pDate : PROP_xDateUp, "Создан", PROP_xUserUp, "-");
-                
                 // Если возможно ИЗМЕНЯЛСЯ протокол, добавляем изменение
                 if (PROP_xDateUp > PROP_pDate)
-                    PROP_xLog = UserLog.MET_LogAdd("", PROP_xDateUp, "Изменён", PROP_xUserUp, "-");               
+                    PROP_xLog = UserLog.MET_LogAdd("", PROP_xDateUp, "Изменён", PROP_xUserUp, "-");
             }
             else
-                PROP_xLog = UserLog.MET_LogAdd(PROP_xLog, DateTime.Now, pTipLog);         
+                PROP_xLog = UserLog.MET_LogAdd(PROP_xLog, DateTime.Now, pTipLog);
         }
 
         ///<summary>МЕТОД Фабрика объекта Protokol</summary>
-        /// <param name="pTip">Тип протокола</param> 
-        /// <param name="pCodApstac">Код посещения</param> 
+        /// <param name="pTip">Тип протокола</param>
+        /// <param name="pCodApstac">Код посещения</param>
         /// <param name="pCodShablon">Код шаблона</param>
-        /// <param name="pIndex">Индекс протокола</param> 
+        /// <param name="pIndex">Индекс протокола</param>
         public static UserProtokol MET_FactoryProtokol(eTipDocum pTip, decimal pCodApstac, int pCodShablon, int pIndex)
         {
             // Коллекция Protokol
@@ -267,7 +256,7 @@ namespace wpfGeneral.UserStruct
             //  Ищем в коллекции Protokol по типу, коду Apstac, номеру шаблона и индексу
             UserProtokol _Value = _Protokol.FirstOrDefault(p => p.PROP_TipProtokol.PROP_TipDocum == pTip
                 && p.PROP_CodApstac == pCodApstac && p.PROP_NumShablon == pCodShablon && p.PROP_pIndex == pIndex);
-            // Если не нашли, то пытаемся Protokol создать 
+            // Если не нашли, то пытаемся Protokol создать
             if (_Value == null)
             {
                 _Value = new UserProtokol();
@@ -293,15 +282,15 @@ namespace wpfGeneral.UserStruct
         }
 
         /// <summary>МЕТОД Фабрика объекта Protokol</summary>
-        /// <param name="pTip">Тип протокола</param> 
-        /// <param name="pCod">Код протокола</param> 
+        /// <param name="pTip">Тип протокола</param>
+        /// <param name="pCod">Код протокола</param>
         public static UserProtokol MET_FactoryProtokol(eTipDocum pTip, int pCod)
         {
             // Коллекция Protokol
             List<UserProtokol> _Protokol = ((VirtualModul)MyGlo.Modul).PUB_Protokol;
             //  Ищем в коллекции Protokol по типу и коду протокола
             UserProtokol _Value = _Protokol.FirstOrDefault(p => p.PROP_TipProtokol.PROP_TipDocum == pTip && p.PROP_Cod == pCod);
-            // Если не нашли, то пытаемся Protokol создать 
+            // Если не нашли, то пытаемся Protokol создать
             if (_Value == null)
             {
                 _Value = new UserProtokol();
@@ -327,8 +316,8 @@ namespace wpfGeneral.UserStruct
         }
 
         /// <summary>МЕТОД Фабрика Массовая загрузка всех объектов Protokol одного посещения/стационара</summary>
-        /// <param name="pTip">Тип протокола</param> 
-        /// <param name="pCodApstacKL">Код посещения/пациента</param> 
+        /// <param name="pTip">Тип протокола</param>
+        /// <param name="pCodApstacKL">Код посещения/пациента</param>
         /// <param name="pTipFind">Ищем по CodApstac или по KL</param>
         public static bool MET_FactoryProtokolArray(eTipDocum pTip, decimal pCodApstacKL, string pTipFind = "CodApstac")
         {
@@ -347,13 +336,10 @@ namespace wpfGeneral.UserStruct
                     _Protokol.Add(_Value);
                 }
                 _SqlDataReader.Close();
-
                 // Загружаем все заголовки шаблонов ListShablon по загруженным протоколам
                 UserListShablon.MET_FactoryListShablonArray(pTip);
-
                 // Загружаем все заголовки шаблонов Shablon по загруженным протоколам
                 UserShablon.MET_FactoryShablonArray(pTip);
-
                 return true;
             }
             catch (Exception ex)

@@ -12,7 +12,7 @@ namespace wpfGeneral.UserWindows
     {
         private ComboBox PRI_ComboBox_1;
         private CheckBox PRI_CheckBox_1;
-        
+
         /// <summary>СВОЙСТВО Код метода ВМП</summary>
         public int PROP_IDHM { get; private set; }
 
@@ -21,7 +21,6 @@ namespace wpfGeneral.UserWindows
 
         /// <summary>Начальный фильтр SQL</summary>
         private readonly string PRI_Filtr = "";
-
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_MetodVMP(string pDiag = "")
@@ -114,7 +113,6 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox_1.IsChecked = true;
             PRI_CheckBox_1.Click += PART_CheckBox_Click;
             _SPanel_1.Children.Add(PRI_CheckBox_1);
-
             PRO_Where = $" TipVMP = {PRI_ComboBox_1.SelectedValue}";
             MET_Filter();
         }
@@ -123,13 +121,10 @@ namespace wpfGeneral.UserWindows
         private void PART_CheckBox_Click(object sender, RoutedEventArgs e)
         {
             PRI_ComboBox_1.IsEnabled = PRI_CheckBox_1.IsChecked == true;
-
             PRO_Where = "";
-
             // Фильтр по отделению стационара
             if (PRI_ComboBox_1.IsEnabled)
                 PRO_Where += $" TipVMP = {PRI_ComboBox_1.SelectedValue}";
-
             MET_Filter();
         }
 
@@ -137,25 +132,23 @@ namespace wpfGeneral.UserWindows
         private void PART_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             PRO_Where = "";
-
             // Фильтр по отделению стационара
             if (PRI_ComboBox_1.IsEnabled)
                 PRO_Where += $" TipVMP = {PRI_ComboBox_1.SelectedValue}";
-
             MET_Filter();
         }
-        
+
+
+
         /// <summary>МЕТОД Выбор данных</summary>
         protected override void MET_Select()
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {
                 DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
-                
                 PROP_IDHM = Convert.ToInt16(_DataRowView.Row["IDHM"]);
                 PROP_HMName = Convert.ToString(_DataRowView.Row["HMName"]);
                 PROP_Return = true;

@@ -12,22 +12,19 @@ namespace wpfGeneral.UserWindows
     public class UserWindow_Laboratory : VirtualUserWindow
     {
         private DatePicker PRI_DatePicker_1;
-      
         /// <summary>Дата исследования</summary>
         private string PRI_Dat;
         /// <summary>ФИО пациента</summary>
         private string PRI_Fio;
         /// <summary>Код шаблона</summary>
-        private int PRI_ShablLab = 1000;    
+        private int PRI_ShablLab = 1000;
         /// <summary>Таймер для задержки перед запросом</summary>
         private DispatcherTimer PRI_Timer;
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_Laboratory()
         {
             // Ставим Русский язык
             MyMet.MET_Lаng();
-
             // Имя таблицы
             PRO_TableName = "Laboratory";
             // Если строка ввода ищет через SQL
@@ -50,7 +47,7 @@ namespace wpfGeneral.UserWindows
             // Показываем в подсказке
             PRO_PoleBarPanel = 1;
         }
-                
+
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
@@ -104,8 +101,7 @@ namespace wpfGeneral.UserWindows
             PRI_DatePicker_1.DisplayDateEnd = DateTime.Today;
             PRI_DatePicker_1.DisplayDateStart = DateTime.Parse("07/07/2020");
             PRI_DatePicker_1.SelectedDateChanged += delegate { PRI_Timer.Stop(); MET_SqlFilter(); };
-            _SPanel_1.Children.Add(PRI_DatePicker_1);            
-
+            _SPanel_1.Children.Add(PRI_DatePicker_1);
             PRI_Timer = new DispatcherTimer();
             PRI_Timer.Interval = new TimeSpan(0, 0, 1);
             PRI_Timer.Tick += delegate { PRI_Timer.Stop(); MET_SqlFilter(); };
@@ -118,28 +114,23 @@ namespace wpfGeneral.UserWindows
         {
             // Наше условие фильтра
             PRO_TextFilter = (sender as TextBox)?.Text;
-
             // Перевод строки фильтра
             PRO_TextFilterTransliter = PRO_Transliter.MET_Replace(PRO_TextFilter);
             // Смотрим есть ли спец символы, кторые бы запортили SQL запрос
             PRO_TextFilter = PRO_TextFilter.Replace("'", "''");
-
             PRI_Timer.Stop();
             PRI_Timer.Start();
         }
-        
+
         /// <summary>МЕТОД Фильтруем данные для больших таблиц</summary>
         protected override void MET_SqlFilter()
         {
             // Учитывать дату исследования или показывать все исследования
             PRI_Dat = $"'{PRI_DatePicker_1.SelectedDate:yyyy-MM-dd}'";
-           
             // ФИО пациента
             PRI_Fio = PRO_TextFilter;
-                     
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
-
             // Выделяем первую строку
             if (PRO_DataView != null && PRO_DataView.Table.Rows.Count != -1)
                 PART_DataGrid.SelectedIndex = 0;
@@ -150,7 +141,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список пациентов
             try
             {
@@ -163,5 +153,6 @@ namespace wpfGeneral.UserWindows
             }
             Close();
         }
-    } 
+    }
+
 }

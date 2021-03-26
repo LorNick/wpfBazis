@@ -64,7 +64,7 @@ namespace wpfGeneral.UserWindows
         /// <param name="pColumn">Редактируемый столбец</param>
         /// <remarks>Не реализованно</remarks>
         protected override bool MET_SqlEdit(DataRow pRow, string pStrValue, DataGridColumn pColumn)
-        {           
+        {
             return true;
         }
 
@@ -109,9 +109,9 @@ namespace wpfGeneral.UserWindows
             }
         }
 
-        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
+        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static new bool MET_Access()
-        {            
+        {
             if (!MyGlo.Admin)
             {
                 MessageBox.Show("У вас нет доступа.");

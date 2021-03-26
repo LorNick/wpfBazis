@@ -2,34 +2,32 @@
              xmlns="clr-namespace:wpfGeneral.UserControls"
              xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"   
-             mc:Ignorable="d"  
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              x:Name="UserPole"
              FontSize="14">
-    
-        <p:BulletDecorator Margin="0,2,2,2" VerticalAlignment="Center">
-            <p:BulletDecorator.Bullet>
-                <p:Label Name="PART_Label" Height="24" 
-                         HorizontalAlignment="Left"  Foreground="Navy" 
-                         Content="UserPoleText"
-                         VerticalContentAlignment="Center" Padding="5,0" 
-                         HorizontalContentAlignment="Right" />
-            </p:BulletDecorator.Bullet>
-       
-            <p:TextBox Name="PART_TextBox" 
-                       Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}" 
-                       AcceptsReturn="True"
-                       TextWrapping="Wrap" 
-                       MinWidth="20"
-                       PreviewTextInput="PART_TextBox_PreviewTextInput"
-                       p:SpellCheck.IsEnabled="True" 
-                       Language="ru-ru"
-                       p:ScrollViewer.VerticalScrollBarVisibility="Auto"
-                       p:ScrollViewer.CanContentScroll="True"
-                       TextChanged="PART_TextBox_TextChanged" 
-                       VerticalContentAlignment="Stretch" 
-                       LostFocus="PART_TextBox_LostFocus">
-            </p:TextBox>       
-        </p:BulletDecorator>   
+    <p:BulletDecorator Margin="0,2,2,2" VerticalAlignment="Center">
+        <p:BulletDecorator.Bullet>
+            <p:Label Name="PART_Label" Height="24"
+                        HorizontalAlignment="Left"  Foreground="Navy"
+                        Content="UserPoleText"
+                        VerticalContentAlignment="Center" Padding="5,0"
+                        HorizontalContentAlignment="Right" />
+        </p:BulletDecorator.Bullet>
+        <p:TextBox Name="PART_TextBox"
+                    Text="{p:Binding ElementName=UserPole, Path=PROP_Text, Mode=TwoWay}"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    MinWidth="20"
+                    PreviewTextInput="PART_TextBox_PreviewTextInput"
+                    p:SpellCheck.IsEnabled="True"
+                    Language="ru-ru"
+                    p:ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    p:ScrollViewer.CanContentScroll="True"
+                    TextChanged="PART_TextBox_TextChanged"
+                    VerticalContentAlignment="Stretch"
+                    LostFocus="PART_TextBox_LostFocus">
+        </p:TextBox>
+    </p:BulletDecorator>
 </VirtualPole>

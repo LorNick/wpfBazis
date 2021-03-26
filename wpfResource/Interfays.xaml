@@ -9,7 +9,7 @@
         <Setter Property="Height" Value="28"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
     </Style>
-    
+
     <!--Стиль для Экспандера-->
     <Style TargetType="Expander">
         <Setter Property="Background">
@@ -21,14 +21,14 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <!--Стиль для Бордюра 1-->
     <Style TargetType="Border" x:Key="Border_1">
         <Setter Property="BorderThickness" Value="0.5"/>
-        <Setter Property="Margin" Value="0, 2, 0, 0"/> 
+        <Setter Property="Margin" Value="0, 2, 0, 0"/>
         <Setter Property="Background" Value="GhostWhite"/>
     </Style>
-    
+
     <!--Стиль для Бордюра 2-->
     <Style TargetType="Border" x:Key="Border_2">
         <Setter Property="BorderThickness" Value="0.5"/>
@@ -58,8 +58,8 @@
     <Style TargetType="telerik:RadWatermarkTextBox">
         <Style.Triggers>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="Background" Value="#FFFFFFC0"/>                               
-            </Trigger>          
+                <Setter Property="Background" Value="#FFFFFFC0"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
 
@@ -89,7 +89,7 @@
         <Setter Property="ContentTemplate">
             <Setter.Value>
                 <DataTemplate>
-                    <TextBlock TextWrapping="Wrap" Text="{Binding}" TextAlignment="Center"></TextBlock>  
+                    <TextBlock TextWrapping="Wrap" Text="{Binding}" TextAlignment="Center"></TextBlock>
                 </DataTemplate>
             </Setter.Value>
         </Setter>
@@ -116,10 +116,10 @@
     </Style>
 
     <!--Стили для DataGrid (таблиц)-->
-    <Style TargetType="DataGrid"> 
+    <Style TargetType="DataGrid">
         <Setter Property="AutoGenerateColumns" Value="False"/>
         <Setter Property="CanUserReorderColumns" Value="False"/>
-        <Setter Property="CanUserResizeColumns" Value="False"/>      
+        <Setter Property="CanUserResizeColumns" Value="False"/>
         <Setter Property="HeadersVisibility" Value="Column"/>
         <Setter Property="AlternationCount" Value="2"/>
         <Setter Property="IsReadOnly" Value="True"/>
@@ -143,7 +143,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
      <!--Стили для DataGrid (таблиц)-->
     <Style TargetType="{x:Type DataGrid}" x:Key="DataGridReestr">
         <Setter Property="VerticalGridLinesBrush" Value="#C6D7C5"/>

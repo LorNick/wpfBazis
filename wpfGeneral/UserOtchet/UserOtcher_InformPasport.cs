@@ -4,10 +4,7 @@ using System.Windows.Media.Imaging;
 using wpfGeneral.UserNodes;
 using wpfStatic;
 using wpfGeneral.UserWindows;
-using System.Windows;
 using Newtonsoft.Json.Linq;
-using wpfGeneral.UserStruct;
-using System.Collections.Generic;
 
 namespace wpfGeneral.UserOtchet
 {
@@ -38,12 +35,11 @@ namespace wpfGeneral.UserOtchet
             // Заполняем строку данными запроса
             MySql.MET_DsAdapterFill(MyQuery.kbol_Select_2(MyGlo.KL), "Shablon");
             PRO_RowShablon = MyGlo.DataSet.Tables["Shablon"].Rows[0];
-
             // Номер амбулаторной карты
             xVopr = "Паспортные данные амбулаторного больного №";
             xOtvet = MET_PoleStr("NomAK");
             xAligment = 2; xParagraph = true;
-            MET_Print();            
+            MET_Print();
             // ФИО
             xVopr = " Пациент:";
             xOtvet = MyGlo.FIO;
@@ -91,14 +87,15 @@ namespace wpfGeneral.UserOtchet
                 xEnter = 1;
                 xParagraph = true;
                 MET_Print();
-            }            
+            }
+
             // Cтраховоя компания
             if (MET_PoleStr("NameSCom") != "")
             {
                 xVopr = " Страховая компания:";
                 xOtvet = MET_PoleStr("NameSCom");
                 xParagraph = true;
-                MET_Print();                
+                MET_Print();
                 // Регион страховой компании
                 if (MET_PoleStr("NameReg") != "")
                 {
@@ -124,7 +121,8 @@ namespace wpfGeneral.UserOtchet
                     xParagraph = true;
                     MET_Print();
                 }
-            }                     
+            }
+
             // ЛПУ приписки
             if (MET_PoleStr("NameSCom") != "")
             {
@@ -132,7 +130,8 @@ namespace wpfGeneral.UserOtchet
                 xOtvet = MET_PoleStr("LPU");
                 xParagraph = true;
                 MET_Print();
-            }     
+            }
+
             // Наименование документа удостоверяющего личность
             if (MET_PoleStr("DocName") != "")
             {
@@ -263,17 +262,14 @@ namespace wpfGeneral.UserOtchet
             {
                 xEnter = 1;
                 MET_Print();
-
                 // Служебная информация
                 xVopr = " Служебная информация:";
-                xParagraph = true;               
+                xParagraph = true;
                 MET_Print();
-
                 // Если есть логи
                 if (!string.IsNullOrEmpty(MET_PoleStr("xLog")))
                 {
                     JObject _Json = JObject.Parse(MET_PoleStr("xLog"));
-
                     // Кто создал карту
                     xVopr = " Пользователь, создавший карту:";
                     try
@@ -293,26 +289,22 @@ namespace wpfGeneral.UserOtchet
                     xEnter = 1; xTab = 1;
                     MET_Print();
                     Button _ButtonLog = new Button();
-
                     StackPanel _StackPanel = new StackPanel();
                     _StackPanel.Orientation = Orientation.Horizontal;
-
                     Image _Image = new Image();
                     _Image.Height = 20;
                     _Image.Width = 20;
                     _Image.Source = (BitmapImage)FindResource("mnLog");
                     _StackPanel.Children.Add(_Image);
-
                     Label _Label = new Label();
                     _Label.Content = "показать логи";
                     _StackPanel.Children.Add(_Label);
-
                     _ButtonLog.Content = _StackPanel;
                     _ButtonLog.ToolTip = "Показать логи изменения карточки пациента";
                     _ButtonLog.Focusable = false;
                     _ButtonLog.Tag = 1;
                     _ButtonLog.Click += delegate
-                    {                       
+                    {
                         // Открываем Форму Карточка Log
                         UserWindow_DocumLog _WinLog = new UserWindow_DocumLog(MET_PoleStr("xLog"));
                         _WinLog.Show();
@@ -320,7 +312,6 @@ namespace wpfGeneral.UserOtchet
 
                     PRO_Paragraph.Inlines.Add(_ButtonLog);
                 }
-                
                 // KL
                 xVopr = "  KL:";
                 xOtvet = MyGlo.KL.ToString();

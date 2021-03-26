@@ -10,7 +10,6 @@ namespace wpfGeneral.UserWindows
         /// <summary>СВОЙСТВО Наименование МНН препарата</summary>
         public string PROP_Value { get; private set; }
 
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_LecMNN()
         {
@@ -52,13 +51,12 @@ namespace wpfGeneral.UserWindows
             string[] _mName = { "", "Препарат"  };
             return _mName[pIndex];
         }
-        
+
         /// <summary>МЕТОД Выбор данных</summary>
         protected override void MET_Select()
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {

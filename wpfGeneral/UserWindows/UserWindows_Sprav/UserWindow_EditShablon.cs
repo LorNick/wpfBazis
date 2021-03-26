@@ -17,7 +17,6 @@ using wpfGeneral.UserControls;
 
 namespace wpfGeneral.UserWindows
 {
-
     /// <summary>КЛАСС Редактор шаблонов</summary>
     public class UserWindow_EditShablon: VirtualUserWindow
     {
@@ -48,8 +47,7 @@ namespace wpfGeneral.UserWindows
         private static extern bool ShowWindow(IntPtr handle, int cmdShow);      // Отображает данное окно впереди, даже если было свернуто
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-
+        
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_EditShablon()
         {
@@ -67,7 +65,6 @@ namespace wpfGeneral.UserWindows
             PRO_PoleFiltr = "Names";
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
-
             // Создаем фильтр
             MET_CreateFiltr();
             // Открываем таблицу
@@ -155,34 +152,32 @@ namespace wpfGeneral.UserWindows
             // Дата с
             PRI_DatePicker_1 = new Tel.RadDateTimePicker();
             PRI_DatePicker_1.SelectedValue = DateTime.Parse("01/01/2008");
-            PRI_DatePicker_1.SelectionChanged += delegate { MET_SqlFilter(); };           
+            PRI_DatePicker_1.SelectionChanged += delegate { MET_SqlFilter(); };
             _SPanel_2.Children.Add(PRI_DatePicker_1);
             Label _Label_3 = new Label();
             _Label_3.Content = " по :";
             _Label_3.Foreground = Brushes.Navy;
             _SPanel_2.Children.Add(_Label_3);
             // Дата по
-            PRI_DatePicker_2 = new Tel.RadDateTimePicker();           
+            PRI_DatePicker_2 = new Tel.RadDateTimePicker();
             PRI_DatePicker_2.SelectedValue = DateTime.Parse("01/01/2222");
             PRI_DatePicker_2.SelectionChanged += delegate { MET_SqlFilter(); };
             _SPanel_2.Children.Add(PRI_DatePicker_2);
-
             // UserCod
             PRI_UserCod = new UserPole_Text();
             PRI_UserCod.PROP_MinWidthDescription = 90;
             PRI_UserCod.PROP_WidthText = 100;
             PRI_UserCod.PROP_Description = "UserCod";
             _SPanel_2.Children.Add(PRI_UserCod);
-
             // Скрыть нулевые протоколы
             PRI_CheckBox_2 = new CheckBox();
             PRI_CheckBox_2.Margin = new Thickness(10, 0, 0, 0);
             PRI_CheckBox_2.Content = $"скрыть нулевые протоколы";
-            PRI_CheckBox_2.VerticalAlignment = VerticalAlignment.Center;           
+            PRI_CheckBox_2.VerticalAlignment = VerticalAlignment.Center;
             PRI_CheckBox_2.Click += delegate { MET_SqlFilter(); };
             _SPanel_2.Children.Add(PRI_CheckBox_2);
         }
-        
+
         /// <summary>СОБЫТИЕ Нажали на кнопку "Выгрузка шаблона в Excel"</summary>
         protected virtual void PRI_ButtonToExcel_1_Click(object sender, RoutedEventArgs e)
         {
@@ -205,13 +200,10 @@ namespace wpfGeneral.UserWindows
                     _eTip = eTipDocum.Kdl;
                     break;
             }
-
             string _NameFile = $"{_TipDoc}_{_CodShablon}";
             string _PathFile = $@"C:\Shablons\{_NameFile}.xlsx";
-            
             Excel.Workbook _WorkBook;
             Excel.Application _ExcelApp;
-
             Process[] _Processes = Process.GetProcesses();
             // Выбираем только наши
             IEnumerable<Process> _ProcsBazis = _Processes.Where(p => p.ProcessName == "EXCEL" && p.MainWindowTitle == $"{_NameFile}.xlsx - Excel");
@@ -223,7 +215,6 @@ namespace wpfGeneral.UserWindows
                 ShowWindow(_Process.MainWindowHandle, 1);
                 return;
             }
-         
             _ExcelApp = new Excel.Application();
 
             bool _FileNew;
@@ -240,13 +231,10 @@ namespace wpfGeneral.UserWindows
                 _ExcelApp.Workbooks.Add(Type.Missing);
                 _FileNew = true;
             }
-            
             PRI_Shablons = UserShablon.MET_FactoryListShablon(_eTip, _CodShablon);
-            
             _WorkBook = _ExcelApp.Workbooks[1];
             _WorkBook.Saved = true;
             Excel.Worksheet _Sheet = (Excel.Worksheet) _WorkBook.Worksheets.Item[1];
-            
             // Рисуем заголовки
             int _y = 1;
             int _x = 1;
@@ -276,7 +264,6 @@ namespace wpfGeneral.UserWindows
             _Sheet.Cells[_y, _x++].Value = "xLua";
             _Sheet.Columns[_x].ColumnWidth = 22;
             _Sheet.Cells[_y, _x].Value = "xInfo";
-            
             // Заполняем данные
             _y = 2;
             foreach (var _Shablon in PRI_Shablons)
@@ -300,20 +287,15 @@ namespace wpfGeneral.UserWindows
                     _Sheet.Cells[_y, _x].Rows.RowHeight = 100;
                 _y++;
             }
-
             _Sheet.Name = DateTime.Now.ToString().Replace(':','.');
             _Sheet.Copy(Before: _WorkBook.Worksheets[1]);
-
             _Sheet = (Excel.Worksheet)_WorkBook.Worksheets.Item[1];
             _Sheet.Name = "Текущий";
-
             _ExcelApp.DisplayAlerts = true;
-
             if (_FileNew)
                 _WorkBook.SaveAs(_PathFile);
             else
                 _WorkBook.Save();
-
             _WorkBook.Activate();
             IntPtr _Handler1 = FindWindow(null, _ExcelApp.Caption);
             SetForegroundWindow(_Handler1);
@@ -342,16 +324,12 @@ namespace wpfGeneral.UserWindows
                     _eTip = eTipDocum.Kdl;
                     break;
             }
-
             var _TipProtokol = new MyTipProtokol(_eTip);
             string _NameFile = $"{_TipDoc}_{_CodShablon}";
             string _PathFile = $@"C:\Shablons\{_NameFile}.xlsx";
-
             Excel.Workbook _WorkBook;
             Excel.Application _ExcelApp;
-
             _ExcelApp = new Excel.Application();
-            
             FileInfo _FileInfo = new FileInfo(_PathFile);
             // Если нашли файл с текущим шаблоном
             if (!_FileInfo.Exists)
@@ -359,10 +337,9 @@ namespace wpfGeneral.UserWindows
                 MessageBox.Show($"Не найден файл: {_PathFile}", "Алё, чо грузить то?!");
                 return;
             }
-            
             _WorkBook = _ExcelApp.Workbooks.Open(_PathFile);
             Excel.Worksheet _Sheet = (Excel.Worksheet)_WorkBook.Worksheets.Item[1];
-            
+
             // Заполняем данные
             List<UserShablon> _ListShablons = new List<UserShablon>();
             int _y = 2;
@@ -390,7 +367,6 @@ namespace wpfGeneral.UserWindows
                     _Shablon.PROP_TipProtokol = _TipProtokol;
                     _Shablon.PROP_FlagEdit = false;
                     _y++;
-
                     _ListShablons.Add(_Shablon);
                 }
             }
@@ -401,11 +377,9 @@ namespace wpfGeneral.UserWindows
                 MessageBox.Show($"Ошибка загрузки в строке: {_y}, в столбце: {--_x}", "Ошибка");
                 return;
             }
-
             UserShablon.MET_FactoryListShablon(_eTip, _CodShablon);
             int _Remov = ((VirtualModul)MyGlo.Modul).PUB_Shablon.RemoveAll(p => p.PROP_ID == _CodShablon);
             ((VirtualModul)MyGlo.Modul).PUB_Shablon.AddRange(_ListShablons);
-
             _WorkBook.Close();
             _ExcelApp.Quit();
 
@@ -458,9 +432,7 @@ namespace wpfGeneral.UserWindows
                     _eTip = eTipDocum.Kdl;
                     break;
             }
-
             var _TipProtokol = new MyTipProtokol(_eTip);
-
             // Вопрос на загрузку
             if (MessageBox.Show($"Вы точно хотите загрузить {_CodShablon} шаблон на филиал?", "Вот это вопрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -469,20 +441,19 @@ namespace wpfGeneral.UserWindows
                 else
                     MessageBox.Show($"Что то пошло не так!", "Загружено в SQL", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-           
         }
 
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
             // Фильтр по UserCod
-            return MyQuery.MET_ListShablon_Select_5(PRI_ComboBox_1.SelectedValue.ToString(), 
-                PRI_DatePicker_1.DisplayDate, 
-                PRI_DatePicker_2.DisplayDate, 
-                PRI_UserCod.PROP_Text, 
+            return MyQuery.MET_ListShablon_Select_5(PRI_ComboBox_1.SelectedValue.ToString(),
+                PRI_DatePicker_1.DisplayDate,
+                PRI_DatePicker_2.DisplayDate,
+                PRI_UserCod.PROP_Text,
                 PRI_CheckBox_2.IsChecked);
         }
-        
+
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
@@ -511,7 +482,7 @@ namespace wpfGeneral.UserWindows
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
-        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
+        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static new bool MET_Access()
         {
             if (!MyGlo.Admin)
@@ -527,7 +498,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect || PART_DataGrid.SelectedItem == null)
                 return;
-
             DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
             int _CodShablon = Convert.ToInt16(_DataRowView.Row["Cod"]);
             string _NameSha = Convert.ToString(_DataRowView.Row["Name"]);
@@ -549,9 +519,7 @@ namespace wpfGeneral.UserWindows
                     _eTip = eTipDocum.Kdl;
                     break;
             }
-
             var _TipProtokol = new MyTipProtokol(_eTip);
-
             UserWindow_EditProtokol _WinSpr = new UserWindow_EditProtokol(_TipProtokol, _CodShablon, _NameSha, _ImageSha, PRI_DatePicker_1.DisplayDate, PRI_DatePicker_2.DisplayDate, PRI_UserCod.PROP_Text);
             _WinSpr.Show();
         }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using wpfGeneral.UserStruct;
 using WebSocket4Net;
 using SuperSocket.ClientEngine;
@@ -9,8 +6,6 @@ using System.Threading;
 using Newtonsoft.Json.Linq;
 using System.Windows.Threading;
 using wpfGeneral.UserControls;
-using System.Windows.Input;
-using System.Windows;
 
 namespace wpfGeneral.UserFormShablon
 {
@@ -31,7 +26,6 @@ namespace wpfGeneral.UserFormShablon
         public UseFormShablon_Voice(UserDocument pDocument)
         {
             PROP_Docum = pDocument;
-
             if (!PROP_Docum.PROP_ListShablon.PROP_MyFormat.MET_If("Voice"))
                 return;
 
@@ -92,7 +86,7 @@ namespace wpfGeneral.UserFormShablon
         {
             MET_LogAdd("Ошибка", e.ToString());
         }
-               
+
         //private void PART_Button_Delete_Click(object sender, RoutedEventArgs e)
         //{
         //    string _M = @"{

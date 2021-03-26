@@ -68,7 +68,7 @@ namespace wpfGeneral.UserWindows
             PART_DataGrid.Columns.RemoveAt(0);
             PART_DataGrid.Columns.RemoveAt(0);
         }
-       
+
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
@@ -184,12 +184,11 @@ namespace wpfGeneral.UserWindows
                 {
                     DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
                     if (_DataRowView == null)
-                        return;                   
+                        return;
                     decimal _KL = Convert.ToDecimal(_DataRowView.Row["KL"]);
                     decimal _IND = Convert.ToDecimal(_DataRowView.Row["CodApstac"]);
                     MySql.MET_DsAdapterFill(MyQuery.log_wpfBazis_Select_2(_KL, _IND), "TableRezult");
                     DataTable _Table = MyGlo.DataSet.Tables["TableRezult"];
-
                     if (_Table.Rows.Count == 0)
                     {
                         MessageBox.Show("Данной записи на текущем сервере нет, возможно эта запись сегодня создана на другом сервере", "Внимание!");
@@ -214,13 +213,11 @@ namespace wpfGeneral.UserWindows
                             _MyTipProtokol = new MyTipProtokol(eTipDocum.Null);     // модуль истории болезни
                             break;
                     }
-
                     // У не админов доступ только в историю болезни
                     if (!MyGlo.Admin)
                     {
                         _MyTipProtokol = new MyTipProtokol(eTipDocum.Null);
                     }
-
                     // Пытаемся открыть новую копию программы, для редактирования протоколов
                     MyMet.MET_EditWindows(_MyTipProtokol.PROP_TipDocum, _IND, _KL);
                     PROP_Return = true;
@@ -241,18 +238,16 @@ namespace wpfGeneral.UserWindows
             // Если нет данных, то выходим
             if (string.IsNullOrWhiteSpace(_Text))
                 return;
-
             TextBox _TextBox = new TextBox();
             _TextBox.MaxWidth = 1000;
             _TextBox.MaxHeight = 500;
             _TextBox.TextWrapping = TextWrapping.Wrap;
             _TextBox.Text = _Text;
             _TextBox.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
-
-            var _StackPanel = e.DetailsElement.FindName("PART_DetailsPanel") as StackPanel;           
+            var _StackPanel = e.DetailsElement.FindName("PART_DetailsPanel") as StackPanel;
             _StackPanel?.Children.Add(_TextBox);
         }
-        
+
         /// <summary>МЕТОД Фильтруем данные для больших таблиц</summary>
         protected override void MET_SqlFilter()
         {
@@ -283,17 +278,15 @@ namespace wpfGeneral.UserWindows
             // Фильтр по Date
             if (PRI_FiltrDateN.PROP_Text != "" && PRI_FiltrDateK.PROP_Text != "")
                     PRO_SqlWhere += $" and cast(LogDate as date) between '{PRI_FiltrDateN.PROP_Date:MM.dd.yyyy}' and '{PRI_FiltrDateK.PROP_Date:MM.dd.yyyy}'";
-            
             // При старте, ниже указанные фильтры не учитываем
             string _Sort = "";
             if (PRO_DataView != null)
                 _Sort = PRO_DataView.Sort;
-
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
-        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
+        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static new bool MET_Access()
         {
             if (!MyGlo.Admin)

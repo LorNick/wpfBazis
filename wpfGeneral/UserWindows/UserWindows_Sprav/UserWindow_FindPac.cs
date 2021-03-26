@@ -9,14 +9,13 @@ using wpfStatic;
 
 namespace wpfGeneral.UserWindows
 {
-
     /// <summary>КЛАСС Окно поиска пациента по Kbol, Apac, Apastac (В РАБОТЕ!!!)</summary>
     public class UserWindow_FindPac: VirtualUserWindow
     {
         /// <summary>Начальная дата</summary>
         private DatePicker PRI_DatePicker_1;
         /// <summary>Конечная дата</summary>
-        private DatePicker PRI_DatePicker_2;             
+        private DatePicker PRI_DatePicker_2;
         /// <summary>Таймер для задержки перед запросом</summary>
         private DispatcherTimer PRI_Timer;
         /// <summary>Тип базы</summary>
@@ -27,10 +26,10 @@ namespace wpfGeneral.UserWindows
         private string PRI_Tip;
         private string PRI_D1 = "01/01/2018";
         private string PRI_D2 = "01/01/2018";
-        
+
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_FindPac()
-        {            
+        {
             // Имя таблицы
             PRO_TableName = "FindPac";
             // Если строка ввода ищет через SQL
@@ -48,12 +47,12 @@ namespace wpfGeneral.UserWindows
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
             // Создаем фильтр
-            MET_CreateFiltr();            
+            MET_CreateFiltr();
             // Открываем таблицу
             MET_OpenForm();
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
-        }       
+        }
 
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
@@ -73,7 +72,7 @@ namespace wpfGeneral.UserWindows
         {
             PART_DataGrid.Columns[0].Width = 130;     // KL
             PART_DataGrid.Columns[1].Width = 250;     // ФИО пациента
-            PART_DataGrid.Columns[2].Width = 85;      // Дата р.            
+            PART_DataGrid.Columns[2].Width = 85;      // Дата р.
             PART_DataGrid.Columns[3].Width = 85;      // Поступил
             PART_DataGrid.Columns[4].Width = 85;      // Выписан
             PART_DataGrid.Columns[6].Width = 130;     // Врач
@@ -137,7 +136,6 @@ namespace wpfGeneral.UserWindows
             PRI_DatePicker_2.IsEnabled = true;
             PRI_DatePicker_2.SelectedDateChanged += delegate { PRI_Timer.Start(); };
             _SPanel_2.Children.Add(PRI_DatePicker_2);
-
             PRI_Timer = new DispatcherTimer();
             PRI_Timer.Interval = new TimeSpan(0, 0, 1);
             PRI_Timer.Tick += delegate { PRI_Timer.Stop(); MET_SqlFilter(); };
@@ -150,12 +148,10 @@ namespace wpfGeneral.UserWindows
         {
             // Наше условие фильтра
             PRO_TextFilter = (sender as TextBox)?.Text;
-
             // Перевод строки фильтра
             PRO_TextFilterTransliter = PRO_Transliter.MET_Replace(PRO_TextFilter);
             // Смотрим есть ли спец символы, кторые бы запортили SQL запрос
             PRO_TextFilter = PRO_TextFilter.Replace("'", "''");
-
             PRI_Timer.Stop();
             PRI_Timer.Start();
         }
@@ -164,7 +160,6 @@ namespace wpfGeneral.UserWindows
         protected override void MET_SqlFilter()
         {
             PRI_Tip = PRI_TipRadioButton.PROP_Text ?? "0";
-
             if (PART_DataGrid.Columns.Count > 0)
             {
                 switch (PRI_Tip)
@@ -201,13 +196,13 @@ namespace wpfGeneral.UserWindows
                         PART_DataGrid.Columns[8].Width = 80;
                         break;
                     case "3":   // параклиника parObsledov
-                        PART_DataGrid.Columns[3].Header = "Посещение";                       
+                        PART_DataGrid.Columns[3].Header = "Посещение";
                         PART_DataGrid.Columns[4].Visibility = Visibility.Collapsed;
                         PART_DataGrid.Columns[5].Visibility = Visibility.Visible;
                         PART_DataGrid.Columns[6].Visibility = Visibility.Visible;
                         PART_DataGrid.Columns[7].Header = "Cod";
                         PART_DataGrid.Columns[7].Visibility = Visibility.Visible;
-                        PART_DataGrid.Columns[7].Width = 80;     
+                        PART_DataGrid.Columns[7].Width = 80;
                         PART_DataGrid.Columns[8].Header = "Протокол";
                         PART_DataGrid.Columns[8].Visibility = Visibility.Visible;
                         PART_DataGrid.Columns[8].Width = 220;
@@ -226,11 +221,8 @@ namespace wpfGeneral.UserWindows
                 PRI_FIO = PRO_TextFilter;
                 PRI_Cod = null;
             }
-
             PRI_D1 = $"{PRI_DatePicker_1.SelectedDate:MM.dd.yyyy}";
             PRI_D2 = $"{PRI_DatePicker_2.SelectedDate:MM.dd.yyyy}";
-           
-
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
@@ -244,10 +236,8 @@ namespace wpfGeneral.UserWindows
                 DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
                 if (_DataRowView == null)
                     return;
-                
                 decimal _KL = Convert.ToDecimal(_DataRowView.Row["KL"]);
                 decimal _IND = Convert.ToDecimal(_DataRowView.Row["IND"]);
-
                 MyTipProtokol _MyTipProtokol;
                 switch (PRI_Tip)
                 {
@@ -264,13 +254,11 @@ namespace wpfGeneral.UserWindows
                         _MyTipProtokol = new MyTipProtokol(eTipDocum.Null);     // модуль истории болезни
                         break;
                 }
-
                 // У не админов доступ только в историю болезни
                 if (!MyGlo.Admin)
                 {
                     _MyTipProtokol = new MyTipProtokol(eTipDocum.Null);
                 }
-
                 // Пытаемся открыть новую копию программы, для редактирования протоколов
                 MyMet.MET_EditWindows(_MyTipProtokol.PROP_TipDocum, _IND, _KL);
                 PROP_Return = true;

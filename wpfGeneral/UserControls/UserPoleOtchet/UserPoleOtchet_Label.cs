@@ -15,7 +15,7 @@ namespace wpfGeneral.UserControls
                 PROP_Hide = true;
         }
 
-        /// <summary>МЕТОД Выводим в отчет</summary>        
+        /// <summary>МЕТОД Выводим в отчет</summary>
         public override TextElement MET_Print()
         {
             // Ответ

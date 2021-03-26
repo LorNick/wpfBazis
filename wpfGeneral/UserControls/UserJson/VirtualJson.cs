@@ -11,9 +11,8 @@ namespace wpfGeneral.UserControls
         #region ---- Protected Поля ----
         ///// <summary>Максимальное значение</summary>
         //protected double PRO_ValueMax;
-
         #endregion
-       
+
         #region ---- СВОЙСТВА ----
         /// <summary>СВОЙСТВО Наименование тега (из таблицы s_Tags, поле Tag)</summary>
         public virtual string PROP_Tag { get; set; }
@@ -40,10 +39,7 @@ namespace wpfGeneral.UserControls
         /// <summary>РЕГИСТРАЦИЯ Свойства PROP_Value</summary>
         public static readonly DependencyProperty DEPR_ValueProperty =
             DependencyProperty.Register("PROP_Value", typeof(object), typeof(VirtualJson), new PropertyMetadata(""));
-
-
-        #endregion 
-
+        #endregion
 
         ///<summary>КОНСТРУКТОР</summary>
         public VirtualJson()

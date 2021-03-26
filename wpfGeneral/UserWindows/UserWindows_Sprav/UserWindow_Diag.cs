@@ -6,25 +6,23 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Справочник Диагнозов МКБ-10</summary>
     public class UserWindow_Diag : VirtualUserWindow
-    {   
+    {
         /// <summary>СВОЙСТВО Код диагноза</summary>
         public string PROP_Cod { get; private set; }
-        
+
         /// <summary>СВОЙСТВО Наименование диагноза</summary>
         public string PROP_Text { get; private set; }
 
         /// <summary>Начальный фильтр SQL</summary>
         private readonly string PRI_JsonFiltr = "";
-             
 
         /// <summary>КОНСТРУКТОР</summary>
         /// <param name="pSqlOneWhere">Фильтр из тега (необязательный)</param>
-        public UserWindow_Diag(string pSqlOneWhere = "") 
-        {            
+        public UserWindow_Diag(string pSqlOneWhere = "")
+        {
             // Фильтр для диагнозов, к примеру (устаревший) показать диагнозы только для kslp: "dbo.jsonIf(xInfo, 'kslp') = 1"
             if (!string.IsNullOrWhiteSpace(pSqlOneWhere))
                 PRI_JsonFiltr = $" and dbo.jsonIf(xInfo, '{pSqlOneWhere}') = 1";
-            
             // Имя таблицы
             PRO_TableName = "s_Diag";
             //Размеры
@@ -41,7 +39,7 @@ namespace wpfGeneral.UserWindows
             MET_OpenForm();
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
-        }        
+        }
 
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
@@ -73,7 +71,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {

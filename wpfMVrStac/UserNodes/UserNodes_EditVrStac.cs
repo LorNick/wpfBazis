@@ -2,7 +2,7 @@
 using wpfGeneral.UserModul;
 using wpfGeneral.UserNodes;
 using wpfGeneral.UserStruct;
-using wpfStatic;                                         
+using wpfStatic;
 
 namespace wpfMVrStac
 {
@@ -38,8 +38,8 @@ namespace wpfMVrStac
                 PROP_shaPresenceProtokol = ((VirtualModul)MyGlo.Modul).PUB_Protokol.Any(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Stac
                         && p.PROP_CodApstac == MyGlo.IND && p.PROP_NumShablon == PRI_NomerShablon);
             }
-        }   
-        
+        }
+
         ///<summary>МЕТОД Инициализация ветки</summary>
         public override void MET_Inizial()
         {

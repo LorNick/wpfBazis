@@ -28,7 +28,7 @@ namespace wpfGeneral.UserControls
                     PART_Label.Padding = new Thickness(5, 0, 5, 0);
             }
         }
-       
+
         /// <summary>СВОЙСТВО Максимальное значение</summary>
         public override object PROP_ValueMax
         {
@@ -91,7 +91,6 @@ namespace wpfGeneral.UserControls
         public static readonly DependencyProperty DEPR_ValueMaxDateProperty =
             DependencyProperty.Register("PROP_ValueMaxDate", typeof(DateTime?), typeof(UserPole_Calendar), new UIPropertyMetadata(DateTime.MaxValue));
 
-
         /// <summary>РЕГИСТРАЦИЯ Свойства PROP_ValueMinDate</summary>
         public static readonly DependencyProperty DEPR_ValueMinDateProperty =
             DependencyProperty.Register("PROP_ValueMinDate", typeof(DateTime?), typeof(UserPole_Calendar), new UIPropertyMetadata(DateTime.MinValue));
@@ -110,7 +109,8 @@ namespace wpfGeneral.UserControls
         public override void MET_Inicial()
         {
             // Располагаем текст
-			this.HorizontalAlignment = HorizontalAlignment.Left;                
+            this.HorizontalAlignment = HorizontalAlignment.Left;
+
             if (PROP_Format.MET_If("ac"))
                 this.HorizontalAlignment = HorizontalAlignment.Center;
             if (PROP_Format.MET_If("ar"))
@@ -128,9 +128,9 @@ namespace wpfGeneral.UserControls
             {
                 if (DateTime.TryParse(_Dat, out DateTime _DateTime))
                     PART_Calendar.SelectedDates.Add(_DateTime);
-            }            
+            }
         }
-        
+
         /// <summary>СОБЫТИЕ Нажали на кнопку - скрыть/отобразить календарь</summary>
         private void PART_ButtonVisiblCalendar_Click(object sender, RoutedEventArgs e)
         {

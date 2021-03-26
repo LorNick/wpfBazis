@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using m = wpfReestr.MyMet;
 using wpfStatic;
 using e = Microsoft.Office.Interop.Excel;
-
 
 namespace wpfReestr
 {
@@ -28,7 +22,6 @@ namespace wpfReestr
 
             // Версия редакции 3 (март 2018)
             // Имя поля в таблице StrahReestr (Описание)
-
             // Если ВМП, то расчитываем и заменяем данные
             bool _FlagVMP = m.MET_PoleStr("MetVMP", _Apstac) != "";
             if (_FlagVMP)
@@ -55,10 +48,12 @@ namespace wpfReestr
                     _Apstac["TAL_NUM"] = _VMP["TAL_NUM"];
                     _Apstac["TAL_D"] = _VMP["TAL_D"];
                     _Apstac["PRVSs"] = 41;
+                    _Apstac["IDMODP"] = _VMP["IDMODP"];
+                    _Apstac["HGR"] = _VMP["Hgr"];
                 }
             }
 
-            // PLAT -> SMO (Код страховой компании)                                   далее в  MET_CalcAll() 
+            // PLAT -> SMO (Код страховой компании)                                   далее в  MET_CalcAll()
             PRI_StrahReestr.PLAT = _Apstac["ScomEnd"].ToString();
 
             // LPU_1 (Подразделения МО)
@@ -67,7 +62,7 @@ namespace wpfReestr
             // ORDER -> EXTR (Направление на госпитализацию, 1 - плановая, 2 - экстренная (у нас нету), 0 - поликлиника)
             PRI_StrahReestr.ORDER = 1;
 
-            // LPU_ST -> USL_OK (Условия оказания мед. помощи, справочник V006, 1 - кр. стационра, 2 - дн. стационар, 3 - поликлиника)            
+            // LPU_ST -> USL_OK (Условия оказания мед. помощи, справочник V006, 1 - кр. стационра, 2 - дн. стационар, 3 - поликлиника)
             PRI_StrahReestr.LPU_ST = m.MET_PoleInt("LPU_ST", _Apstac); ;
 
             // VIDPOM (Вид помощи, справочник V008, у нас 13 - поликл, 14 - телемедицина, 31 - стационар, 32 - ВМП)
@@ -88,7 +83,7 @@ namespace wpfReestr
             // PODR (Код отделения)
             PRI_StrahReestr.PODR = m.MET_ParseDec(m.MET_PoleStr("PODR", _Apstac) + ((int)PRI_StrahReestr.PROFIL).ToString("D3"));
 
-            // DET (Детский профиль, если ребёнок то 1 иначе 0)            далее в  MET_CalcAll() 
+            // DET (Детский профиль, если ребёнок то 1 иначе 0)            далее в  MET_CalcAll()
             PRI_Age = m.MET_PoleInt("Age", _Apstac);
 
             // CODE_USL (Код услуги - для дополнительной оплаты и операций Код услуг прописан програмно, справочник услуг)
@@ -106,7 +101,7 @@ namespace wpfReestr
             // EX_DATE ->  DATE_2 -> DATE_OUT (Дата окончания)
             PRI_StrahReestr.EX_DATE = m.MET_PoleDate("DK", _Apstac);
 
-            // DS1 -> DS (Диагноз)                                              
+            // DS1 -> DS (Диагноз)
             PRI_StrahReestr.DS1 = m.MET_PoleStr("D", PRI_RowReestr);
             // Проверка
             if (PRI_StrahReestr.DS1.Length < 3)
@@ -118,16 +113,16 @@ namespace wpfReestr
                 return;
             }
 
-            // DS2 (Сопутствующий Диагноз - типо Сахарный диабет)                    
+            // DS2 (Сопутствующий Диагноз - типо Сахарный диабет)
             PRI_StrahReestr.DS2 = "";
 
-            // PACIENTID -> NHISTORY (Номер истории болезни/талона)       
+            // PACIENTID -> NHISTORY (Номер истории болезни/талона)
             PRI_StrahReestr.PACIENTID = m.MET_PoleStr("Cod", PRI_RowReestr);
 
             // RES_G -> RSLT (Результат обращения/госпитализации, справочник V009)
             int[] _RES_G = { 0, 1, 4, 5 };
             int _Rezobr = m.MET_PoleInt("FlagOut", _Apstac);                                    // FlagOut 1 - выписан, 2 - переведен, 3 - умер
-            // кр. стационар (101-выписан, 104-переведен, 105-умер)                                                            
+            // кр. стационар (101-выписан, 104-переведен, 105-умер)
             // дневной стационар (201-выписан, 204-переведен, 205-умер)
             PRI_StrahReestr.RES_G = 100 * PRI_StrahReestr.LPU_ST + _RES_G[_Rezobr];
 
@@ -155,7 +150,7 @@ namespace wpfReestr
                 PRI_ErrorRow = true;
             }
 
-            // VPOLIS (Тип полиса 1 - старый, 2 - временный, 3 - новый)   далее в  MET_CalcAll() 
+            // VPOLIS (Тип полиса 1 - старый, 2 - временный, 3 - новый)   далее в  MET_CalcAll()
             PRI_NPolis = m.MET_PoleStr("SNEnd", _Apstac);
 
             // SERIA -> SPOLIS (Серия полиса)
@@ -175,7 +170,7 @@ namespace wpfReestr
 
             MET_CalcAll();
 
-            //if (PRI_StrahReestr.EX_DATE.Value.Year < 2021) 
+            //if (PRI_StrahReestr.EX_DATE.Value.Year < 2021)
             //    MET_CalcKsg2019(_Apstac);  // удалил
             //else
             MET_CalcKsg2021(_Apstac);
@@ -188,7 +183,6 @@ namespace wpfReestr
             }
             catch (Exception)
             {
-
                 PRI_StrahReestr.NOM_USL = "Ошибка json";
             }
         }
@@ -240,7 +234,7 @@ namespace wpfReestr
                 return;
             }
 
-            // 20. DS2 (Сопутствующий Диагноз - типо Сахарный диабет) (53. DS2) (48)                    
+            // 20. DS2 (Сопутствующий Диагноз - типо Сахарный диабет) (53. DS2) (48)
             PRI_StrahReestr.DS2 = (string)_JsonSL["Kslp_diag"] ?? "";
 
             //// Сопутствующий диагноз для D70
@@ -319,7 +313,7 @@ namespace wpfReestr
                     PRI_Sl.ONK_SL = new MyONK_SL();
 
                     // DS1_T - Повод обращения (N018)
-                    // 0 - первичное лечение  
+                    // 0 - первичное лечение
                     // 1 - рецедив с метастазами, 2 - прогресирование с метастазами, 21, 22 - то-же но без метастаз)
                     // 3 - динамическое наблюдение
                     // 4 - диспансерное наблюдение
@@ -391,7 +385,7 @@ namespace wpfReestr
                         PRI_Sl.ONK_SL.ONK_M = _MNumber ?? 56;
                     }
 
-                    // B_DIAG - Диагностический блок 
+                    // B_DIAG - Диагностический блок
                     // Гистология
                     string _Gisto = (string)_JsonSL["resulthistology"] ?? "";
                     if (!string.IsNullOrEmpty(_Gisto))
@@ -431,7 +425,7 @@ namespace wpfReestr
                         var _mGisto = _Gisto.Split(';');
                         // Смотрим если такой диагноз в проверочном файле N009
                         var _N012 = PRI_N012.Where(e => e.Kod1.Contains(_D3)).ToList();
-                        
+
                         bool _DiagN012 = _N012.Any();
                         foreach (var _i in _mGisto)
                         {
@@ -589,9 +583,7 @@ namespace wpfReestr
                 if (_Zno && PRI_Sl.DS_ONK == 0 && PRI_Sl.ONK_SL.DS1_T < 3)
                 {
                     Random _Random = new Random();
-
                     string _xInfo = m.MET_PoleStr("xInfo", _KsgRow);
-
                     _xInfo = string.IsNullOrEmpty(_xInfo) ? "{}" : _xInfo;
                     JObject _JsonUsl;
                     try
@@ -609,14 +601,13 @@ namespace wpfReestr
 
                     MyONK_USL _MyOnkUsl = new MyONK_USL();
 
-
-                    // Тип услуги по умолчанию  
+                    // Тип услуги по умолчанию
                     _MyOnkUsl.USL_TIP = 5;
 
                     // Если есть только диагноз
                     if (_CountUsl == 1 && _MyUSL.Tip == "диаг")
                     {
-                        // Тип услуги  
+                        // Тип услуги
                         _MyOnkUsl.USL_TIP = 5;
                         PRI_Sl.ONK_SL.ONK_USL.Add(_MyOnkUsl);
                     }
@@ -624,7 +615,7 @@ namespace wpfReestr
                     // Биопсия, исследования и др.
                     if (_MyUSL.Usl.StartsWith("A11") || _MyUSL.Usl.StartsWith("B03") || _MyUSL.Usl.StartsWith("A03"))
                     {
-                        // Тип услуги  
+                        // Тип услуги
                         _MyOnkUsl.USL_TIP = 5;
                         PRI_Sl.ONK_SL.ONK_USL.Add(_MyOnkUsl);
                     }
@@ -632,7 +623,7 @@ namespace wpfReestr
                     // Хирургического лечение
                     if (_MyUSL.Usl.StartsWith("A16"))
                     {
-                        // Тип услуги  
+                        // Тип услуги
                         _MyOnkUsl.USL_TIP = 1;
                         // Тип хирургического лечения (ПО УМОЛЧАНИЮ 1)
                         int _Hir = (int?)_JsonUsl["THir"] ?? 0;
@@ -644,7 +635,7 @@ namespace wpfReestr
                     if (_MyUSL.Usl.StartsWith("sh") || _MyUSL.Usl.StartsWith("A25") || _MyUSL.Usl.StartsWith("gem"))
                     {
                         _MyOnkUsl.LEK_PR = new List<MyLEK_PR>();
-                        // Тип услуги  
+                        // Тип услуги
                         _MyOnkUsl.USL_TIP = 2;
                         // Тип Линия  (ПО УМОЛЧАНИЮ РАНДОМ ЗАМЕНИТЬ)
                         int _TIP_L = (int?)_JsonUsl["TLek_L"] ?? 0;
@@ -705,7 +696,7 @@ namespace wpfReestr
                                         {
                                             _DateN = _DateTime;
                                             _MyUSL.DatN = MET_VerifDate(_DateN.ToString("dd.MM.yyyy"), $"химии, для {i}-го препарата с кодом {_RegNum} дата введения", true);
-                                            if (PRI_ErrorRow) return; // Критическая ошибка - выходим 
+                                            if (PRI_ErrorRow) return; // Критическая ошибка - выходим
                                         }
                                         if (_DateK < _DateTime)
                                         {
@@ -753,14 +744,13 @@ namespace wpfReestr
                                 PRI_Sl.CRIT = new List<string>();
                             PRI_Sl.CRIT.Add(_MyUSL.Usl);
                         }
-
                         PRI_Sl.ONK_SL.ONK_USL.Add(_MyOnkUsl);
                     }
 
                     // Радиология
                     if (_MyUSL.Usl.StartsWith("A06") || _MyUSL.Usl.StartsWith("A07"))
                     {
-                        // Тип услуги  
+                        // Тип услуги
                         _MyOnkUsl.USL_TIP = 3;
                         // Тип Линия  (ПО УМОЛЧАНИЮ РАНДОМ ЗАМЕНИТЬ)
                         int _LUCH_TIP = (int?)_JsonUsl["TLuch"] ?? 0;
@@ -860,13 +850,13 @@ namespace wpfReestr
                                         {
                                             _DateN = _DateTime;
                                             _MyUSL.DatN = MET_VerifDate(_DateN.ToString("dd.MM.yyyy"), $"химии у ЛУЧЕВОЙ терапии дата введения", true);
-                                            if (PRI_ErrorRow) return; // Критическая ошибка - выходим                                            
+                                            if (PRI_ErrorRow) return; // Критическая ошибка - выходим
                                         }
                                         if (_DateK < _DateTime)
                                         {
                                             _DateK = _DateTime;
                                             _MyUSL.DatK = MET_VerifDate(_DateK.ToString("dd.MM.yyyy"), $"химии у ЛУЧЕВОЙ терапии дата введения", true);
-                                            if (PRI_ErrorRow) return; // Критическая ошибка - выходим                                              
+                                            if (PRI_ErrorRow) return; // Критическая ошибка - выходим
                                         }
                                         _LekPr.DATE_INJ.Add(_DateTime.ToString("dd.MM.yyyy"));
                                     }
@@ -896,16 +886,14 @@ namespace wpfReestr
                         return;
                     }
                 }
-
                 PRI_Sl.USL.Add(_MyUSL);
-
             }
 
             // Проверяем есть химия
             if (PRI_Sl.ONK_SL != null && PRI_Sl.ONK_SL.ONK_USL != null && PRI_Sl.ONK_SL.ONK_USL.Any(p => p.USL_TIP == 2 || p.USL_TIP == 4))
             {
                 try
-                {               
+                {
                     // Вес
                     PRI_Sl.ONK_SL.WEI = (double?)_JsonSL["Ves"] ?? new Random().Next(50, 100);
                     if (PRI_Sl.ONK_SL.WEI == 0)
@@ -956,7 +944,7 @@ namespace wpfReestr
                 }
             }
 
-            // Если дневной стационар или ВМП, то пропускаем КСЛП 
+            // Если дневной стационар или ВМП, то пропускаем КСЛП
             if (PRI_StrahReestr.LPU_ST == 1 && PRI_StrahReestr.METOD_HMP == "")
             {
                 // Смотрим КСЛП для круглосуточного стационара
@@ -1054,7 +1042,7 @@ namespace wpfReestr
                 {
                     PRI_Sl.KOEF_Dzp = (double)PRI_Sl.USL[0]?.Dzp;
                     PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_Z *
-                                        (1 - PRI_Sl.KOEF_Dzp + PRI_Sl.KOEF_Dzp * PRI_Sl.KOEF_UP * 
+                                        (1 - PRI_Sl.KOEF_Dzp + PRI_Sl.KOEF_Dzp * PRI_Sl.KOEF_UP *
                                         PRI_Sl.IT_SL * PRI_Sl.KOEF_U * PRI_Sl.KOEF_D);
                 }
                 else
@@ -1065,7 +1053,7 @@ namespace wpfReestr
                     PRI_Sl.SUMV = 25927.13107024 * PRI_Sl.KOEF_Z *
                             PRI_Sl.KOEF_UP * PRI_Sl.IT_SL * PRI_Sl.KOEF_U;
                 }
-                
+
 
                 if (PRI_Sl.IT_SL == 1)
                     PRI_Sl.IT_SL = 0;
@@ -1125,9 +1113,9 @@ namespace wpfReestr
                         else
                             _NFZ = 14680.09945962; // 24 466.60 * 0,6000057 = 14680.09945962
 
-                        PRI_Sl.SUMV = _NFZ * PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U;                         
+                        PRI_Sl.SUMV = _NFZ * PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U;
                     }
-                    
+
                     // Сверх короткий случай (если нет операций (не Ашки), а только диагноз)
                     if (PRI_StrahReestr.KOL_USL < 4 && PRI_Sl.USL[0].Day3 != 1)
                     {
@@ -1169,14 +1157,15 @@ namespace wpfReestr
                         PRI_ErrorToExcel.MET_SaveError();
                         PRI_ErrorRow = true;
                     }
+                    // Модель пациента V019
+                    PRI_Sl.IDMODP = m.MET_PoleStr("IDMODP", pApstac);
+                    // Номер группы ВМП V019
+                    PRI_Sl.HGR = m.MET_PoleStr("HGR", pApstac);
                 }
             }
-
             PRI_Sl.SUMV = Math.Round(PRI_Sl.SUMV, 2, MidpointRounding.AwayFromZero);
             PRI_StrahReestr.KSG = PRI_Sl.USL[0].Ksg;   // !!!!!!!!!!!!!
             PRI_Sl.KSG = PRI_Sl.USL[0].Ksg;
-
-
             PRI_StrahReestr.SUM_LPU = (decimal)PRI_Sl.SUMV;
         }
     }

@@ -29,8 +29,8 @@ namespace wpfGeneral.UserWindows
             PRO_TableName = "s_Department";
             // Заголовок
             Title = "Справочник Подразделений:";
-            //Размеры            
-            Height = 620;            
+            //Размеры
+            Height = 620;
             MinWidth = Width;
             // Поле поиска
             PRO_PoleFiltr = "Filtr";
@@ -47,7 +47,7 @@ namespace wpfGeneral.UserWindows
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
         }
-        
+
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
@@ -112,7 +112,7 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox_1.IsChecked = true;
             PRI_CheckBox_1.Click += delegate { PRI_ComboBox_1.IsEnabled = PRI_CheckBox_1.IsChecked == true; MET_DopFilter(); };
             _SPanel_1.Children.Add(PRI_CheckBox_1);
-        }       
+        }
 
         /// <summary>МЕТОД Дополнительный фильтр по загруженным данным</summary>
         protected override void MET_DopFilter()
@@ -121,16 +121,14 @@ namespace wpfGeneral.UserWindows
                 PRO_Where = $"Korpus = '{PRI_ComboBox_1.SelectedValue}'";
             else
                 PRO_Where = "";
-
             MET_Filter();
         }
-       
+
         /// <summary>МЕТОД Выбор данных</summary>
         protected override void MET_Select()
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {

@@ -10,7 +10,6 @@ namespace wpfGeneral.UserControls
     public partial class UserPole_Text
     {
         #region ---- СВОЙСТВО ----
-
         /// <summary>СВОЙСТВО Изменялся ли текст</summary>
         public bool PROP_BoolChangeText { get; set; }
 
@@ -18,8 +17,8 @@ namespace wpfGeneral.UserControls
         public override string PROP_Description
         {
             get { return (string)PART_Label.Content; }
-            set 
-            { 
+            set
+            {
                 PART_Label.Content = value;
                 // Если описания нету, то убираем пустой отступ
                 if (value == "")
@@ -68,7 +67,7 @@ namespace wpfGeneral.UserControls
         public override double PROP_WidthText
         {
             get { return PART_TextBox.Width; }
-            set 
+            set
             {
                 PART_TextBox.Width = value;
                 if (double.IsNaN(PART_TextBox.Width))
@@ -102,8 +101,8 @@ namespace wpfGeneral.UserControls
         public override byte PROP_PometkaText
         {
             get { return PRO_PometkaText; }
-            set 
-            { 
+            set
+            {
                 PRO_PometkaText = value;
                 if (PRO_PometkaText == 1)
                     PART_TextBox.BorderBrush = Brushes.Red;
@@ -113,16 +112,16 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Скрываем рамку</summary>
-        public override bool PROP_HideBorder 
+        public override bool PROP_HideBorder
         {
             get
             {
-                return (PART_TextBox.BorderThickness.Equals(new Thickness(0)));   
+                return PART_TextBox.BorderThickness.Equals(new Thickness(0));
             }
             set
             {
                 if (value)
-                    PART_TextBox.BorderThickness = new Thickness(0);          
+                    PART_TextBox.BorderThickness = new Thickness(0);
             }
         }
 
@@ -152,16 +151,16 @@ namespace wpfGeneral.UserControls
 
         ///<summary>МЕТОД Инициализация поля</summary>
         public override void MET_Inicial()
-		{
+        {
             // Ограничиваем 5000 символами
             PROP_MaxLength = 5000;
-			// Располагаем текст
-			PROP_TextAlignment = TextAlignment.Left;
-			if (PROP_Format.PROP_Value.ContainsKey("fac"))
-				PROP_TextAlignment = TextAlignment.Center;
-			if (PROP_Format.PROP_Value.ContainsKey("far"))
-				PROP_TextAlignment = TextAlignment.Right;
-		}
+            // Располагаем текст
+            PROP_TextAlignment = TextAlignment.Left;
+            if (PROP_Format.PROP_Value.ContainsKey("fac"))
+                PROP_TextAlignment = TextAlignment.Center;
+            if (PROP_Format.PROP_Value.ContainsKey("far"))
+                PROP_TextAlignment = TextAlignment.Right;
+        }
 
         /// <summary>СОБЫТИЕ при вводе символа в TextBox</summary>
         private void PART_TextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -181,7 +180,6 @@ namespace wpfGeneral.UserControls
             }
             // Вызываем TextChanged для новых форм (если есть, такое событие)
             TextChanged?.Invoke(this, e);
-            
         }
 
         /// <summary>СОБЫТИЕ при вводе символа в TextBox</summary>
@@ -194,7 +192,7 @@ namespace wpfGeneral.UserControls
                 case "#":
                 case "'":
                     e.Handled = true;
-                    break;            
+                    break;
             }
         }
 

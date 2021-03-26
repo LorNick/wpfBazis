@@ -98,7 +98,7 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox2.Content = "Не принят";
             PRI_CheckBox2.VerticalAlignment = VerticalAlignment.Center;
             PRI_CheckBox2.Foreground = Brushes.Navy;
-            PRI_CheckBox2.IsChecked = true; 
+            PRI_CheckBox2.IsChecked = true;
             PRI_CheckBox2.Click += delegate { PRI_DatePicker1.IsEnabled = PRI_CheckBox1.IsChecked == true; MET_SqlFilter(); };
             _SPanel1.Children.Add(PRI_CheckBox2);
         }
@@ -111,25 +111,22 @@ namespace wpfGeneral.UserWindows
                 PRO_SqlWhere = "where isnull(t.xDelete, 0) = 0 and e.Corpus = 1";
             else
                 PRO_SqlWhere = "where isnull(t.xDelete, 0) = 0 and e.Corpus = 2";
-            // Фильтр по дате  
+            // Фильтр по дате
             if (PRI_DatePicker1.IsEnabled)
             {
                 DateTime _Date = Convert.ToDateTime(PRI_DatePicker1.Text);
                 PRO_SqlWhere += String.Format(" and t.[Date] = '{0}'", _Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US")));
             }
-            // Ещё не принятые 
+            // Ещё не принятые
             if (PRI_CheckBox2.IsChecked == true)
             {
                 PRO_SqlWhere += " and t.Flag = 3";
             }
-            
             // ФИО пациента
             if (PRO_TextFilter.Length > 0)
                 PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
-            
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
-            
         }
     }
 }

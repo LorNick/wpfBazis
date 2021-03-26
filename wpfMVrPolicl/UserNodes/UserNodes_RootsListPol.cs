@@ -12,11 +12,11 @@ namespace wpfMVrPolicl
     /// <summary>КЛАСС Ветка для Добавочных веток поликлиники</summary>
     /// <remarks>Начальные данные ветки, только для присвоения данных</remarks>
     public class UserNodes_RootsListPol : VirtualNodes_RootsList
-    {  
+    {
         /// <summary>СВОЙСТВО (шаблона) Разрешение создания шаблона</summary>
         ///<remarks>Только для модуля поликлиники</remarks>
         public override bool PROP_shaButtonNew { get { return MyGlo.TypeModul == eModul.VrPolicl; } }
-        
+
          /// <summary>КОНСТРУКТОР</summary>
         public UserNodes_RootsListPol()
         {

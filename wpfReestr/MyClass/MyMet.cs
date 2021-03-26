@@ -27,7 +27,7 @@ namespace wpfReestr
             DateTime.TryParse(_Row[pPole].ToString(), out DateTime _Result);
             if (_Result == DateTime.MinValue)
                 return null;
-            else            
+            else
                 return _Result;
         }
 
@@ -55,7 +55,7 @@ namespace wpfReestr
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(string pStr)
-        {            
+        {
             int.TryParse(pStr, out int _Result);
             return _Result;
         }
@@ -64,7 +64,7 @@ namespace wpfReestr
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static int MET_ParseInt(object pObject)
-        {            
+        {
             int.TryParse(pObject.ToString(), out int _Result);
             return _Result;
         }
@@ -73,7 +73,7 @@ namespace wpfReestr
         /// <param name="pStr">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(string pStr)
-        {         
+        {
             decimal.TryParse(pStr, out decimal _Result);
             return _Result;
         }
@@ -82,7 +82,7 @@ namespace wpfReestr
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static decimal MET_ParseDec(object pObject)
-        {            
+        {
             decimal.TryParse(pObject.ToString(), out decimal _Result);
             return _Result;
         }
@@ -91,7 +91,7 @@ namespace wpfReestr
         /// <param name="pStr">Строка с датой</param>
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(string pStr)
-        {            
+        {
             DateTime.TryParse(pStr, out DateTime _Result);
             return _Result;
         }
@@ -100,7 +100,7 @@ namespace wpfReestr
         /// <param name="pObject">Строка с числом</param>
         /// <returns>В случае ошибки возвращаем 0</returns>
         public static double MET_ParseRea(object pObject)
-        {            
+        {
             double.TryParse(pObject.ToString(), out double _Result);
             return _Result;
         }
@@ -110,7 +110,7 @@ namespace wpfReestr
         /// <returns>В случае ошибки возвращаем Null</returns>
         public static DateTime? MET_ParseDat(object pObject)
         {
-            if (pObject.ToString() == "") return null;           
+            if (pObject.ToString() == "") return null;
             DateTime.TryParse(pObject.ToString(), out DateTime _Result);
             return _Result;
         }
@@ -125,7 +125,7 @@ namespace wpfReestr
             _Result = _DateTime == null ? "" : _DateTime.Value.ToShortDateString() + " г.";
             return _Result;
         }
-        #endregion  
+        #endregion
     }
 
     //===============================================================================
@@ -148,7 +148,6 @@ namespace wpfReestr
         {
             // Используя NuGet пакет LinqToExcel (https://code.google.com/p/linqtoexcel/) подключаемся к книге Excel
             // Работа с Excel http://wladm.narod.ru/C_Sharp/comexcel.html
-         
             // Наш объект Excel
             PUB_ExcelApp = new e.Application();
             // Одна страница в книге
@@ -160,7 +159,7 @@ namespace wpfReestr
             // Рабочая страница
             PUB_Worksheet = (e.Worksheet)_Sheets.Item[1];
         }
-            
+
         /// <summary>МЕТОД Закругляемся</summary>
         public bool MET_End()
         {
@@ -171,7 +170,6 @@ namespace wpfReestr
                 PUB_ExcelApp.Quit();
                 return false;
             }
-           
             PUB_ExcelApp.Visible = true;
             return true;
         }
@@ -252,7 +250,7 @@ namespace wpfReestr
             if (PUB_Name.IndexOf("[") > -1)
                 PUB_Name = PUB_Name.Substring(1, PUB_Name.Length - 2);          // тут убираем скобки
             else
-                PUB_NameK = "[" + PUB_Name + "]";                               // а тут их ставим   
+                PUB_NameK = "[" + PUB_Name + "]";                               // а тут их ставим
             try
             {
                 // Находим тип колонки
@@ -266,7 +264,7 @@ namespace wpfReestr
         }
 
         /// <summary>МЕТОД Возвращаем точное условие фильтра (только равно)</summary>
-        /// <param name="pWhere">Текст условия</param>    
+        /// <param name="pWhere">Текст условия</param>
         public string MET_Filtr(string pWhere)
         {
             if (PUB_Error) return "";
@@ -289,7 +287,7 @@ namespace wpfReestr
         }
 
         /// <summary>МЕТОД Возвращаем примерное условие фильтра (больше равно, либо Like)</summary>
-        /// <param name="pWhere">Текст условия</param>    
+        /// <param name="pWhere">Текст условия</param>
         public string MET_FiltrPr(string pWhere)
         {
             if (PUB_Error) return "";

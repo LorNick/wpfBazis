@@ -16,7 +16,6 @@ namespace wpfGeneral.UserFormShablon
     /// 1. Новый документ, единственный в ветке
     /// 2. Редактируем любой документ
     /// 3. Создаем новый документ в подветке
-    /// 
     /// - Помечаем ветку, зеленым цветом, сообщая, что мы её редактируем;
     /// - Создаем вкладку;
     /// - Привязываем вкладку к закладке;
@@ -27,14 +26,14 @@ namespace wpfGeneral.UserFormShablon
     /// - Отображаем и переключаемся на закладку шаблона;
     /// - При сохранении если (тип документа 3), то:
     ///    - убираем пометку, что редактируем ветку,
-    ///    - создаем новую ветку, 
-    ///    - переключаемся на неё, 
+    ///    - создаем новую ветку,
+    ///    - переключаемся на неё,
     ///    - помечаем, что её редактируем,
     ///    - привязываем её к документу;
-    /// - При сохранении, редактируем данные вкладки; 
+    /// - При сохранении, редактируем данные вкладки;
     /// - При закрытии спрашиваем о сохранении и убираем пометку, что редактируем ветку
     ///</remarks>
-    public abstract class VirtualFormShablon : Grid 
+    public abstract class VirtualFormShablon : Grid
     {
         /// <summary>Список полей</summary>
         public SortedList PUB_HashPole;
@@ -96,7 +95,7 @@ namespace wpfGeneral.UserFormShablon
         public UserDocument PROP_Docum { get; set; }
 
         /// <summary>СВОЙСТВО Тип протокола</summary>
-        public MyTipProtokol PROP_TipProtokol { get; set; }  
+        public MyTipProtokol PROP_TipProtokol { get; set; }
         #endregion
 
 
@@ -153,7 +152,7 @@ namespace wpfGeneral.UserFormShablon
                     _Pole = new UserPole_Text();
                     break;
                 case 5:
-                    _Pole = new UserPole_ComboBox(); // список                   
+                    _Pole = new UserPole_ComboBox(); // список
                     break;
                 case 6:
                     _Pole = new UserPole_Text();
@@ -214,7 +213,7 @@ namespace wpfGeneral.UserFormShablon
             // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (DictionaryEntry _DiEnt in PUB_HashPole)
             {
-                VirtualPole _Pole = (VirtualPole) _DiEnt.Value;                 // наше поле с ответом  
+                VirtualPole _Pole = (VirtualPole) _DiEnt.Value;                 // наше поле с ответом
                 if (!_Pole.MET_Verification())                                  // сообщение об ошибки выдает само поле
                     return false;
             }
@@ -231,8 +230,8 @@ namespace wpfGeneral.UserFormShablon
             {
                 try
                 {
-                    VirtualPole _Pole = (VirtualPole) _DictEn.Value;            // элемент поля                                                       
-                    _Pole.PROP_Text = _Pole.PROP_DefaultText;                   // Значение по умолчанию                                         
+                    VirtualPole _Pole = (VirtualPole) _DictEn.Value;            // элемент поля
+                    _Pole.PROP_Text = _Pole.PROP_DefaultText;                   // Значение по умолчанию
                     _Pole.PROP_ForegroundText = Brushes.Gray;                   // Окрашиваем текст в серый цвет (текст по умолчанию)
                 }
                 catch

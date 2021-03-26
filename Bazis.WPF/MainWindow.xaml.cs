@@ -33,16 +33,14 @@ namespace wpfBazis
 {
     /// <summary>КЛАСС Главного окна wpfBazis. Логика взаимодействия для MainWindow.xaml</summary>
     public partial class MainWindow
-    {  
+    {
         /// <summary>Модуль</summary>
         public VirtualModul PUB_Modul;
 
         /// <summary>Текущая ветка</summary>
         private VirtualNodes PRI_FormMyNodes;
-
         /// <summary>Элемент шаблона, на котором стоит фокус</summary>
-        private IInputElement PUB_FocusUI;   
-        
+        private IInputElement PUB_FocusUI;
 
         #region Старт
         /// <summary>КОНСТРУКТОР 1</summary>
@@ -80,7 +78,7 @@ namespace wpfBazis
             // Создаем контекстное меню
             MyGlo.ContextMenu = new ContextMenu();
             // Событие при открытии контекстного меню
-            MyGlo.ContextMenu.Opened += PART_ContextMenu_Opened;      
+            MyGlo.ContextMenu.Opened += PART_ContextMenu_Opened;
         }
 
         /// <summary>СОБЫТИЕ Запуск программы 3</summary>
@@ -89,7 +87,8 @@ namespace wpfBazis
             // Считываем начальные параметры командной строки
             MyGlo.MET_ComStr();
             // Создаем модуль
-            PUB_Modul = MET_CreateModul(MyGlo.TypeModul);   
+            PUB_Modul = MET_CreateModul(MyGlo.TypeModul);
+
             // Параметры командной строки, только для этого модуля
             PUB_Modul.MET_ComStr();
             // Повторно Поля логирования, что бы узнать CodApstac (есть ещё дубляж в MyGlo.MET_ComStr)
@@ -115,7 +114,6 @@ namespace wpfBazis
                // Такое окно уже открыто, закрываем это
                Close();
             }
-
             // Смещаем окно программы, если уже были открыты wpfBazis и если новое окно, а не старое
             if (MyGlo.Korpus != 2 && pNewWindows && _CoutWindows > 1)
             {
@@ -123,12 +121,11 @@ namespace wpfBazis
                 Top += 10*_CoutWindows;
                 Left += 10*_CoutWindows;
             }
-
             Title = _TitleTMP;
             // Показываем имя пользователя
             PART_LabelUserName.Content = MyGlo.UserName;
             // Если Админ - закрашиваем поле имя пользователя
-            if (MyGlo.Admin) PART_Border_UserName.Background = new SolidColorBrush(Colors.Orchid); 
+            if (MyGlo.Admin) PART_Border_UserName.Background = new SolidColorBrush(Colors.Orchid);
             // Пациент
             PART_LabelPacient.Content = MyGlo.FIO + " " + MyGlo.DR;
             // Главное дерево
@@ -229,7 +226,6 @@ namespace wpfBazis
         }
         #endregion
 
-
         #region Ошибки и Меню
         /// <summary>МЕТОД Показываем окно с ошибкой соединения </summary>
         /// <param name="pException">Ошибка</param>
@@ -241,7 +237,7 @@ namespace wpfBazis
             if (_Win.ShowDialog() == true)
                 Environment.Exit(0);
         }
-        
+
         /// <summary>МЕТОД Показываем окно с Репортом (отчеты)</summary>
         /// <param name="pPath">Какой отчет отобразить</param>
         public void MET_ReportViewerLoad(string pPath = "/Menu/index")
@@ -252,14 +248,12 @@ namespace wpfBazis
                 PART_WindowsFormsHostReportViewer.Child = PART_ReportViewer;
                 PART_ReportViewer.ProcessingMode = ProcessingMode.Remote;
                 PART_ReportViewer.ServerReport.ReportServerCredentials.NetworkCredentials = new NetworkCredential("ReportViewer", "rptVwr2019");  // Для нового сервера отчетов
-
                 if (MyGlo.Server == 3) // главный корпус
                     PART_ReportViewer.ServerReport.ReportServerUrl = new Uri("http://192.168.0.8/ReportServer/", UriKind.Absolute);
                 else // из вне
                     PART_ReportViewer.ServerReport.ReportServerUrl = new Uri("http://10.30.103.8/ReportServer/", UriKind.Absolute);
                 PART_ReportViewer.ServerReport.ReportPath = pPath;
                 PART_ReportViewer.RefreshReport();
-
                 // Показываем вкладку формы
                 PART_TabReportViewer.Visibility = Visibility.Visible;
                 // Открываем вкладку с формой
@@ -304,7 +298,7 @@ namespace wpfBazis
                     _WinSpr = new UserWindow_VrachStac();
                     _WinSpr.Show();
                     break;
-                case "_Врачи поликлиники":  
+                case "_Врачи поликлиники":
                     // Справочник врачей поликлиники
                     _WinSpr = new UserWindow_VrachPol();
                     _WinSpr.Show();
@@ -330,7 +324,7 @@ namespace wpfBazis
                     {
                         _WinSpr = new UserWindow_Image();
                         _WinSpr.Show();
-                    }                    
+                    }
                     break;
                 case "_Методы ВМП":
                     // Справочник Методов ВМП
@@ -345,7 +339,7 @@ namespace wpfBazis
                         _WinSpr.Topmost = false;
                         _WinSpr.Show();
                     }
-                    break;               
+                    break;
                 case "_Тест":
                     // Тестовая форма
                     if (UserWindow_Test.MET_Access())
@@ -358,7 +352,7 @@ namespace wpfBazis
                 case "_Редактор шаблонов":
                     // Редактор шаблонов
                     if (UserWindow_EditShablon.MET_Access())
-                    {                        
+                    {
                         _WinSpr = new UserWindow_EditShablon();
                         _WinSpr.Topmost = false;
                         _WinSpr.Show();
@@ -377,7 +371,6 @@ namespace wpfBazis
         }
         #endregion
 
-
         #region Ветки
         /// <summary>МЕТОД Скрываем-Открываем у отчета кнопки редактирования</summary>
         /// <param name="pVirtualNodes">Выбранная ветка</param>
@@ -394,16 +387,15 @@ namespace wpfBazis
                 // Скрываем у отчета кнопки редактирования
                 PART_Button_Edit.IsEnabled = false;
                 PART_Button_New.IsEnabled = false;
-
                 // Скрываем/показываем кнопки сохраниния, отчистки
                 PART_Button_SaveSha.Visibility = pVirtualNodes.PROP_shaButtonSvaveSha;
                 PART_Button_ClearSha.Visibility = pVirtualNodes.PROP_shaButtonClearSha;
             }
         }
-                                  
-        /// <summary>СОБЫТИЕ при выборе элемента дерева</summary> 
+
+        /// <summary>СОБЫТИЕ при выборе элемента дерева</summary>
         private void PART_TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {   
+        {
             // Выбранная ветка
             VirtualNodes _VirtualNodes = (VirtualNodes)PART_TreeView.SelectedItem;
             if (_VirtualNodes != null)
@@ -415,10 +407,8 @@ namespace wpfBazis
                     MET_LoadPdfFileFromServer(_VirtualNodes);
                     return;
                 }
-
                 // Открываем 1ю вкладку с отчетом
                 PART_TabControl.SelectedItem = PART_TabOtch;
-
                 // Оформляем закладку отчета
                 PART_TabOtch.Header = _VirtualNodes.MET_Header(PART_TabOtch, eVkladki.Otchet);
                 PART_FDoc.Blocks.Clear();
@@ -428,12 +418,11 @@ namespace wpfBazis
                 PART_FDoc.Blocks.Add(_VirtualNodes.PROP_Docum.PROP_Otchet.MET_Inizial(_VirtualNodes));
                 // Обнуляем полосу сдвига текста по листу
                 PART_Slider.Value = 0;
-                // Скрываем-Открываем у отчета кнопку редактирования 
+                // Скрываем-Открываем у отчета кнопку редактирования
                 MET_MyNodesButton(_VirtualNodes);
             }
         }
         #endregion
-
 
         #region Контекстное меню
         /// <summary>СОБЫТИЕ Открываем контекстного меню</summary>
@@ -442,9 +431,7 @@ namespace wpfBazis
             ContextMenu _ContextMenu = (ContextMenu)sender;                     // контекстное меню
             _ContextMenu.FontSize = 13;
             _ContextMenu.Items.Clear();                                         // чистим список контекстного меню
-
             if (!((MyGlo.ContextMenu.PlacementTarget as FrameworkElement)?.Tag is VirtualPole _VirtualPole)) return;
-
             switch (_VirtualPole.PROP_Type)
             {
                 case eVopros.Text:
@@ -464,18 +451,15 @@ namespace wpfBazis
         /// <param name="pContextMenu">Контекстное меню</param>
         private void MET_ContextMenu_TextBox(ContextMenu pContextMenu)
         {
-            
             MenuItem _ConMenuItem;                                              // элементы меню
             Separator _Separator;                                               // сепаратор
-
             TextBox _TextBox = pContextMenu.PlacementTarget as TextBox;
             DataRow[] _mRow;                                                    // записи шаблона
             int _Count;                                                         // всего ответов
             VirtualPole _VirtualPole = (pContextMenu.PlacementTarget as Control).Tag as VirtualPole;
             var d = _VirtualPole.PROP_Docum?.PROP_ListShablon.PROP_TipProtokol;
             // Если поле вне шаблона или VarId = 0 то перескакиваем
-            if (PRI_FormMyNodes == null || _VirtualPole.PROP_VarId == 0) goto Label; 
-
+            if (PRI_FormMyNodes == null || _VirtualPole.PROP_VarId == 0) goto Label;
             string _NameList = "astList";
             switch (PRI_FormMyNodes.PROP_TipNodes)
             {
@@ -485,19 +469,19 @@ namespace wpfBazis
                 case eTipNodes.Stac_RootsList:
                     _NameList = "astList";
                     break;
-				// Шаблоны параклиники
+                // Шаблоны параклиники
                 case eTipNodes.Para_RootsList:
                 case eTipNodes.Para_Add:
                     _NameList = "parList";
                     break;
-				// Шаблоны поликлиники
-				case eTipNodes.Pol_RootsList:
-				case eTipNodes.Pol_Add:
-					_NameList = "apaNList";
-					break;
+                // Шаблоны поликлиники
+                case eTipNodes.Pol_RootsList:
+                case eTipNodes.Pol_Add:
+                    _NameList = "apaNList";
+                    break;
                 // Шаблоны КДЛ
                 case eTipNodes.Kdl_RootsList:
-                case eTipNodes.Kdl_Add:                
+                case eTipNodes.Kdl_Add:
                     _NameList = "kdlList";
                     break;
                 // Шаблоны документов (лист назначения)
@@ -506,10 +490,10 @@ namespace wpfBazis
                     break;
             }
 
-            // Заполняем строку данными запроса         
+            // Заполняем строку данными запроса
             MySql.MET_DsAdapterFill(MyQuery.MET_List_Select_4(_NameList, _VirtualPole.PROP_Shablon, _VirtualPole.PROP_VarId), "List");
-           
-            // Всего ответов  
+
+            // Всего ответов
             _Count = MyGlo.DataSet.Tables["List"].Rows.Count;
             _mRow = new DataRow[_Count];
             // Заполняем все варианты ответов
@@ -531,7 +515,7 @@ namespace wpfBazis
                 _ConMenuItem.Tag = _mRow[i]["ValueCod"].ToString();
                 _ConMenuItem.Click += PART_ConMenuItem_TextBox_Click;
                 pContextMenu.Items.Add(_ConMenuItem);
-            } 
+            }
             // Если ответов нету то ставим разделитель
             if (_Count > 0)
             {
@@ -606,13 +590,11 @@ namespace wpfBazis
                     _NameList = "s_ListDocum";
                     break;
             }
-
             TextBox _TextBox = MyGlo.ContextMenu.PlacementTarget as TextBox;    // текущий компонент
             VirtualPole _VirtualPole = (_TextBox?.Parent as BulletDecorator)?.Parent as VirtualPole;
             string _Text = _Item?.Header is TextBlock ? ((TextBlock)_Item.Header).Text : _Item?.Header.ToString();
             int _NomerShablon = _VirtualPole.PROP_Shablon;
             int _VarID = _VirtualPole.PROP_VarId;
-          
             switch (_Text)
             {
                 case "Добавить":
@@ -620,7 +602,6 @@ namespace wpfBazis
                     int _Cod = MySql.MET_QueryInt(MyQuery.MET_List_MaxCod_Select_2(_NameList, _NomerShablon)) + 1;
                     if (_Cod == 1)
                         _Cod = _NomerShablon * 1000 + 1; // если это первый ответ в шаблоне то начинаем с нужного номера
-
                     // Проверяем на наличие повторов
                     // Если такого ответа ещё нету, то записываем его в базу
                     if (MySql.MET_QueryBool(MyQuery.MET_List_Select_3(_NameList, _NomerShablon, _VarID, _TextBox.Text)))
@@ -662,7 +643,7 @@ namespace wpfBazis
             // Форма Редактор Шаблона (только для админа)
             if (MyGlo.Admin)
             {
-                if ((MyGlo.ContextMenu.PlacementTarget as FrameworkElement)?.Tag is VirtualPole _VirtualPole && _VirtualPole.PROP_VarId > 0)             
+                if ((MyGlo.ContextMenu.PlacementTarget as FrameworkElement)?.Tag is VirtualPole _VirtualPole && _VirtualPole.PROP_VarId > 0)
                 {
                     // Разделитель
                     if (pContextMenu.Items.Count > 0)
@@ -670,7 +651,6 @@ namespace wpfBazis
                         Separator _Separator = new Separator();
                         pContextMenu.Items.Add(_Separator);
                     }
-
                     MenuItem _ConMenuItem = new MenuItem();
                     _ConMenuItem.Header = "Редактор Шаблона";
                     _ConMenuItem.Click += PART_ConMenuItem_EditShablon_Click;
@@ -683,7 +663,6 @@ namespace wpfBazis
         private void PART_ConMenuItem_EditShablon_Click(object sender, EventArgs e)
         {
             VirtualPole _VirtualPole = (MyGlo.ContextMenu.PlacementTarget as FrameworkElement)?.Tag as VirtualPole;
-
             if(_VirtualPole?.PROP_Docum.PROP_Shablon != null)
             {
                 UserWindow_Lua _WinLua = new UserWindow_Lua(_VirtualPole)
@@ -716,15 +695,15 @@ namespace wpfBazis
         }
         #endregion
 
-
         #region Выход
         /// <summary>СОБЫТИЕ Выход из программы</summary>
         private void PART_ComandClose_Executed(object sender, ExecutedRoutedEventArgs e)
-        {                  
+        {
             Close();
         }
 
-        /// <summary>СОБЫТИЕ при закрытии программы</summary> 
+        /// <summary>СОБЫТИЕ при закрытии программы</summary>
+
         private void Form_Closing(object sender, CancelEventArgs e)
         {
             // Запрос на сохранение протокола
@@ -745,9 +724,8 @@ namespace wpfBazis
         }
         #endregion
 
-
         #region Язык
-        /// <summary>СОБЫТИЕ при смене языка</summary> 
+        /// <summary>СОБЫТИЕ при смене языка</summary>
         private void Current_InputLanguageChanged(Object sender, InputLanguageEventArgs e)
         {
             if (InputLanguageManager.Current.CurrentInputLanguage.ToString() == "en-US")
@@ -764,7 +742,7 @@ namespace wpfBazis
             }
         }
 
-        /// <summary>СОБЫТИЕ при нажатии на кнопку "Смена языка"</summary> 
+        /// <summary>СОБЫТИЕ при нажатии на кнопку "Смена языка"</summary>
         private void PART_Button_Language_Click(object sender, RoutedEventArgs e)
         {
             // Если язык Английский, то ставим Русский и наоборот
@@ -779,9 +757,8 @@ namespace wpfBazis
         }
         #endregion
 
-
         #region Печать
-        /// <summary>СОБЫТИЕ при нажатии на кнопку "Просмотр печати" из отчета</summary> 
+        /// <summary>СОБЫТИЕ при нажатии на кнопку "Просмотр печати" из отчета</summary>
         private void PART_Button_Preview_Click(object sender, RoutedEventArgs e)
         {
             // Выбранная ветка
@@ -789,10 +766,10 @@ namespace wpfBazis
             // А если ветки то и нету, то сваливаем
             if (_SelectNodes == null) return;
             // Выводим на просмотр печати
-            MET_PreviewPrint(_SelectNodes);            
+            MET_PreviewPrint(_SelectNodes);
         }
 
-        /// <summary>СОБЫТИЕ при нажатии на кнопку "Просмотр печати" из шабллона</summary> 
+        /// <summary>СОБЫТИЕ при нажатии на кнопку "Просмотр печати" из шабллона</summary>
         private void PART_Button_PrewSha_Click(object sender, RoutedEventArgs e)
         {
             // Сохраняемся
@@ -800,11 +777,11 @@ namespace wpfBazis
             {
                 PRI_FormMyNodes.IsSelected = true;
                 // Выводим на просмотр печати
-                MET_PreviewPrint(PRI_FormMyNodes);  
+                MET_PreviewPrint(PRI_FormMyNodes);
             }
         }
 
-        /// <summary>МЕТОД "Просмотр печати"</summary> 
+        /// <summary>МЕТОД "Просмотр печати"</summary>
         /// <param name="pVirtualNodes">Выбранная ветка</param>
         private void MET_PreviewPrint(VirtualNodes pVirtualNodes)
         {
@@ -839,12 +816,11 @@ namespace wpfBazis
             // Печатаем (если есть ветка)
             _SelectNodes?.PROP_Docum.PROP_Otchet.MET_CreatePrint(PART_DocViewer, PART_FDoc, true);
         }
-        #endregion   
-
+        #endregion
 
         #region Шаблоны
         /// <summary>МЕТОД Закрытие вкладки Формы </summary>
-        /// <param name="pTabItem">Вкладку которую закрываем</param>         
+        /// <param name="pTabItem">Вкладку которую закрываем</param>
         public void MET_Delg_Close(TabItem pTabItem)
         {
             // Запрос на сохранение протокола
@@ -880,14 +856,14 @@ namespace wpfBazis
                         PRI_FormMyNodes.PROP_Docum.PROP_Shablon = null;
                         PRI_FormMyNodes.PROP_shaNomerShablon = 0;
                         break;
-                }      
-                // Скрываем-Открываем у отчета кнопку редактирования 
+                }
+                // Скрываем-Открываем у отчета кнопку редактирования
                 MET_MyNodesButton((VirtualNodes)PART_TreeView.SelectedItem);
             }
         }
 
         /// <summary>МЕТОД Нужно ли сохранять шаблон </summary>
-        /// <param name="pEnable">true - шаблон сохранен, false - шаблон не сохранен</param> 
+        /// <param name="pEnable">true - шаблон сохранен, false - шаблон не сохранен</param>
         public void MET_Delg_EditShablon(bool pEnable)
         {
             // Отображаем либо скрываем кнопку "Сохранения формы"
@@ -899,7 +875,6 @@ namespace wpfBazis
         {
             string _Text = "";
             int _NomerShablon = 0;
-
             // Выбранная ветка
             PRI_FormMyNodes = (VirtualNodes)PART_TreeView.SelectedItem;
             // А если ветки то и нету, то сваливаем
@@ -908,18 +883,17 @@ namespace wpfBazis
             VirtualWindow_Shablon _WinSpr = null;
             // По умолчанию отображаем панель ToolBar
             PART_ToolBarShablon.Visibility = Visibility.Visible;
-
             // Если нужно вызывать окно выбора шаблона
             switch (PRI_FormMyNodes.Name)
             {
                 // Только шаблоны Лечения
-                case "eleTVItem_Oper":            
+                case "eleTVItem_Oper":
                     _WinSpr = new UserWindow_Shablon_Stac("Шаблоны лечения:", 102, 109);
                     break;
                 // Только шаблоны Анестезиолога
                 case "eleTVItem_Anest":
                     _WinSpr = new UserWindow_Shablon_Stac("Шаблоны Анестезиолога:", 130, 139);
-                    break;  
+                    break;
                 // Только шаблоны Обходов, консилиумов
                 case "eleTVItem_Obhod":
                     _WinSpr = new UserWindow_Shablon_Stac("Обходы и консилиумы:", 110, 119);
@@ -927,39 +901,33 @@ namespace wpfBazis
                 // Только шаблоны Документы
                 case "eleTVItem_Dokum":
                     _WinSpr = new UserWindow_Shablon_Stac("Документы:", 140, 160);
-                    break;   
+                    break;
                 // Только шаблоны Выписки
                 case "eleTVItem_Extact":
                     _WinSpr = new UserWindow_Shablon_Stac("Выписные документы:", 120, 129, true);
                     break;
-
                 // Только шаблоны Поликлиники
                 case "eleTVItem_Pol":
                     _WinSpr = new UserWindow_Shablon_Policl("Шаблоны Поликлиники:", MyGlo.Otd);
-                    break;	
-							 
+                    break;
                 // Только для Параклиники
                 case "eleTVItem_ParaIss":
                     // Смотрим есть ли заполненный протокол для этого обследования
                     bool _Flag = MySql.MET_QueryBool(MyQuery.MET_parProtokol_Select_2(MyGlo.IND));
-                    _WinSpr = new UserWindow_Shablon_Paracl(_Flag);                 
+                    _WinSpr = new UserWindow_Shablon_Paracl(_Flag);
                     break;
-
                 // Только для общих докуметов (kdl)
                 case "eleTVItem_ObDocum":
                     _WinSpr = new UserWindow_Shablon_Kdl("Шаблоны Справок:", "\\StacKdl");
                     break;
-
                 // Только других ЛПУ (kdl)
                 case "eleTVItem_OtherLpu":
                     _WinSpr = new UserWindow_Shablon_Kdl("Шаблоны документов:", "\\OtherLpu");
                     break;
-
                 // Для исследований пока только на CODVID 19 (kdl)
                 case "eleTVItem_Laboratory":
                     _WinSpr = new UserWindow_Shablon_Kdl("Шаблоны исследований:", "\\Issled");
                     break;
-
                 // Для документов PDF (kdl)
                 case "eleTVItem_Pdf":
                     // Скрываем панель ToolBar, так как у нас будт своя панель
@@ -972,14 +940,13 @@ namespace wpfBazis
                     //PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true, PRI_FormMyNodes.PROP_shaNomerShablon, "Документ PDF");
                     //return;
                     break;
-
                 // Иначе (если, сама ветка радактируется, то идем дальше, а если не редактируется, то выходим)
                 default:
                     if (PRI_FormMyNodes.PROP_TipNodes == eTipNodes.EditDocum ||
                         PRI_FormMyNodes.PROP_TipNodes == eTipNodes.Stac_Edit)
                         break;
                     return;
-            }  
+            }
             // Если выбрали какое нужно окно выбора шаблона
             if (_WinSpr != null)
             {
@@ -988,10 +955,8 @@ namespace wpfBazis
                 _WinSpr.ShowDialog();
                 if (_WinSpr.PROP_Return)
                 {
-
                     int _Max = ((VirtualModul) MyGlo.Modul).PUB_Protokol.Any() ? ((VirtualModul)MyGlo.Modul).PUB_Protokol.Max(p => p.PROP_pIndex) : 0;
-                    
-                    PRI_FormMyNodes.PROP_shaIndex = ++_Max; 
+                    PRI_FormMyNodes.PROP_shaIndex = ++_Max;
                     PRI_FormMyNodes.PROP_shaNomerShablon = _WinSpr.PUB_Shablon;
                     _Text = _WinSpr.PUB_Text;
                     _NomerShablon = _WinSpr.PUB_Shablon;
@@ -1010,7 +975,7 @@ namespace wpfBazis
                 PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabForm, eVkladki.Form, true);
                 // Создаем форму
                 PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, true, _NomerShablon, _Text);
-                // Скрываем-Открываем у отчета кнопку редактирования 
+                // Скрываем-Открываем у отчета кнопку редактирования
                 MET_MyNodesButton(PRI_FormMyNodes);
             }
         }
@@ -1042,12 +1007,12 @@ namespace wpfBazis
                 // Показываем вкладку формы
                 PART_TabForm.Visibility = Visibility.Visible;
                 // Открываем вкладку с формой
-                PART_TabControl.SelectedItem = PART_TabForm;   
+                PART_TabControl.SelectedItem = PART_TabForm;
                 // Оформляем закладку формы
-                PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabForm, eVkladki.Form, true); 
+                PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabForm, eVkladki.Form, true);
                 // Создаем форму
-                PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, false);           
-                // Скрываем-Открываем у отчета кнопку редактирования 
+                PRI_FormMyNodes.MET_ShowShablon(PART_GridShablon, false);
+                // Скрываем-Открываем у отчета кнопку редактирования
                 MET_MyNodesButton(PRI_FormMyNodes);
             }
             catch (Exception ex)
@@ -1063,7 +1028,6 @@ namespace wpfBazis
             // Сохраняемся
             if (MET_SaveShablon())
                 MessageBox.Show("Шаблон успешно сохранен!");
-            
         }
 
         /// <summary>МЕТОД "Сохранить шаблон"</summary>
@@ -1072,11 +1036,9 @@ namespace wpfBazis
             // Провека на правильность заполнения
             if (!PRI_FormMyNodes.PROP_Docum.PROP_FormShablon.MET_Verification())
                 return false;   // проверка не прошла и выходим без сохранения
-            
             // Сохраняем шаблон
             if (!PRI_FormMyNodes.PROP_Docum.PROP_FormShablon.MET_Save())
                 return false;
-            
             // Если нужно добавляем вкладки
             switch (PRI_FormMyNodes.PROP_TipNodes)
             {
@@ -1093,24 +1055,20 @@ namespace wpfBazis
                 case eTipNodes.Stac_Add:
                     break;
             }
-
             PART_TabForm.Header = PRI_FormMyNodes.MET_Header(PART_TabForm, eVkladki.Form, true);
            // PRI_FormMyNodes.PROP_TextDown = PRI_FormMyNodes.PROP_TextDown;
-
             // Пробегаемся по всем родительским веткам и говорим им обновить отчеты
             MET_CreateOtchet(PRI_FormMyNodes);
-
             return true;
         }
 
         /// <summary>СОБЫТИЕ Потеря фокуса вкладки шаблона, запоминаем фокус полседнего поля, что бы потом к нему вернуться</summary>
         private void PART_TabForm_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-        {   
+        {
             if (PRI_FormMyNodes.PROP_Docum.PROP_FormShablon != null)
                 PUB_FocusUI = FocusManager.GetFocusedElement(PART_GridShablon);
         }
         #endregion
-
 
         #region Отчеты/смена пациента
         /// <summary>МЕТОД Генерируем отчет</summary>
@@ -1124,16 +1082,16 @@ namespace wpfBazis
                 MET_CreateOtchet(pVirtualNodes.PROP_Parent);
             }
         }
-                    
+
         /// <summary>СОБЫТИЕ Нажали на кнопку "Смена пациента"</summary>
         private void PART_Button_SelectPac_Click(object sender, RoutedEventArgs e)
         {
             VirtualUserWindow _WinSpr;
             switch (MyGlo.TypeModul)
             {
-                case eModul.VrPolicl:                
+                case eModul.VrPolicl:
                     // Открываем список пациентов поликлиники
-					_WinSpr = new UserWindow_PolApac();                    
+                    _WinSpr = new UserWindow_PolApac();
                     break;
                 case eModul.VrStac:
                     // Открываем список стационара
@@ -1141,11 +1099,11 @@ namespace wpfBazis
                     break;
                 case eModul.VrPara:
                     // Открываем список пациентов параклиники
-                    _WinSpr = new UserWindow_ParObsledov();                   
+                    _WinSpr = new UserWindow_ParObsledov();
                     break;
                 case eModul.KancerReg:
                     // Открываем список из канцер регистра
-                    _WinSpr = new UserWindow_KancerReg();                   
+                    _WinSpr = new UserWindow_KancerReg();
                     break;
                 case eModul.OtherLpu:
                 case eModul.CAOP:
@@ -1161,9 +1119,8 @@ namespace wpfBazis
                         _WinSpr = new UserWindow_KbolLPU();
                     else
                         _WinSpr = new UserWindow_Kbol();
-                    break;   
+                    break;
             }
-
             _WinSpr.PROP_Modal = true;
             _WinSpr.WindowStyle = WindowStyle.ToolWindow;
             _WinSpr.ShowDialog();
@@ -1175,7 +1132,7 @@ namespace wpfBazis
                 MyGlo.callbackEvent_sReloadWindows?.Invoke(false);
             }
         }
-         
+
         /// <summary>СОБЫТИЕ Перемещение ползунка сдвига отчета</summary>
         private void PART_Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
@@ -1189,8 +1146,7 @@ namespace wpfBazis
             // При переключении на вкладку Шаблона, ставим фокус на редактируемое поле (если такое было)
             if (PART_TabControl.SelectedItem.Equals(PART_TabForm) && PUB_FocusUI != null)
                 Dispatcher.BeginInvoke(new Action(() => { PUB_FocusUI.Focus(); }));
-
-            // Выбрана ли вкладка отчета 
+            // Выбрана ли вкладка отчета
             if (PART_TabControl.SelectedItem.Equals(PART_TabOtch))
             {
                 // Выбранная ветка
@@ -1207,7 +1163,7 @@ namespace wpfBazis
                     PART_FDoc.Blocks.Add(_VirtualNodes.PROP_Docum.PROP_Otchet.MET_Inizial(_VirtualNodes));
                     // Обнуляем полосу сдига текста по листу
                     PART_Slider.Value = 0;
-                    // Скрываем-Открываем у отчета кнопку редактирования 
+                    // Скрываем-Открываем у отчета кнопку редактирования
                     MET_MyNodesButton(_VirtualNodes);
                 }
             }
@@ -1240,7 +1196,6 @@ namespace wpfBazis
                 PRI_WebClient.DownloadDataCompleted += MET_DownloadDataCompleted;
                 // Асинхронная загрузка файла
                 PRI_WebClient.DownloadDataAsync(_uri);
-
                 // Оформляем закладку отчета
                 PART_TabPdfViewer.Header = pNode.MET_Header(PART_TabPdfViewer, eVkladki.PDF, true);
             }
@@ -1252,19 +1207,18 @@ namespace wpfBazis
 
         /// <summary>МЕТОД Завершение скачивание PDF файла с сервера</summary>
         private void MET_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
-        {           
+        {            
             try
             {
                 // Загружаем в поток рисунок
                 MemoryStream _Stream = new MemoryStream(e.Result);
                 pdfViewer.DocumentSource = new PdfDocumentSource(_Stream);
-
                 // Открываем 1ю вкладку с отчетом
-                PART_TabControl.SelectedItem = PART_TabPdfViewer;               
+                PART_TabControl.SelectedItem = PART_TabPdfViewer;
                 // Показываем вкладку формы
                 PART_TabPdfViewer.Visibility = Visibility.Visible;
                 // Открываем вкладку с формой
-                PART_TabControl.SelectedItem = PART_TabPdfViewer;               
+                PART_TabControl.SelectedItem = PART_TabPdfViewer;
             }
             catch (Exception ex)
             {
@@ -1277,22 +1231,17 @@ namespace wpfBazis
         {
             OpenFileDialog _OpenFileDialog = new OpenFileDialog();
             _OpenFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
-
             _OpenFileDialog.ShowDialog();
-                       
-            // Алгоритм нахождения MD5 
+            // Алгоритм нахождения MD5
             // Просто отображает Хэш на экране
             FileStream stream = File.OpenRead(_OpenFileDialog.FileName);
-
             MD5 _MD5 = new MD5CryptoServiceProvider();
             byte[] _Hashenc = _MD5.ComputeHash(stream);
             string _Result = "";
-
             foreach (var _b in _Hashenc)
             {
                 _Result += _b.ToString("x2");
             }
-
             PRI_WebClient = new WebClient();
             // Завершение загрузки
             PRI_WebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(MET_Completed);
@@ -1301,16 +1250,16 @@ namespace wpfBazis
             // URI сервера и api
             var uri = new Uri("http://192.168.0.6:81/api/Storage/UploadFile");
             try
-            {                
+            {
                 // Заголовок с токеном для аутентификации в функции загрузки
-                PRI_WebClient.Headers.Add("auth-key", "wpfBazisDownloadAndUploadFileWebApi20201014");               
+                PRI_WebClient.Headers.Add("auth-key", "wpfBazisDownloadAndUploadFileWebApi20201014");
                 // Асинхронная загрузка файла
                 PRI_WebClient.UploadFileAsync(uri, _OpenFileDialog.FileName);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }  
+            }
         }
 
         /// <summary>МЕТОД Завершение сохранения PDF файла на сервер</summary>
@@ -1327,7 +1276,6 @@ namespace wpfBazis
                 }
                 return;
             }
-
             MessageBox.Show("Файл Загружен!");
         }
 

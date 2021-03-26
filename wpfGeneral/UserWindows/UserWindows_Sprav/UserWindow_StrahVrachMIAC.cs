@@ -4,10 +4,10 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Cправочник врачей из МИАЦ (для проверки действующих сертефикатов, только наше ЛПУ 555509)</summary>
     public class UserWindow_StrahVrachMIAC : VirtualUserWindow
-    {   
-        /// <summary>КОНСТРУКТОР</summary>      
-        public UserWindow_StrahVrachMIAC() 
-        {            
+    {
+        /// <summary>КОНСТРУКТОР</summary>
+        public UserWindow_StrahVrachMIAC()
+        {
             // Имя таблицы
             PRO_TableName = "StrahVrachMIAC";
             //Размеры
@@ -28,7 +28,7 @@ namespace wpfGeneral.UserWindows
             MET_OpenForm();
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
-        }        
+        }
 
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
@@ -55,6 +55,6 @@ namespace wpfGeneral.UserWindows
         protected override void MET_RemoveAt()
         {
             PART_DataGrid.Columns.RemoveAt(0);
-        }      
+        }
     }
 }

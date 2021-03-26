@@ -8,13 +8,12 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Таблицы ответов шаблона</summary>
     public class UserWindow_List : VirtualUserWindow
-    {   
+    {
         /// <summary>Номер шаблона</summary>
         private readonly int PRI_NomerShablon;
         /// <summary>Номер вопроса</summary>
         private readonly int PRI_VarID;
 
-       
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_List(string pTable, int pShablon, int pVarID)
         {
@@ -30,7 +29,7 @@ namespace wpfGeneral.UserWindows
             MinWidth = Width;
             // Сортируем по полю Варианты ответа
             PRO_PoleSort = 0;
-            // Показываем в подсказке 
+            // Показываем в подсказке
             PRO_PoleBarPanel = 1;
             // Открываем кнопки редактирования
             PROP_FlagButtonEdit = true;
@@ -62,7 +61,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Разрешаем (false), Запрещаяем (true) редактировать столбцы</summary>
         protected override bool MET_ReadOnly(int pIndex)
         {
-            // строка с метода metHeader 
+            // строка с метода metHeader
             //string[] _Name = { "", "Варианты ответов" };
             bool[] _mReadOnly = { true, false };
             return _mReadOnly[pIndex];
@@ -75,20 +74,18 @@ namespace wpfGeneral.UserWindows
             // Если нету кода, то выходим
             if (pRow["Cod"].ToString() == "")
                 return false;
-            if (MessageBox.Show("Вы точно хотите удалить этот ответ? \n А может он кому то нужен!", "Удалить?", 
+            if (MessageBox.Show("Вы точно хотите удалить этот ответ? \n А может он кому то нужен!", "Удалить?",
                     MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                 return false;
             // Код ответа
             int _Cod = Convert.ToInt32(pRow["Cod"]);
             // Удаляем
             MySql.MET_QueryNo(MyQuery.MET_List_Delete_1(PRO_TableName, _Cod));
-
             // Записываем в логи
             MyGlo.PUB_Logger.Info($"Удалили ответ в поле с VarId {PRI_VarID}," +
                                           $" шаблона {PRI_NomerShablon}," +
                                           $"\n таблицы {PRO_TableName}:" +
                                           $"\n {pRow["Value"]}");
-
             return true;
         }
 
@@ -99,7 +96,6 @@ namespace wpfGeneral.UserWindows
         protected override bool MET_SqlEdit(DataRow pRow, string pStrValue, DataGridColumn pColumn)
         {
             int _Cod;                                                           // код ответа
-
             // Проверяем на наличие повторов
             // Если есть повтор, то не сохраняем
             if (MySql.MET_QueryBool(MyQuery.MET_List_Select_3(PRO_TableName, PRI_NomerShablon, PRI_VarID, pStrValue)))
@@ -112,7 +108,6 @@ namespace wpfGeneral.UserWindows
             {
                 _Cod = Convert.ToInt32(pRow["Cod"]);        // код ответа
                 MySql.MET_QueryNo(MyQuery.MET_List_Update_1(PRO_TableName, _Cod, pStrValue));
-
                 // Записываем в логи
                 MyGlo.PUB_Logger.Info($"Изменили ответ в поле с VarId {PRI_VarID}," +
                                               $" шаблона {PRI_NomerShablon}," +
@@ -130,7 +125,6 @@ namespace wpfGeneral.UserWindows
             pRow["Cod"] = _Cod;
             pRow["Value"] = pStrValue;
             MyGlo.DataSet.Tables[PRO_TableName].Rows.Add(pRow);
-
             return true;
         }
     }

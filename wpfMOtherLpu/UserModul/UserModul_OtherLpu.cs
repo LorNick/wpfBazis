@@ -11,22 +11,21 @@ using wpfStatic;
 
 namespace wpfMOtherLpu
 {
-	/// <summary>КЛАСС Модуля Работы со списком протоколов</summary>
-	public class UserModul_OtherLpu : VirtualModul
-	{
+    /// <summary>КЛАСС Модуля Работы со списком протоколов</summary>
+    public class UserModul_OtherLpu : VirtualModul
+    {
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
-		{
-		    MyGlo.KL = MyGlo.DataSet.Tables["s_Users"].AsEnumerable()
+        {
+            MyGlo.KL = MyGlo.DataSet.Tables["s_Users"].AsEnumerable()
                 .FirstOrDefault(p => p.Field<int>("Cod") == MyGlo.User)?.Field<decimal>("KL") ?? 0;
-            
+
 #if DEBUG
-            // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ) - пока показываем   
+            // Показываем меню - 1 (КОД), скрываем меню и смену пациентов = 0 (онкологи ЛПУ) - пока показываем
             PUB_Menu = 1;
             MyGlo.Otd = 30602060;
             MyGlo.Lpu = 554512; //554505; // 554403; // БСМП2 - 554502, МСЧ 7 - 554403, Кардио - 554505
 #endif
-
             string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
@@ -34,19 +33,17 @@ namespace wpfMOtherLpu
                 // 1, 2, 3 заполняются в MyGlo
                 if (x == 4)
                     MyGlo.Otd = Convert.ToInt32(_mArgs[4]);
-
                 if (x == 5)
                     MyGlo.Lpu = Convert.ToInt32(_mArgs[5]);
             }
-		}
+        }
 
-		/// <summary>МЕТОД Начальные данные</summary>
-		public override void MET_NachDan()
-		{
+        /// <summary>МЕТОД Начальные данные</summary>
+        public override void MET_NachDan()
+        {
             // Если нет пациента - выходим
-		    if (MyGlo.KL == 0)
-		        return;
-
+            if (MyGlo.KL == 0)
+                return;
             // Заполняем hasKBOL
             MyGlo.HashKBOL = MySql.MET_QueryHash(MyQuery.kbol_Select_1(MyGlo.KL));
             // Заполняем HashLastDiag
@@ -56,32 +53,30 @@ namespace wpfMOtherLpu
             // Дата рождения пациента
             MyGlo.DR = MyMet.MET_StrDat(MyGlo.HashKBOL["DR"]);
             // Пол пациента
-            MyGlo.Pol = Convert.ToInt16(MyGlo.HashKBOL["POL"]) == 1 ? "Мужской" : "Женский"; 
+            MyGlo.Pol = Convert.ToInt16(MyGlo.HashKBOL["POL"]) == 1 ? "Мужской" : "Женский";
             // Обнуляем историю болезни
             MyGlo.HashOtchet.Clear();
-		}
+        }
 
-		/// <summary>МЕТОД Заголовок программы</summary>
-		public override string MET_Title()
-		{  
+        /// <summary>МЕТОД Заголовок программы</summary>
+        public override string MET_Title()
+        {
             // Наименование модуля
             string _Title = "wpfBazis -- ЛПУ --";
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
-
             // Пациент
             _Title += MyGlo.KL > 0 ? "  (" + MyGlo.FIO + " " + MyGlo.DR : " ( ";
             // Показываем имя пользователя
             _Title += " - " + MyGlo.UserName + ")";
             return _Title;
-		}
+        }
 
         /// <summary>МЕТОД Формируем дерево</summary>
         public override void MET_CreateTree()
         {
             // Преварительно чистим  дерево
             MyGlo.TreeView.Items.Clear();
-
             if (MyGlo.KL > 0)
             {
                 // Чистим структуру протоколов
@@ -93,7 +88,7 @@ namespace wpfMOtherLpu
                 // Загружаем все протоколы Protokol таблицы Stac, по KL пациента
                 UserProtokol.MET_FactoryProtokolArray(eTipDocum.Stac, MyGlo.KL, "KL");
 
-                // ВЕТКА Общие сведенья 
+                // ВЕТКА Общие сведенья
                 VirtualNodes _Node = new UserNodes_Inform
                 {
                     PROP_TipNodes = eTipNodes.Main,
@@ -106,7 +101,6 @@ namespace wpfMOtherLpu
                 _Node.PROP_Docum = new UserDocument(_Node);
                 _Node.PROP_Docum.PROP_Otchet = new UserOtcher_InformCreate {PROP_Docum = _Node.PROP_Docum};
                 _Node.MET_Inizial();
-
                 {
                     // ВЕТКА Паспортная часть (Сразу ставим на нем фокус)
                     _Node = new UserNodes_Inform
@@ -203,5 +197,5 @@ namespace wpfMOtherLpu
                 }
             }
         }
-	}
+    }
 }

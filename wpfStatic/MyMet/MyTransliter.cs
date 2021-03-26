@@ -45,7 +45,8 @@ namespace wpfStatic
             PRI_Words.Add("Ь", "M");
             PRI_Words.Add("Б", ",");
             PRI_Words.Add("Ю", ".");
-            // Перевод Латиницу в Кирилица 
+            // Перевод Латиницу в Кирилица
+
             PRI_Words.Add("`", "Ё");
             PRI_Words.Add("Q", "Й");
             PRI_Words.Add("W", "Ц");
@@ -82,9 +83,9 @@ namespace wpfStatic
         }
 
         /// <summary>МЕТОД Возвращаем текст в другой кодировке</summary>
-        /// <param name="pText">Текст условия</param>    
+        /// <param name="pText">Текст условия</param>
         public string MET_Replace(string pText)
-        {   
+        {
             string source = "";
             foreach (char _Char in pText)
             {
@@ -96,5 +97,5 @@ namespace wpfStatic
             }
             return source;
         }
-    }  
+    }
 }

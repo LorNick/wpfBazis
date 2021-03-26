@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using Newtonsoft.Json.Linq;
 using wpfGeneral.UserControls;
-using wpfGeneral.UserModul;
 using wpfGeneral.UserStruct;
 using wpfStatic;
 
@@ -16,7 +11,7 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Виртуальной формы справочников</summary>
     internal partial class UserWindow_CardAdmin
-    {           
+    {
         #region ---- СВОЙСТВО ----
         /// <summary>СВОЙСТВО KL kbol</summary>
         public decimal PROP_KLkbol
@@ -90,7 +85,7 @@ namespace wpfGeneral.UserWindows
             get { return PART_UserUpName.PROP_Text; }
             set { PART_UserUpName.PROP_Text = value; }
         }
-       
+
         // Тип протокола
         private MyTipProtokol PRI_MyTipProtokol;
 
@@ -134,7 +129,7 @@ namespace wpfGeneral.UserWindows
         {
             get { return PART_jTag.PROP_Text; }
             set
-            {               
+            {
                 PART_jTag.PROP_Text = value;
                 PRI_KbolInfo.PROP_jTag = value;
                 PRI_KbolInfo.PROP_FlagChange = true;
@@ -147,7 +142,7 @@ namespace wpfGeneral.UserWindows
         {
             get { return PART_CheckBoxOms.PROP_Checked; }
             set
-            {               
+            {
                 PART_CheckBoxOms.PROP_Checked = value;   // сразу отображаем на экране
                 PRI_KbolInfo.PROP_Oms = value ? 1 : 0;
                 PRI_KbolInfo.PROP_FlagChange = true;
@@ -164,7 +159,6 @@ namespace wpfGeneral.UserWindows
             // Меню работы с реестром
             using (var _Key = Registry.CurrentUser.OpenSubKey("Software\\wpfBazis", true))
             {
-
                 if ((string)_Key?.GetValue("Edit") == "true")
                     PART_MenuItem_1.Header = "_Убрать доступ на Редактирование (в реестре)";
                 else
@@ -176,7 +170,7 @@ namespace wpfGeneral.UserWindows
                     PART_MenuItem_2.Header = "_Поставить доступ Администратора (в реестре)";
             }
         }
-        
+
         /// <summary>СОБЫТИЕ После загрузки окна</summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -192,7 +186,8 @@ namespace wpfGeneral.UserWindows
                 if (PROP_PoleHistory.PROP_IsTexted)                               // ... если протокол
                 {
                     PROP_CodProtokol = (int)PROP_PoleHistory.PROP_Cod;
-                    // Протокол 
+                    // Протокол
+
                     _Protokol = UserProtokol.MET_FactoryProtokol(PROP_MyTipProtokol.PROP_TipDocum, PROP_CodProtokol);
                 }
                 else                                                            // ... если карточка
@@ -202,7 +197,7 @@ namespace wpfGeneral.UserWindows
                     PROP_IND = PROP_PoleHistory.PROP_Cod;
                     PROP_Tip = "карта";
                 }
-            }    
+            }
             // Только протоколы
             if (_Protokol != null)
             {
@@ -219,12 +214,12 @@ namespace wpfGeneral.UserWindows
                 PROP_UserUpName = _Protokol.PROP_UserName;
                 PROP_MyTipProtokol = _Protokol.PROP_TipProtokol;
                 PROP_xDelete = _Protokol.PROP_xDelete;
-                PROP_Tip = "протокол";                
+                PROP_Tip = "протокол";
             }
 
             PRI_KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(PROP_MyTipProtokol.PROP_KbolInfo, PROP_IND, MyGlo.KL);
             if (!PRI_KbolInfo.PROP_FlagNew && PRI_KbolInfo.PROP_jTag != null)
-            {               
+            {
                 // Берем сразу отформатированные теги
                 PROP_jTag = PRI_KbolInfo.PROP_Json.ToString();
                 PROP_Oms = PRI_KbolInfo.PROP_Oms == 1;
@@ -236,7 +231,6 @@ namespace wpfGeneral.UserWindows
                 PART_StacPanelKbolInfo.IsEnabled = false;
                 PROP_jTag = "Нет записи kbolInfo";
             }
-
             // Запрет на проверку правописания
             PART_jTag.PART_TextBox.SpellCheck.IsEnabled = false;
         }
@@ -340,5 +334,5 @@ namespace wpfGeneral.UserWindows
         {
             PROP_jTag = ((UserPole_Text)sender).PROP_Text;
         }
-    }                                
+    }
 }

@@ -6,7 +6,7 @@ using wpfStatic;
 
 namespace wpfGeneral.UserWindows
 {
-    /// <summary>КЛАСС Справочник связей и тарифов 
+    /// <summary>КЛАСС Справочник связей и тарифов
     /// по Специальности, Профилю, Коду услуг, Флагу, Тарифу...</summary>
     public class UserWindow_StrahTarif : VirtualUserWindow
     {
@@ -16,11 +16,11 @@ namespace wpfGeneral.UserWindows
         private CheckBox PRI_CheckBox_1;
 
         /// <summary>СВОЙСТВО Код отделения</summary>
-        public string PROP_Cod { get; private set; }  
-        
+        public string PROP_Cod { get; private set; }
+
         /// <summary>СВОЙСТВО Наименование отделения</summary>
         public string PROP_Text { get; private set; }
-        
+
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_StrahTarif()
         {
@@ -39,8 +39,7 @@ namespace wpfGeneral.UserWindows
             // Сортируем по полю Код
             PRO_PoleSort = 0;
             // Создаем фильтр
-            MET_CreateFiltr();            
-            
+            MET_CreateFiltr();
             // Открываем таблицу
             MET_OpenForm();
             // Фильтр
@@ -48,7 +47,7 @@ namespace wpfGeneral.UserWindows
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
         }
-        
+
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
         {
@@ -106,8 +105,8 @@ namespace wpfGeneral.UserWindows
             PRI_DatePicker_1.DisplayDateEnd = DateTime.Today;
             PRI_DatePicker_1.DisplayDateStart = DateTime.Parse("01/01/2013");
             PRI_DatePicker_1.IsEnabled = true;
-            PRI_DatePicker_1.SelectedDateChanged += delegate { MET_DopFilter(); }; 
-            _SPanel_1.Children.Add(PRI_DatePicker_1);            
+            PRI_DatePicker_1.SelectedDateChanged += delegate { MET_DopFilter(); };
+            _SPanel_1.Children.Add(PRI_DatePicker_1);
             // Check
             PRI_CheckBox_1 = new CheckBox();
             PRI_CheckBox_1.Margin = new Thickness(10, 0, 0, 0);
@@ -127,6 +126,6 @@ namespace wpfGeneral.UserWindows
             else
                 PRO_Where = "";
             MET_Filter();
-        }       
+        }
     }
 }

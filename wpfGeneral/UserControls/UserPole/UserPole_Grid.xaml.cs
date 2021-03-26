@@ -7,26 +7,26 @@ using wpfStatic;
 
 namespace wpfGeneral.UserControls
 {
-    /// <summary>КЛАСС для поля статической Таблицы (Grid)</summary>        
+    /// <summary>КЛАСС для поля статической Таблицы (Grid)</summary>
     /// <remarks>
-    /// <para>Сокращения Formatа таблицы</para>  
-    /// <para>Все параметры не проверяются на ошибки и должны контролироваться вручную</para> 
-    /// <para>Поле таблицы (14 тип):</para> 
+    /// <para>Сокращения Formatа таблицы</para>
+    /// <para>Все параметры не проверяются на ошибки и должны контролироваться вручную</para>
+    /// <para>Поле таблицы (14 тип):</para>
     /// <list type="table">
     /// <listheader><term>Имя</term><description>Описание</description></listheader>
     /// <item> <term>\gR 3</term><description>сколько строк (3 - количество строк)</description> </item>
     /// <item> <term>\gC 3</term><description>сколько столбцов (3 - количество столбцов)</description> </item>
     /// <item> <term>\gsr</term><description>отображать границы между ячейками, если установлен то это таблица иначе просто группировка полей</description> </item>
-    /// </list>   
-    /// <para>Поля ячеек:</para> 
+    /// </list>
+    /// <para>Поля ячеек:</para>
     /// <list type="table">
     /// <listheader><term>Имя</term><description>Описание</description></listheader>
     /// <item> <term>\gRo 3</term><description>номер строки (3 - сам номер, начинается с нуля, в данном случае это 4я строка), если нет параметра, то устанавливается в 0</description> </item>
     /// <item> <term>\gCo 3</term><description>номер колонки (3 - сам номер, начинается с нуля, в данном случае это 4я колонка), если нет параметра, то устанавливается в 0</description> </item>
-    /// <item> <term>\gRs 2</term><description>объеденение строки (2 - объеденяем ячейки 2х строк)</description> </item> 
+    /// <item> <term>\gRs 2</term><description>объеденение строки (2 - объеденяем ячейки 2х строк)</description> </item>
     /// <item> <term>\gCs 2</term><description>объеденение колонки (2 - объеденяем ячейки 2х колонок)</description> </item>
     /// <item> <term>\gw 2,5</term><description>ширина колонки в долях (в 2,5 шире чем обычная колонка), ставить желательно в ячейке первой строке</description> </item>
-    /// </list>   
+    /// </list>
     /// </remarks>
     public partial class UserPole_Grid : VirtualPole
     {
@@ -48,7 +48,7 @@ namespace wpfGeneral.UserControls
         /// <summary>СВОЙСТВО Отображаем внутренние границы, между ячейками (по умолчанию они скрыты)</summary>
         public bool PROP_ShowRectangle { get; private set; }
         #endregion ----
-     
+
         /// <summary>КОНСТРУКТОР</summary>
         public UserPole_Grid()
         {
@@ -56,14 +56,14 @@ namespace wpfGeneral.UserControls
 
             PART_Grid.ContextMenu = MyGlo.ContextMenu;
             PART_Grid.Tag = this;
-        }                      
-        
+        }
+
         ///<summary>МЕТОД Инициализация поля</summary>
         public override void MET_Inicial()
         {
             int _Row;
             int _Column;
-           
+
             // Строк
             try { _Row = Convert.ToInt16(PROP_Format.PROP_Value["gR"]); }
             catch { _Row = 1; }
@@ -72,12 +72,12 @@ namespace wpfGeneral.UserControls
             catch { _Column = 1; }
             // Границы между ячейками
             PROP_ShowRectangle = PROP_Format.PROP_Value.ContainsKey("gsr");
-			// Если это настоящая таблица, меняем цвет фона	и обрамляем рамочкой
-			if (PROP_ShowRectangle)
-			{
-				PART_Border.Background = Brushes.Beige;
-				PART_Border.BorderThickness = new Thickness(0.5);
-			}
+            // Если это настоящая таблица, меняем цвет фона    и обрамляем рамочкой
+            if (PROP_ShowRectangle)
+            {
+                PART_Border.Background = Brushes.Beige;
+                PART_Border.BorderThickness = new Thickness(0.5);
+            }
             // Высота таблицы
             PART_Grid.MinHeight = 27 * _Row;
             // Добавляем строки и колонки
@@ -85,7 +85,7 @@ namespace wpfGeneral.UserControls
             MET_AddColumn(_Column);
         }
 
-        /// <summary>МЕТОД Добавляем строки</summary> 
+        /// <summary>МЕТОД Добавляем строки</summary>
         /// <param name="pCountRow">Количество строк</param>
         private void MET_AddRow(int pCountRow)
         {
@@ -99,12 +99,11 @@ namespace wpfGeneral.UserControls
             }
         }
 
-        /// <summary>МЕТОД Добавляем Столбцы</summary> 
+        /// <summary>МЕТОД Добавляем Столбцы</summary>
         /// <param name="pCountColumn">Количество столбцов</param>
         private void MET_AddColumn(int pCountColumn)
         {
             PART_Grid.ColumnDefinitions.Clear();
-             
             ColumnDefinition _Column;
             for (int i = 0; i < pCountColumn; i++)
             {
@@ -123,18 +122,20 @@ namespace wpfGeneral.UserControls
             int _RowSpan;
             int _ColumnSpan;
             double _With;
-                      
+
             // Строка
             try { _Row = Convert.ToUInt16(pPole.PROP_Format.PROP_Value["gRo"]); }
             catch { _Row = 0; }
             Grid.SetRow(pPole, _Row);
             // Колонка
             try { _Column = Convert.ToUInt16(pPole.PROP_Format.PROP_Value["gCo"]); }
-            catch { _Column = 0; }              
+            catch { _Column = 0; }
+
             Grid.SetColumn(pPole, _Column);
             // Объединение по Строкам
             try { _RowSpan = Convert.ToUInt16(pPole.PROP_Format.PROP_Value["gRs"]); }
-            catch { _RowSpan = 0; } 
+            catch { _RowSpan = 0; }
+
             if (_RowSpan > 0) Grid.SetRowSpan(pPole, _RowSpan);
             // Объединение по Колонокам
             try { _ColumnSpan = Convert.ToUInt16(pPole.PROP_Format.PROP_Value["gCs"]); }
@@ -145,9 +146,8 @@ namespace wpfGeneral.UserControls
             catch { _With = 0; }
             if (_With > 0)
                 PART_Grid.ColumnDefinitions[_Column].Width = new GridLength(_With, GridUnitType.Star);
-            // Добавляем поле в ячейку 
+            // Добавляем поле в ячейку
             PART_Grid.Children.Add(pPole);
-                    
             // Если нужно рисуем границу между ячейками
             if (PROP_ShowRectangle)
             {
@@ -160,7 +160,7 @@ namespace wpfGeneral.UserControls
                 _Rectangle.StrokeThickness = 0.5;
                 PART_Grid.Children.Add(_Rectangle);
                 // Если ресуем границу между ячейками, то убираем границу у элемента
-                pPole.PROP_HideBorder = true;             
+                pPole.PROP_HideBorder = true;
             }
             return true;
         }

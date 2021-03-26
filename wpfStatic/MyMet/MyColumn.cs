@@ -31,7 +31,7 @@ namespace wpfStatic
             if (RPOP_Name.Contains("["))
                 RPOP_Name = RPOP_Name.Substring(1, RPOP_Name.Length - 2);       // тут убираем скобки
             else
-                RPOP_NameK = "[" + RPOP_Name + "]";                             // а тут их ставим   
+                RPOP_NameK = "[" + RPOP_Name + "]";                             // а тут их ставим
             try
             {
                 // Находим тип колонки
@@ -46,7 +46,7 @@ namespace wpfStatic
         }
 
         /// <summary>МЕТОД Возвращаем точное условие фильтра (только равно)</summary>
-        /// <param name="pWhere">Текст условия</param>    
+        /// <param name="pWhere">Текст условия</param>
         public string MET_Filtr(string pWhere)
         {
             if (PROP_Error) return "";
@@ -69,7 +69,7 @@ namespace wpfStatic
         }
 
         /// <summary>МЕТОД Возвращаем примерное условие фильтра (больше равно, либо Like)</summary>
-        /// <param name="pWhere">Текст условия</param>    
+        /// <param name="pWhere">Текст условия</param>
         public string MET_FiltrPr(string pWhere)
         {
             if (PROP_Error) return "";

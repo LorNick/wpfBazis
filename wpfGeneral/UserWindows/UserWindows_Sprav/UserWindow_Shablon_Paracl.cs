@@ -9,13 +9,12 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Выбор шаблона исследования Параклиники</summary>
     public class UserWindow_Shablon_Paracl : VirtualWindow_Shablon
-    {  
+    {
         private ComboBox PRI_ComboBox_1;
         private CheckBox PRI_CheckBox_1;
 
         /// <summary>Отображать основные шаблоны = false, дополнительные шаблоны = true</summary>
         private readonly bool PRI_Flag;
-
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_Shablon_Paracl(bool pFlag)
@@ -38,7 +37,7 @@ namespace wpfGeneral.UserWindows
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
             // Создаем фильтр
-            MET_CreateFiltr();            
+            MET_CreateFiltr();
             // Открываем таблицу
             MET_OpenForm();
             // Фильтр
@@ -91,19 +90,17 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox_1.IsChecked = true;
             PRI_CheckBox_1.Click += delegate { PRI_ComboBox_1.IsEnabled = PRI_CheckBox_1.IsChecked == true; MET_DopFilter(); };
             _SPanel_1.Children.Add(PRI_CheckBox_1);
-        }        
+        }
 
         /// <summary>МЕТОД Дополнительный фильтр по загруженным данным</summary>
         protected override void MET_DopFilter()
-        {            
+        {
             // Показываем только дополнительные шаблоны, либо только основные
             PRO_Where = PRI_Flag ? " TipObsled > 1" : " TipObsled = 1";
-
             // Фильтр по профилю исследования
             if (PRI_ComboBox_1.IsEnabled)
                 PRO_Where += $" and ProfilVr = {PRI_ComboBox_1.SelectedValue}";
-
             MET_Filter();
-        }       
+        }
     }
 }

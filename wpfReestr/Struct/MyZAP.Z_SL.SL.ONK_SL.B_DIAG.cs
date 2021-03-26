@@ -3,7 +3,7 @@
 namespace wpfReestr
 {
     /// <summary>КЛАСС Диагностический блок</summary>
-    /// <remarks>Справочник Q018; тип файла C, T; путь ZL_LIST/ZAP/Z_SL/SL/ONK_SL/B_DIAG</remarks> 
+    /// <remarks>Справочник Q018; тип файла C, T; путь ZL_LIST/ZAP/Z_SL/SL/ONK_SL/B_DIAG</remarks>
     public class MyB_DIAG
     {
         /// <summary>Дата взятия материала (из json NOM_USL)</summary>

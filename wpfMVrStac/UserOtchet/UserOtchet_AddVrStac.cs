@@ -8,11 +8,11 @@ namespace wpfMVrStac
 {
     /// <summary>КЛАСС Отчет Шаблонов Стационара (для типа EditStac)</summary>
     public class UserOtchet_AddVrStac : VirtualOtchet
-    {    
+    {
         ///<summary>МЕТОД Инициализация отчета</summary>
         /// <param name="pNodes">Ветка</param>
         public override VirtualOtchet MET_Inizial(VirtualNodes pNodes)
-        {                       
+        {
             // Если нужно формировать отчет
             if (PROP_NewCreate)
             {
@@ -24,7 +24,7 @@ namespace wpfMVrStac
                 Blocks.Clear();
                 // Если есть заполенный протокол
                 if (PROP_Nodes.PROP_shaPresenceProtokol)
-                    MET_Otchet();        // Формируем отчет               
+                    MET_Otchet();        // Формируем отчет
                 else
                     MET_NoOtchet();      // Отчет не заполен
                 // Добавляем последний параграф в блок
@@ -42,10 +42,9 @@ namespace wpfMVrStac
         {
             PROP_Docum.PROP_Protokol = UserProtokol.MET_FactoryProtokol(PROP_Docum.PROP_TipDocum,
                 MyGlo.IND, PROP_Docum.PROP_ListShablon.PROP_Cod, PROP_Nodes.PROP_shaIndex);
-           
-			PRO_Paragraph = new Paragraph();
-            // Заполняем ответы           
-			MET_Protokol();
+            PRO_Paragraph = new Paragraph();
+            // Заполняем ответы
+            MET_Protokol();
         }
     }
 }

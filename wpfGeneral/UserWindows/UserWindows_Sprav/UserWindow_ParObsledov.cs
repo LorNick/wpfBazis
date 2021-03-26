@@ -72,7 +72,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Устанавливаем Ширину колонок</summary>
         protected override void MET_WithColumn()
         {
-            PART_DataGrid.Columns[2].Width = 280;        // ФИО  
+            PART_DataGrid.Columns[2].Width = 280;        // ФИО
             PART_DataGrid.Columns[3].Width = 85;         // Дата р.
         }
 
@@ -93,20 +93,16 @@ namespace wpfGeneral.UserWindows
             _SPanel_1.Orientation = Orientation.Horizontal;
             _SPanel_1.Margin = new Thickness(0, 2, 0, 2);
             _SPanel.Children.Add(_SPanel_1);
-
             // Начальная дата обследования
             PRI_BeginDate = new UserPole_Data();
             PRI_BeginDate.PROP_WidthText = 100;
-
-            DateTime _ToDay = DateTime.Today;           
+            DateTime _ToDay = DateTime.Today;
             var _StartDate = new DateTime(_ToDay.Year, 1, 1);
             var _EendDate = DateTime.Today;
-
             PRI_BeginDate.PROP_Date = _StartDate;
             PRI_BeginDate.PROP_Description = "За период с";
             PRI_BeginDate.MET_Changed = () => MET_SqlFilter();
             _SPanel_1.Children.Add(PRI_BeginDate);
-
             // Конечная дата обследования
             PRI_EndDate = new UserPole_Data();
             PRI_EndDate.PROP_WidthText = 100;
@@ -115,17 +111,14 @@ namespace wpfGeneral.UserWindows
             PRI_EndDate.MET_Changed = () => MET_SqlFilter();
             PRI_EndDate.PROP_Description = "по";
             _SPanel_1.Children.Add(PRI_EndDate);
-
         }
 
         /// <summary>МЕТОД Фильтруем данные для больших таблиц</summary>
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = "where isnull(o.xDelete, 0) = 0";
-
             // Фильтр по дате
             PRO_SqlWhere = $" and o.DP between '{PRI_BeginDate.PROP_Date:MM.dd.yyyy}' and '{PRI_EndDate.PROP_Date:MM.dd.yyyy}'";
-
             // Фильтр по строке поиска
             if (PRO_TextFilter.Length > 0)
             {
@@ -135,15 +128,14 @@ namespace wpfGeneral.UserWindows
                     // Код обследования или KL пациента
                     PRO_SqlWhere += $" and (o.Cod = {PRO_TextFilter} or k.KL = {PRO_TextFilterTransliter})";
                 }
-                else 
+                else
                 {
                     // ФИО пациента
                     PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
                 }
             }
-            
             // Запрос
-            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);            
+            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
         /// <summary>МЕТОД Выбор данных</summary>

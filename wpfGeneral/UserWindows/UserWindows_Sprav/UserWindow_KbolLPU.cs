@@ -3,16 +3,15 @@ using System.Data;
 using wpfStatic;
 
 namespace wpfGeneral.UserWindows
-{ 
+{
     /// <summary>КЛАСС Таблицы "kbol"  для онколовгов ЛПУ</summary>
     public class UserWindow_KbolLPU : VirtualUserWindow
-    { 
+    {
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_KbolLPU()
         {
             // Ставим Русский язык
             MyMet.MET_Lаng();
-
             // Имя таблицы
             PRO_TableName = "kbolLPU";
             // Если строка ввода ищет через SQL
@@ -32,7 +31,7 @@ namespace wpfGeneral.UserWindows
             MET_OpenForm();
             // Ставим фокус на сторку поиска
             PART_TextBox.Focus();
-        }                                
+        }
 
         /// <summary>МЕТОД Формирование Запроса</summary>
         protected override string MET_SelectQuery()
@@ -67,9 +66,8 @@ namespace wpfGeneral.UserWindows
             // ФИО пациента
             if (PRO_TextFilter.Length > 0)
                 PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
-            
             // Запрос
-            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);           
+            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
         /// <summary>МЕТОД Выбор данных</summary>
@@ -77,7 +75,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список пациентов
             try
             {
@@ -90,5 +87,5 @@ namespace wpfGeneral.UserWindows
             }
             Close();
         }
-    } 
+    }
 }

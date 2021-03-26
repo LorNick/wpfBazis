@@ -12,7 +12,7 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Виртуальной формы справочников</summary>
     public partial class VirtualUserWindow
-    {        
+    {
         /// <summary>Если false - не пересчитываем размер колонок (ещё рано), true - с этого момента начинаем пересчет размера колонок</summary>
         private bool PRI_FlageResizeColumn;
 
@@ -86,7 +86,8 @@ namespace wpfGeneral.UserWindows
         /// <summary>КОНСТРУКТОР</summary>
         protected VirtualUserWindow()
         {
-            InitializeComponent();           
+            InitializeComponent();
+
             // Ставим Русский язык
             MyMet.MET_Lаng();
         }
@@ -97,10 +98,9 @@ namespace wpfGeneral.UserWindows
         protected void MET_OpenForm(bool pLoadSqlFlag = true)
         {
             if (Owner == null)
-                Owner = Application.Current.MainWindow;			
+                Owner = Application.Current.MainWindow;
             // Определяем условия и загружаем данные
             if (pLoadSqlFlag)  MET_SqlFilter();
-           
             // Cоздаем DataView для нашей таблице
             PRO_DataView = new DataView(MyGlo.DataSet.Tables[PRO_TableName]);
             // Отображаем таблицу
@@ -113,18 +113,18 @@ namespace wpfGeneral.UserWindows
                 PART_Button_Edit.IsEnabled = true;
                 PART_Button_Delete.IsEnabled = true;
             }
-
             MET_SizeChanged(PART_DataGrid);
         }
 
         /// <summary>МЕТОД Формирование Запроса (пустой)</summary>
         protected virtual string MET_SelectQuery() { return ""; }
-        
+
         /// <summary>МЕТОД Создание фильтров для загрузки данных из SQL</summary>
         protected virtual void MET_SqlFilter()
-        {     
+        {
             // Запрос
-            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName); 
+            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
+
         }
 
         /// <summary>МЕТОД Создание фильтров для уже загруженных данных</summary>
@@ -136,15 +136,14 @@ namespace wpfGeneral.UserWindows
                 string[] _mFilter = PRO_TextFilter.Split(' ');
                 // Если есть спец поле, то используем его, иначе выбранный столбик
                 string _PoleSort = PRO_PoleFiltr != "" ? PRO_PoleFiltr : PRO_DataView.Sort;
-
                 // Если после сортировки так и не нашли то выходим (как правило, это когда нет данных)
                 if (_PoleSort == "")
                     return;
-
                 string _And = PRO_Where.Length > 0 ? " and " : "";
                 try
                 {
-                    string _Filtr = $"{PRO_Where}{_And}";                    
+                    string _Filtr = $"{PRO_Where}{_And}";
+
                     foreach (var _f in _mFilter)
                     {
                         _Filtr += $"({_PoleSort} like '%{_f}%' or {_PoleSort} like '%{PRO_Transliter.MET_Replace(_f)}%') and ";
@@ -181,7 +180,6 @@ namespace wpfGeneral.UserWindows
                 {
                     PRO_DataView.RowFilter = "";
                 }
-
             // Выделяем первую строку
             if (PRO_DataView != null && PRO_DataView.Table.Rows.Count != -1)
                 PART_DataGrid.SelectedIndex = 0;
@@ -252,7 +250,6 @@ namespace wpfGeneral.UserWindows
                 PRO_TextFilter = PRO_TextFilter.Replace("'", "''");
                 MET_SqlFilter();
                 PRO_DataView.RowFilter = "";
-              //  PRO_TextFilter = "";       // Надо с этой строкой разобраться, почему она здесь?      
             }
             // Вызываем дополнительный фильтр, куда добавляем фильтр по загруженным данным
             else
@@ -270,11 +267,10 @@ namespace wpfGeneral.UserWindows
         {
             // Количество строк
             PART_BarText_2.Text = $"Строк: {PRO_DataView.Count}";
-
             // Показываем выбранное значение
             DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
             if (_DataRowView != null)
-                PART_BarText_1.Text = Convert.ToString(_DataRowView.Row[PRO_PoleBarPanel ?? PRO_PoleSort]);                          
+                PART_BarText_1.Text = Convert.ToString(_DataRowView.Row[PRO_PoleBarPanel ?? PRO_PoleSort]);
         }
         #endregion
 
@@ -286,7 +282,6 @@ namespace wpfGeneral.UserWindows
                 return;
             // Выставляем авторазмер
             pDataGrid.ColumnWidth = DataGridLength.Auto;
-            // Do not change column size if Visibility State Changed 
             if (pDataGrid.RenderSize.Width > 0)
             {
                 // Ширина всех колонок
@@ -296,7 +291,6 @@ namespace wpfGeneral.UserWindows
                 {
                     if (Equals(_Column, pDataGrid.Columns[pDataGrid.Columns.Count - 1]))
                     {
-                        // Space available to fill ( -25 Standard vScrollbar) 
                         double _Space = (pDataGrid.RenderSize.Width - 40) - _AllSize;
                         _Column.Width = new DataGridLength(_Space);
                     }
@@ -308,8 +302,8 @@ namespace wpfGeneral.UserWindows
                     _AllSize += _Column.ActualWidth;
                 }
             }
-        }                                                                             
-    
+        }
+
         /// <summary>СОБЫТИЕ Нажали на кнопку "Удалить запись"</summary>
         private void PART_Button_Delete_Click(object sender, RoutedEventArgs e)
         {
@@ -324,13 +318,13 @@ namespace wpfGeneral.UserWindows
         private void PART_Button_Check_Click(object sender, RoutedEventArgs e)
         {
             MET_Select();
-        }          
+        }
 
         /// <summary>СОБЫТИЕ Нажали на кнопку "Закрыть"</summary>
         private void PART_Button_Undo_Click(object sender, RoutedEventArgs e)
-        {				
+        {
             Close();
-        }        
+        }
 
         /// <summary>СОБЫТИЕ После загрузки окна</summary>
         private void UserWindows_Loaded(object sender, RoutedEventArgs e)
@@ -347,13 +341,15 @@ namespace wpfGeneral.UserWindows
             }
 
             if (PART_DataGrid.Columns.Count > 0)
-            {               
+            {
+
+
                 // Выделяем первую строку
                 if (PRO_DataView.Table.Rows.Count != -1)
                     PART_DataGrid.SelectedIndex = 0;
             }
         }
-      
+
         /// <summary>СОБЫТИЕ Меняются размеры DataGrid</summary>
         private void PART_DataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -363,7 +359,7 @@ namespace wpfGeneral.UserWindows
 
         /// <summary>СОБЫТИЕ Сохроняем измения в ячейке</summary>
         private void PART_DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
-        {    
+        {
             // Находим запись
             DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
             // Меняем (добавляем запись), если строка не пустая
@@ -388,13 +384,12 @@ namespace wpfGeneral.UserWindows
         {
             // Номер столбца
             int _Index = (sender as DataGrid).Columns.Count;
-            
             // Запускаем свою генерацию, если не прошла, то пытаемся делать общую генерацию
             if (!MET_GeneratingColumn(sender, e))
             {
                 // Отображаем картинки из базы
                 if (e.PropertyName == "Image")
-                {                 
+                {
                     DataGridTemplateColumn _TemplateColumn = new DataGridTemplateColumn
                     {
                         Header = "Image",
@@ -403,18 +398,16 @@ namespace wpfGeneral.UserWindows
                     };
                     e.Column = _TemplateColumn;
                 }
-                            
                 // Отображаем иконки из словаря
                 if (e.PropertyName == "Icon")
                 {
                     DataGridTemplateColumn _TemplateColumn = new DataGridTemplateColumn
-                    {                    
+                    {
                         Header = "Icon",
                         CellTemplate = (DataTemplate)Resources["icoDateCellTemplate"]
-                    };               
-                    e.Column = _TemplateColumn;                  
+                    };
+                    e.Column = _TemplateColumn;
                 }
-
                 // Отображаем иконки из словаря (как правило для удаления)
                 if (e.PropertyName == "IconDel")
                 {
@@ -425,22 +418,19 @@ namespace wpfGeneral.UserWindows
                     };
                     e.Column = _TemplateColumn;
                 }
-
                 // Отображаем Дату в нормальном виде
                 if (e.PropertyType == typeof(DateTime))
-                {                       
+                {
                     if (e.Column is DataGridTextColumn _DateText)
                         _DateText.Binding.StringFormat = "dd.MM.yyyy";
                 }
-
-                // Отображаем текст (для просмотра) 
+                // Отображаем текст (для просмотра)
                 if (e.PropertyType == typeof(string))
-                {                   
+                {
                     // Настраиваем перенос строки, в ячейке
                     if (e.Column is DataGridTextColumn _DateText)
                         _DateText.ElementStyle = this.Resources["WordWrapStyle"] as Style;
                 }
-
                 //// Отображаем Дату в нормальном виде
                 //if (e.PropertyName == "NameLS")
                 //{
@@ -450,7 +440,6 @@ namespace wpfGeneral.UserWindows
                 //    e.Column = _TemplateColumn;
                 //}
             }
-            
             // Переименовываем столбцы
             e.Column.Header = MET_Header((sender as DataGrid).Columns.Count);
             // Разрешаем редактировать столбцы
@@ -464,7 +453,7 @@ namespace wpfGeneral.UserWindows
             MET_WithColumn();
             // Удаляем ненужный столбец, если есть колонки
             MET_RemoveAt();
-        } 
+        }
 
         /// <summary>МЕТОД Сохраняем файл с рисунком в байтовый массив</summary>
         public static byte[] MET_GetPhoto(string pFilePath)
@@ -480,13 +469,13 @@ namespace wpfGeneral.UserWindows
         /// <summary>СОБЫТИЕ Изменения статуса окна, если оно свернуто - сворачивает главное оконо</summary>
         private void UserWindows_StateChanged(object sender, EventArgs e)
         {
-			if (this.WindowState == WindowState.Minimized)
-			{
-				if (Owner != null)
-				{
-					Owner.WindowState = WindowState.Minimized;
-				}
-			}
+            if (this.WindowState == WindowState.Minimized)
+            {
+                if (Owner != null)
+                {
+                    Owner.WindowState = WindowState.Minimized;
+                }
+            }
         }
 
         /// <summary>СОБЫТИЕ Инициализация новой строки</summary>
@@ -521,7 +510,7 @@ namespace wpfGeneral.UserWindows
         {
             MET_LoadingRowDetails(sender, e);
         }
-        
+
         /// <summary>СОБЫТИЕ После создания DataGrid</summary>
         private void PART_DataGrid_Loaded(object sender, RoutedEventArgs e)
         {
@@ -537,7 +526,7 @@ namespace wpfGeneral.UserWindows
         }
         #endregion
 
-        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>        
+        /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static bool MET_Access()
         {
             return true;
@@ -546,7 +535,7 @@ namespace wpfGeneral.UserWindows
 
     ///<summary>КЛАСС Конвертор Возвращаем иконку из словаря по имени</summary>
     class ConvertTextToImage : IValueConverter
-    {        
+    {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if (value.ToString() == "") return null;
@@ -557,12 +546,12 @@ namespace wpfGeneral.UserWindows
             catch
             {
                 return new BitmapImage();
-            }          
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
-        }        
+        }
     }
 }

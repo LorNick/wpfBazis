@@ -9,7 +9,7 @@ namespace wpfMKancReg
     {
         /// <summary>Код посещения в стационар</summary>
         public static decimal IND;
-       
+
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
@@ -21,7 +21,7 @@ namespace wpfMKancReg
                 // Нулевая строка - путь к программе
                 // 1, 2, 3 заполняются в MyGlo
                 if (x == 4)
-                    MyGlo.IND = Convert.ToDecimal(args[4]);               
+                    MyGlo.IND = Convert.ToDecimal(args[4]);
             }
         }
 
@@ -50,18 +50,17 @@ namespace wpfMKancReg
             MyGlo.DiagStac = Convert.ToString(MyGlo.HashAPSTAC["D"]);
             // Обнуляем историю болезни
             MyGlo.HashOtchet.Clear();
-
             IND = MyGlo.IND;
         }
 
         /// <summary>МЕТОД Заголовок программы</summary>
         public override string MET_Title()
-        {  
+        {
             // Наименование модуля
             string _Title = "wpfBazis -- Канцер Регистр --";
             // Номер версии
             _Title += " " + MyMet.MET_Ver();
-            // Отделение 
+            // Отделение
             _Title += $" ({MyMet.MET_NameOtd()})";
             // Пациент
             _Title += "  (" + MyGlo.FIO + " " + MyGlo.DR;

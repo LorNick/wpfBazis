@@ -16,7 +16,6 @@ namespace wpfGeneral.UserWindows
         private ComboBox PRI_ComboBox_2;
         private CheckBox PRI_CheckBox_2;
 
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_Kbol()
         {
@@ -33,7 +32,7 @@ namespace wpfGeneral.UserWindows
             Height = 660;
             // Сортируем по Фамилии
             PRO_PoleSort = 1;
-            // Показываем в подсказке 
+            // Показываем в подсказке
             PRO_PoleBarPanel = 2;
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
@@ -118,11 +117,11 @@ namespace wpfGeneral.UserWindows
             _SPanel_2.Children.Add(_Label_2);
             // Отделения
             PRI_ComboBox_2 = new ComboBox();
-            PRI_ComboBox_2.Width = 280;           
+            PRI_ComboBox_2.Width = 280;
             MySql.MET_DsAdapterFill(MyQuery.s_Department_Select_1(" and Tip in (1, 2)"), "s_Department");
-            PRI_ComboBox_2.ItemsSource =  new DataView(MyGlo.DataSet.Tables["s_Department"]);           
+            PRI_ComboBox_2.ItemsSource =  new DataView(MyGlo.DataSet.Tables["s_Department"]);
             PRI_ComboBox_2.SelectedValuePath = "Cod";
-            PRI_ComboBox_2.DisplayMemberPath = "Names";           
+            PRI_ComboBox_2.DisplayMemberPath = "Names";
             PRI_ComboBox_2.IsEnabled = false;
             PRI_ComboBox_2.SelectedValue = 1;
             PRI_ComboBox_2.SelectionChanged += PART_SelectionChanged;
@@ -138,7 +137,7 @@ namespace wpfGeneral.UserWindows
             _SPanel_2.Children.Add(PRI_CheckBox_2);
         }
 
-        /// <summary>СОБЫТИЕ На отключение/включение элеменов фильтра через CheckBox</summary>       
+        /// <summary>СОБЫТИЕ На отключение/включение элеменов фильтра через CheckBox</summary>
         private void PART_CheckBox_Click(object sender, RoutedEventArgs e)
         {
             PRI_DatePicker_1.IsEnabled = PRI_CheckBox_1.IsChecked == true;
@@ -153,12 +152,11 @@ namespace wpfGeneral.UserWindows
                 return;
             MET_SqlFilter();
         }
-        
+
         /// <summary>МЕТОД Фильтруем данные для больших таблиц</summary>
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = "";
-
             // Был ли в стационаре
             if (PRI_DatePicker_1.IsEnabled || PRI_ComboBox_2.IsEnabled)
             {
@@ -166,24 +164,19 @@ namespace wpfGeneral.UserWindows
                     join dbo.APSTAC as a
                       on a.KL = k.KL";
             }
-
             PRO_SqlWhere += "\nwhere isnull(k.xDelete, 0) = 0";
-
             // Фильтр по дате  в стационаре
             if (PRI_DatePicker_1.IsEnabled)
             {
                 DateTime _Date = Convert.ToDateTime(PRI_DatePicker_1.Text);
                 PRO_SqlWhere += string.Format(" and a.DN <= '{0}' and (a.DK is NULL or a.DK >= '{0}')", _Date.ToString("d", CultureInfo.CreateSpecificCulture("en-US")));
             }
-
             // Фильтр по отделению стационара
             if (PRI_ComboBox_2.IsEnabled)
                 PRO_SqlWhere += string.Format(" and a.Otd = {0}", PRI_ComboBox_2.SelectedValue);
-                              
             // ФИО пациента
             if (PRO_TextFilter.Length > 0)
                PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
-          
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
@@ -193,7 +186,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список пациентов
             try
             {
@@ -206,5 +198,5 @@ namespace wpfGeneral.UserWindows
             }
             Close();
         }
-    } 
+    }
 }

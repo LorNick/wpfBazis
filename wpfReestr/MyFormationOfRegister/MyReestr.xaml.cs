@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -13,7 +12,6 @@ using Newtonsoft.Json.Linq;
 using m = wpfReestr.MyMet;
 using wpfStatic;
 using e = Microsoft.Office.Interop.Excel;
-
 
 namespace wpfReestr
 {
@@ -33,33 +31,27 @@ namespace wpfReestr
     }
 
     /// <summary>КЛАСС Формируем реестры</summary>
-    public partial class MyReestr 
+    public partial class MyReestr
     {
         #region ---- Private ----
         /// <summary>Тип реестра (1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С)</summary>
         private int PRI_TipReestr;
         /// <summary>Вид реестра: 1 - Основной 0 - Тестовый реестр</summary>
         private int PRI_MainTest;
-
         /// <summary>Наша база</summary>
         private StarahReestrDataContext PRI_Context;
-
         /// <summary>Список реестров</summary>
         private StrahFile PRI_StrahFile;
         /// <summary>Запись реестра</summary>
         private StrahReestr PRI_StrahReestr;
-
         /// <summary>Запись Случая реестра</summary>
         private MySL PRI_Sl;
-
         /// <summary>Колличество услуг</summary>
         private int PRI_CouUsl;
-
         /// <summary>Номер записи реестра</summary>
         private int PRI_ReeNom_Zap;
         /// <summary>Номер пациента в реестре</summary>
         private int PRI_ReeN_Zap;
-     
         /// <summary>Флаг 1 - кр. стационар, 2 - дн. стационар, 3 - поликлиника, 4 - параклиника, 5 - гистология</summary>
         private eTipUsl PRI_TipUsl;
         /// <summary>Возраст</summary>
@@ -76,10 +68,8 @@ namespace wpfReestr
         private string PRI_SMO_NAM;
         /// <summary>Прошлая Страховая компания поменялась</summary>
         private bool PRI_FlagSMO;
-
         /// <summary>Разрешаем пересчитывать выборку</summary>
         private bool PRI_FlagPreInfo;
-        
         /// <summary>Справочники N002 Стадии</summary>
         private List<StrahSpr> PRI_N002;
         /// <summary>Справочники N003 Т</summary>
@@ -96,13 +86,10 @@ namespace wpfReestr
         private List<StrahSpr> PRI_N011;
         /// <summary>Справочники N012 Соответствие ИГХ диагнозам</summary>
         private List<StrahSpr> PRI_N012;
-
         /// <summary>Справочник StrahStacSv</summary>
         private List<StrahStacSv> PRI_StrahStacSv;
-
         /// <summary>Объявление типа делегата для ProgressBar</summary>
         private delegate void UpdateProgressBarDelegate(DependencyProperty dp, object value);
-
         /// <summary>Текущая запись</summary>
         private DataRow PRI_RowReestr;
 
@@ -111,7 +98,7 @@ namespace wpfReestr
         /// <summary>Выгрузка ошибок в Excel</summary>
         private MyExcel PRI_ErrorToExcel;
         /// <summary>Ошибочная запись</summary>
-        private bool PRI_ErrorRow;        
+        private bool PRI_ErrorRow;
         #endregion
 
         #region ---- Свойства ----
@@ -155,14 +142,14 @@ namespace wpfReestr
         {
             get { return (int)this.GetValue(DEPR_ParentProperty); }
             set { this.SetValue(DEPR_ParentProperty, value); }
-        }         
+        }
 
         /// <summary>СВОЙСТВО Информация процесса</summary>
         public string PROP_ProgressLabel
         {
             get { return (string)this.GetValue(DEPR_ProgressLabelProperty); }
             set { this.SetValue(DEPR_ProgressLabelProperty, value); }
-        } 
+        }
         #endregion
 
         #region ---- РЕГИСТРАЦИЯ ----
@@ -223,22 +210,20 @@ namespace wpfReestr
             PRI_DataViewStrachComp = new DataView(MyGlo.DataSet.Tables["StrahFile_Select"]);
             PART_ComboBoxMainMonth.ItemsSource = PRI_DataViewStrachComp;
             PART_ComboBoxMainMonth.DisplayMemberPath = "Visual";
-            PART_ComboBoxMainMonth.SelectedValuePath = "ParentCod";          
+            PART_ComboBoxMainMonth.SelectedValuePath = "ParentCod";
             DataTable _Table = MyGlo.DataSet.Tables["StrahFile_Select"];
-            _Table.PrimaryKey = new[] { _Table.Columns["ParentCod"] };            
+            _Table.PrimaryKey = new[] { _Table.Columns["ParentCod"] };
             //  Разрешаем загружать предварительную инфу (ну что бы по десять раз не загружало, при старте и установке дат)
             PRI_FlagPreInfo = true;
         }
-        
+
         /// <summary>СОБЫТИЕ Выбираем основной месяц</summary>
         private void PART_ComboBoxMainMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (PART_ComboBoxMainMonth.SelectedItem == null) return;
-
             PRI_FlagPreInfo = false;
             int _Parent = (int)PART_ComboBoxMainMonth.SelectedValue;
             DataRow _RowParent = MyGlo.DataSet.Tables["StrahFile_Select"].Rows.Find(_Parent);
-          
             PROP_DateN = (DateTime)m.MET_PoleDate("DateNNew", _RowParent);
             PROP_DateK = (DateTime)m.MET_PoleDate("DateKNew", _RowParent);
             PRI_TipReestr = m.MET_PoleInt("TipReestr", _RowParent);
@@ -253,12 +238,12 @@ namespace wpfReestr
                     break;
                 case 4:
                     PART_VMPRadio_4.IsChecked = true;
-                    break;                  
+                    break;
             }
             MET_PreInfa();
             PRI_FlagPreInfo = true;
         }
-         
+
         /// <summary>СОБЫТИЕ Выбираем Основной/Тестовый реестр</summary>
         private void RadioButtonMainTest_Click(object sender, RoutedEventArgs e)
         {
@@ -270,7 +255,7 @@ namespace wpfReestr
             {
                 PROP_ParentCod = 0;
                 MET_PreInfa();
-            }            
+            }
             PRI_FlagPreInfo = true;
         }
 
@@ -279,7 +264,7 @@ namespace wpfReestr
         {
             if (!PRI_FlagPreInfo) return;
             PRI_FlagPreInfo = false;           ;
-            PRI_TipReestr = m.MET_ParseInt(((RadioButton)sender).Tag);           
+            PRI_TipReestr = m.MET_ParseInt(((RadioButton)sender).Tag);
             // Загружаем данные
             MET_PreInfa();
             PRI_FlagPreInfo = true;
@@ -288,7 +273,7 @@ namespace wpfReestr
         /// <summary>СОБЫТИЕ Кнопка - прошлый месяц</summary>
         private void PART_LastButton_Click(object sender, RoutedEventArgs e)
         {
-            PRI_FlagPreInfo = false;                       
+            PRI_FlagPreInfo = false;
             PROP_DateN = new DateTime(DateTime.Today.AddMonths(-1).Year, DateTime.Today.AddMonths(-1).Month, 1);
             PROP_DateK = PROP_DateN.AddMonths(1);
             PROP_DateK = PROP_DateK.AddDays(-1);
@@ -300,7 +285,7 @@ namespace wpfReestr
         /// <summary>СОБЫТИЕ Кнопка - текущий месяц</summary>
         private void PART_CarrentButton_Click(object sender, RoutedEventArgs e)
         {
-            PRI_FlagPreInfo = false;                        
+            PRI_FlagPreInfo = false;
             PROP_DateN = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             PROP_DateK = PROP_DateN.AddMonths(1);
             PROP_DateK = PROP_DateK.AddDays(-1);
@@ -313,7 +298,7 @@ namespace wpfReestr
         private void PART_DateN_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!PRI_FlagPreInfo) return;
-            PRI_FlagPreInfo = false;                        
+            PRI_FlagPreInfo = false;
             // Пересчитываем начальную инфу
             MET_PreInfa();
             PRI_FlagPreInfo = true;
@@ -323,7 +308,7 @@ namespace wpfReestr
         private void PART_DateK_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!PRI_FlagPreInfo) return;
-            PRI_FlagPreInfo = false;                       
+            PRI_FlagPreInfo = false;
             // Пересчитываем начальную инфу
             MET_PreInfa();
             PRI_FlagPreInfo = true;
@@ -335,7 +320,6 @@ namespace wpfReestr
         {
             // Загружаем заготовку реестра StrahReestr
             MySql.MET_DsAdapterFill(MyQuery.ReStrahReestr_Select_2(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReStrahReestr");
-
             // Максимум ProgressBar
             PART_Info.Content = "Записей: " + MyGlo.DataSet.Tables["ReStrahReestr"].Rows.Count;
         }
@@ -349,14 +333,12 @@ namespace wpfReestr
                 MessageBox.Show("Начальная дата не может быть больше конечной!", "Ошибка");
                 return;
             }
-
             // Проверяем на наличие записей
             if (MyGlo.DataSet.Tables["ReStrahReestr"].Rows.Count == 0)
             {
                 MessageBox.Show("Так нечего же выгружать!", "Ошибка");
                 return;
             }
-
             // Запуск расчета
             MET_StartCalc();
         }
@@ -374,12 +356,10 @@ namespace wpfReestr
             PART_UserPage.IsEnabled = false;
             // Даем поток, для обновления формы
             Dispatcher.Invoke(_Progress, DispatcherPriority.Background, RangeBase.ValueProperty, _BarValue);
-
-            // Связь с SQL, в принципе не очень то и нужен, только для разового сохраниения в  StrahFile  
+            // Связь с SQL, в принципе не очень то и нужен, только для разового сохраниения в  StrahFile
             try
             {
                 PRI_Context = new StarahReestrDataContext(MySql.MET_ConSql());
-              
                 // Запись файла  StrahFile
                 PRI_StrahFile = new StrahFile
                 {
@@ -398,13 +378,11 @@ namespace wpfReestr
                     pHide = 0,
                     pParent = PROP_ParentCod
                 };
-
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
-
 
             // Стартовые номера для поля N_ZAP
             int.TryParse($"{PRI_TipReestr}{PROP_DateK.Month:00}00000", out PRI_ReeN_Zap);
@@ -453,7 +431,7 @@ namespace wpfReestr
             // Связь Реестр - Apstac
             _DataRelation = new DataRelation("ReReestr_Apstac", _ReStrahReestr, _ReApstac, false);
             MyGlo.DataSet.Relations.Add(_DataRelation);
-           
+
            // Стационар 2. Ksg
             MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_5(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReKsg");
             // Связь Apstac - Ksg
@@ -502,7 +480,7 @@ namespace wpfReestr
             PRI_N012 = new List<StrahSpr>(PRI_Context.StrahSpr.Where(e => e.Number > 0 && e.TableID == "N012"));
 
             PRI_StrahStacSv = new List<StrahStacSv>(PRI_Context.StrahStacSv);
-            
+
             // Максимум ProgressBar
             PART_ProgressBar.Maximum = MyGlo.DataSet.Tables["ReStrahReestr"].Rows.Count;
 
@@ -512,7 +490,7 @@ namespace wpfReestr
 
             // Создаем файл с ошибками (шапачку там)
             PRI_ErrorToExcel = new MyExcel(PRI_StrahFile);
-           
+
             // Перебераем все записи
             foreach (DataRow _Reestr in MyGlo.DataSet.Tables["ReStrahReestr"].Rows)
             {
@@ -530,7 +508,7 @@ namespace wpfReestr
                 PRI_ErrorToExcel.PROP_RowReestr = PRI_RowReestr;
                 PRI_ErrorToExcel.PROP_Nom++;
                 PRI_ErrorToExcel.PROP_Tip = new[] { "", "Кр. Стационар", "Дн. Стационар", "Поликлиника", "Параклиника", "Гистология" } [(int)PRI_TipUsl];
-             
+
                 switch (PRI_TipUsl)
                 {
                     case eTipUsl.StacKr:
@@ -544,8 +522,8 @@ namespace wpfReestr
                     case eTipUsl.Gist:
                         MET_CalcPar();    // считаем параклинику
                         break;
-                }              
-                
+                }
+
                 // Изменения прогресса
                 PROP_ProgressLabel = $"Загружено: {++_BarValue} из {PART_ProgressBar.Maximum}";
                 Dispatcher.Invoke(_Progress, DispatcherPriority.Background, RangeBase.ValueProperty, _BarValue);
@@ -553,7 +531,7 @@ namespace wpfReestr
                 // Сохраним строку в StrahReestr (если ошибок нет)
                 if (!PRI_ErrorRow) MET_SaveSql();
             }
-           
+
             // Для корректрирующих реестров пересчитаем нумерацию
             if (PROP_ParentCod > 0)
                 MySql.MET_QueryNo(MyQuery.StrahReestr_Update_2(PRI_StrahFile.Cod, PROP_ParentCod));
@@ -575,8 +553,8 @@ namespace wpfReestr
 
             MyGlo.DataSet.Tables["ReApstac"].ChildRelations.Clear();
             MyGlo.DataSet.Tables["ReKsg"].ChildRelations.Clear();
-            MyGlo.DataSet.Tables["ReApstacCons"].ChildRelations.Clear();      
-                        
+            MyGlo.DataSet.Tables["ReApstacCons"].ChildRelations.Clear();
+
             MyGlo.DataSet.Tables["ReKsg"].Clear();
             MyGlo.DataSet.Tables["ReApstacCons"].Clear();
             MyGlo.DataSet.Tables["ReApstac"].Clear();
@@ -587,11 +565,11 @@ namespace wpfReestr
             }
             MyGlo.DataSet.Relations.Clear();
             // Усё
-            MessageBox.Show(string.Format("Реестр №{0} сформирован!", PRI_StrahFile.Cod));  
+            MessageBox.Show(string.Format("Реестр №{0} сформирован!", PRI_StrahFile.Cod));
             // Показываем ошибки
             PRI_ErrorToExcel.MET_End();
-        }        
-               
+        }
+
 
         /// <summary>МЕТОД 6. Расчет Параклиники/Гистологии</summary>
         private void MET_CalcPar()
@@ -614,9 +592,9 @@ namespace wpfReestr
             // Связываем ReStrahReestr и RePar
             DataRow _RowPar = PRI_RowReestr.GetChildRows("ReReestr_Par")[0];
 
-            // PLAT -> SMO (Код страховой компании)                               далее в  MET_CalcAll() 
+            // PLAT -> SMO (Код страховой компании)                               далее в  MET_CalcAll()
             PRI_StrahReestr.PLAT = m.MET_PoleStr("Scom", _RowPar);
-           
+
             // LPU_1 (Подразделения МО)
             PRI_StrahReestr.LPU_1 = 55550900;                               // по умолчанию главный
 
@@ -637,16 +615,16 @@ namespace wpfReestr
                         ref PRI_ErrorRow);
 
             // PODR (Код отделения)
-            string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");           
+            string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
             PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}1{_Prof}");
 
-            // DET (Детский профиль, если ребёнок то 1 иначе 0)      далее в  MET_CalcAll() 
+            // DET (Детский профиль, если ребёнок то 1 иначе 0)      далее в  MET_CalcAll()
             PRI_Age = m.MET_PoleInt("Age", _RowPar);
 
-            // PRVS (Специальность врача, справочник V004) 
+            // PRVS (Специальность врача, справочник V004)
             PRI_StrahReestr.PRVS = m.MET_PoleStr("PRVS", _RowPar);
 
-            // IDDOKT -> CODE_MD (Код врача, справочник врачей) 
+            // IDDOKT -> CODE_MD (Код врача, справочник врачей)
             PRI_StrahReestr.IDDOKT = m.MET_PoleStr("IDDOKT", _RowPar);
 
             // ARR_DATE -> DATE_IN (Дата начала)
@@ -655,7 +633,7 @@ namespace wpfReestr
             // EX_DATE -> DATE_OUT (Дата окончания)
             PRI_StrahReestr.EX_DATE = PRI_StrahReestr.ARR_DATE;
 
-            // DS1 (Диагноз)                                             
+            // DS1 (Диагноз)
             PRI_StrahReestr.DS1 = m.MET_PoleStr("D", PRI_RowReestr);
             // Проверка
             if (PRI_StrahReestr.DS1.Length < 3)
@@ -667,10 +645,10 @@ namespace wpfReestr
                 return;
             }
 
-            //DS2 (Сопутствующий Диагноз - не заполняем) 
+            //DS2 (Сопутствующий Диагноз - не заполняем)
             PRI_StrahReestr.DS2 = "";
 
-            // PACIENTID -> NHISTORY (Номер истории Cod из kbolInfo)     
+            // PACIENTID -> NHISTORY (Номер истории Cod из kbolInfo)
             PRI_StrahReestr.PACIENTID = m.MET_PoleStr("Cod", PRI_RowReestr);
 
             // RES_G -> RSLT (Результат обращения/госпитализации, справочник V009)
@@ -699,7 +677,7 @@ namespace wpfReestr
             // SUM_LPU -> SUMV_USL (Сумма услуги)
             PRI_StrahReestr.SUM_LPU = PRI_StrahReestr.TARIF;
 
-            // NUMBER -> NPOLIS (Номер полиса)  далее в  MET_CalcAll() 
+            // NUMBER -> NPOLIS (Номер полиса)  далее в  MET_CalcAll()
             PRI_NPolis = m.MET_PoleStr("SN", _RowPar);
             if (string.IsNullOrEmpty(PRI_NPolis))
             {
@@ -715,7 +693,7 @@ namespace wpfReestr
 
             // DayN (Длительность лечения из Тарифов)
             PRI_StrahReestr.DayN = 1;
-            
+
             // Цель посещения
             PRI_Sl.P_Cel = "1.0";
 
@@ -743,7 +721,7 @@ namespace wpfReestr
 
             // ЛПУ направления
             PRI_Sl.NPR_MO = 555509;
-            PRI_Sl.NPR_MO = m.MET_PoleInt("NPR_MO", _RowPar);          
+            PRI_Sl.NPR_MO = m.MET_PoleInt("NPR_MO", _RowPar);
             // Пациент может быть направлен от нас, только с другого ЛПУ
             if (PRI_Sl.NPR_MO == 555509 && m.MET_ParseInt(PRI_StrahReestr.PLAT) < 100) // Иногородним позволяем направление с нашим ЛПУ
             {
@@ -813,8 +791,6 @@ namespace wpfReestr
                     PRI_Sl.ONK_SL.DS1_T = 5;
                 }
             }
-
-
             PRI_StrahReestr.CODE_USL = _Usluga.Code_Usl;
             PRI_StrahReestr.VID_VME = _Usluga.Usl;
 
@@ -837,12 +813,12 @@ namespace wpfReestr
         /// <summary>МЕТОД 7. Расчет общих полей</summary>
         private void MET_CalcAll()
         {
-            // Версия редакции 3 (март 2018)            
-            
+            // Версия редакции 3 (март 2018)
+
             // CodFile (Код файла реестра)
             PRI_StrahReestr.CodFile = PRI_StrahFile.Cod;
 
-            // PLAT (Код страховой компании)  
+            // PLAT (Код страховой компании)
             // Перекодируем местные страховые компании
             switch (PRI_StrahReestr.PLAT)
             {
@@ -881,10 +857,10 @@ namespace wpfReestr
             // SMO_OGRN  (ОГРН страховой компании)
             PRI_StrahReestr.SMO_OGRN = PRI_SMO_OGRN;
 
-            // SMO_OK (ОКАТО страховой компании) -> ST_OKATO (Для старых полисов) 
+            // SMO_OK (ОКАТО страховой компании) -> ST_OKATO (Для старых полисов)
             PRI_StrahReestr.SMO_OK = PRI_SMO_OK;
 
-            // SMO_NAM (Наименование страховой компании)    
+            // SMO_NAM (Наименование страховой компании)
             PRI_StrahReestr.SMO_NAM = PRI_SMO_NAM;
 
             // LPU_ST -> USL_OK (Условия оказания мед. помощи, справочник V006, 1 - кр. стационра, 2 - дн. стационар, 3 - поликлиника, 4 - параклиника, 5 - гистология)
@@ -893,7 +869,7 @@ namespace wpfReestr
              // DET (Детский профиль, если ребёнок то 1 иначе 0)
             PRI_StrahReestr.DET = PRI_Age < 18 ? 1 : 0;
 
-            // VPOLIS (Тип полиса 1 - старый, 2 - временный, 3 - новый)            
+            // VPOLIS (Тип полиса 1 - старый, 2 - временный, 3 - новый)
             char _VPolis = PRI_NPolis[PRI_NPolis.Length - 1];
             switch (_VPolis)
             {
@@ -905,7 +881,7 @@ namespace wpfReestr
                     break;
                 case 'н':
                     PRI_StrahReestr.VPOLIS = 3;                                      // новый
-                    break;             
+                    break;
                 default:
                     PRI_StrahReestr.VPOLIS = 1;
                     break;
@@ -944,7 +920,7 @@ namespace wpfReestr
             string _MR = m.MET_PoleStr("MR", PRI_RowReestr);
             PRI_StrahReestr.MR = _MR.Length > 0 ? _MR.ToUpper() : "Г. ОМСК";
 
-            // DOCTYPE (Тип документа удостоверяющего личность)  
+            // DOCTYPE (Тип документа удостоверяющего личность)
             PRI_StrahReestr.DOCTYPE = 0;
             if (PRI_StrahReestr.VPOLIS != 3)                    // если полис новый, то документ можем не заполнять
             {
@@ -970,7 +946,7 @@ namespace wpfReestr
                 }
                 PRI_StrahReestr.DOCSER = PRI_StrahReestr.DOCTYPE == 14 && _Pasp_Ser.Length > 3
                     ? _Pasp_Ser.Substring(0, 2) + " " + _Pasp_Ser.Substring(2, 2)               // паспорт
-                    : _Pasp_Ser;                                                                // другие            
+                    : _Pasp_Ser;                                                                // другие
 
                 // DOCNUM (Номер документа удостоверяющего личность)
                 PRI_StrahReestr.DOCNUM = m.MET_PoleStr("Pasp_Nom", PRI_RowReestr);
@@ -1003,7 +979,7 @@ namespace wpfReestr
                     PRI_ErrorToExcel.MET_SaveError();
                     PRI_ErrorRow = true;
                     return;
-                }                           
+                }
             }
 
             // OKATOG -> OKATOP (ОКАТО места жительства)
@@ -1018,12 +994,12 @@ namespace wpfReestr
 
             // NOM_ZAP -> IDCASE (Номер случая)
             PRI_StrahReestr.NOM_ZAP = PRI_ErrorRow || PRI_StrahReestr.PR_NOV  == 1 ? 0 : ++PRI_ReeNom_Zap;
-            
+
             // ID_PAC (Код пациента)
             PRI_StrahReestr.ID_PAC = m.MET_PoleDec("KL", PRI_RowReestr);
 
-            // N_ZAP  (Номер пациента) 
-            PRI_StrahReestr.N_ZAP = PRI_ErrorRow || PRI_StrahReestr.PR_NOV == 1 ? 0 : ++PRI_ReeN_Zap;            
+            // N_ZAP  (Номер пациента)
+            PRI_StrahReestr.N_ZAP = PRI_ErrorRow || PRI_StrahReestr.PR_NOV == 1 ? 0 : ++PRI_ReeN_Zap;
         }
 
         /// <summary>МЕТОД 8. Сохраняем полученную запись в Sql</summary>
@@ -1040,23 +1016,23 @@ namespace wpfReestr
             // Основной файл
             string _Str = $@"
                 insert into dbo.StrahReestr
-                   (CodFile                                                                     
+                   (CodFile
                    ,PLAT,SMO_OGRN,SMO_OK,SMO_NAM
-                   ,LPU_1,[ORDER],LPU_ST                           
+                   ,LPU_1,[ORDER],LPU_ST
                    ,VIDPOM,PODR,PROFIL
                    ,DET,CODE_USL,PRVS,IDDOKT
                    ,ARR_DATE,EX_DATE,DS1,DS2,PACIENTID
                    ,RES_G,ISHOD,IDSP
-                   ,KOL_USL,TARIF,SUM_LPU                    
+                   ,KOL_USL,TARIF,SUM_LPU
                    ,VPOLIS,SERIA,NUMBER
                    ,FAMILY,NAME,FATHER,POL
-                   ,VOZRAST,SS,OS_SLUCH              
+                   ,VOZRAST,SS,OS_SLUCH
                    ,MR,DOCTYPE,DOCSER
-                   ,DOCNUM,OKATOG                    
+                   ,DOCNUM,OKATOG
                    ,NOM_ZAP,UKL,NOM_USL,ID_PAC
                    ,N_ZAP,PR_NOV,DayN
                    ,VID_VME,VID_HMP,METOD_HMP
-                   ,DOCDATE,DOCORG, KSG)                                                
+                   ,DOCDATE,DOCORG, KSG)
                 values
                    ({PRI_StrahReestr.CodFile.ToString()}
                     ,'{PRI_StrahReestr.PLAT}','{PRI_StrahReestr.SMO_OGRN}','{PRI_StrahReestr.SMO_OK}','{PRI_StrahReestr.SMO_NAM}'
@@ -1075,8 +1051,6 @@ namespace wpfReestr
                     ,{PRI_StrahReestr.N_ZAP.ToString()},{PRI_StrahReestr.PR_NOV.ToString()},{PRI_StrahReestr.DayN.ToString()}
                     ,'{PRI_StrahReestr.VID_VME}','{PRI_StrahReestr.VID_HMP}','{PRI_StrahReestr.METOD_HMP}'
                     ,{_DOCDATE},'{PRI_StrahReestr.DOCORG}', '{PRI_StrahReestr.KSG}');";
-
-           
             MySql.MET_QueryNo(_Str);
         }
 
@@ -1089,14 +1063,14 @@ namespace wpfReestr
         /// <param name="pIsNapr">Дата должна быть меньше или равно началу случая (дата направления) (по пумолчанию false)</param>
         /// <returns>В случае ошибки возвращаем null иначе туже строку</returns>
         private string MET_VerifDate(string pStrDate, string pNameTag, bool pFatalError = false, bool pIsStart = true, bool pIsEnd = true, bool pIsNapr = false)
-        {           
+        {
             // Наличие даты
             if (string.IsNullOrEmpty(pStrDate))
                 return null;
 
             // Проверка на формат даты
             if (!DateTime.TryParse(pStrDate, out DateTime _DateTime))
-            { 
+            {
                 // Если ошибка критическая
                 if (pFatalError)
                 {
@@ -1151,7 +1125,7 @@ namespace wpfReestr
             }
 
             return pStrDate;
-        }      
+        }
     }
 }
 

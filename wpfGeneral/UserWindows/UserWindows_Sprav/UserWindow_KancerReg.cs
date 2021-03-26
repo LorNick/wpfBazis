@@ -19,7 +19,6 @@ namespace wpfGeneral.UserWindows
         private CheckBox PRI_CheckBox_3;
         private CheckBox PRI_CheckBox_4;
 
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_KancerReg()
         {
@@ -150,7 +149,7 @@ namespace wpfGeneral.UserWindows
             _SPanel_3.Children.Add(PRI_CheckBox_4);
         }
 
-        /// <summary>СОБЫТИЕ На отключение/включение элеменов фильтра через CheckBox</summary>       
+        /// <summary>СОБЫТИЕ На отключение/включение элеменов фильтра через CheckBox</summary>
         private void PART_CheckBox_Click(object sender, RoutedEventArgs e)
         {
             PRI_DatePicker_1.IsEnabled = PRI_CheckBox_1.IsChecked == true;
@@ -191,8 +190,7 @@ namespace wpfGeneral.UserWindows
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = "where a.DK is not NULL and isnull(a.xDelete, 0) = 0";
-
-            // Фильтр по дате  
+            // Фильтр по дате
             if (PRI_DatePicker_1.IsEnabled)
             {
                 DateTime _Date1 = Convert.ToDateTime(PRI_DatePicker_1.Text);
@@ -209,11 +207,9 @@ namespace wpfGeneral.UserWindows
             // Cкрывать заполенные в Канц. регистр
             if (PRI_CheckBox_4.IsChecked == true)
                 PRO_SqlWhere += " and a.OtpuskDate is NULL";
-
             // ФИО пациента
             if (PRO_TextFilter.Length > 0)
                 PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
-
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
@@ -236,5 +232,5 @@ namespace wpfGeneral.UserWindows
             }
             Close();
         }
-    } 
+    }
 }

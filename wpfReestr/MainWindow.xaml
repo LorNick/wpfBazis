@@ -1,14 +1,14 @@
 ﻿<Window x:Class="wpfReestr.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"       
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         xmlns:local="clr-namespace:wpfReestr"
-        Title="MainWindow" 
+        Title="MainWindow"
         x:Name="UserWindow"
-        Height="800" Width="1250" 
-        Icon="/Resources\data_edit.ico" 
-        FontSize="14"  
+        Height="800" Width="1250"
+        Icon="/Resources\data_edit.ico"
+        FontSize="14"
         WindowStartupLocation="CenterScreen"
         Loaded="Window_Loaded">
     <Window.Resources>
@@ -17,7 +17,6 @@
                 <ResourceDictionary Source="pack://application:,,,/wpfResource;component/ImageList.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/wpfResource;component/Button.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
             <!--Конвертр для иконок-->
             <local:ConvertTextToImage x:Key="ConvertTextToImage" />
         </ResourceDictionary>
@@ -86,100 +85,92 @@
                     <telerik:RadWatermarkTextBox Height="24" Name="PART_TextBoxFindIDCase" Width="200"
                         WatermarkBehavior="HideOnTextEntered"
                         WatermarkContent="Нажмите на Enter"
-                        KeyDown="PART_TextBoxFindIDCase_KeyDown"  
-                        CharacterCasing="Upper" DataContext="{Binding ElementName=PART_Grid, Path=MaxHeight}" 
+                        KeyDown="PART_TextBoxFindIDCase_KeyDown"
+                        CharacterCasing="Upper" DataContext="{Binding ElementName=PART_Grid, Path=MaxHeight}"
                         SelectionChanged="PART_TextBoxFindIDCase_SelectionChanged" GotFocus="PART_TextBoxFindIDCase_GotFocus_1"
                         />
-                    <telerik:RadToggleButton Name="PART_ButtonFindFiltr" CornerRadius="7" Width="60" Margin="5,0,0,0" ToolTipService.ToolTip="Фильтровать по строке Поиска по FAM/IDCase" 
+                    <telerik:RadToggleButton Name="PART_ButtonFindFiltr" CornerRadius="7" Width="60" Margin="5,0,0,0" ToolTipService.ToolTip="Фильтровать по строке Поиска по FAM/IDCase"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Фильтр" />
                 </StackPanel>
-
                 <StackPanel Orientation="Horizontal" Margin="1">
                     <!--Фильтры Впервые/Повторно-->
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Main" CornerRadius="7" Width="28" Margin="15,0,0,0" ToolTipService.ToolTip="Впервые поданные записи" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Main" CornerRadius="7" Width="28" Margin="15,0,0,0" ToolTipService.ToolTip="Впервые поданные записи"
                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnDocuments}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Corrected" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Повторно (исправленные) поданные записи" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Corrected" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Повторно (исправленные) поданные записи"
                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnNaznach}"/>
                     </telerik:RadToggleButton>
-
                     <!--Фильтры Услуги-->
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Stac" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Круглосуточный стационар (LPU_ST = 1)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Stac" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Круглосуточный стационар (LPU_ST = 1)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnStac}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1StacDnev" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Дневной стационар (LPU_ST = 2)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1StacDnev" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Дневной стационар (LPU_ST = 2)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnStacDnev}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1PosPolikl" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Посещение поликлиники (амбулатория) (LPU_ST = 3)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1PosPolikl" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Посещение поликлиники (амбулатория) (LPU_ST = 3)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnPosPolikl}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Paracl" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Параклиника (LPU_ST = 4)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Paracl" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Параклиника (LPU_ST = 4)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnParacl}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Microscope" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Гистология (LPU_ST = 5)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Microscope" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Гистология (LPU_ST = 5)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnMicroscope}"/>
                     </telerik:RadToggleButton>
-
                     <!--Фильтры Страховые Компании-->
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoAlfa" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoAlfa" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoAlfa}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoKapital" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая компания Капитал (код 41)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoKapital" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая компания Капитал (код 41)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoKapital}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoSogaz" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая - компания Согаз (код 44, он же 52)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoSogaz" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая - компания Согаз (код 44, он же 52)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoSogaz}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoInogor" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Иногородние страховые компании" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoInogor" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Иногородние страховые компании"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoInogor}"/>
                     </telerik:RadToggleButton>
-
                     <!--Фильтр Дети-->
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Baby" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Показывать только детей" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Baby" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Показывать только детей"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnBaby}"/>
                     </telerik:RadToggleButton>
-
                     <!--ФИЛЬТРЫ-->
-                    <telerik:RadToggleButton Name="PART_ButtonFiltr1" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Фильт по выбранному полю и значению" 
-                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Ф1" />                    
+                    <telerik:RadToggleButton Name="PART_ButtonFiltr1" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Фильт по выбранному полю и значению"
+                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Ф1" />
                     <Label Content="Поле" Name="PART_FilterPole1" />
                     <Label Content="Значение" Foreground="Red" Name="PART_FilterZnach1" />
-
-                    <telerik:RadToggleButton Name="PART_ButtonFiltr2" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Фильт по выбранному полю и значению" 
-                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Ф2" />                    
+                    <telerik:RadToggleButton Name="PART_ButtonFiltr2" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Фильт по выбранному полю и значению"
+                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Ф2" />
                     <Label Content="Поле" Name="PART_FilterPole2" />
                     <Label Content="Значение" Foreground="Red" Name="PART_FilterZnach2" />
-                </StackPanel>                              
+                </StackPanel>
             </StackPanel>
-
             <Grid Name="Grid1" Grid.Row="1" >
                 <DataGrid Name="dataGrid1"
                           ItemsSource="{Binding}"
                           AutoGenerateColumns="False"
                           CanUserDeleteRows="False"
                           AlternatingRowBackground="#FFF8F8EF"
-                          FontSize="12" 
+                          FontSize="12"
                           VirtualizingStackPanel.IsVirtualizing="True"
                           VirtualizingStackPanel.VirtualizationMode="Recycling"
-                          RowDetailsVisibilityMode="VisibleWhenSelected"                                                     
-                          CurrentCellChanged="dataGrid1_CurrentCellChanged" 
-                          CellEditEnding="dataGrid1_CellEditEnding"                           
-                          Margin="0,0,0,5" 
+                          RowDetailsVisibilityMode="VisibleWhenSelected"
+                          CurrentCellChanged="dataGrid1_CurrentCellChanged"
+                          CellEditEnding="dataGrid1_CellEditEnding"
+                          Margin="0,0,0,5"
                           FrozenColumnCount="6"
                           Style="{StaticResource DataGridReestr}">
-
                     <DataGrid.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="_Удалить строки" Click="MenuItemData1_Click_1"></MenuItem>
@@ -275,59 +266,56 @@
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnFileC}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonFileH" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Файлы Н - Без С" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonFileH" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Файлы Н - Без С"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnFileH}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonFileT" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Файлы T - ВМП" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonFileT" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Файлы T - ВМП"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnFileT}"/>
                     </telerik:RadToggleButton>
-                    
                     <Label Content="Страх. комп.:" Height="24" Margin="20,1,0,1" Padding="0" />
-                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoAlfa" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoAlfa" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoAlfa}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoKapital" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая компания Капитал (код 41)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoKapital" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая компания Капитал (код 41)"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoKapital}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoSogaz" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая - компания Согаз (код 44, он же 52)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoSogaz" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая - компания Согаз (код 44, он же 52)"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoSogaz}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoInogor" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="ТФОМС" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoInogor" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="ТФОМС"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoInogor}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoAll" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Тестовые - (только для внутреннего использования)" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonSmoAll" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Тестовые - (только для внутреннего использования)"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoAll}"/>
                     </telerik:RadToggleButton>
-                    
                     <Label Content="Реестры:" Height="24" Margin="20,1,0,1" Padding="0" />
-                    <telerik:RadToggleButton Name="PART_ToggleButtonMain" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Основные реестры" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonMain" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Основные реестры"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnDocuments}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonCorrected" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Исправленные реестры" 
+                    <telerik:RadToggleButton Name="PART_ToggleButtonCorrected" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Исправленные реестры"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnNaznach}"/>
                     </telerik:RadToggleButton>
-
                     <Label Name="PART_LabelCountZapAndSumm" Height="24" Margin="20,1,0,1" Padding="0" Foreground="#FF3434B2" FontWeight="Bold"/>
                 </StackPanel>
-                <DataGrid Name="dataGrid2"  
-                          Grid.Row="1" 
-                          AutoGenerateColumns="False" 
+                <DataGrid Name="dataGrid2"
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
                           AlternatingRowBackground="#FFF2F2E2"
-                          FontSize="12"   
+                          FontSize="12"
                           RowDetailsVisibilityMode="VisibleWhenSelected"
                           CanUserAddRows="False"
                           CanUserDeleteRows="False"
-                          SelectionMode="Single" 
-                          SelectionChanged="dataGrid2_SelectionChanged" 
+                          SelectionMode="Single"
+                          SelectionChanged="dataGrid2_SelectionChanged"
                           CellEditEnding="dataGrid2_CellEditEnding"
                           Style="{StaticResource DataGridReestr}">
                     <DataGrid.ContextMenu>
@@ -404,10 +392,10 @@
         <StatusBar Grid.Row="2" Grid.Column="0">
             <Label  Name="PART_LabelStatusBar" Padding="0" Foreground="#FF3434B2" FontWeight="Bold" />
         </StatusBar>
-        <TextBox x:Name="PART_TextBoxTeg" 
-                 Text="{Binding SelectedItem.NOM_USL, ElementName=dataGrid1, Mode=TwoWay, NotifyOnSourceUpdated = True, UpdateSourceTrigger=Explicit}"         
-                 Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" FontSize="12" 
-                 TextWrapping="Wrap"                  
+        <TextBox x:Name="PART_TextBoxTeg"
+                 Text="{Binding SelectedItem.NOM_USL, ElementName=dataGrid1, Mode=TwoWay, NotifyOnSourceUpdated = True, UpdateSourceTrigger=Explicit}"
+                 Grid.Column="1" Grid.Row="0" Grid.RowSpan="3" FontSize="12"
+                 TextWrapping="Wrap"
                  p:ScrollViewer.VerticalScrollBarVisibility="Auto"
                  p:ScrollViewer.CanContentScroll="True"
                  AcceptsReturn="True"

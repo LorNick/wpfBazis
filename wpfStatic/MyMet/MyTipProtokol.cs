@@ -26,8 +26,8 @@
         public int PROP_NextRef { get; private set; }
         #endregion
 
-        /// <summary>КОНСТРУКТОР</summary>  
-        /// <param name="pTipProtokol">Тип протокола</param>         
+        /// <summary>КОНСТРУКТОР</summary>
+        /// <param name="pTipProtokol">Тип протокола</param>
         public MyTipProtokol(eTipDocum pTipProtokol)
         {
             // Тип
@@ -63,5 +63,5 @@
                     break;
             }
         }
-    }      
+    }
 }

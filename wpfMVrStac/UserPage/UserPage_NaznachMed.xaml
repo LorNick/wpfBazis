@@ -1,20 +1,18 @@
 ﻿<Page x:Class="wpfMVrStac.UserPage_NaznachMed"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:my="clr-namespace:wpfMVrStac"
       xmlns:my1="clr-namespace:wpfGeneral.UserControls;assembly=wpfGeneral"
       x:Name="UserPage"
       mc:Ignorable="d" FontSize="14" Loaded="Page_Loaded">
-    
     <Grid>
         <Grid.Resources>
             <my:AgeToColorConverter1 x:Key="AgeToColorConverter1" />
-          
             <!--Стиль Заголовка-->
             <Style x:Key="IdStyle11" TargetType="{x:Type DataGridColumnHeader}">
-                <Setter Property="Foreground"> 
+                <Setter Property="Foreground">
                     <Setter.Value>
                         <MultiBinding Converter="{StaticResource AgeToColorConverter1}">
                             <Binding RelativeSource="{RelativeSource Self}" />
@@ -26,7 +24,7 @@
                 <Setter Property="ContentTemplate">
                     <Setter.Value>
                         <DataTemplate>
-                            <TextBlock TextWrapping="Wrap" Text="{Binding}" TextAlignment="Center"></TextBlock>                          
+                            <TextBlock TextWrapping="Wrap" Text="{Binding}" TextAlignment="Center"></TextBlock>
                         </DataTemplate>
                     </Setter.Value>
                 </Setter>
@@ -34,25 +32,22 @@
                 <Setter Property="Padding" Value="0"/>
                 <Setter Property="Margin" Value="0"/>
             </Style>
-          
             <!--Стиль-->
             <Style x:Key="RightAlignStyle" TargetType="{x:Type TextBlock}">
                 <Setter Property="TextAlignment" Value="Center" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-
             <!--Стиль Ячеек Назначений-->
             <Style x:Key="CellCenterStyle" TargetType="{x:Type DataGridCell}">
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type DataGridCell}">
                             <Grid  Background="{TemplateBinding Background}">
-                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>                                
+                                <ContentPresenter VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             </Grid>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding Path=DelNote}" Value="WA">
                         <Setter Property="Template">
@@ -71,7 +66,6 @@
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
-
             <!--Стиль Наименование ЛС-->
             <Style x:Key="CellNameStyle" TargetType="{x:Type DataGridCell}">
                 <Setter Property="Template">
@@ -85,20 +79,18 @@
                 </Setter>
             </Style>
         </Grid.Resources>
-
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-
         <!--Главная таблица Назначений-->
-        <DataGrid ItemsSource="{Binding}" Name="eleDataGrid" Grid.Row="0" 
-                  CellStyle="{StaticResource CellCenterStyle}" 
+        <DataGrid ItemsSource="{Binding}" Name="eleDataGrid" Grid.Row="0"
+                  CellStyle="{StaticResource CellCenterStyle}"
                   ColumnHeaderStyle="{StaticResource IdStyle11}"
                   AutoGenerateColumns="True" FrozenColumnCount="1" ColumnWidth="53" CanUserReorderColumns="False" CanUserResizeColumns="False"
-                  CanUserSortColumns="False" AreRowDetailsFrozen="True" SelectionMode="Single" GridLinesVisibility="All" 
+                  CanUserSortColumns="False" AreRowDetailsFrozen="True" SelectionMode="Single" GridLinesVisibility="All"
                   EnableRowVirtualization="False" MinRowHeight="30" CanUserResizeRows="False"
-                  MouseDown="eleDataGrid_MouseDown"   
+                  MouseDown="eleDataGrid_MouseDown"
                   AutoGeneratingColumn="eleDataGrid_AutoGeneratingColumn"
                   SelectedCellsChanged="eleDataGrid_SelectedCellsChanged"
                   RowDetailsVisibilityChanged="eleDataGrid_RowDetailsVisibilityChanged">
@@ -111,7 +103,6 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
             </DataGrid.Columns>
-    
             <!--Окно детализации таблицы Назначений-->
             <DataGrid.RowDetailsTemplate >
                 <DataTemplate>
@@ -122,21 +113,21 @@
                                     <Button Name="PART_Hide" Click="PART_Hide_Click">Скрыть</Button>
                                     <TextBlock Foreground="Navy" Padding="5,0" Width="100" TextAlignment="Right" VerticalAlignment="Center">Назначение:</TextBlock>
                                     <!--Текст назначения-->
-                                    <my1:UserPole_Text Name="PART_Pole_14" PROP_VarId="14" PROP_Description="" PROP_Text="{Binding Path=NameLS, Mode=TwoWay}" 
-                                                      ToolTip="Текст назначения" PROP_WidthText="441" PROP_Insert="True" PROP_PometkaText="1" 
-                                                      Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompStr}" 
+                                    <my1:UserPole_Text Name="PART_Pole_14" PROP_VarId="14" PROP_Description="" PROP_Text="{Binding Path=NameLS, Mode=TwoWay}"
+                                                      ToolTip="Текст назначения" PROP_WidthText="441" PROP_Insert="True" PROP_PometkaText="1"
+                                                      Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompStr}"
                                                       PROP_Type="Text"
                                                       PROP_Shablon="3"
                                                       LostFocus="PART_Pole_14_LostFocus"
                                                        />
                                     <!--Таблица компонентов-->
-                                    <DataGrid x:Name="eleDataGrid2" ItemsSource="{Binding}" Width="441" Loaded="eleDataGrid2_Loaded" IsReadOnly="False" 
-                                              CanUserDeleteRows="False" CanUserAddRows="False" 
-                                              Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompTab}" 
+                                    <DataGrid x:Name="eleDataGrid2" ItemsSource="{Binding}" Width="441" Loaded="eleDataGrid2_Loaded" IsReadOnly="False"
+                                              CanUserDeleteRows="False" CanUserAddRows="False"
+                                              Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompTab}"
                                               CellEditEnding="eleDataGrid2_CellEditEnding">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Header="Наименование" Width="280" Binding="{Binding Path=NameKomp}" IsReadOnly="True" />
-                                            <DataGridTextColumn Header="Ед.изм" Binding="{Binding Path=BazeMeas}" ElementStyle="{StaticResource RightAlignStyle}" 
+                                            <DataGridTextColumn Header="Ед.изм" Binding="{Binding Path=BazeMeas}" ElementStyle="{StaticResource RightAlignStyle}"
                                                                 IsReadOnly="True" />
                                             <DataGridTextColumn Header="Дозировка" Binding="{Binding Path=Doza}"  ElementStyle="{StaticResource RightAlignStyle}" />
                                         </DataGrid.Columns>
@@ -144,7 +135,7 @@
                                     <!--Кнопки Добавить/Удалить Компонент ЛС-->
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                                         <Button Name="PART_SaveLS" Click="PART_SaveLS_Click">Добавить</Button>
-                                        <Button Name="PART_DeleteLS" Click="PART_DeleteLS_Click" 
+                                        <Button Name="PART_DeleteLS" Click="PART_DeleteLS_Click"
                                                 Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompTab}">Удалить</Button>
                                     </StackPanel>
                                 </WrapPanel>
@@ -153,85 +144,85 @@
                                 <StackPanel Orientation="Vertical">
                                     <WrapPanel>
                                         <!--Дата начала приема ЛС-->
-                                        <my1:UserPole_Data Name="PART_Pole_1" PROP_Description="Дата начала:" PROP_VarId="1" 
-                                                          PROP_ValueMinDate="{Binding ElementName=UserPage, Path=PROP_DateN}" 
-                                                          PROP_ValueMaxDate="{Binding ElementName=UserPage, Path=PROP_DateK}" 
-                                                          PROP_Date="{Binding Path=DateN, Mode=TwoWay}" ToolTip="1. Дата начала" 
-                                                          PROP_PometkaText="1" PROP_MinWidthDescription="150" 
+                                        <my1:UserPole_Data Name="PART_Pole_1" PROP_Description="Дата начала:" PROP_VarId="1"
+                                                          PROP_ValueMinDate="{Binding ElementName=UserPage, Path=PROP_DateN}"
+                                                          PROP_ValueMaxDate="{Binding ElementName=UserPage, Path=PROP_DateK}"
+                                                          PROP_Date="{Binding Path=DateN, Mode=TwoWay}" ToolTip="1. Дата начала"
+                                                          PROP_PometkaText="1" PROP_MinWidthDescription="150"
                                                           LostFocus="PART_Pole_1_LostFocus" />
                                         <!--Сколько дней принимать ЛС-->
-                                        <my1:UserPole_Text Name="PART_Pole_2" PROP_Description="Дней:" PROP_VarId="2" 
-                                                          PROP_Text="{Binding Path=Kurs, Mode=TwoWay}" ToolTip="2. Дней" 
-                                                          PROP_MaxLength="2" PROP_WidthText="28" PROP_Insert="True" PROP_DefaultText="16" 
-                                                          PROP_PometkaText="1" PROP_MinWidthDescription="68" 
-                                                          PROP_Shablon="3" 
+                                        <my1:UserPole_Text Name="PART_Pole_2" PROP_Description="Дней:" PROP_VarId="2"
+                                                          PROP_Text="{Binding Path=Kurs, Mode=TwoWay}" ToolTip="2. Дней"
+                                                          PROP_MaxLength="2" PROP_WidthText="28" PROP_Insert="True" PROP_DefaultText="16"
+                                                          PROP_PometkaText="1" PROP_MinWidthDescription="68"
+                                                          PROP_Shablon="3"
                                                           PROP_Type="Text"
                                                           LostFocus="PART_Pole_2_LostFocus" />
                                         <!--Дата окончания приема ЛС-->
-                                        <my1:UserPole_Data Name="PART_Pole_3" PROP_Description="Дата окончания:" PROP_VarId="3" 
-                                                          PROP_Date="{Binding Path=DateK, Mode=TwoWay}" 
-                                                          PROP_ValueMinDate="{Binding ElementName=PART_Pole_1, Path=PROP_Date}" 
-                                                          PROP_ValueMaxDate="{Binding ElementName=UserPage, Path=PROP_DateK}" 
-                                                          ToolTip="3. Дата окончания" PROP_MinWidthDescription="120" 
+                                        <my1:UserPole_Data Name="PART_Pole_3" PROP_Description="Дата окончания:" PROP_VarId="3"
+                                                          PROP_Date="{Binding Path=DateK, Mode=TwoWay}"
+                                                          PROP_ValueMinDate="{Binding ElementName=PART_Pole_1, Path=PROP_Date}"
+                                                          PROP_ValueMaxDate="{Binding ElementName=UserPage, Path=PROP_DateK}"
+                                                          ToolTip="3. Дата окончания" PROP_MinWidthDescription="120"
                                                           LostFocus="PART_Pole_3_LostFocus" />
                                     </WrapPanel>
                                     <WrapPanel>
                                         <!--Принимаем каждые Х день-->
                                         <my1:UserPole_Text Name="PART_Pole_4" PROP_Description="Периодичность:" PROP_VarId="4"
-                                                          PROP_Text="{Binding Path=Period, Mode=TwoWay}" 
-                                                          ToolTip="4. Прием назначения каждый Х день (число от 1 до 10) 1 - каждый день, 2 - через день ..."  
-                                                          PROP_MaxLength="2" PROP_WidthText="28" 
-                                                          PROP_Insert="True" PROP_DefaultText="1" PROP_PometkaText="1" PROP_MinWidthDescription="150" 
-                                                          PROP_Shablon="3" 
+                                                          PROP_Text="{Binding Path=Period, Mode=TwoWay}"
+                                                          ToolTip="4. Прием назначения каждый Х день (число от 1 до 10) 1 - каждый день, 2 - через день ..."
+                                                          PROP_MaxLength="2" PROP_WidthText="28"
+                                                          PROP_Insert="True" PROP_DefaultText="1" PROP_PometkaText="1" PROP_MinWidthDescription="150"
+                                                          PROP_Shablon="3"
                                                           PROP_Type="Text"
                                                           LostFocus="PART_Pole_4_LostFocus" />
                                         <!--Сколько раз в день-->
-                                        <my1:UserPole_Text Name="PART_Pole_5" PROP_Description="Схема приема:" PROP_VarId="5" 
-                                                          PROP_Text="{Binding Path=Amt, Mode=TwoWay}" ToolTip="5. Сколько раз в день" 
-                                                          PROP_MaxLength="1" PROP_WidthText="28" PROP_Insert="True" PROP_DefaultText="2" 
-                                                          PROP_PometkaText="1" PROP_MinWidthDescription="150" 
-                                                          PROP_Shablon="3" 
+                                        <my1:UserPole_Text Name="PART_Pole_5" PROP_Description="Схема приема:" PROP_VarId="5"
+                                                          PROP_Text="{Binding Path=Amt, Mode=TwoWay}" ToolTip="5. Сколько раз в день"
+                                                          PROP_MaxLength="1" PROP_WidthText="28" PROP_Insert="True" PROP_DefaultText="2"
+                                                          PROP_PometkaText="1" PROP_MinWidthDescription="150"
+                                                          PROP_Shablon="3"
                                                           PROP_Type="Text"
                                                           LostFocus="PART_Pole_5_LostFocus" />
                                         <!--Способ приема-->
-                                        <my1:UserPole_Text Name="PART_Pole_6" PROP_Description="Способ приема:" 
-                                                          PROP_VarId="6" PROP_Text="{Binding Path=Route, Mode=TwoWay}" ToolTip="6. Способ приема" 
-                                                          PROP_MaxLength="30" PROP_Insert="True" PROP_WidthText="180" PROP_DefaultText="Внутривенно капельно" 
-                                                          PROP_PometkaText="1" PROP_MinWidthDescription="120" 
+                                        <my1:UserPole_Text Name="PART_Pole_6" PROP_Description="Способ приема:"
+                                                          PROP_VarId="6" PROP_Text="{Binding Path=Route, Mode=TwoWay}" ToolTip="6. Способ приема"
+                                                          PROP_MaxLength="30" PROP_Insert="True" PROP_WidthText="180" PROP_DefaultText="Внутривенно капельно"
+                                                          PROP_PometkaText="1" PROP_MinWidthDescription="120"
                                                           PROP_Shablon="3"
                                                           PROP_Type="Text"
                                                           LostFocus="PART_Pole_6_LostFocus" />
                                     </WrapPanel>
                                     <WrapPanel>
                                         <!--Примечание приема-->
-                                        <my1:UserPole_Text Name="PART_Pole_7" PROP_Description="Примечание приема:" PROP_VarId="7" 
-                                                          PROP_Text="{Binding Path=Note, Mode=TwoWay}" ToolTip="7. Примечание приема" 
-                                                          PROP_MaxLength="250" PROP_WidthText="510" PROP_Insert="True" 
-                                                          PROP_DefaultText="После еды" PROP_MinWidthDescription="150" 
-                                                          PROP_Shablon="3" 
+                                        <my1:UserPole_Text Name="PART_Pole_7" PROP_Description="Примечание приема:" PROP_VarId="7"
+                                                          PROP_Text="{Binding Path=Note, Mode=TwoWay}" ToolTip="7. Примечание приема"
+                                                          PROP_MaxLength="250" PROP_WidthText="510" PROP_Insert="True"
+                                                          PROP_DefaultText="После еды" PROP_MinWidthDescription="150"
+                                                          PROP_Shablon="3"
                                                           PROP_Type="Text"
                                                           LostFocus="PART_Pole_7_LostFocus" />
                                     </WrapPanel>
                                 </StackPanel>
                             </Border>
                             <Border Style="{StaticResource Border_1}">
-                                <WrapPanel>                                   
+                                <WrapPanel>
                                     <!--Препарат пациента-->
-                                    <my1:UserPole_CheckBox Name="PART_Pole_9" PROP_Description="Препарат пациента:" PROP_VarId="9" 
+                                    <my1:UserPole_CheckBox Name="PART_Pole_9" PROP_Description="Препарат пациента:" PROP_VarId="9"
                                                           ToolTip="9. Препарат пациента - не учитывается при списании"
-                                                          PROP_Checked="{Binding Path=FlagPac, Mode=TwoWay}" 
+                                                          PROP_Checked="{Binding Path=FlagPac, Mode=TwoWay}"
                                                           PROP_MinWidthDescription="150"
                                                           IsChecked="PART_Pole_9_IsChecked" />
                                     <!--Кто изминил запись-->
-                                    <my1:UserPole_Text Name="PART_Pole_10" PROP_Description="Врач:" PROP_VarId="10" 
-                                                      PROP_Text="{Binding Path=UserVarachName, Mode=TwoWay}" 
-                                                      ToolTip="10. Врач, назначивший или изменивший данное назначение" 
-                                                      PROP_MaxLength="20" PROP_Insert="True" PROP_WidthText="180" PROP_MinWidthDescription="120" 
+                                    <my1:UserPole_Text Name="PART_Pole_10" PROP_Description="Врач:" PROP_VarId="10"
+                                                      PROP_Text="{Binding Path=UserVarachName, Mode=TwoWay}"
+                                                      ToolTip="10. Врач, назначивший или изменивший данное назначение"
+                                                      PROP_MaxLength="20" PROP_Insert="True" PROP_WidthText="180" PROP_MinWidthDescription="120"
                                                       IsEnabled="False" />
                                 </WrapPanel>
                             </Border>
                             <!--Отмена назначения-->
-                            <Expander Margin="0, 2, 0, 0">                               
+                            <Expander Margin="0, 2, 0, 0">
                                 <Expander.Header>
                                     <Label Content="Отмена выдачи назначения" Foreground="Navy" />
                                 </Expander.Header>
@@ -239,28 +230,28 @@
                                     <StackPanel Orientation="Vertical">
                                         <WrapPanel>
                                             <!--Причина отмены-->
-                                            <my1:UserPole_Text Name="PART_Pole_13" PROP_Description="Причина отмены:" PROP_VarId="13" 
-                                                              PROP_Text="{Binding Path=DelNote, Mode=TwoWay}" ToolTip="13. Примечание отмены" 
-                                                              PROP_Insert="True"  PROP_WidthText="510" 
-                                                              PROP_DefaultText="Пациента от этого лекарства пучит" 
+                                            <my1:UserPole_Text Name="PART_Pole_13" PROP_Description="Причина отмены:" PROP_VarId="13"
+                                                              PROP_Text="{Binding Path=DelNote, Mode=TwoWay}" ToolTip="13. Примечание отмены"
+                                                              PROP_Insert="True"  PROP_WidthText="510"
+                                                              PROP_DefaultText="Пациента от этого лекарства пучит"
                                                               PROP_Type="Text"
                                                               PROP_MinWidthDescription="150" LostFocus="PART_Pole_13_LostFocus" />
                                         </WrapPanel>
                                         <WrapPanel>
                                             <!--Дата отмены-->
-                                            <my1:UserPole_Data Name="PART_Pole_11" PROP_Description="Дата отмены:" PROP_VarId="11" 
+                                            <my1:UserPole_Data Name="PART_Pole_11" PROP_Description="Дата отмены:" PROP_VarId="11"
                                                               ToolTip="11. Дата отмены" PROP_MinWidthDescription="150"
-                                                              PROP_Date="{Binding Path=DelDate, Mode=TwoWay}" 
-                                                              PROP_ValueMinDate="{Binding ElementName=PART_Pole_1, Path=PROP_Date}" 
-                                                              PROP_ValueMaxDate="{Binding ElementName=PART_Pole_3, Path=PROP_Date}" 
+                                                              PROP_Date="{Binding Path=DelDate, Mode=TwoWay}"
+                                                              PROP_ValueMinDate="{Binding ElementName=PART_Pole_1, Path=PROP_Date}"
+                                                              PROP_ValueMaxDate="{Binding ElementName=PART_Pole_3, Path=PROP_Date}"
                                                               LostFocus="PART_Pole_11_LostFocus" />
                                             <!--Кто отменил-->
-                                            <my1:UserPole_Text Name="PART_Pole_12" PROP_Description="Врач отменивший назначение:" PROP_VarId="12" 
-                                                              PROP_Text="{Binding Path=DelUserVarachName}" 
-                                                              PROP_Shablon="3" 
-                                                              ToolTip="12. Врач, отменивший данное назначение" PROP_MaxLength="20" 
+                                            <my1:UserPole_Text Name="PART_Pole_12" PROP_Description="Врач отменивший назначение:" PROP_VarId="12"
+                                                              PROP_Text="{Binding Path=DelUserVarachName}"
+                                                              PROP_Shablon="3"
+                                                              ToolTip="12. Врач, отменивший данное назначение" PROP_MaxLength="20"
                                                               PROP_Insert="True" PROP_WidthText="180" PROP_MinWidthDescription="218" />
-                                        </WrapPanel>                                        
+                                        </WrapPanel>
                                     </StackPanel>
                                 </Border>
                             </Expander>
@@ -268,13 +259,12 @@
                     </Border>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
-        </DataGrid>       
+        </DataGrid>
         <!--Кнопки Добавить/Удалить Назначения-->
         <WrapPanel HorizontalAlignment="Center" Grid.Row="1">
             <Button Name="PART_AddNaz" Click="PART_AddNaz_Click">Добавить</Button>
             <Button Name="PART_DeleteNaz" Click="PART_DeleteNaz_Click">Удалить</Button>
         </WrapPanel>
-        
     </Grid>
 </Page>
 

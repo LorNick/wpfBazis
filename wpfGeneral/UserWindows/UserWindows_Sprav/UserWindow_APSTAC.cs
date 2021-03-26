@@ -7,7 +7,6 @@ using wpfStatic;
 
 namespace wpfGeneral.UserWindows
 {
-
     /// <summary>КЛАСС Таблицы "APSTAC"</summary>
     public class UserWindow_APSTAC : VirtualUserWindow
     {
@@ -16,10 +15,9 @@ namespace wpfGeneral.UserWindows
         private ComboBox PRI_ComboBox_2;
         private CheckBox PRI_CheckBox_2;
 
-
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_APSTAC()
-        {            
+        {
             // Имя таблицы
             PRO_TableName = "APSTAC";
             // Если строка ввода ищет через SQL
@@ -34,7 +32,7 @@ namespace wpfGeneral.UserWindows
             PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И)";
             // Сортируем по Фамилии
             PRO_PoleSort = 1;
-            // Показываем в подсказке 
+            // Показываем в подсказке
             PRO_PoleBarPanel = 3;
             // Разрешаем выбирать записи
             PROP_FlagButtonSelect = true;
@@ -51,7 +49,7 @@ namespace wpfGeneral.UserWindows
         {
             return MyQuery.APSTAC_Select_3(PRO_SqlWhere);
         }
-        
+
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
@@ -139,7 +137,7 @@ namespace wpfGeneral.UserWindows
             _SPanel_2.Children.Add(PRI_CheckBox_2);
         }
 
-        /// <summary>СОБЫТИЕ На отключение/включение элеменов фильтра через CheckBox</summary>       
+        /// <summary>СОБЫТИЕ На отключение/включение элеменов фильтра через CheckBox</summary>
         private void PART_CheckBox_Click(object sender, RoutedEventArgs e)
         {
             PRI_DatePicker_1.IsEnabled = PRI_CheckBox_1.IsChecked == true;
@@ -159,21 +157,17 @@ namespace wpfGeneral.UserWindows
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = "where isnull(a.xDelete, 0) = 0";
-
-            // Фильтр по дате  
+            // Фильтр по дате
             if (PRI_DatePicker_1.IsEnabled)
                PRO_SqlWhere += $" and a.DN <= '{PRI_DatePicker_1.DisplayDate:MM.dd.yyyy}' and (a.DK is NULL or a.DK >= '{PRI_DatePicker_1.DisplayDate:MM.dd.yyyy}')";
-
             // Фильтр по отделению
             if (PRI_ComboBox_2.IsEnabled)
                 PRO_SqlWhere += $" and a.Otd = {PRI_ComboBox_2.SelectedValue}";
-            
             // ФИО пациента
             if (PRO_TextFilter.Length > 0)
                 PRO_SqlWhere += $" and (k.FAM like '{PRO_TextFilter}%' or k.FAM like '{PRO_TextFilterTransliter}%')";
-            
             // Запрос
-            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);            
+            MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
 
         /// <summary>МЕТОД Выбор данных</summary>

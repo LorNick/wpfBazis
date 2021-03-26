@@ -20,22 +20,21 @@ namespace wpfGeneral.UserOtchet
 {
     /// <summary>КЛАСС Отчетов (абстрактный)</summary>
     public abstract class VirtualOtchet : Section
-    {  
+    {
         /// <summary>Список полей</summary>
         public Hashtable PUB_HashPole;
-       
+
         #region ---- Protected Field ----
         /// <summary>Записи шаблона</summary>
         protected DataRow PRO_RowShablon;
-		/// <summary>Запись протокола</summary>
-		protected DataRow PRO_RowProtokol; 
+        /// <summary>Запись протокола</summary>
+        protected DataRow PRO_RowProtokol;
         /// <summary>Параграф</summary>
         protected Paragraph PRO_Paragraph;
         /// <summary>Отступ (есть/нету)</summary>
         protected bool PRO_OtstupFlag = false;
         /// <summary>Отчет, для просмотра печати</summary>
         protected bool PRO_Priew;
-		
         /// <summary>Cтрока вопроса</summary>
         protected string xVopr = "";
         /// <summary>Cтрока ответа</summary>
@@ -65,7 +64,7 @@ namespace wpfGeneral.UserOtchet
         public double PROP_Otstup
         {
             get { return Blocks.FirstBlock.Padding.Top; }
-            set 
+            set
             {
                 if (Blocks.FirstBlock != null)
                 {
@@ -77,7 +76,7 @@ namespace wpfGeneral.UserOtchet
 
         /// <summary>СВОЙСТВО Нужно ли формировать отчет (true - да, false - нет)</summary>
         public bool PROP_NewCreate { get; set; }
-       
+
         /// <summary>СВОЙСТВО Ветка</summary>
         public VirtualNodes PROP_Nodes { get; set; }
 
@@ -92,14 +91,14 @@ namespace wpfGeneral.UserOtchet
         #endregion
 
         /// <summary>КОНСТРУКТОР</summary>
-        protected VirtualOtchet() 
-        { 
+        protected VirtualOtchet()
+        {
             // Ставим пометку, что нужно формировать отчет
             PROP_NewCreate = true;
         }
-       
+
         /// <summary>МЕТОД Инициализация отчета</summary>
-        /// <param name="pNodes">Ветка</param>        
+        /// <param name="pNodes">Ветка</param>
         public virtual VirtualOtchet MET_Inizial(VirtualNodes pNodes)
         {
             PROP_Nodes = pNodes;                                                // ветка
@@ -111,7 +110,7 @@ namespace wpfGeneral.UserOtchet
 
         /// <summary>МЕТОД Инициализация отчета</summary>
         public virtual VirtualOtchet MET_Inizial()
-        { 
+        {
             FontFamily = new FontFamily("Times New Roman");
             FontSize = 16;
             IsHyphenationEnabled = true;                                        // включаем перенос строк
@@ -119,9 +118,9 @@ namespace wpfGeneral.UserOtchet
         }
 
         /// <summary>МЕТОД Создаем объект для печати</summary>
-        /// <param name="pMyDocumentViewer">Просмоторщик печати</param> 
-        /// <param name="pFlowDocument">Документ, который печатаем</param> 
-        /// <param name="pPrintNow">Печатаем сразу</param> 
+        /// <param name="pMyDocumentViewer">Просмоторщик печати</param>
+        /// <param name="pFlowDocument">Документ, который печатаем</param>
+        /// <param name="pPrintNow">Печатаем сразу</param>
         public virtual bool MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow  = false)
         {
             MyGlo.BrushesOtchet = null;                                         // сбрасываем фон
@@ -135,11 +134,11 @@ namespace wpfGeneral.UserOtchet
         }
 
         /// <summary>МЕТОД Формируем объект для печати</summary>
-        /// <param name="pMyDocumentViewer">Просмоторщик печати</param> 
-        /// <param name="pFlowDocument">Документ, который печатаем</param> 
-        /// <param name="pPrintNow">Печатаем сразу</param> 
+        /// <param name="pMyDocumentViewer">Просмоторщик печати</param>
+        /// <param name="pFlowDocument">Документ, который печатаем</param>
+        /// <param name="pPrintNow">Печатаем сразу</param>
         protected void MET_PreiwPrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow = false)
-        {            
+        {
             try
             {
                 // ПЕЧАТЬ с помощью фалов в памяти
@@ -147,7 +146,7 @@ namespace wpfGeneral.UserOtchet
                 MemoryStream _MemoryStream = new MemoryStream();
                 // Создать пакет, используя статический метод Package.Open()
                 Package _Package = Package.Open(_MemoryStream, FileMode.Create, FileAccess.ReadWrite);
-                // Каждому пакету необходим URI. Использовать синтаксис pack://. 
+                // Каждому пакету необходим URI. Использовать синтаксис pack://.
                 // Действительное имя файла неважно
                 Uri _Uri = new Uri("pack://filename.xps");
                 // Удаляем пакет, если он уже был с таким именем
@@ -156,7 +155,6 @@ namespace wpfGeneral.UserOtchet
                 PackageStore.AddPackage(_Uri, _Package);
                 // Создать документ XPS на основе этого пакета. (с уровнем сжатия)
                 XpsDocument _XpsDoc = new XpsDocument(_Package, CompressionOption.SuperFast, _Uri.AbsoluteUri);
-                
                 // Формируем файл просмотра печати
                 XpsDocumentWriter _XpsDocWri = XpsDocument.CreateXpsDocumentWriter(_XpsDoc);
                 // Создаем класс просмотра печати с нашими данными
@@ -169,7 +167,6 @@ namespace wpfGeneral.UserOtchet
                 pMyDocumentViewer.FitToWidth();
                 // Закрываем файл просмотра печати
                 _XpsDoc.Close();
-                
                 // Если печатаем сразу, без предварительного просмотра
                 if (pPrintNow)
                 {
@@ -189,7 +186,7 @@ namespace wpfGeneral.UserOtchet
         protected virtual void MET_Otchet() { }
 
         /// <summary>МЕТОД Выводим, если документ не заполнен</summary>
-        protected virtual void MET_NoOtchet() 
+        protected virtual void MET_NoOtchet()
         {
             xVopr = "Документ не заполнен";
             xOtvet = "";
@@ -200,7 +197,7 @@ namespace wpfGeneral.UserOtchet
 
         /// <summary>МЕТОД Выводим данные в Документ</summary>
         protected void MET_Print(FlowDocument pFlowDocument = null)
-        {               
+        {
             // ---- Новая страница
             if (xPage)
                 xParagraph = true;
@@ -231,7 +228,6 @@ namespace wpfGeneral.UserOtchet
             Run _Otv = new Run("  " + xOtvet);
             xVopr = "";
             xOtvet = "";
-            
             // ---- Новая строка
             for (; xEnter > 0; xEnter--)
             {
@@ -241,7 +237,6 @@ namespace wpfGeneral.UserOtchet
                     Blocks.Add(PRO_Paragraph);
                 PRO_Paragraph = new Paragraph {LineHeight = 1};
             }
-         
             // ---- Табуляция
             for (; xTab > 0; xTab--)
                 PRO_Paragraph.Inlines.Add("\t");
@@ -266,16 +261,14 @@ namespace wpfGeneral.UserOtchet
             PRO_Paragraph.Inlines.Add(_Vopr);                                   // печатаем вопрос
             _Otv.FontWeight = FontWeights.Bold;                                 // устанавливаем стиль для ответа
             _Otv.FontSize = xSize++;                                            // размер шрифта
-            PRO_Paragraph.Inlines.Add(_Otv);                                    // печатаем ответ 
-
-			if (PRO_Paragraph.Parent == null)
-			{
-				if (pFlowDocument != null)
-					pFlowDocument.Blocks.Add(PRO_Paragraph);
-				else
-					Blocks.Add(PRO_Paragraph);
-			}
-            
+            PRO_Paragraph.Inlines.Add(_Otv);                                    // печатаем ответ
+            if (PRO_Paragraph.Parent == null)
+            {
+                if (pFlowDocument != null)
+                    pFlowDocument.Blocks.Add(PRO_Paragraph);
+                else
+                    Blocks.Add(PRO_Paragraph);
+            }
             // Сбрасываем настройки на начальные
             xSize = FontSize;                                                   // размер шрифта по умолчанию
             xStyle = FontStyles.Normal;                                         // стиль по умолчанию
@@ -283,8 +276,8 @@ namespace wpfGeneral.UserOtchet
             xAligment = 1;                                                      // выравнивание по умолчанию
             xOtvet = "";
             xVopr = "";
-        }        
-        
+        }
+
         /// <summary>МЕТОД Показываем эмблему</summary>
         protected virtual void MET_ImageEmblema(FlowDocument pFlowDocument)
         {
@@ -300,8 +293,8 @@ namespace wpfGeneral.UserOtchet
                 AlignmentY = AlignmentY.Top,
                 Opacity = 0.4
             };
-            _Image.Freeze();   			
-            pFlowDocument.Background = _Image;				
+            _Image.Freeze();
+            pFlowDocument.Background = _Image;
         }
 
         /// <summary>МЕТОД Создаем объект Pole</summary>
@@ -311,55 +304,55 @@ namespace wpfGeneral.UserOtchet
             VirtualPoleOtchet _Pole = null;
             switch (pTypePole)
             {
-                case eVopros.Number:		                                    // 1. Число UserPole_Number
+                case eVopros.Number:                                            // 1. Число UserPole_Number
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Real:		                                        // 2. Десятичное UserPole_Text
+                case eVopros.Real:                                                // 2. Десятичное UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Date:		                                        // 3. Дата UserPole_Data
+                case eVopros.Date:                                                // 3. Дата UserPole_Data
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.KrString:	                                        // 4. Текст (короткий) UserPole_Text
+                case eVopros.KrString:                                            // 4. Текст (короткий) UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.List:		                                        // 5. Список UserPole_Text
+                case eVopros.List:                                                // 5. Список UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.LoText:	                                        // 6. Текст (длинный) UserPole_Text
+                case eVopros.LoText:                                            // 6. Текст (длинный) UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.MultiList:	                                        // 7. Код операци Список (многовыборочный) UserPole_MultyList
+                case eVopros.MultiList:                                            // 7. Код операци Список (многовыборочный) UserPole_MultyList
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Text:		                                        // 8. Свободный текст (основной) UserPole_Text
+                case eVopros.Text:                                                // 8. Свободный текст (основной) UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Razdel:	                                        // 9. Раздел UserPole_Razdel
-					_Pole = new UserPoleOtchet_Razdel();
+                case eVopros.Razdel:                                            // 9. Раздел UserPole_Razdel
+                    _Pole = new UserPoleOtchet_Razdel();
                     break;
-                case eVopros.Hide:		                                        // 10. Скрытое поле UserPole_Text
+                case eVopros.Hide:                                                // 10. Скрытое поле UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Time:		                                        // 11. Время UserPole_Text
+                case eVopros.Time:                                                // 11. Время UserPole_Text
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Radio:		                                        // 12. Радио кнопки UserPoleRadio_Button
+                case eVopros.Radio:                                                // 12. Радио кнопки UserPoleRadio_Button
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Image:		                                        // 13. Изображения UserPole_Image
+                case eVopros.Image:                                                // 13. Изображения UserPole_Image
                     _Pole = new UserPoleOtchet_Image();
                     break;
-                case eVopros.Grid:		                                        // 14. Таблица UserPole_Grid
+                case eVopros.Grid:                                                // 14. Таблица UserPole_Grid
                     _Pole = new UserPoleOtchet_Grid();
                     break;
-                case eVopros.Label:		                                        // 15. Метка UserPole_Label
-					_Pole = new UserPoleOtchet_Label();
+                case eVopros.Label:                                                // 15. Метка UserPole_Label
+                    _Pole = new UserPoleOtchet_Label();
                     break;
-                case eVopros.Sprav:		                                        // 16. Справочники UserPole_Sprav
+                case eVopros.Sprav:                                                // 16. Справочники UserPole_Sprav
                     _Pole = new UserPoleOtchet_Text();
                     break;
-                case eVopros.Calendar:		                                    // 16. Календарь UserPole_Calendar
+                case eVopros.Calendar:                                            // 16. Календарь UserPole_Calendar
                     _Pole = new UserPoleOtchet_Text();
                     break;
             }
@@ -367,12 +360,14 @@ namespace wpfGeneral.UserOtchet
             _Pole.PROP_Prefix = PROP_Prefix;                                    // префикс таблицы
             return _Pole;
         }
-			  		
+
+
+
         /// <summary>МЕТОД Заполняем данные из протокола </summary>
         /// <param name="pFlowDocument">Если null, то текущий отчет, иначе в заданный FlowDocument</param>
         protected void MET_Protokol(FlowDocument pFlowDocument = null)
         {
-            // Список полей 
+            // Список полей
             PUB_HashPole = new Hashtable();
             // Пробегаемся по вопросам шаблона
             foreach (UserShablon _Shablon in PROP_Docum.PROP_Shablon)
@@ -383,55 +378,55 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_Maska = MyMet.MET_ParseInt(_Shablon.PROP_Maska);
                 _Pole.PROP_Format = new MyFormat(_Shablon.PROP_xFormat);
                 _Pole.PROP_Shablon = _Shablon;
-                _Pole.PROP_Protokol = PROP_Docum.PROP_Protokol;                                
-                _Pole.PROP_StrProtokol = PROP_Docum.PROP_Protokol.PROP_Protokol;                                   
+                _Pole.PROP_Protokol = PROP_Docum.PROP_Protokol;
+                _Pole.PROP_StrProtokol = PROP_Docum.PROP_Protokol.PROP_Protokol;
                 _Pole.PROP_Name = "Pole_" + _Pole.PROP_VarID;                   // имя поля
                 PUB_HashPole.Add(_Pole.PROP_Name, _Pole);                       // записываем элемент в очередь
                 _Pole.MET_Inicial();                                            // инициализация поля
                 _Pole.PROP_Parent = (VirtualPoleOtchet)PUB_HashPole["Pole_" + _Pole.PROP_Maska]; // родительское поле, если есть
-				// Добавляем форму в отчет
+                // Добавляем форму в отчет
                 if (_Pole.PROP_Parent != null && _Pole.PROP_Parent.PROP_Nested && !_Pole.PROP_Parent.PROP_HideChild)
-				{
-					_Pole.PROP_Parent.MET_AddElement(_Pole);
-				}
-				else
-				{
-					// Если родитель запретил печатать, то и мы запретим детям печататься
-					if (_Pole.PROP_Parent != null && _Pole.PROP_Parent.PROP_HideChild)
-					{
-						_Pole.PROP_HideChild = true;
-						_Pole.PROP_Hide = true;
-					}
-					// Если не печатаем поле, то следующее поле
-					if (_Pole.PROP_Hide)
-						continue;
-					TextElement _Element = _Pole.MET_Print();
-					if (_Element is Block)
-					{
-						if (pFlowDocument != null)
-							pFlowDocument.Blocks.Add((Block)_Element);
-						else
-							Blocks.Add((Block)_Element);						
-						if (_Element is Paragraph)
-							PRO_Paragraph = (Paragraph)_Element;
-						else
-							PRO_Paragraph = new Paragraph();
-					}
-					else
-					{
-						PRO_Paragraph.Inlines.Add((Inline)_Element);
-						if (PRO_Paragraph.Parent == null)
-						{
-							if (pFlowDocument != null)
-								pFlowDocument.Blocks.Add(PRO_Paragraph);
-							else
-								Blocks.Add(PRO_Paragraph);
-						}
-					}
-				}
+                {
+                    _Pole.PROP_Parent.MET_AddElement(_Pole);
+                }
+                else
+                {
+                    // Если родитель запретил печатать, то и мы запретим детям печататься
+                    if (_Pole.PROP_Parent != null && _Pole.PROP_Parent.PROP_HideChild)
+                    {
+                        _Pole.PROP_HideChild = true;
+                        _Pole.PROP_Hide = true;
+                    }
+                    // Если не печатаем поле, то следующее поле
+                    if (_Pole.PROP_Hide)
+                        continue;
+                    TextElement _Element = _Pole.MET_Print();
+                    if (_Element is Block)
+                    {
+                        if (pFlowDocument != null)
+                            pFlowDocument.Blocks.Add((Block)_Element);
+                        else
+                            Blocks.Add((Block)_Element);
+                        if (_Element is Paragraph)
+                            PRO_Paragraph = (Paragraph)_Element;
+                        else
+                            PRO_Paragraph = new Paragraph();
+                    }
+                    else
+                    {
+                        PRO_Paragraph.Inlines.Add((Inline)_Element);
+                        if (PRO_Paragraph.Parent == null)
+                        {
+                            if (pFlowDocument != null)
+                                pFlowDocument.Blocks.Add(PRO_Paragraph);
+                            else
+                                Blocks.Add(PRO_Paragraph);
+                        }
+                    }
+                }
             }
         }
-	   
+
         /// <summary>МЕТОД Ставим фон</summary>
         protected void MET_Background()
         {

@@ -9,13 +9,13 @@ namespace wpfReestr
         /// <summary>Номер записи (из StrahReestr)</summary>
         public decimal N_ZAP { get; set; }
 
-        /// <summary>Признак исправленной записи (0 - передаются впревые, 1 - повторно после исправления; из StrahReestr)</summary>        
-        public byte PR_NOV { get; set; } = 0;        
+        /// <summary>Признак исправленной записи (0 - передаются впревые, 1 - повторно после исправления; из StrahReestr)</summary>
+        public byte PR_NOV { get; set; } = 0;
 
-        /// <summary>Сведения о пациенте</summary>        
+        /// <summary>Сведения о пациенте</summary>
         public MyPACIENT PACIENT { get; set; }
 
-        /// <summary>Сведения о законченном случае</summary>        
+        /// <summary>Сведения о законченном случае</summary>
         public MyZ_SL Z_SL { get; set; }
     }
 }

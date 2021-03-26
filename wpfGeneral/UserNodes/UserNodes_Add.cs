@@ -25,8 +25,8 @@ namespace wpfGeneral.UserNodes
                 if (PRI_Index > MyGlo.MaxImdex)
                     MyGlo.MaxImdex = PRI_Index;
             }
-        }           
-     
+        }
+
         ///<summary>МЕТОД Инициализация ветки</summary>
         public override void MET_Inizial()
         {
@@ -35,7 +35,6 @@ namespace wpfGeneral.UserNodes
 
             // По умолчанию ветку можно редактировать
             PROP_shaButtonEdit = true;
-
             // Наличие протокола
             PROP_shaPresenceProtokol = true;
         }

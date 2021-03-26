@@ -36,7 +36,7 @@ namespace wpfReestr
         /// <summary>Список блоков онко-услуг (обязательно для USL_OK = (1, 2) и DS1_T = (0, 1, 2); из json NOM_USL)</summary>
         public List<MyONK_USL> ONK_USL { get; set; }
 
-        /// <summary>Количество фракций проведения лучевой терапии (при USL_TIP = (3, 4) в блоке ONK_USL; из json NOM_USL)</summary>       
+        /// <summary>Количество фракций проведения лучевой терапии (при USL_TIP = (3, 4) в блоке ONK_USL; из json NOM_USL)</summary>
         public int K_FR { get; set; }
 
         /// <summary>Масса тела (кг, при USL_TIP = (2, 4); из json NOM_USL)</summary>

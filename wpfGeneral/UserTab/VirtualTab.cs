@@ -15,7 +15,6 @@ namespace wpfGeneral.UserTab
         /// <summary>Текст ветки (нижняя строка)</summary>
         protected TextBlock PRO_TextBlockDown  = new TextBlock();
 
-
         /// <summary>СВОЙСТВО Текст ветки</summary>
         public string PROP_Text
         {
@@ -29,7 +28,6 @@ namespace wpfGeneral.UserTab
             get { return PRO_TextBlockDown.Text; }
             set { PRO_TextBlockDown.Text = value; }
         }
-
 
         /// <summary>КОНСТРУКТОР (пустой)</summary>
         protected VirtualTab() { }
@@ -61,7 +59,7 @@ namespace wpfGeneral.UserTab
             PRO_TextBlock.Padding = new Thickness(0);
             PRO_TextBlock.VerticalAlignment = VerticalAlignment.Center;
             PRO_TextBlock.Margin = new Thickness(2, 0, 4, 0);
-            PRO_TextBlock.Padding = new Thickness(0);            
+            PRO_TextBlock.Padding = new Thickness(0);
             _StackPanel.Children.Add(PRO_TextBlock);
             // Нижний текст (Дата)
             PRO_TextBlockDown.Text = pDate;
@@ -70,7 +68,7 @@ namespace wpfGeneral.UserTab
             PRO_TextBlockDown.FontSize = 11;
             PRO_TextBlockDown.Height = 13;
             PRO_TextBlockDown.Foreground = Brushes.BlueViolet;
-            _StackPanel.Children.Add(PRO_TextBlockDown);                       
+            _StackPanel.Children.Add(PRO_TextBlockDown);
         }
 
         /// <summary>МЕТОД Признак удаления ветки (зачеркивание текста)</summary>
@@ -117,7 +115,8 @@ namespace wpfGeneral.UserTab
         /// <param name="pDate">Дата</param>
         public UserTabVrladka(ImageSource pImageSource, string pText, object pParent, eVkladki pVkladki, bool pClose, string pDate = "")
             : base(pImageSource, pText, 22, pDate)
-        {   
+        {
+
             // В зависимости от вкладки меняем цвет
             switch (pVkladki)
             {

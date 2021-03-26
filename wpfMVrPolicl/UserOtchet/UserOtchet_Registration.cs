@@ -15,7 +15,7 @@ namespace wpfMVrPolicl
             // Если нужно формировать отчет
             if (PROP_NewCreate)
             {
-                MET_Otchet();                                                   
+                MET_Otchet();
                 PROP_NewCreate = false;
             }
             return this;
@@ -30,7 +30,7 @@ namespace wpfMVrPolicl
             PRO_Paragraph = new Paragraph();
             PRO_Paragraph.Inlines.Add(_Frame);
             Blocks.Clear();
-            Blocks.Add(PRO_Paragraph);        
-        }   
+            Blocks.Add(PRO_Paragraph);
+        }
     }
 }

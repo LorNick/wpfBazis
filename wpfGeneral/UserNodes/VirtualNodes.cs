@@ -36,11 +36,11 @@ namespace wpfGeneral.UserNodes
         public string PROP_TextDefault { get; set; }
 
         /// <summary>СВОЙСТВО Текст ветки (заголовок)</summary>
-        public virtual string PROP_Text 
+        public virtual string PROP_Text
         {
             get { return PRI_Text; }
             set
-            {   
+            {
                 PRI_Text = value;
                 // Если вкладка уже создана, то меняем у неё текст
                 if (Header != null)
@@ -75,12 +75,12 @@ namespace wpfGeneral.UserNodes
         public VirtualNodes PROP_Parent { get; set; }
 
         /// <summary>СВОЙСТВО Имя родительской ветки (если нету, то родитель - корень)</summary>
-        public string PROP_ParentName 
+        public string PROP_ParentName
         {
-            get 
-            { 
+            get
+            {
                 // Если есть имя родительской ветки, то показываем
-                return PROP_Parent.Name ?? ""; 
+                return PROP_Parent.Name ?? "";
             }
             set
             {
@@ -144,37 +144,35 @@ namespace wpfGeneral.UserNodes
         public virtual Visibility PROP_shaButtonClearSha { get; set; }
 
         /// <summary>СВОЙСТВО (шаблона) Индекс протокола</summary>
-        public virtual int PROP_shaIndex { get; set; }       
+        public virtual int PROP_shaIndex { get; set; }
 
         /// <summary>СВОЙСТВО (шаблона) Номер посещения/стационара/обследования</summary>
         public decimal PROP_shaIND { get; set; }
 
         /// <summary>СВОЙСТВО (шаблона) Тип протокола</summary>
         public MyTipProtokol PROP_shaTipProtokol { get; set; }
-       
+
         /// <summary>СВОЙСТВО (печати) Отступы при печати (0 - нету,1 - стандартные, 2 - минимальные )</summary>
         public byte PROP_prnPadding { get; set; }
         #endregion
-       
 
         ///<summary>МЕТОД Инициализация ветки</summary>
         public virtual void MET_Inizial()
-        {  
+        {
             // Данные ветки
             try
             {
                 PROP_ImageSource = (BitmapImage)FindResource(PROP_ImageName);   // настраиваем картинку
             }
             catch (Exception)
-            {   
+            {
                 PROP_ImageSource = (BitmapImage)FindResource("mnDoc_7");        // не нашел иконку, ставим стандартную
-            }            
+            }
 
             PROP_shaButtonNew = false;
             PROP_shaButtonEdit = false;
             PROP_shaButtonSvaveSha = Visibility.Visible;
             PROP_shaButtonClearSha = Visibility.Visible;
-
             PROP_prnPadding = 1;
             // Рисуем ветку
             Header = new UserTabNod(PROP_ImageSource, PROP_Text, PROP_TextDown);
@@ -190,7 +188,6 @@ namespace wpfGeneral.UserNodes
                 this.UnregisterName(this.Name);
                 this.RegisterName(this.Name, this);
             }
-
             // Регистрируем события на удаление и восстановление протоколов
             if (PROP_Docum != null && PROP_Docum.PROP_Protokol != null)
             {
@@ -200,18 +197,18 @@ namespace wpfGeneral.UserNodes
         }
 
         /// <summary>МЕТОД Показываем ветку (закладку)</summary>
-        /// <param name="pParent">Вкладка - родитель закладки</param> 
-        /// <param name="pVkladki">Тип вкладки</param> 
-        /// <param name="pClose">Кнопка закрытия вкладки</param> 
+        /// <param name="pParent">Вкладка - родитель закладки</param>
+        /// <param name="pVkladki">Тип вкладки</param>
+        /// <param name="pClose">Кнопка закрытия вкладки</param>
         public virtual UserTabVrladka MET_Header(object pParent, eVkladki pVkladki, bool pClose = false)
         {
             UserTabVrladka _UserTabNods = new UserTabVrladka(PROP_ImageSource, PROP_Text, pParent, pVkladki, pClose, PROP_TextDown);
-            return _UserTabNods;          
+            return _UserTabNods;
         }
 
         /// <summary>МЕТОД Отображение шаблона</summary>
-        /// <param name="pGrid">Сюда добавляем шабллон</param> 
-        /// <param name="pNewShablon">ture - Новый шаблон, false - Старый шаблон</param> 
+        /// <param name="pGrid">Сюда добавляем шабллон</param>
+        /// <param name="pNewShablon">ture - Новый шаблон, false - Старый шаблон</param>
         /// <param name="pNomerShablon">Номер шаблона</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
         public virtual bool MET_ShowShablon(Grid pGrid, bool pNewShablon, int pNomerShablon = 0, string pText = "")
@@ -220,14 +217,14 @@ namespace wpfGeneral.UserNodes
             {
                 // Создаем шаблон
                 PROP_Docum.PROP_FormShablon = new UserFormShablon_Standart(PROP_Docum);
-                PROP_Docum.PROP_FormShablon.MET_Inizial(this, true, pNomerShablon, pText); 
+                PROP_Docum.PROP_FormShablon.MET_Inizial(this, true, pNomerShablon, pText);
             }
             else if (PROP_Docum.PROP_FormShablon == null)
             {
                 PROP_Docum.PROP_FormShablon = new UserFormShablon_Standart(PROP_Docum);
-                PROP_Docum.PROP_FormShablon.MET_Inizial(this, false, pNomerShablon, pText); 
+                PROP_Docum.PROP_FormShablon.MET_Inizial(this, false, pNomerShablon, pText);
             }
-                                
+
             // Создаем контейнер и добавляем в него шаблон
             ScrollViewer _ScrollViewer = new ScrollViewer
             {
@@ -246,10 +243,8 @@ namespace wpfGeneral.UserNodes
         public void MET_Delete(bool pDelete)
         {
             PROP_Delete = pDelete;
-
             // Если протокол удаленый, то помечаем его
             (Header as UserTabNod).MET_Delete(PROP_Delete);
-
             // Показываем ветку или скрываем, в зависимости от флага
             if (!PROP_Delete || MyGlo.ShowDeletedProtokol)
                 Visibility = Visibility.Visible;

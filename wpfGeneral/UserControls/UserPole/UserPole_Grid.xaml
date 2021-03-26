@@ -2,18 +2,18 @@
              xmlns="clr-namespace:wpfGeneral.UserControls"
              xmlns:p="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              x:Name="UserPole">
     <p:Grid >
-        <p:Grid.RowDefinitions>            
+        <p:Grid.RowDefinitions>
             <p:RowDefinition />
             <p:RowDefinition />
         </p:Grid.RowDefinitions>
         <p:Label Name="PART_Label" Height="24" HorizontalAlignment="Left"  Foreground="Navy" Content="UserPoleGrid" VerticalContentAlignment="Center" Padding="5,0" HorizontalContentAlignment="Right" />
         <p:Border Name="PART_Border" p:Grid.Row="1" BorderBrush="CornflowerBlue">
-            <p:Grid Name="PART_Grid" >                
+            <p:Grid Name="PART_Grid" >
             </p:Grid>
         </p:Border>
     </p:Grid>

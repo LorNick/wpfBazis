@@ -6,8 +6,8 @@ namespace wpfGeneral.UserControls
 {
     /// <summary>КЛАСС для (CheckBox)</summary>
     public partial class UserPole_CheckBox : VirtualPole
-    {  
-        /// <summary>РЕГИСТРАЦИЯ Свойства PROP_Checked</summary> 
+    {
+        /// <summary>РЕГИСТРАЦИЯ Свойства PROP_Checked</summary>
         public static readonly DependencyProperty PROP_CheckedProperty =
             DependencyProperty.Register("PROP_Checked", typeof(bool), typeof(UserPole_CheckBox), null);
 
@@ -16,7 +16,7 @@ namespace wpfGeneral.UserControls
         {
             get { return (bool)this.GetValue(PROP_CheckedProperty); }
             set { this.SetValue(PROP_CheckedProperty, value); }
-        }            
+        }
 
         /// <summary>СВОЙСТВО Описание вопроса</summary>
         public override string PROP_Description
@@ -32,7 +32,7 @@ namespace wpfGeneral.UserControls
                     PART_Label.Padding = new Thickness(5, 0, 5, 0);
             }
         }
-       
+
         /// <summary>РЕГИСТРАЦИЯ События при нажатии на CheckBox</summary>
         public static readonly RoutedEvent CheckedEvent;
 
@@ -46,13 +46,13 @@ namespace wpfGeneral.UserControls
         /// <summary>КОНСТРУКТОР</summary>
         public UserPole_CheckBox()
         {
-            InitializeComponent();         
-         }
+            InitializeComponent();
+        }
 
         /// <summary>Статический КОНСТРУКТОР</summary>
         static UserPole_CheckBox()
         {
-            CheckedEvent = EventManager.RegisterRoutedEvent("IsChecked", RoutingStrategy.Bubble, 
+            CheckedEvent = EventManager.RegisterRoutedEvent("IsChecked", RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<bool>), typeof(UserPole_CheckBox));
         }
 
@@ -65,7 +65,6 @@ namespace wpfGeneral.UserControls
             RoutedPropertyChangedEventArgs<bool> _Args = new RoutedPropertyChangedEventArgs<bool>(false, true);
             _Args.RoutedEvent = CheckedEvent;
             _CheckBox.RaiseEvent(_Args);
-
         }
     }
 }

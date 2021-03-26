@@ -52,12 +52,13 @@ namespace wpfStatic
                 case 6:                                                         // Главный из вне
                     _Connect += "password=RhtvyTDF1V9f5#8;";
                     _Connect += "data source=10.30.103.8;";
-                    break; 
+                    break;
             }
             _Connect += "persist security info=False;";
             _Connect += "initial catalog=Bazis;";
             _Connect += "Connect Timeout=90000000;";
-            // возвращаем строку подключения к SQL Server`у 
+            // возвращаем строку подключения к SQL Server`у
+
             return _Connect;
             // ~~~~ Строка подключения к SQL Server`у ~~~~
         }
@@ -105,7 +106,7 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
@@ -146,7 +147,7 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
@@ -188,7 +189,7 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
@@ -228,7 +229,7 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
@@ -271,7 +272,7 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
@@ -311,9 +312,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
-
                 try
                 {
                     _Value = (DateTime)_SqlCom.ExecuteScalar();                 // выполянем запрос
@@ -352,7 +352,7 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу    
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
@@ -395,15 +395,16 @@ namespace wpfStatic
         /// <returns>Возвращаем SqlDataReader</returns>
         public static SqlDataReader MET_QuerySqlDataReader(string pStrSQL)
         {
-            int _CountTimeout = 0;                                              // попытки достучаться до сервера (5 попыток)     
+            int _CountTimeout = 0;                                              // попытки достучаться до сервера (5 попыток)
             label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу    
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 try
                 {
-                    SqlDataReader _SqlDr = _SqlCom.ExecuteReader(CommandBehavior.CloseConnection);  // выполянем запрос  
+                    SqlDataReader _SqlDr = _SqlCom.ExecuteReader(CommandBehavior.CloseConnection);  // выполянем запрос
+
                     return _SqlDr;
                 }
                 catch (SqlException ex)
@@ -429,7 +430,7 @@ namespace wpfStatic
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего DataReader)");
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
-            }          
+            }
         }
 
         /// <summary>Массовая вставка данных в SQL из DataTable</summary>
@@ -437,11 +438,10 @@ namespace wpfStatic
         /// <returns>Возвращаем bool</returns>
         public static bool MET_SqlBulkCopy(DataTable pDataTable)
         {
-            bool _Result;             
+            bool _Result;
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу 
-
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 // Создаем объект SqlBulkCopy, указываем таблицу назначения и загружаем.
                 using (var loader = new SqlBulkCopy(PUB_SqlConct))
                 {
@@ -451,7 +451,7 @@ namespace wpfStatic
                 _Result = false;
             }
             catch (Exception ex)
-            {               
+            {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка массовой вставки SqlBulkCopy");
                 MyGlo.callbackEvent_sError(ex);
                 _Result = false;
@@ -464,7 +464,7 @@ namespace wpfStatic
         /// <param name="pImage">Наименование поля картинки</param>
         /// <param name="photo">Байтовый массив изображения</param>
         public static void MET_QueryNoImage(string pStrSQL, string pImage, byte[] photo)
-        {  
+        {
             int _CountTimeout = 0;                                              // попытки достучаться до сервера (5 попыток)
         label1:
             try
@@ -505,16 +505,14 @@ namespace wpfStatic
         public static void MET_QueryXML(string pStrSQL, string pFile)
         {
             int _CountTimeout = 0;                                              // попытки достучаться до сервера (5 попыток)
-
             XmlDocument _Doc = new XmlDocument();
-            XmlDeclaration _XmlDecl = _Doc.CreateXmlDeclaration("1.0", "windows-1251", null);        
+            XmlDeclaration _XmlDecl = _Doc.CreateXmlDeclaration("1.0", "windows-1251", null);
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу       
+                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
                 SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
                 _SqlCom.CommandTimeout = 90000000;
-
                 try
                 {
                     using (XmlReader _Read = _SqlCom.ExecuteXmlReader())        // выполянем запрос
@@ -547,9 +545,7 @@ namespace wpfStatic
             // Добавляем ветку рут
             XmlElement _Root = _Doc.DocumentElement;
             _Doc.InsertBefore(_XmlDecl, _Root);
-
             PUB_SqlConct.Close();                                               // закрываем подключение
-                       
             // Имя файла
             string _PathToXml = @"c:\1Reestrs\" + pFile + ".xml";
             // Сохроняем xml в файл
@@ -569,7 +565,7 @@ namespace wpfStatic
             MET_QueryNo(MyQuery.NextRef_Update_1(pNomTabl));
             return _Cod;
         }
-        
+
         /// <summary>Наименование (поле TKOD) справочников (с указанием текстового кода)</summary>
         /// <param name="pValCod">Текстовый код</param>
         /// <param name="pTable">Имя таблицы</param>
@@ -577,7 +573,7 @@ namespace wpfStatic
         public static string MET_NameSpr(string pValCod, string pTable)
         {
             string _StrSql = $@"select TKOD
-                               from dbo.{pTable}    
+                               from dbo.{pTable}
                                where KOD = '{pValCod}'";
             return MET_QueryStr(_StrSql);
         }
@@ -589,7 +585,7 @@ namespace wpfStatic
         public static string MET_NameSpr(int pValCod, string pTable)
         {
             string _StrSql = $@"select TKOD
-                            from dbo.{pTable}    
+                            from dbo.{pTable}
                             where KOD = {pValCod}";
             return MET_QueryStr(_StrSql);
         }
@@ -598,15 +594,15 @@ namespace wpfStatic
         /// <param name="pValCod">Числовой код</param>
         /// <param name="pTable">Имя таблицы</param>
         /// <param name="pPoleSelect">Возвращаемое поле</param>
-        /// <param name="pPoleWhere">Условие выборки</param> 
+        /// <param name="pPoleWhere">Условие выборки</param>
         /// <returns>Возвращаем наименование</returns>
         public static string MET_NameSpr(int pValCod, string pTable, string pPoleSelect, string pPoleWhere)
         {
-            string _StrSql = $@"select {pPoleSelect}   
-                            from dbo.{pTable}    
+            string _StrSql = $@"select {pPoleSelect}
+                            from dbo.{pTable}
                             where {pPoleWhere} = {pValCod}";
             return MET_QueryStr(_StrSql);
-        }       
+        }
 
         /// <summary>Находим максимальный Cod + 1 (целое число)</summary>
         /// <param name="pTable">Имя таблицы</param>
@@ -637,7 +633,7 @@ namespace wpfStatic
         /// <summary>Пингуем сервер ДРУГОГО корпуса по IP (Pol, Fil)</summary>
         /// <returns>true - есть пинг</returns>
         public static bool MET_Ping()
-        {   
+        {
             return MET_QueryInt("select dbo.Ping()") == 0;
         }
         #endregion

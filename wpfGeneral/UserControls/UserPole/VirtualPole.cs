@@ -36,7 +36,7 @@ namespace wpfGeneral.UserControls
         /// <summary>Помечаем поле текста</summary>
         protected bool PRO_Necessarily;
         #endregion
-       
+
         #region ---- СВОЙСТВА ----
         /// <summary>СВОЙСТВО Документ этой ветки</summary>
         public UserDocument PROP_Docum { get; set; }
@@ -44,19 +44,19 @@ namespace wpfGeneral.UserControls
         /// <summary>СВОЙСТВО Lua</summary>
         public UserLua_Standart PROP_Lua { get; set; }
 
-        /// <summary>СВОЙСТВО Описание вопроса</summary> 
+        /// <summary>СВОЙСТВО Описание вопроса</summary>
         public virtual string PROP_Description { get; set; }
 
         /// <summary>СВОЙСТВО Ответ</summary>
         public virtual string PROP_Text
-        {   
+        {
             get { return (string)this.GetValue(DEPR_TextProperty); }
             set { this.SetValue(DEPR_TextProperty, value); }
         }
         /// <summary>РЕГИСТРАЦИЯ Свойства PROP_Text</summary>
         public static readonly DependencyProperty DEPR_TextProperty =
             DependencyProperty.Register("PROP_Text", typeof(string), typeof(VirtualPole), new PropertyMetadata(""));
-       
+
         /// <summary>СВОЙСТВО Заначение ответа по умолчанию</summary>
         public virtual string PROP_DefaultText { get; set; }
 
@@ -72,7 +72,7 @@ namespace wpfGeneral.UserControls
         {
             get { return PRO_ValueMin; }
             set { PRO_ValueMin = (int)value; }
-        }    
+        }
 
         /// <summary>СВОЙСТВО Количество символов в ответе</summary>
         public virtual int PROP_MaxLength { get ; set; }
@@ -82,14 +82,15 @@ namespace wpfGeneral.UserControls
 
         /// <summary>СВОЙСТВО Номер индификатора VarId</summary>
         public virtual int PROP_VarId
-        {   
+        {
             get { return (int)this.GetValue(DEPR_VarIdProperty); }
             set { this.SetValue(DEPR_VarIdProperty, value); }
-        } 
+        }
+
         /// <summary>РЕГИСТРАЦИЯ Свойства PROP_VarId</summary>
         public static readonly DependencyProperty DEPR_VarIdProperty =
-            DependencyProperty.Register("PROP_VarId", typeof(int), typeof(VirtualPole), new PropertyMetadata(0));     
-       
+            DependencyProperty.Register("PROP_VarId", typeof(int), typeof(VirtualPole), new PropertyMetadata(0));
+
         /// <summary>СВОЙСТВО Подстановка данных - false или замена данных - true</summary>
         public virtual bool PROP_Insert
         {
@@ -155,8 +156,7 @@ namespace wpfGeneral.UserControls
                     PROP_PometkaText = 0;
             }
         }
-        #endregion 
-
+        #endregion
 
         ///<summary>КОНСТРУКТОР</summary>
         public VirtualPole()

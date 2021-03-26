@@ -1,7 +1,6 @@
-﻿using System.Windows;  
+﻿using System.Windows;
 using System.Windows.Media;
 using wpfStatic;
-
 
 namespace wpfGeneral.UserControls
 {
@@ -32,17 +31,17 @@ namespace wpfGeneral.UserControls
         public UserPole_Label()
         {
             InitializeComponent();
-            PART_TextBox.BorderThickness = new Thickness(0);
 
+            PART_TextBox.BorderThickness = new Thickness(0);
             PART_TextBox.ContextMenu = MyGlo.ContextMenu;
             PART_TextBox.Tag = this;
         }
-       
+
         ///<summary>МЕТОД Инициализация поля</summary>
         public override void MET_Inicial()
-        {               
+        {
             // Располагаем текст
-			this.HorizontalAlignment = HorizontalAlignment.Left;
+            this.HorizontalAlignment = HorizontalAlignment.Left;
             if (PROP_Format.PROP_Value.ContainsKey("ac"))
                 this.HorizontalAlignment = HorizontalAlignment.Center;
             if (PROP_Format.PROP_Value.ContainsKey("ar"))

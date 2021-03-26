@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,8 +18,8 @@ namespace wpfGeneral.UserControls
         public override string PROP_Description
         {
             get { return (string)PART_Label.Content; }
-            set 
-            { 
+            set
+            {
                 PART_Label.Content = value;
                 // Если описания нету, то убираем пустой отступ
                 if (value == "")
@@ -64,7 +63,7 @@ namespace wpfGeneral.UserControls
         public override double PROP_WidthText
         {
             get { return PART_TextBox.Width; }
-            set 
+            set
             {
                 PART_TextBox.Width = value;
                 if (double.IsNaN(PART_TextBox.Width))
@@ -85,8 +84,8 @@ namespace wpfGeneral.UserControls
         public override byte PROP_PometkaText
         {
             get { return PRO_PometkaText; }
-            set 
-            { 
+            set
+            {
                 PRO_PometkaText = value;
                 if (PRO_PometkaText == 1)
                     PART_TextBox.BorderBrush = Brushes.Red;
@@ -96,16 +95,16 @@ namespace wpfGeneral.UserControls
         }
 
         /// <summary>СВОЙСТВО Скрываем рамку</summary>
-        public override bool PROP_HideBorder 
+        public override bool PROP_HideBorder
         {
             get
             {
-                return (PART_TextBox.BorderThickness.Equals(new Thickness(0)));   
+                return PART_TextBox.BorderThickness.Equals(new Thickness(0));
             }
             set
             {
                 if (value)
-                    PART_TextBox.BorderThickness = new Thickness(0);          
+                    PART_TextBox.BorderThickness = new Thickness(0);
             }
         }
 
@@ -132,29 +131,29 @@ namespace wpfGeneral.UserControls
             PART_TextBox.Tag = this;
         }
 
-		///<summary>МЕТОД Инициализация поля</summary>
-		public override void MET_Inicial()
-		{
+        ///<summary>МЕТОД Инициализация поля</summary>
+        public override void MET_Inicial()
+        {
             // Ограничиваем 20 символами
             PROP_MaxLength = 20;
-			// Располагаем текст
-			PROP_TextAlignment = TextAlignment.Left;
-			if (PROP_Format.PROP_Value.ContainsKey("fac"))
-				PROP_TextAlignment = TextAlignment.Center;
-			if (PROP_Format.PROP_Value.ContainsKey("far"))
-				PROP_TextAlignment = TextAlignment.Right;
-		}
-	 
+            // Располагаем текст
+            PROP_TextAlignment = TextAlignment.Left;
+            if (PROP_Format.PROP_Value.ContainsKey("fac"))
+                PROP_TextAlignment = TextAlignment.Center;
+            if (PROP_Format.PROP_Value.ContainsKey("far"))
+                PROP_TextAlignment = TextAlignment.Right;
+        }
+
+
         /// <summary>СОБЫТИЕ при вводе символа в TextBox</summary>
         private void PART_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextBox _TextBox = (TextBox)sender;
-
             // Если была ошибка, то при востановлении данных мы просто выходим
             if (_TextBox.Text == PROP_Text) return;
             // Проверим число на правильность
             if (_TextBox.Text != "")
-            {                
+            {
                 // Если не парсится в число или мы ставим пробел, то вертаем всё назад
                 if (!double.TryParse(_TextBox.Text, out double _Number) || _TextBox.Text.IndexOf(' ') != -1)
                 {
@@ -176,7 +175,7 @@ namespace wpfGeneral.UserControls
             if (Equals(PROP_ForegroundText, Brushes.Gray))
                 PROP_ForegroundText = Brushes.Black;
             // Сохраним число
-            this.SetValue(DEPR_TextProperty, _TextBox.Text);           
+            this.SetValue(DEPR_TextProperty, _TextBox.Text);
         }
 
         /// <summary>СОБЫТИЕ при вводе символа в TextBox</summary>
@@ -187,11 +186,9 @@ namespace wpfGeneral.UserControls
             string _DecimalSeparator = _NumberFormatInfo.NumberDecimalSeparator;
             string _GroupSeparator = _NumberFormatInfo.NumberGroupSeparator;
             string _NegativeSign = _NumberFormatInfo.NegativeSign;
-
             TextBox _Text = (TextBox) sender;
-            
-            if (char.IsDigit(e.Text[0])) 
-            { 
+            if (char.IsDigit(e.Text[0]))
+            {
                // Это число
             }
             else if (e.Text.Equals(_DecimalSeparator) || e.Text.Equals(_GroupSeparator))
@@ -205,7 +202,7 @@ namespace wpfGeneral.UserControls
             else
             {
                 // Некорректный символ, сваливаем
-                e.Handled = true;                                              
+                e.Handled = true;
             }
         }
 

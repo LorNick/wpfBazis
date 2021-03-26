@@ -1,6 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="ImageList.xaml" />
         <ResourceDictionary Source="Interfays.xaml" />
@@ -16,7 +15,7 @@
     <!--Стиль обычных кнопок-->
     <Style x:Key="StyleButton" TargetType="Button">
         <Setter Property="Height" Value="40" />
-        <Setter Property="Width" Value="110" /> 
+        <Setter Property="Width" Value="110" />
     </Style>
 
     <!--Стили для кнопок ToggleButton-->
@@ -30,8 +29,8 @@
                             <GradientStop Color="White" Offset="0"/>
                             <GradientStop Color="DarkOrange" Offset="1" />
                         </LinearGradientBrush>
-                    </Setter.Value>      
-                </Setter> 
+                    </Setter.Value>
+                </Setter>
             </Trigger>
         </Style.Triggers>
     </Style>

@@ -115,13 +115,11 @@ namespace wpfGeneral.UserStruct
             set { if (PRI_xInfo != value) { PRI_xInfo = value; PART_RaisePropertyChanged("PROP_xInfo"); } }
         }
 
-
         /// <summary>СВОЙСТВО Тип протокола</summary>
         public MyTipProtokol PROP_TipProtokol { get; set; }
 
         /// <summary>СВОЙСТВО Флаг редактирования строки шаблона</summary>
         public bool PROP_FlagEdit { get; set; }
-
 
         /// <summary>Событие на изменение свойств</summary>
         public event PropertyChangedEventHandler PropertyChanged;
@@ -143,13 +141,12 @@ namespace wpfGeneral.UserStruct
             List<UserShablon> _Shablon = ((VirtualModul)MyGlo.Modul).PUB_Shablon;
             //  Ищем в коллекции <Shablon> по типу и номеру шаблона все вопросы данного шаблона, которые были изменены
             List<UserShablon> _Value = _Shablon.Where(p => p.PROP_ID == PROP_ID && p.PROP_TipProtokol == PROP_TipProtokol && p.PROP_FlagEdit).ToList();
-            // Если не нашли, то пытаемся <Shablon> создать 
+            // Если не нашли, то пытаемся <Shablon> создать
             foreach (var _i in _Value)
             {
                 MySql.MET_QueryNo(MyQuery.MET_Shablon_Update_1(_i.PROP_TipProtokol.PROP_Shablon, _i.PROP_Cod, _i.PROP_ID, _i.PROP_Nomer, _i.PRI_VarId, _i.PROP_Maska,
                                                                 _i.PROP_Type, _i.PROP_Razdel, _i.PROP_Name, _i.PROP_ValueStart, _i.PROP_OutText, _i.PROP_InText,
                                                                 _i.PROP_xFormat, _i.PROP_xLua, _i.PROP_xInfo));
-                
                 // Сбрасываем флаг редактирования
                 _i.PROP_FlagEdit = false;
             }
@@ -167,21 +164,19 @@ namespace wpfGeneral.UserStruct
             // Удаляем шаблон из SQL
             MyTipProtokol _Tip = new MyTipProtokol(pTip);
             MySql.MET_QueryNo(MyQuery.MET_Shablon_Delete_1(pCodShablon, _Tip.PROP_Prefix));
-
-            // Добавляем элементы шаблона в SQL 
+            // Добавляем элементы шаблона в SQL
             foreach (var _i in _Value)
             {
                 MySql.MET_QueryNo(MyQuery.MET_Shablon_Insert_1(_i.PROP_TipProtokol.PROP_Shablon, _i.PROP_Cod, _i.PROP_ID, _i.PROP_Nomer, _i.PRI_VarId, _i.PROP_Maska,
                                                                 _i.PROP_Type, _i.PROP_Razdel, _i.PROP_Name, _i.PROP_ValueStart, _i.PROP_OutText, _i.PROP_InText,
                                                                 _i.PROP_xFormat, _i.PROP_xLua, _i.PROP_xInfo));
-
                 // Сбрасываем флаг редактирования
                 _i.PROP_FlagEdit = false;
             }
         }
 
         ///<summary>МЕТОД Конвертация данных Shablon из DataReader</summary>
-        /// <param name="pDataReader">Поток данных из SQL</param> 
+        /// <param name="pDataReader">Поток данных из SQL</param>
         private void MET_LoadDataReader(IDataRecord pDataReader)
         {
             try
@@ -209,7 +204,7 @@ namespace wpfGeneral.UserStruct
         }
 
         ///<summary>МЕТОД Фабрика объектов Shablon</summary>
-        /// <param name="pTip">Тип протокола</param> 
+        /// <param name="pTip">Тип протокола</param>
         /// <param name="pCodShablon">Код шаблона</param>
         public static List<UserShablon> MET_FactoryListShablon(eTipDocum pTip, int pCodShablon)
         {
@@ -217,14 +212,13 @@ namespace wpfGeneral.UserStruct
             List<UserShablon> _Shablons = ((VirtualModul)MyGlo.Modul).PUB_Shablon;
             //  Ищем в коллекции <Shablon> по типу и номеру шаблона
             List<UserShablon> _Value = _Shablons.Where(p => p.PROP_ID == pCodShablon && p.PROP_TipProtokol.PROP_TipDocum == pTip).ToList();
-            // Если не нашли, то пытаемся <Shablon> загрузить из SQL 
+            // Если не нашли, то пытаемся <Shablon> загрузить из SQL
             if (!_Value.Any())
             {
                 try
                 {
                     MyTipProtokol _Tip = new MyTipProtokol(pTip);
                     SqlDataReader _SqlDataReader = MySql.MET_QuerySqlDataReader(MyQuery.MET_Shablon_Select_3(pCodShablon, _Tip.PROP_Prefix));
-
                     while (_SqlDataReader.Read())
                     {
                         UserShablon _Shablon = new UserShablon();
@@ -249,7 +243,7 @@ namespace wpfGeneral.UserStruct
         }
 
         /// <summary>МЕТОД Фабрика Массовая загрузка всех объектов Shablon для загруженной коллекции Protokol</summary>
-        /// <param name="pTip">Тип протокола</param> 
+        /// <param name="pTip">Тип протокола</param>
         /// <remarks>Делается как из MET_FactoryProtokolArray</remarks>
         public static bool MET_FactoryShablonArray(eTipDocum pTip)
         {

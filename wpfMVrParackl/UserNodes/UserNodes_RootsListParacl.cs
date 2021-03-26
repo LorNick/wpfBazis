@@ -35,11 +35,12 @@ namespace wpfMVrParacl
         {
             return new UserOtchet_AddParacl { PROP_Docum = pDocument };
         }
-       
+
         ///<summary>МЕТОД Запрос на поиск подветок</summary>
         protected override IEnumerable<UserProtokol> MET_LoadProtokol()
         {
-            return ((VirtualModul)MyGlo.Modul).PUB_Protokol.Where(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Paracl && p.PROP_CodApstac == MyGlo.IND).OrderBy(p => p.PROP_Cod); ;
+            return ((VirtualModul)MyGlo.Modul).PUB_Protokol.Where(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Paracl 
+                            && p.PROP_CodApstac == MyGlo.IND).OrderBy(p => p.PROP_Cod);
         }
 
         ///<summary>МЕТОД Создание подветки</summary>

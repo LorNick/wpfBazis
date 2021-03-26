@@ -6,15 +6,14 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using wpfStatic;
 
-
 namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Справочник Операций</summary>
     public class UserWindow_Oper : VirtualUserWindow
     {
         /// <summary>СВОЙСТВО Код операции</summary>
-        public string PROP_Cod { get; private set; }  
-        
+        public string PROP_Cod { get; private set; }
+
         /// <summary>СВОЙСТВО Наименование операции</summary>
         public string PROP_Text { get; private set; }
 
@@ -22,7 +21,7 @@ namespace wpfGeneral.UserWindows
         private readonly int PRI_Shablon;
         // Дата действия кодов лечения
         private readonly DateTime PRI_Date;
-        
+
         // Элементы фильтра (КСГ - круглосуточный, КСГ - дневной, все записи)
         private ComboBox PRI_ComboBox_1;
         // Элемент фильтра (только для данного шаблона - тег-массив "shablon": [9910])
@@ -37,7 +36,6 @@ namespace wpfGeneral.UserWindows
         {
             // Ставим Русский язык
             MyMet.MET_Lаng();
-
             // Имя таблицы
             PRO_TableName = "s_VidOper";
             // Заголовок
@@ -113,7 +111,6 @@ namespace wpfGeneral.UserWindows
             PRI_ComboBox_1.ItemsSource = _Dictionary;
             PRI_ComboBox_1.DisplayMemberPath = "Value";
             PRI_ComboBox_1.SelectedValuePath = "Key";
-
             // Смотрим тип стационара
             if (MyGlo.TypeModul == eModul.VrStac)
             {
@@ -124,7 +121,6 @@ namespace wpfGeneral.UserWindows
             }
             else
                 PRI_ComboBox_1.SelectedValue = "all";       // НЕ стацонар
-
             PRI_ComboBox_1.IsEnabled = true;
             PRI_ComboBox_1.SelectionChanged += delegate { MET_SqlFilter(); };
             _SPanel_1.Children.Add(PRI_ComboBox_1);
@@ -157,9 +153,9 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox2.Foreground = Brushes.Navy;
             PRI_CheckBox2.Click += delegate { MET_SqlFilter(); };
             _SPanel_2.Children.Add(PRI_CheckBox2);
-        }        
+        }
 
-        /// <summary>МЕТОД Создание фильтров для загрузки данных из SQL (Выбор фильтрации операций по КСГ)</summary>     
+        /// <summary>МЕТОД Создание фильтров для загрузки данных из SQL (Выбор фильтрации операций по КСГ)</summary>
         protected override void MET_SqlFilter()
         {
             PRO_SqlWhere = "";
@@ -172,10 +168,8 @@ namespace wpfGeneral.UserWindows
             // Только для данного шаблона
             if (PRI_CheckBox1.IsChecked == true && PRI_Shablon > 0)
                 PRO_SqlWhere += $" and dbo.jsonIfArray(xInfo, 'shablon', '{PRI_Shablon}') = 1";
-
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
-
             // Выделяем первую строку
             if (PRO_DataView != null && PRO_DataView.Table.Rows.Count != -1)
                 PART_DataGrid.SelectedIndex = 0;
@@ -237,7 +231,6 @@ namespace wpfGeneral.UserWindows
                 {
                     PRO_DataView.RowFilter = "";
                 }
-
             // Выделяем первую строку
             if (PRO_DataView != null && PRO_DataView.Table.Rows.Count != -1)
                 PART_DataGrid.SelectedIndex = 0;
@@ -248,7 +241,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {

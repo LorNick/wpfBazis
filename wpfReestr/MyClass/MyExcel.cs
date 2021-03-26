@@ -32,7 +32,6 @@ namespace wpfReestr
         private readonly StrahFile PRI_StrahFile;
         private readonly e.Application PRI_ExcelApp;
         private readonly e.Worksheet PRI_Worksheet;
-
         private int PRI_Row = 3;
 
         /// <summary>КОНСТРУКТОР </summary>
@@ -41,9 +40,7 @@ namespace wpfReestr
         {
             // Используя NuGet пакет LinqToExcel (https://code.google.com/p/linqtoexcel/) подключаемся к книге Excel
             // Работа с Excel http://wladm.narod.ru/C_Sharp/comexcel.html
-
             PRI_StrahFile = pStrahFile;
-
             // Наш объект Excel
             PRI_ExcelApp = new e.Application();
             // Одна страница в книге
@@ -54,11 +51,9 @@ namespace wpfReestr
             e.Sheets _Sheets = PRI_ExcelApp.Workbooks.Item[1].Worksheets;
             // Рабочая страница
             PRI_Worksheet = (e.Worksheet)_Sheets.Item[1];
-
-            // Заголовок  
+            // Заголовок
             string _Value = "Реестр №" + PRI_StrahFile.Cod;
             MET_Print("A1", _Value);
-
             // Шапка
             // 1
             MET_Print("A3", "Номер");
@@ -87,9 +82,9 @@ namespace wpfReestr
 
         /// <summary>МЕТОД Проверка и запись ошибки реестра в Excel</summary>
         /// <param name="pVerif">Условие на наличие ошибки</param>
-        /// <param name="pCod">Код ошибки</param> 
+        /// <param name="pCod">Код ошибки</param>
         /// <param name="pName">Описание ошибки</param>
-        /// <param name="pErrorRow">Сообщаем, что строка с ошибкой</param> 
+        /// <param name="pErrorRow">Сообщаем, что строка с ошибкой</param>
         /// <returns>true - есть ошибка, false - нет ошибки</returns>
         public bool MET_VeryfError(bool pVerif, string pCod, string pName, ref bool pErrorRow)
         {
@@ -102,7 +97,6 @@ namespace wpfReestr
                 pErrorRow = true;
                 return true;
             }
-
             // Ошибки нет
             return false;
         }
@@ -111,7 +105,6 @@ namespace wpfReestr
             public void MET_SaveError()
         {
             PRI_Row++;
-
             MET_PrintR("A", PROP_Nom.ToString());
             MET_PrintR("B", PROP_Tip);
             var _DP = m.MET_PoleDate("DP", PROP_RowReestr);
@@ -136,10 +129,9 @@ namespace wpfReestr
                 PRI_ExcelApp.Quit();
                 return;
             }
-            // Заголовок  
+            // Заголовок
             string _Value = "Время создания: " + MySql.MET_QueryDat("select pDate from dbo.StrahFile where Cod =" + PRI_StrahFile.Cod);
             MET_Print("C1", _Value);
-
             PRI_ExcelApp.Visible = true;
         }
 

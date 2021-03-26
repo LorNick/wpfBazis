@@ -27,7 +27,6 @@ namespace wpfMOtherLpu
             base.MET_Inizial();
             // Запрещаем содаздание документов
             PROP_shaButtonNew = false;
-
         }
 
         ///<summary>МЕТОД Отчет подветки</summary>
@@ -40,20 +39,19 @@ namespace wpfMOtherLpu
         protected override IEnumerable<UserProtokol> MET_LoadProtokol()
         {
             var _p = ((VirtualModul) MyGlo.Modul).PUB_Protokol;
-
             // Если ЛПУ Кардиодиспансер (554505), то смотрим шаблон 9944, иначе химия и шаблон 9924 только для поликлиники
-            var _k = _p.Where(p => ((MyGlo.Lpu != 554505 && p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Pol && p.PROP_NumShablon == 9924 ) 
+            var _k = _p.Where(p => ((MyGlo.Lpu != 554505 && p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Pol && p.PROP_NumShablon == 9924 )
+
                     || (MyGlo.Lpu == 554505 && p.PROP_NumShablon == 9944))
                    && p.PROP_KL == MyGlo.KL).ToList()
                 .OrderBy(p => p.PROP_pDate).ThenBy(p => p.PROP_Cod);
-
             return _k;
         }
 
         ///<summary>МЕТОД Создание подветки</summary>
         protected override UserNodes_Add MET_TypeNodesAdd()
         {
-            return new UserNodes_Add(); 
+            return new UserNodes_Add();
         }
 
         /// <summary>МЕТОД Настраиваем дополнительные параметры для НОВОЙ подветки</summary>

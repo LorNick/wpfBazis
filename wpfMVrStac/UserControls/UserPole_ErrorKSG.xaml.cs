@@ -45,7 +45,7 @@ namespace wpfMVrStac.UserControls
         /// <summary>СВОЙСТВО 1 - текущий пользователь/врач, 0 - остальные врачи этого отделения</summary>
         public int PROP_User { get; set; }
         #endregion
-        
+
         /// <summary>КОНСТРУКТОР</summary>
         public UserPole_ErrorKSG(DataRow pRow )
         {
@@ -74,11 +74,10 @@ namespace wpfMVrStac.UserControls
             }
         }
 
-        /// <summary>СОБЫТИЕ Открытие контекстного меню Редактировать</summary>     
+        /// <summary>СОБЫТИЕ Открытие контекстного меню Редактировать</summary>
         private void PART_MenuItem_Edit_Click(object sender, RoutedEventArgs e)
         {
             MyTipProtokol _MyTipProtokol = new MyTipProtokol(eTipDocum.Stac);
-          
             // Пытаемся открыть новую копию программы, для редактирования протоколов
             MyMet.MET_EditWindows(_MyTipProtokol.PROP_TipDocum, PROP_CodApstac, PROP_KL);
         }

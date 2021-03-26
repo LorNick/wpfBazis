@@ -5,13 +5,11 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Виртуальное окно выбора Шаблонов (любых)</summary>
     public class VirtualWindow_Shablon : VirtualUserWindow
-    {   
+    {
         /// <summary>Выбранный шаблон</summary>
         public int PUB_Shablon = 0;
-
         /// <summary>Наименование шаблона</summary>
         public string PUB_Text = "";
-       
 
         /// <summary>КОНСТРУКТОР (пустой)</summary>
         protected VirtualWindow_Shablon()
@@ -47,7 +45,6 @@ namespace wpfGeneral.UserWindows
         {
             if (!PROP_FlagButtonSelect)
                 return;
-
             // Список выбора
             try
             {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using wpfStatic;
@@ -9,12 +7,11 @@ namespace wpfGeneral.UserWindows
 {
     /// <summary>КЛАСС Выбор шаблонов Поликлиники</summary>
     public class UserWindow_Shablon_Policl : VirtualWindow_Shablon
-    {  
+    {
         private CheckBox PRI_CheckBox_1;
         private CheckBox PRI_CheckBox_2;
 
         private readonly int PRI_Profil;
-
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserWindow_Shablon_Policl(string pTitle, int pProfil)
@@ -32,9 +29,9 @@ namespace wpfGeneral.UserWindows
             // Поле поиска
             PRO_PoleFiltr = "Filter";
             // Разрешаем выбирать записи
-            PROP_FlagButtonSelect = true;            
+            PROP_FlagButtonSelect = true;
             // Создаем фильтр
-            MET_CreateFiltr();            
+            MET_CreateFiltr();
             // Открываем таблицу
             MET_OpenForm();
             // Фильтр
@@ -48,12 +45,12 @@ namespace wpfGeneral.UserWindows
         {
             return MyQuery.MET_ListShablon_Select_2(PRO_SqlWhere, "apaN");
         }
-        
+
         /// <summary>МЕТОД Создание фильтров</summary>
         private void MET_CreateFiltr()
         {
             PART_Grid.RowDefinitions[0].Height = new GridLength(80, GridUnitType.Auto);
-            PART_Expander.Visibility = Visibility.Visible;            
+            PART_Expander.Visibility = Visibility.Visible;
             PART_Expander.IsExpanded = true;    // Показываем строку Фильтра
             Border _Border = new Border();
             _Border.Style = (Style)FindResource("Border_2");
@@ -80,17 +77,16 @@ namespace wpfGeneral.UserWindows
             PRI_CheckBox_2.Content = "Показать шаблоны Документов";
             PRI_CheckBox_2.VerticalAlignment = VerticalAlignment.Center;
             PRI_CheckBox_2.Foreground = Brushes.Navy;
-            PRI_CheckBox_2.IsChecked = MySql.MET_QueryBool(MyQuery.MET_ListShablon_Select_1());   // если нету профильных шаблонов, открываем дополнительные документы 
+            PRI_CheckBox_2.IsChecked = MySql.MET_QueryBool(MyQuery.MET_ListShablon_Select_1());   // если нету профильных шаблонов, открываем дополнительные документы
             PRI_CheckBox_2.Click += delegate { MET_DopFilter(); };
             _SPanel_1.Children.Add(PRI_CheckBox_2);
-        }           
+        }
 
         /// <summary>МЕТОД Создание фильтров для загрузки данных из SQL</summary>
         protected override void MET_SqlFilter()
         {
             // Запрещаем повторный выбор уже введеных шаблонов
             PRO_SqlWhere = $" and (Cod not in (select NumShablon from dbo.apaNProtokol where CodApstac = {MyGlo.IND} and isnull(xDelete, 0) = 0) or Cod >= 20000)";
-            
             // Запрос
             MySql.MET_DsAdapterFill(MET_SelectQuery(), PRO_TableName);
         }
@@ -100,12 +96,10 @@ namespace wpfGeneral.UserWindows
         {
             // По профилю
             PRO_Where = PRI_CheckBox_1.IsChecked == true ?  $" ProfilVr = {PRI_Profil} or ProfilVr >= 40" : " 1=1";
-            
             // Только Осмотр
             if (PRI_CheckBox_2.IsChecked == false)
-                PRO_Where += " and TipObsled = 1";            
-            
-            MET_Filter();            
+                PRO_Where += " and TipObsled = 1";
+            MET_Filter();
         }
     }
 }

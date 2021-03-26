@@ -37,7 +37,7 @@ namespace wpfStatic
             {
                 PART_ErrorText.AppendText("\n\n--- " + _Data.Key + ":\n");
                 PART_ErrorText.AppendText(_Data.Value.ToString());
-            }  
+            }
         }
 
         /// <summary>СОБЫТИЕ Закрыть программу</summary>

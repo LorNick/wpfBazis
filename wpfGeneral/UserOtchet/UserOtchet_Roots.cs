@@ -55,7 +55,6 @@ namespace wpfGeneral.UserOtchet
             PRO_Paragraph = new Paragraph();
             // Перебераем дочерние ветки и выводим их
             MET_OtchVet(PROP_Nodes);
-
             // Сортировка, с помощью промежуточных массиввов
             UserPole_History[] _mHistories = new UserPole_History[PRO_PoleHistory.Count];
             PRO_PoleHistory.CopyTo(_mHistories, 0);
@@ -80,7 +79,6 @@ namespace wpfGeneral.UserOtchet
                 // Если есть подвкладки, то перебераем их
                 if (_Node.Items.Count > 0)
                     MET_OtchVet(_Node);
-
                 // Формируем поля истории
                 if (_Node.PROP_Data > DateTime.MinValue)
                 {
@@ -95,13 +93,12 @@ namespace wpfGeneral.UserOtchet
                     // Название протокола
                     _Pole.PROP_Document = _Node.PROP_TextDefault;
                     _Pole.Margin = new Thickness(5, 0, 0, 0);
-                    _Pole.PROP_Background = Brushes.LightYellow;                    
+                    _Pole.PROP_Background = Brushes.LightYellow;
                     _Pole.PROP_IsDelete = _Node.PROP_Docum?.PROP_Protokol?.PROP_xDelete == 1;
                     // Находим иконку
                     _Pole.PROP_BitmapImage = (BitmapImage) _Node.PROP_ImageSource;
                     // Обязательно, если экспандер содержит текст, а не подвкладки
                     _Pole.PROP_IsTexted = true;
-
                     _Pole.PROP_Nodes = _Node;
                     _Pole.MET_Inicial();
                     // Делегат при открытии документа
@@ -149,7 +146,8 @@ namespace wpfGeneral.UserOtchet
         ///<summary>МЕТОД Создаем объект для печати</summary>
         /// <param name="pMyDocumentViewer">Просмоторщик печати</param>
         /// <param name="pFlowDocument">Поток с нашим текстом</param>
-        /// <param name="pPrintNow">Печатаем сразу</param> 
+        /// <param name="pPrintNow">Печатаем сразу</param>
+
         public override bool MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow = false)
         {
             // Сбрасываем фон

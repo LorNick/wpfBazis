@@ -13,7 +13,6 @@ namespace wpfGeneral.UserLua
     public class UserLua_Standart
     {
         private readonly Lua PRI_Lua = new Lua();
-
         private readonly dynamic PRI_Env;
 
         /// <summary>Наша форма с шаблоном</summary>
@@ -56,7 +55,6 @@ namespace wpfGeneral.UserLua
         {
             // Обязательно добавить имя функции в этот файл, для подсветки кода
             // E:\Nick\C#\wpfBazis\wpfGeneral\UserLua\UserWindow_Lua.cs
-
             // Подключаем функции для считывания глобальных данных
             // Выводим окно сообещиния
             PRI_Env.lMessage = new Action<string, string>(lMessage);
@@ -92,7 +90,6 @@ namespace wpfGeneral.UserLua
             PRI_Env.lNew = new Func<bool>(lNew);
             // Текущее поле
             PRI_Env["Pole"] = PUB_Pole;
-
             // Сравниваем текстовые 2 даты
             PRI_Env.lDateIf = new Func<string, string, int>(lDateIf);
             // Время госпитализации
@@ -116,7 +113,7 @@ namespace wpfGeneral.UserLua
         /// <summary>Lua Функция. Вывод сообщения в лог окно UserWindow_Lua</summary>
         /// <param name="pText">Строка сообщения</param>
         private void lLog(string pText)
-        {           
+        {
             // Если открыто окно UserWindows_Lua, то выводим в логи код VarId вопроса и заданный текст
             MyGlo.callbackEvent_sLuaLog?.Invoke($"VarId{PUB_Pole.PROP_VarId}: {pText}");
         } // func lLog
@@ -138,10 +135,8 @@ namespace wpfGeneral.UserLua
             decimal _CodZap = MyGlo.IND;
             // Смотрим наличие указанной таблицы pTab
             pTab = pTab == "" ? PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_KbolInfo : pTab;
-         
             UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(pTab, _CodZap, MyGlo.KL);
             _KbolInfo.MET_Change(pTag, _Value);
-
             //string _Query = $"exec dbo.jsonInfoAdd {_Cod}, '{pTab}', '{pKey}', '{_Value}', '' {_Razdel}";
             //MySql.MET_QueryNo(_Query);
             return true;
@@ -161,10 +156,8 @@ namespace wpfGeneral.UserLua
             decimal _CodZap = MyGlo.IND;
             // Смотрим наличие указанной таблицы pTab
             pTab = pTab == "" ? PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_KbolInfo : pTab;
-         
             UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(pTab, _CodZap, MyGlo.KL);
             _KbolInfo.MET_Delete(pTag);
-           
             return true;
         } // func lKbolInfoDel
 
@@ -172,14 +165,13 @@ namespace wpfGeneral.UserLua
         /// <param name="pOms">Значения поля ОМС: 0 - не подавать в реестры, 1 - подавать в реестры ОМС</param>
         /// <returns>Возвращаем успех или не успех изменения данных</returns>
         private bool lKbolInfoOms(int pOms = 1)
-        {          
+        {
             // Код записи (Cod из Apac, IND  из Apstac, Cod из parObsledov
             decimal _CodZap = MyGlo.IND;
             // Смотрим наличие указанной таблицы pTab
             string _Tab = PUB_Pole.PROP_FormShablon.PROP_TipProtokol.PROP_KbolInfo;
             UserKbolInfo _KbolInfo = UserKbolInfo.MET_FactoryKbolInfo(_Tab, _CodZap, MyGlo.KL);
             _KbolInfo.MET_ChangeOms(pOms);
-
             return true;
         } // func lKbolInfoOms
 
@@ -210,10 +202,8 @@ namespace wpfGeneral.UserLua
             if (_VirtualPole is UserPole_MultyList)
             {
                 // Значение
-                object _Value = pValue ?? PUB_Pole.PROP_Text; 
-
+                object _Value = pValue ?? PUB_Pole.PROP_Text;
                 UserPole_MultyList _Pole = (UserPole_MultyList) _VirtualPole;
-
                 _Pole.MET_ChangeInfo(pTag, _Value);
                 return true;
             }
@@ -228,7 +218,6 @@ namespace wpfGeneral.UserLua
         {
             // Находим наше поле
             VirtualPole _VirtualPole = PUB_Pole.PROP_FormShablon.GetPole(pVarId);
-
             // Проверяем на соответствие типу  UserPole_MultyList
             if (_VirtualPole is UserPole_MultyList _Pole)
             {
@@ -244,14 +233,10 @@ namespace wpfGeneral.UserLua
         {
             // Находим отделение госпитализации
             VirtualPole _PoleOtd = PUB_Pole.PROP_FormShablon.GetPole(3);
-
             // Находим дату госпитализации
             VirtualPole _PoleDate = PUB_Pole.PROP_FormShablon.GetPole(4);
-
             // Время по умолчанию
             string _Time = "9:00";
-            
-             
             if (_PoleOtd.PROP_Text != "" && _PoleDate.PROP_Text != "")
             {
                 try
@@ -274,12 +259,10 @@ namespace wpfGeneral.UserLua
         {
             // Результат
             string _Value = "";
-
-
             if (pSql != "")
             {
                 try
-                {                    
+                {
                     _Value = MySql.MET_QueryStr(pSql);
                 }
                 catch
@@ -295,7 +278,6 @@ namespace wpfGeneral.UserLua
         private int lDateIf(string pDate1, string pDate2)
         {
             int _Rezult;
-            
             if (DateTime.TryParse(pDate1, out DateTime _Date1) && DateTime.TryParse(pDate2, out DateTime _Date2))
                 _Rezult = _Date1.CompareTo(_Date2);
             else
@@ -305,7 +287,7 @@ namespace wpfGeneral.UserLua
         } // func lDateIf
 
         /// <summary>Lua Функция. Отображаем поля в шаблоне, указанные в массиве VarId</summary>
-        /// <param name="pVarId">Перечень кодов VarId</param>      
+        /// <param name="pVarId">Перечень кодов VarId</param>
         private void lVisiblOn(params int[] pVarId)
         {
             for (int i = 0; i < pVarId.Length; i++)
@@ -315,7 +297,7 @@ namespace wpfGeneral.UserLua
         } // func lVisiblOn
 
         /// <summary>Lua Функция. Скрываем поля в шаблоне, указанные в массиве VarId</summary>
-        /// <param name="pVarId">Перечень кодов VarId</param>      
+        /// <param name="pVarId">Перечень кодов VarId</param>
         private void lVisiblOff(params int[] pVarId)
         {
             for (int i = 0; i < pVarId.Length; i++)
@@ -325,7 +307,7 @@ namespace wpfGeneral.UserLua
         } // func lVisiblOff
 
         /// <summary>Lua Функция. Делаем обязательными поля, указанные в массиве VarId</summary>
-        /// <param name="pVarId">Перечень кодов VarId</param>      
+        /// <param name="pVarId">Перечень кодов VarId</param>
         private void lNecesOn(params int[] pVarId)
         {
             for (int i = 0; i < pVarId.Length; i++)
@@ -335,24 +317,24 @@ namespace wpfGeneral.UserLua
         } // func lNecesOn
 
         /// <summary>Lua Функция. Делаем НЕобязательными поля, указанные в массиве VarId</summary>
-        /// <param name="pVarId">Перечень кодов VarId</param>      
+        /// <param name="pVarId">Перечень кодов VarId</param>
         private void lNecesOff(params int[] pVarId)
         {
             for (int i = 0; i < pVarId.Length; i++)
             {
                 PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).PROP_Necessarily = false;
             }
-        } // func lNecesOff     
+        } // func lNecesOff
 
         /// <summary>Lua Функция.  Отчистка текста полей, указанные в массиве VarId</summary>
-        /// <param name="pVarId">Перечень кодов VarId</param>      
+        /// <param name="pVarId">Перечень кодов VarId</param>
         private void lTextClear(params int[] pVarId)
         {
             for (int i = 0; i < pVarId.Length; i++)
             {
                 PUB_Pole.PROP_FormShablon.GetPole(pVarId[i]).PROP_Text = "";
             }
-        } // func lTextClear   
+        } // func lTextClear
 
         //private bool lFocusPole(int pVarId)
         //{
@@ -388,7 +370,7 @@ namespace wpfGeneral.UserLua
                 case "LastDiag":
                     _Value = MyGlo.HashLastDiag[pPole];
                     break;
-            }            
+            }
             return _Value ?? "";
         } // func lRead
         #endregion
@@ -401,7 +383,6 @@ namespace wpfGeneral.UserLua
             PROP_OnChange = PROP_ChankText.IndexOf("function OnChange()") > -1;
             PROP_OnBeforeSave = PROP_ChankText.IndexOf("function OnBeforeSave()") > -1;
             PROP_OnSave = PROP_ChankText.IndexOf("function OnSave()") > -1;
-
             try
             {
                 PRI_Env.dochunk(PROP_ChankText); // execute the chunk
@@ -419,7 +400,6 @@ namespace wpfGeneral.UserLua
         public void MET_TestLua(string pChunk)
         {
             PRI_Lua.CompileChunk(pChunk, new LuaCompileOptions {DebugEngine = new LuaStackTraceDebugger()});
-            
             try
             {
                 PRI_Lua.CompileChunk("return b * 2", new LuaCompileOptions(), new KeyValuePair<string, Type>("b", typeof(int)));

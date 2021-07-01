@@ -38,7 +38,7 @@ namespace wpfGeneral.UserControls
             if (value != null)
             {
                 string imageName = value.ToString();
-                Uri uri = new Uri(String.Format("pack://application:,,,/wpfResource;component/mnImag/{0}", imageName), UriKind.Relative);
+                Uri uri = new Uri(string.Format("pack://application:,,,/wpfResource;component/mnImag/{0}", imageName), UriKind.Relative);
                 return new BitmapImage(uri);
             }
             return null;

@@ -1716,7 +1716,7 @@ namespace wpfStatic
         #endregion
 
         #region ---- s_List ----
-        /// <summary>Варианты ответа 3м параметрам</summary>
+        /// <summary>Варианты ответа</summary>
         public static string MET_s_List_Select_1(string ID)
         {
             string _Query = $@"
@@ -1733,6 +1733,16 @@ namespace wpfStatic
                 select Value
                 from dbo.s_ListDocum
                 where ID = '{ID}' and Nomer = {Nomer}";
+            return _Query;
+        }
+
+        /// <summary>Варианты ответа</summary>
+        public static string MET_s_List_Select_3(string ID)
+        {
+            string _Query = $@"
+                select Cod, ID, Number Value, ValueCod, DateBeg, DateEnd, xInfo, xLog, xDelete
+                from dbo.s_List
+                where ID = '{ID}'";
             return _Query;
         }
         #endregion
@@ -1926,16 +1936,20 @@ namespace wpfStatic
                     ,DateK
                 from (
                 select *
-                      ,case Flag
-                        when 0 then concat(Flag, '-кр.стац.')
-                        when 1 then concat(Flag, '-дн.стац.')
-                        when 2 then concat(Flag, '-раз.пол.')
-                        when 8 then concat(Flag, '-обр.пол.перв')
-                        when 9 then concat(Flag, '-обр.пол.повт')
-                        when 7 then concat(Flag, '-ВМП')
-                        when 10 then concat(Flag, '-КТ')
-                        when 11 then concat(Flag, '-Гистология')
-                        when 12 then concat(Flag, '-Телемед.')
+                        ,case 
+                            when Flag = 0 then concat(Flag, ' - кр.стационар')
+                            when Flag = 1 then concat(Flag, ' - дн.стационар')
+                            when Flag = 2 then concat(Flag, ' - раз.поликл.')
+                            when Flag = 8 then concat(Flag, ' - обр.пол.перв')
+                            when Flag = 9 then concat(Flag, ' - обр.пол.повт')
+                            when Flag = 7 then concat(Flag, ' - ВМП')
+                            when Flag = 10 and (left(CODE_USL, 2) = 'P1' or  left(CODE_USL, 6) = '3078.2') then concat(Flag, ' - P1-МРТ')
+                            when Flag = 10 and (left(CODE_USL, 2) = 'P2' or  left(CODE_USL, 6) = '3078.3') then concat(Flag, ' - P2-КТ')
+                            when Flag = 10 and left(CODE_USL, 2) = 'P3' then concat(Flag, ' - P3-ЭХОЭКГ')
+                            when Flag = 10 and left(CODE_USL, 2) = 'P4' then concat(Flag, ' - P4-Эндоскопия')
+                            when Flag = 11 and left(CODE_USL, 2) = 'P5' then concat(Flag, ' - P5-Гистология')
+                            when Flag = 11 and left(CODE_USL, 2) = 'P6' then concat(Flag, ' - P6-Молек. гинет.')
+                            when Flag = 12 then concat(Flag, ' - Телемедицина')
                       end as Flags
                 from dbo.StrahTarif) as d";
             return _Return;
@@ -1965,7 +1979,7 @@ namespace wpfStatic
                 from Bazis.dbo.StrahVMP as v
                 left join (values
                     ('1', '1 - Видеоэндоскопич., интервенцион.радиологич., малоинвазивные органосохр.хирург.вмешат'),
-                       ('2', '2 - Расширенные хирургические вмешательства'),
+                    ('2', '2 - Расширенные хирургические вмешательства'),
                     ('3', '3 - Комбинированное лечение ЗНО (хирургическое и противоопух.лекарственное)'),
                     ('4', '4 - Лучевая терапия'),
                     ('5', '5 - Комплексная и высокодозная химиотерапия (включая таргетную)'),
@@ -2270,7 +2284,7 @@ namespace wpfStatic
                 select
                     Name
                 from Phone.dbo.Divisions as d
-                order by Sort, ID";
+                order by Name";
             return _Query;
         }
 

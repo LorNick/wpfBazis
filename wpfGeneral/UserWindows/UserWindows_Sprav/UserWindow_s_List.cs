@@ -6,8 +6,8 @@ using wpfStatic;
 
 namespace wpfGeneral.UserWindows
 {
-    /// <summary>КЛАСС Таблицы ответов шаблона (apaNList, astList, parList, kdlList)</summary>
-    public class UserWindow_List : VirtualUserWindow
+    /// <summary>КЛАСС Таблица универнсальных ответов шаблона s_List</summary>
+    public class UserWindow_s_List : VirtualUserWindow
     {
         /// <summary>Номер шаблона</summary>
         private readonly int PRI_NomerShablon;
@@ -15,7 +15,7 @@ namespace wpfGeneral.UserWindows
         private readonly int PRI_VarID;
 
         /// <summary>КОНСТРУКТОР</summary>
-        public UserWindow_List(string pTable, int pShablon, int pVarID)
+        public UserWindow_s_List(string pTable, int pShablon, int pVarID)
         {
             // Имя таблицы
             PRO_TableName = pTable;
@@ -24,7 +24,7 @@ namespace wpfGeneral.UserWindows
             // Номер вопроса
             PRI_VarID = pVarID;
             // Заголовок
-            Title = "Варианты ответов:";
+            Title = "Универсальные варианты ответов из справочника s_List:";
             //Размеры
             MinWidth = Width;
             // Сортируем по полю Варианты ответа

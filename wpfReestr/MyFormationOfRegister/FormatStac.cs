@@ -65,8 +65,10 @@ namespace wpfReestr
             // LPU_ST -> USL_OK (Условия оказания мед. помощи, справочник V006, 1 - кр. стационра, 2 - дн. стационар, 3 - поликлиника)
             PRI_StrahReestr.LPU_ST = m.MET_PoleInt("LPU_ST", _Apstac); ;
 
-            // VIDPOM (Вид помощи, справочник V008, у нас 13 - поликл, 14 - телемедицина, 31 - стационар, 32 - ВМП)
-            PRI_StrahReestr.VIDPOM = 31;
+            // VIDPOM -> VID_POM (Вид помощи, справочник V008, у нас 13 - поликл, 14 - телемедицина, 31 - стационар, 32 - ВМП)
+            PRI_StrahReestr.VIDPOM = PRI_StrahReestr.LPU_ST == 1 ? 31 : 13; // поставил 12.04.2021 (до этого была везде 31) если то это 13 дневной при поликлиники
+            if (PRI_StrahReestr.VIDPOM == 13 & m.MET_PoleInt("OtdInPol", _Apstac) == 0)
+                PRI_StrahReestr.VIDPOM = 31;    // дневной при стационаре
             if (_FlagVMP) PRI_StrahReestr.VIDPOM = 32;
 
             // PROFIL (Профиль, справочник V002)
@@ -210,11 +212,11 @@ namespace wpfReestr
             if (string.IsNullOrEmpty(_jTag) && !_Zno)
                 _jTag = "{ }";
 
-            // Проверка на наличия данных KoblInfo
+            // Проверка на наличия данных KbolInfo
             if (string.IsNullOrEmpty(_jTag))
             {
                 PRI_ErrorToExcel.PROP_ErrorCod = "28";
-                PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найдена строка APSTAC в KoblInfo";
+                PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найдена строка APSTAC в KbolInfo";
                 PRI_ErrorToExcel.MET_SaveError();
                 PRI_ErrorRow = true;
                 return;
@@ -228,13 +230,13 @@ namespace wpfReestr
             catch
             {
                 PRI_ErrorToExcel.PROP_ErrorCod = "30";
-                PRI_ErrorToExcel.PROP_ErrorName = "(вну) Неправильная структура тегов в KoblInfo";
+                PRI_ErrorToExcel.PROP_ErrorName = "(вну) Неправильная структура тегов в KbolInfo";
                 PRI_ErrorToExcel.MET_SaveError();
                 PRI_ErrorRow = true;
                 return;
             }
 
-            // 20. DS2 (Сопутствующий Диагноз - типо Сахарный диабет) (53. DS2) (48)
+            // DS2 (Сопутствующий Диагноз - типо Сахарный диабет)
             PRI_StrahReestr.DS2 = (string)_JsonSL["Kslp_diag"] ?? "";
 
             //// Сопутствующий диагноз для D70
@@ -247,7 +249,7 @@ namespace wpfReestr
             //    if(string.IsNullOrEmpty(PRI_StrahReestr.DS2) || PRI_StrahReestr.DS2.Substring(0, 1) != "C")
             //    {
             //        PRI_ErrorToExcel.PROP_ErrorCod = "41";
-            //        PRI_ErrorToExcel.PROP_ErrorName = "(вну) Отстутствует или не правильный сопутствующий диагноз для D70 в KoblInfo";
+            //        PRI_ErrorToExcel.PROP_ErrorName = "(вну) Отстутствует или не правильный сопутствующий диагноз для D70 в KbolInfo";
             //        PRI_ErrorToExcel.MET_SaveError();
             //        PRI_ErrorRow = true;
             //        return;
@@ -286,11 +288,11 @@ namespace wpfReestr
                 // Клиническая группа
                 string _klin_gr = (string)_JsonSL["Klin_gr"];
 
-                // Проверка на наличия Клинической группы в KoblInfo
+                // Проверка на наличия Клинической группы в KbolInfo
                 if (string.IsNullOrEmpty(_klin_gr))
                 {
                     PRI_ErrorToExcel.PROP_ErrorCod = "29";
-                    PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найден тег klin_gr (Клиническая группа) в KoblInfo";
+                    PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найден тег klin_gr (Клиническая группа) в KbolInfo";
                     PRI_ErrorToExcel.MET_SaveError();
                     PRI_ErrorRow = true;
                     return;
@@ -512,14 +514,17 @@ namespace wpfReestr
                     Dzp = m.MET_PoleRea("Dzp", _KsgRow)
                 };
 
-                // Удаляем все химии, если это не первая услуга!!!!!
-                if (PRI_CouUsl > 0 && ((_MyUSL.Usl.StartsWith("sh") && !PRI_Sl.USL[0].Usl.StartsWith("sh"))
-                        || (_MyUSL.Usl.StartsWith("gem") && !PRI_Sl.USL[0].Usl.StartsWith("gem"))))
+                //// Удаляем все химии, если это не первая услуга!!!!!
+                //if (PRI_CouUsl > 0 && ((_MyUSL.Usl.StartsWith("sh") && !PRI_Sl.USL[0].Usl.StartsWith("sh"))
+                //        || (_MyUSL.Usl.StartsWith("gem") && !PRI_Sl.USL[0].Usl.StartsWith("gem"))))
+                // Поставил в связи с ошибкой на дубль USL_TIP 02.04.2021 (Ни каких бумаг на этот счет нет)
+
+                // Удаляем все НЕ первые услуги 01.03.2021
+                if (PRI_CouUsl > 0)
                 {
                     _CountUsl--;
                     continue;
                 }
-
                 PRI_CouUsl++;
 
                 // Удаляем если пусто
@@ -605,7 +610,8 @@ namespace wpfReestr
                     _MyOnkUsl.USL_TIP = 5;
 
                     // Если есть только диагноз
-                    if (_CountUsl == 1 && _MyUSL.Tip == "диаг")
+                    // if (_CountUsl == 1 && _MyUSL.Tip == "диаг") убрал 01.06.21
+                    if (PRI_CouUsl == 1 && _MyUSL.Tip == "диаг")
                     {
                         // Тип услуги
                         _MyOnkUsl.USL_TIP = 5;
@@ -684,7 +690,7 @@ namespace wpfReestr
 
                                 var _LekPr = new MyLEK_PR();
                                 _LekPr.REGNUM = _RegNum;
-                                _LekPr.CODE_SH = _MyUSL.Usl.StartsWith("sh") ? _MyUSL.Usl : "нет";
+                                _LekPr.CODE_SH = _MyUSL.Usl.StartsWith("sh") || _MyUSL.Usl.StartsWith("gem") ? _MyUSL.Usl : "нет";
                                 _LekPr.DATE_INJ = new List<string>();
 
                                 string[] _mDates = _Date.Split(';');

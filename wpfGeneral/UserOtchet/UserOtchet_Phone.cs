@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Telerik.Windows.Controls;
 using wpfGeneral.UserNodes;
 using wpfGeneral.UserOtchet;
 using wpfStatic;
@@ -13,7 +14,7 @@ using Orientation = System.Windows.Controls.Orientation;
 
 namespace wpfMViewer.UserOtchet
 {
-    /// <summary>КЛАСС Отчет Истории болезни (для типа Inform)</summary>
+    /// <summary>КЛАСС Справочник телеофнов (для типа Inform)</summary>
     public class UserOtcher_Phone : VirtualOtchet
     {
         ///<summary>Наша таблица</summary>
@@ -61,16 +62,19 @@ namespace wpfMViewer.UserOtchet
             _LabelOtd.Foreground = Brushes.Navy;
             _Panel.Children.Add(_LabelOtd);
             // Отделения
-            ComboBox _ComboBoxOtd = new ComboBox();
-            _ComboBoxOtd.Width = 280;
+            RadComboBox radComboBoxOtd = new RadComboBox();
+            radComboBoxOtd.Width = 280;
             MySql.MET_DsAdapterFill(MyQuery.MET_varPhone_Select_2(), "Divisions");
-            _ComboBoxOtd.ItemsSource = new DataView(MyGlo.DataSet.Tables["Divisions"]);
-            _ComboBoxOtd.DisplayMemberPath = "Name";
-            _ComboBoxOtd.SelectedValuePath = "Name";
-          //  _ComboBoxOtd.IsEnabled = false;
-          //  _ComboBoxOtd.SelectedValue = '2018 Аппарат управления";
-            _ComboBoxOtd.SelectionChanged += delegate { PRO_FiltrOtd = (string)_ComboBoxOtd.SelectedValue ?? ""; PRI_Timer.Start(); };
-            _Panel.Children.Add(_ComboBoxOtd);
+            radComboBoxOtd.ItemsSource = new DataView(MyGlo.DataSet.Tables["Divisions"]);
+            radComboBoxOtd.IsEditable = true;
+            radComboBoxOtd.DisplayMemberPath = "Name";
+            radComboBoxOtd.SelectedValuePath = "Name";
+            radComboBoxOtd.TextSearchMode = TextSearchMode.Contains;
+            radComboBoxOtd.IsFilteringEnabled = true;
+            radComboBoxOtd.StaysOpenOnEdit = true;
+            radComboBoxOtd.MaxDropDownHeight = 300;
+            radComboBoxOtd.SelectionChanged += delegate { PRO_FiltrOtd = (string)radComboBoxOtd.SelectedValue ?? ""; PRI_Timer.Start(); };
+            _Panel.Children.Add(radComboBoxOtd);
             // Check Отделения
             CheckBox _CheckBoxOtd = new CheckBox();
             _CheckBoxOtd.Margin = new Thickness(10, 0, 0, 0);
@@ -82,13 +86,13 @@ namespace wpfMViewer.UserOtchet
             {
                 if (_CheckBoxOtd.IsChecked == false)
                 {
-                    _ComboBoxOtd.IsEnabled = false;
+                    radComboBoxOtd.IsEnabled = false;
                     PRO_FiltrOtd = "";
                 }
                 else
                 {
-                    _ComboBoxOtd.IsEnabled = true;
-                    PRO_FiltrOtd = (string)_ComboBoxOtd.SelectedValue ?? "";
+                    radComboBoxOtd.IsEnabled = true;
+                    PRO_FiltrOtd = (string)radComboBoxOtd.SelectedValue ?? "";
                 }
                 PRI_Timer.Start();
             };

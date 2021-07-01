@@ -38,7 +38,7 @@ namespace wpfGeneral.UserWindows
             PRO_PoleFiltr = "Names";
             // Фильтр по диагнозу
             if (pDiag.Length > 4)
-                PRI_Filtr = $" and (Diag like '%{pDiag.Substring(0, 5)};%' or Diag like '%{pDiag.Substring(0, 3)};%' or json_value(xInfo, '$.TipVMP') = 6)";
+                PRI_Filtr = $" and (Diag like '%{pDiag.Substring(0, 5)};%' or Diag like '%{pDiag.Substring(0, 3)};%')";
             // Открываем таблицу
             MET_OpenForm();
             // Создаем фильтр

@@ -91,15 +91,17 @@
                         />
                     <telerik:RadToggleButton Name="PART_ButtonFindFiltr" CornerRadius="7" Width="60" Margin="5,0,0,0" ToolTipService.ToolTip="Фильтровать по строке Поиска по FAM/IDCase"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Фильтр" />
+                    <telerik:RadToggleButton Name="PART_ButtonFindReestr" CornerRadius="7" Width="60" Margin="5,0,0,0" ToolTipService.ToolTip="Поиск по всем реестрам"
+                                             Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Content="Реестры" Visibility="Hidden" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="1">
-                    <!--Фильтры Впервые/Повторно-->
+                    <!--Фильтры Впервые/Повторно--> <!--По идее удалить-->
                     <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Main" CornerRadius="7" Width="28" Margin="15,0,0,0" ToolTipService.ToolTip="Впервые поданные записи"
-                                            Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
+                                            Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Visibility="Collapsed">
                         <Image Source="{StaticResource mnDocuments}"/>
                     </telerik:RadToggleButton>
                     <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Corrected" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Повторно (исправленные) поданные записи"
-                                            Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
+                                            Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False" Visibility="Collapsed">
                         <Image Source="{StaticResource mnNaznach}"/>
                     </telerik:RadToggleButton>
                     <!--Фильтры Услуги-->
@@ -178,7 +180,7 @@
                         </ContextMenu>
                     </DataGrid.ContextMenu>
                     <DataGrid.Columns>
-                        <DataGridTemplateColumn Header="Исп" Width="32" IsReadOnly="True" ToolTipService.ToolTip="Иконка первой или исправленной записи">
+                        <DataGridTemplateColumn Header="Исп" Width="32" IsReadOnly="True" ToolTipService.ToolTip="Иконка первой или исправленной записи" Visibility="Hidden"> <!--По идее удалить-->
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Image Source="{Binding Path=ParetnImag, Converter={StaticResource ConvertTextToImage}}" Height="20" />

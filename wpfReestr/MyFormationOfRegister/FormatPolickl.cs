@@ -216,11 +216,11 @@ namespace wpfReestr
                 {
                     string _jTag = m.MET_PoleStr("jTag", _PolRow);
 
-                    // Проверка на наличия данных KoblInfo
+                    // Проверка на наличия данных KbolInfo
                     if (string.IsNullOrEmpty(_jTag))
                     {
                         PRI_ErrorToExcel.PROP_ErrorCod = "28";
-                        PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найдена строка APAC в KoblInfo";
+                        PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найдена строка APAC в KbolInfo";
                         PRI_ErrorToExcel.MET_SaveError();
                         PRI_ErrorRow = true;
                         continue;
@@ -234,7 +234,7 @@ namespace wpfReestr
                     catch
                     {
                         PRI_ErrorToExcel.PROP_ErrorCod = "30";
-                        PRI_ErrorToExcel.PROP_ErrorName = "(вну) Неправильная структура тегов в KoblInfo";
+                        PRI_ErrorToExcel.PROP_ErrorName = "(вну) Неправильная структура тегов в KbolInfo";
                         PRI_ErrorToExcel.MET_SaveError();
                         PRI_ErrorRow = true;
                         return;
@@ -268,13 +268,13 @@ namespace wpfReestr
                                 if (_Cel == 4.0)
                                 {
                                     PRI_Sl.P_Cel = "1.3";
-                                    PRI_Sl.DN = 1;
+                                  //  PRI_Sl.DN = 1;
                                 }
                             }
                             catch
                             {
                                 PRI_ErrorToExcel.PROP_ErrorCod = "41";
-                                PRI_ErrorToExcel.PROP_ErrorName = "(вну) Тег Cel (Цель посещения) в KoblInfo имеет некоректное значение";
+                                PRI_ErrorToExcel.PROP_ErrorName = "(вну) Тег Cel (Цель посещения) в KbolInfo имеет некоректное значение";
                                 PRI_ErrorToExcel.MET_SaveError();
                                 PRI_ErrorRow = true;
                                 return;
@@ -283,11 +283,11 @@ namespace wpfReestr
 
                         // Клиническая группа
                         string _klin_gr = (string)_Json["Klin_gr"];
-                        // Проверка на наличия Клинической группы в KoblInfo
+                        // Проверка на наличия Клинической группы в KbolInfo
                         if (string.IsNullOrEmpty(_klin_gr))
                         {
                             PRI_ErrorToExcel.PROP_ErrorCod = "29";
-                            PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найден тег Klin_gr (Клиническая группа) в KoblInfo";
+                            PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найден тег Klin_gr (Клиническая группа) в KbolInfo";
                             PRI_ErrorToExcel.MET_SaveError();
                             PRI_ErrorRow = true;
                             return;
@@ -297,7 +297,10 @@ namespace wpfReestr
                         if (_klin_gr == "Ia" || _klin_gr == "Ib")
                             PRI_Sl.DS_ONK = 1;
                         else
+                        {
                             PRI_Sl.DS_ONK = 0;
+                            PRI_Sl.DN = 1;                  // у кого не первая клиническая группа ставим - состоит на диспансерном учете 29.06.2029
+                        }
 
                         // ONK_UL - Блок лечения ЗНО
                         if (PRI_Sl.DS_ONK == 0)

@@ -13,11 +13,11 @@ namespace wpfMVrPolicl
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
-            MyGlo.KL = 116730666826365; //114510866161757;
+            MyGlo.KL = 114510866161757;
             MyGlo.Otd = 11;  // Профиль врача ProfilVr
-            MyGlo.IND = 1704377; //631942;
+            MyGlo.IND = 631942;
 
-            String[] _mArgs = Environment.GetCommandLineArgs();
+            string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)
             {
                 // Нулевая строка - путь к программе

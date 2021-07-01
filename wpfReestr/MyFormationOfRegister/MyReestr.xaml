@@ -49,35 +49,35 @@
                                 Grid.Column="3" HorizontalAlignment="Left" />
                 </Grid>
             </GroupBox>
-            <GroupBox Name="PART_GroupBoxMainTest" Header="Основной/Тестовый реестр:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
+            <GroupBox Name="PART_GroupBoxMainTest" Header="Исправленный/Основной реестр:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5" >
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <RadioButton Grid.Column="0" Tag="1" Name="PART_Main_1" IsChecked="True" Click="RadioButtonMainTest_Click">
+                    <RadioButton Grid.Column="0" Tag="1" Name="PART_Correction_1" Click="RadioButtonMainCorrection_Click">
                         <StackPanel Orientation="Horizontal" >
-                            <Image Source="{StaticResource mnSmoInogor}" Height="20"/>
-                            <TextBlock Text="Основной рестр" Padding="0" Margin="2, 0" />
+                            <Image Source="{StaticResource mnNaznach}" Height="20"/>
+                            <TextBlock Text="Исправленный рестр" Padding="0" Margin="2, 0" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Grid.Column="1" Tag="0" Name="PART_Test_2" Click="RadioButtonMainTest_Click">
+                    <RadioButton Grid.Column="1" Tag="0" Name="PART_Main_2" Click="RadioButtonMainCorrection_Click" IsChecked="True">  
                         <StackPanel Orientation="Horizontal" >
-                            <Image Source="{StaticResource mnSmoAll}" Height="20"/>
-                            <TextBlock Text="Тестовый реестр" Padding="0" Margin="2, 0" />
+                            <Image Source="{StaticResource mnDocuments}" Height="20"/>
+                            <TextBlock Text="Основной реестр" Padding="0" Margin="2, 0" />
                         </StackPanel>
                     </RadioButton>
                 </Grid>
             </GroupBox>
             <GroupBox Name="PART_GroupBoxPeriodMain" Header="Месяц сдачи. Тип реестра. Родитель реестра:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5, 19, 5, 19"
-                      Visibility="{Binding IsChecked, ElementName=PART_Main_1, Converter={StaticResource b2v}}">
+                      Visibility="{Binding IsChecked, ElementName=PART_Correction_1, Converter={StaticResource b2v}}">
                 <StackPanel Orientation="Horizontal">
                     <Label>Месяц:</Label>
                     <ComboBox Name="PART_ComboBoxMainMonth" Width="340" SelectionChanged="PART_ComboBoxMainMonth_SelectionChanged" />
                 </StackPanel>
             </GroupBox>
             <GroupBox Name="PART_GroupBoxPeriodTest" Header="Период:" BorderBrush="#FF359FE2" Margin="3" Padding="5" Foreground="#FF359FE2"
-                      Visibility="{Binding IsChecked, ElementName=PART_Test_2, Converter={StaticResource b2v}}">
+                      Visibility="{Binding IsChecked, ElementName=PART_Main_2, Converter={StaticResource b2v}}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="60"/>
@@ -102,27 +102,29 @@
                 </Grid>
             </GroupBox>
             <GroupBox Name="PART_GroupBoxTipReestr" Header="Тип реестра:" BorderBrush="#FF359FE2" Foreground="#FF359FE2" Margin="3" Padding="5"
-                      IsEnabled="{Binding IsChecked, ElementName=PART_Test_2}">
+                      IsEnabled="{Binding IsChecked, ElementName=PART_Main_2}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <RadioButton Grid.Column="0" Tag="3" Name="PART_VMPRadio_3" IsChecked="True"
+                    <RadioButton Grid.Column="0" Tag="3" Name="PART_VMPRadio_3"
                                  Click="RadioButtonTipReestr_Click">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{StaticResource mnFileC}" Height="20"/>
                             <TextBlock Text="ЗНО" Padding="0" Margin="2, 0" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Grid.Column="1" Tag="4" Name="PART_VMPRadio_4" Click="RadioButtonTipReestr_Click">
+                    <RadioButton Grid.Column="1" Tag="4" Name="PART_VMPRadio_4"
+                                 Click="RadioButtonTipReestr_Click">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{StaticResource mnFileH}" Height="20"/>
                             <TextBlock Text="Без С" Padding="0" Margin="2, 0" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Grid.Column="2" Tag="1" Name="PART_VMPRadio_1" Click="RadioButtonTipReestr_Click">
+                    <RadioButton Grid.Column="2" Tag="1" Name="PART_VMPRadio_1" IsChecked="True"
+                                 Click="RadioButtonTipReestr_Click">
                         <StackPanel Orientation="Horizontal" >
                             <Image Source="{StaticResource mnFileT}" Height="20"/>
                             <TextBlock Text="ВМП" Padding="0" Margin="2, 0" />

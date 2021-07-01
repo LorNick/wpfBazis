@@ -82,7 +82,7 @@ namespace wpfReestr
                 use Bazis;
                 set language Russian;
 
-                select top (40)
+                select top (20)
                         concat_ws(' - '
                             ,concat(datename(year, dateadd(m, 1, DateN)), ' ',datename(month, dateadd(m, 1, DateN)))
                             ,case VMP
@@ -92,15 +92,15 @@ namespace wpfReestr
                             end
                             ,concat('(', Cod)
                             ,concat(datename(year, DateN), ' ', datename(month, DateN), ')')
-                        )  as Visual
-                        ,Cod as ParentCod
-                        ,VMP as TipReestr
-                        ,DateN as DateNOld
-                        ,DateK as DatekOld
-                        ,dateadd(m, 1, DateN) as DateNNew
-                        ,eomonth(DateN, 1) as DateKNew
+                        )                       as Visual
+                        ,Cod                    as ParentCod
+                        ,VMP                    as TipReestr
+                        ,DateN                  as DateNOld
+                        ,DateK                  as DatekOld
+                        ,dateadd(m, 1, DateN)   as DateNNew
+                        ,eomonth(DateN, 1)      as DateKNew
                 from dbo.StrahFile
-                where NSCHET > 0 and Cod > 1252 and StrahComp = 4
+                where NSCHET > 0 and Cod > 1252 and StrahComp = 4 and pParent = 0 and Cod > 1272
                 order by Cod desc";
             return _Return;
         }
@@ -306,9 +306,9 @@ namespace wpfReestr
                                 ,(select convert(nvarchar(10), convert(date, NAPR_DATE, 104 ), 20) as NAPR_DATE, NAPR_V, MET_ISSL, NAPR_USL
                                   from openjson(NOM_USL, '$.NAPR')
                                   with (
-                                    NAPR_DATE varchar(10)    '$.NAPR_DATE' ,
-                                    NAPR_V    int            '$.NAPR_V',
-                                    MET_ISSL  int            '$.MET_ISSL',
+                                    NAPR_DATE varchar(10)   '$.NAPR_DATE' ,
+                                    NAPR_V    int           '$.NAPR_V',
+                                    MET_ISSL  int           '$.MET_ISSL',
                                     NAPR_USL  nvarchar(15)  '$.NAPR_USL'
                                     )
                                   for xml path('NAPR'), type) as 'SL'
@@ -398,8 +398,8 @@ namespace wpfReestr
                                         for xml path(''), type ) as 'ONK_SL'
                 --- БЛОК Онкологическое лечение ONK_USL ---
                                     ,(select
-                                         json_value(value, '$.USL_TIP') as 'ONK_USL/USL_TIP'
-                                        ,json_value(value, '$.HIR_TIP') as 'ONK_USL/HIR_TIP'
+                                         json_value(value, '$.USL_TIP')   as 'ONK_USL/USL_TIP'
+                                        ,json_value(value, '$.HIR_TIP')   as 'ONK_USL/HIR_TIP'
                                         ,json_value(value, '$.LEK_TIP_L') as 'ONK_USL/LEK_TIP_L'
                                         ,json_value(value, '$.LEK_TIP_V') as 'ONK_USL/LEK_TIP_V'
                                         ,(select
@@ -500,7 +500,7 @@ namespace wpfReestr
                                     ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
                                     ,DS1        as 'USL/DS'
                                     ,CODE_USL   as 'USL/CODE_USL'
-                                    ,cast(KOL_USL as decimal(5,2))   as 'USL/KOL_USL'
+                                    ,1.00       as 'USL/KOL_USL'    --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
                                     ,0.00       as 'USL/TARIF'
                                     ,0.00       as 'USL/SUMV_USL'
                                     ,PRVS       as 'USL/PRVS'
@@ -523,7 +523,7 @@ namespace wpfReestr
                                   -- по решению Корешковой Убрал (возможно временно) 23.03.2021
                                   --  ,iif(left(DopUsl, 2) = 'mt', DopUsl, left(Usl, charindex('.', Usl, 6) - 1))   as 'USL/CODE_USL'
                                     ,left(Usl, charindex('.', Usl, 6) - 1)    as 'USL/CODE_USL'
-                                    ,cast(isnull(Frakc, 1) as decimal(5,2))   as 'USL/KOL_USL'
+                                    ,1          as 'USL/KOL_USL' -- cast(isnull(Frakc, 1) as decimal(5,2)) -- 18.05.2021
                                     ,0.00       as 'USL/TARIF'
                                     ,0.00       as 'USL/SUMV_USL'
                                     ,PRVS       as 'USL/PRVS'
@@ -555,7 +555,7 @@ namespace wpfReestr
                                     ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
                                     ,DS1        as 'USL/DS'
                                     ,CODE_USL   as 'USL/CODE_USL'
-                                    ,cast(KOL_USL as decimal(5,2))    as 'USL/KOL_USL'
+                                    ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2))  -- 18.05.2021
                                     ,SUM_LPU    as 'USL/TARIF'
                                     ,SUM_LPU    as 'USL/SUMV_USL'
                                     ,PRVS       as 'USL/PRVS'
@@ -739,10 +739,10 @@ namespace wpfReestr
                                                 for xml path(''), type ) as 'ONK_SL'
                         --- БЛОК Онкологическое лечение ONK_USL ---
                                             ,(select
-                                                 json_value(value, '$.USL_TIP') as 'ONK_USL/USL_TIP'
-                                                ,json_value(value, '$.HIR_TIP') as 'ONK_USL/HIR_TIP'
-                                                ,json_value(value, '$.LEK_TIP_L') as 'ONK_USL/LEK_TIP_L'
-                                                ,json_value(value, '$.LEK_TIP_V') as 'ONK_USL/LEK_TIP_V'
+                                                 json_value(value, '$.USL_TIP')     as 'ONK_USL/USL_TIP'
+                                                ,json_value(value, '$.HIR_TIP')     as 'ONK_USL/HIR_TIP'
+                                                ,json_value(value, '$.LEK_TIP_L')   as 'ONK_USL/LEK_TIP_L'
+                                                ,json_value(value, '$.LEK_TIP_V')   as 'ONK_USL/LEK_TIP_V'
                                                 ,(select
                                                      json_value(value, '$.REGNUM') as 'LEK_PR/REGNUM'
                                                     ,json_value(value, '$.CODE_SH') as 'LEK_PR/CODE_SH'
@@ -783,7 +783,7 @@ namespace wpfReestr
                                             ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
                                             ,DS1        as 'USL/DS'
                                             ,CODE_USL   as 'USL/CODE_USL'
-                                            ,cast(KOL_USL as decimal(5,2))    as 'USL/KOL_USL'
+                                            ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
                                             ,0.00       as 'USL/TARIF'
                                             ,0.00       as 'USL/SUMV_USL'
                                             ,PRVS       as 'USL/PRVS'
@@ -949,8 +949,8 @@ namespace wpfReestr
                                             ,D          as 'USL/DS'
                                             ,Code_Usl   as 'USL/CODE_USL'
                                             ,1.00       as 'USL/KOL_USL'
-                                            ,0.00          as 'USL/TARIF'
-                                            ,0.00          as 'USL/SUMV_USL'
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
                                             ,PRVS_Usl   as 'USL/PRVS'
                                             ,MD         as 'USL/CODE_MD'
                                         from
@@ -980,9 +980,9 @@ namespace wpfReestr
                                             ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
                                             ,DS1        as 'USL/DS'
                                             ,CODE_USL   as 'USL/CODE_USL'
-                                            ,cast(KOL_USL as decimal(5,2))    as 'USL/KOL_USL'
-                                            ,0.00          as 'USL/TARIF'
-                                            ,0.00          as 'USL/SUMV_USL'
+                                            ,1          as 'USL/KOL_USL'  --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
                                             ,PRVS       as 'USL/PRVS'
                                             ,IDDOKT     as 'USL/CODE_MD'
                                         where LPU_ST in (1, 2)
@@ -1001,9 +1001,9 @@ namespace wpfReestr
                                             ,convert(nvarchar(10), convert(date, DatK, 104 ), 20)  as 'USL/DATE_OUT'  -- Для схем дату окончания ставим равной дате выписки
                                             ,DS1        as 'USL/DS'
                                             ,iif(left(DopUsl, 2) = 'mt', DopUsl, left(Usl, charindex('.', Usl, 6) - 1))   as 'USL/CODE_USL'
-                                            ,cast(isnull(Frakc, 1) as decimal(5,2))    as 'USL/KOL_USL'
-                                            ,0.00          as 'USL/TARIF'
-                                            ,0.00          as 'USL/SUMV_USL'
+                                            ,1          as 'USL/KOL_USL' --cast(isnull(Frakc, 1) as decimal(5,2)) -- 18.05.2021
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
                                             ,PRVS       as 'USL/PRVS'
                                             ,IDDOKT     as 'USL/CODE_MD'
                                         from
@@ -1148,7 +1148,6 @@ namespace wpfReestr
                   on r.CodFile = t.Reestr and r.NOM_ZAP = t.IDCase";
             return _Return;
         }
-
         #endregion
 
         #region ---- Отчеты ----
@@ -1301,8 +1300,8 @@ namespace wpfReestr
             string _Return = $@"
                 use Bazis;
 
-                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @TipReestr as int = {pTipReestr};               -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};                         -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -1338,8 +1337,9 @@ namespace wpfReestr
                     from dbo.APAC as a                                              -- поликлиника
                     left join dbo.ErrorASU  as e    on a.PD = e.Cod                 -- справочник ошибок
                     where  @TipReestr in (3, 4)                                     -- только для С и Н реестров
-                            and (a.DateCloseTap between @DateNNew and @DateKNew     -- по дате посещения
-                              or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                            and ((@Main = 0                                         -- основной рестр 
+                                and a.DateCloseTap between @DateNNew and @DateKNew)                              
+                              or (@Main = 1                                         -- исправленный реестр
                                 and isnull(a.VZ10, 0) > 0
                                 and a.DateCloseTap between @DateNOld and @DateKOld))
                             and a.OMS = 1                                           -- только ОМС
@@ -1362,8 +1362,9 @@ namespace wpfReestr
                     left join dbo.astProtokol   as p                                -- находим протокол Метод ВМП (если есть)
                         on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
                     left join dbo.ErrorASU      as e    on a.PD = e.Cod             -- справочник ошибок
-                    where  (a.DK between @DateNNew and @DateKNew                    -- по дате посещения
-                              or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                    where  ((@Main = 0                                              -- основной рестр 
+                                and a.DK between @DateNNew and @DateKNew)
+                              or (@Main = 1                                         -- исправленный реестр
                                 and isnull(a.VZ10, 0) > 0
                                 and a.DK between @DateNOld and @DateKOld))
                             and isjson(a.xInfo) > 0
@@ -1386,45 +1387,48 @@ namespace wpfReestr
                           ,D
                           ,Korekt
                     from (
-                        select 4 as LPU_ST                                            -- тип подразделения (4 - параклиника, при выгрузке в XML превратить в 3)
+                        select 4 as LPU_ST                                                          -- тип подразделения (4 - параклиника, при выгрузке в XML превратить в 3)
                             ,cast(i.Cod as decimal) as Cod
                             ,p.pDate as DP
-                            ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
+                            ,row_number() over (partition by i.Cod order by p.Cod) as Dubl          -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
                             ,p.KL
-                            ,json_value(i.jTag, '$.Diag') as D
-                            ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt -- если исправления то 1, иначе 0
+                            ,'Z01.8'                                                                --json_value(i.jTag, '$.Diag') as D с 29/06/2021 ставлю диагноз Z
+                            ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt     -- если исправления то 1, иначе 0
                         from dbo.parProtokol    as p
                         join dbo.parObsledov    as o    on p.CodApstac = o.Cod
-                        join dbo.kbolInfo        as i    on i.Tab = 'par' and o.Cod = i.CodZap
+                        join dbo.kbolInfo       as i    on i.Tab = 'par' and o.Cod = i.CodZap
                         left join dbo.ErrorASU  as e    on json_value(i.jTag, '$.Error') = e.Cod
-                        where @TipReestr = 3                                        -- только для С реестра
+                        where @TipReestr = 3                                                        -- только для С реестра
                             and NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
                             and i.Oms = 1
-                            and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
-                                or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                            and ((@Main = 0                                                         -- основной рестр 
+                                    and p.pDate between @DateNNew and @DateKNew)
+                                or (@Main = 1                                                       -- исправленный реестр
                                     and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0
                                     and p.pDate between @DateNOld and @DateKOld))
+                        
                             and isjson(i.jTag) > 0
                             and isnull(p.xDelete, 0) = 0
                             and isnull(e.FlagOut, 1) <> 0
                     ) as d
-                    where Dubl = 1                                                  -- избавляемся от дублей
+                    where Dubl = 1                                                                  -- избавляемся от дублей
                     union all
 
                     -- ## ГИСТОЛОГИЯ ##
-                    select 5 as LPU_ST                                                -- тип подразделения (5 - гистология, при выгрузке в XML превратить в 3)
+                    select 5 as LPU_ST                                                              -- тип подразделения (5 - гистология, при выгрузке в XML превратить в 3)
                             ,cast(i.Cod as decimal) as Cod
                             ,p.pDate as DP
                             ,p.KL
-                            ,json_value(i.jTag, '$.Diag') as D
-                            ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt -- если исправления то 1, иначе 0
+                            ,'Z01.8'                                                                -- json_value(i.jTag, '$.Diag') as D с 29/06/2021 ставлю диагноз Z
+                            ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt     -- если исправления то 1, иначе 0
                     from dbo.kdlProtokol    as p
                     join dbo.kbolInfo        as i    on i.Tab = 'kdl' and i.CodZap = p.Cod
-                    where @TipReestr = 3                                            -- только для С реестра
+                    where @TipReestr = 3                                                            -- только для С реестра
                             and NumShablon = 20001
                             and i.Oms = 1
-                            and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
-                                or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                            and ((@Main = 0                                                         -- основной рестр 
+                                    and p.pDate between @DateNNew and @DateKNew)
+                                or (@Main = 1                                                       -- исправленный реестр
                                     and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0
                                     and p.pDate between @DateNOld and @DateKOld))
                             and isjson(i.jTag) > 0
@@ -1438,7 +1442,6 @@ namespace wpfReestr
                             right(concat('000', k.KR), 3),
                             right(concat('000', k.Gorod), 3),
                             right(concat('000', k.NasP), 3), '00') = kl.CODE
-                where Korekt = 0                -- ВОТ ОН ТУТ СИДИТ!!!!
                 order by k.FAM, k.I, k.O, k.DR, d.DP";
 
             return _Return;
@@ -1456,7 +1459,7 @@ namespace wpfReestr
                     use Bazis
 
                 declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @Main as int = {pMain};             -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -1494,8 +1497,9 @@ namespace wpfReestr
                 left join dbo.s_Diag        as d     on d.KOD = a.D
                 left join dbo.ErrorASU      as e    on a.PD = e.Cod                 -- справочник ошибок
                 where @TipReestr in (3, 4)                                          -- только для С и Н реестров
-                    and (a.DateCloseTap between @DateNNew and @DateKNew             -- по дате посещения
-                        or (@Main = 1                                               -- только для основного реестра, смотрим исправления за прошлый месяц
+                    and ((@Main = 0                                                 -- основной рестр 
+                        and a.DateCloseTap between @DateNNew and @DateKNew)
+                       or (@Main = 1                                                -- исправленный реестр
                         and isnull(a.VZ10, 0) > 0
                         and a.DateCloseTap between @DateNOld and @DateKOld))
                     and a.OMS = 1                                                   -- только ОМС
@@ -1519,7 +1523,7 @@ namespace wpfReestr
                     use Bazis
 
                 declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @Main as int = {pMain};             -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -1547,8 +1551,8 @@ namespace wpfReestr
                           ,v.IDDOKT
                           ,iif(a.Cod <> a.NumberFirstTap, (select count(*) from dbo.APAC as a1 where a1.NumberFirstTap = a.NumberFirstTap), 1) as uet3
                           ,a.DateCloseTap
-                          ,json_value(a2.xInfo, '$.LPUNapr') as NPR_MO          -- ЛПУ направления
-                          ,try_cast(json_value(a2.xInfo, '$.DateNapr') as date) as NPR_DATE       -- дата направления
+                          ,json_value(a2.xInfo, '$.LPUNapr') as NPR_MO                          -- ЛПУ направления
+                          ,try_cast(json_value(a2.xInfo, '$.DateNapr') as date) as NPR_DATE     -- дата направления
                           ,ki.jTag
                     from dbo.APAC            as a2
                     left join dbo.s_VrachPol as v        on a2.KV = v.KOD
@@ -1556,8 +1560,9 @@ namespace wpfReestr
                     left join dbo.kbolInfo   as ki       on ki.Tab = 'pol' and a2.Cod = ki.CodZap
                     left join dbo.ErrorASU   as e        on a.PD = e.Cod            -- справочник ошибок
                     where @TipReestr in (3, 4)                                      -- только для С и Н реестров
-                        and (a.DateCloseTap between @DateNNew and @DateKNew         -- по дате посещения
-                            or (@Main = 1                                           -- только для основного реестра, смотрим исправления за прошлый месяц
+                        and ((@Main = 0                                             -- основной рестр 
+                            and a.DateCloseTap between @DateNNew and @DateKNew)     
+                          or (@Main = 1                                             -- исправленный реестр
                             and isnull(a.VZ10, 0) > 0
                             and a.DateCloseTap between @DateNOld and @DateKOld))
                         and a.OMS = 1                                               -- только ОМС
@@ -1590,28 +1595,29 @@ namespace wpfReestr
                     use Bazis
 
                 declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @Main as int = {pMain};             -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
                 declare @DateKOld as date = eomonth(@DateNOld);         -- конечная дата родительского реестра
 
                 -- Дата и цель последнего консилиума
-                select     cast(a.Cod as decimal) as Cod
-                        ,iif(json_value(jTag, '$.Taktika_1') is not null, 1, iif(json_value(jTag, '$.Taktika_2') is not null, 2, 3)) as PR_CONS
-                        ,left(isnull(isnull(json_value(jTag, '$.Taktika_1'), json_value(jTag, '$.Taktika_2')), json_value(jTag, '$.Taktika_3')), 10) as DT_CONS
+                select cast(a.Cod as decimal) as Cod
+                      ,iif(json_value(jTag, '$.Taktika_1') is not null, 1, iif(json_value(jTag, '$.Taktika_2') is not null, 2, 3)) as PR_CONS
+                      ,left(isnull(isnull(json_value(jTag, '$.Taktika_1'), json_value(jTag, '$.Taktika_2')), json_value(jTag, '$.Taktika_3')), 10) as DT_CONS
                 from (
-                    select   a.Cod
-                            ,kp.jTag
-                            ,row_number() over(partition by a.Cod order by isnull(a1.DP, s1.DK) desc) as Num
+                    select a.Cod
+                          ,kp.jTag
+                          ,row_number() over(partition by a.Cod order by isnull(a1.DP, s1.DK) desc) as Num
                     from dbo.APAC           as a
                     left join dbo.kbolInfo as kp on kp.KL = a.KL
                     left join dbo.APAC     as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DP >= a1.DP
                     left join dbo.APSTAC   as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DP >= s1.DK
                     left join dbo.ErrorASU as e  on a.PD = e.Cod                    -- справочник ошибок
                     where @TipReestr in (3, 4)                                      -- только для С и Н реестров
-                        and (a.DateCloseTap between @DateNNew and @DateKNew         -- по дате посещения
-                            or (@Main = 1                                           -- только для основного реестра, смотрим исправления за прошлый месяц
+                        and ((@Main = 0                                             -- основной рестр 
+                                and a.DateCloseTap between @DateNNew and @DateKNew) 
+                          or (@Main = 1                                             -- исправленный реестр
                             and isnull(a.VZ10, 0) > 0
                             and a.DateCloseTap between @DateNOld and @DateKOld))
                         and a.OMS = 1                                               -- только ОМС
@@ -1644,7 +1650,7 @@ namespace wpfReestr
                     use Bazis
 
                 declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @Main as int = {pMain};             -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -1666,6 +1672,7 @@ namespace wpfReestr
                             ,a.ISXOD                                            -- исход госпитализации
                             ,iif(a.OtdIn = 0, a.UET3, isnull(json_value(a.xInfo, '$.Uet3'), a.UET3)) as Uet3 -- койко дни
                             ,o.Korpus                                           -- корпус отделения 1-главный, 2-филиал
+                            ,iif(o.Cod in (15, 16), 1, 0) as OtdInPol           -- 1 - дневное отделение при поликлиники, 0 - соответственно при стационаре
                             ,json_value(o.xInfo, '$.PODR') as PODR              -- код отделения
                             ,s.PROFIL                                           -- профиль врача
                             ,s.PROFIL_K                                         -- профиль койки
@@ -1682,14 +1689,14 @@ namespace wpfReestr
                             ,'' as IDMODP
                             ,'' as HGR
                             ,555509 as NPR_MO                                   -- ЛПУ направления
-                            ,cast(json_value(a.xInfo, '$.DateNapr') as date) as NPR_DATE       -- дата направления
+                            ,cast(json_value(a.xInfo, '$.DateNapr') as date) as NPR_DATE        -- дата направления
                             ,ki.jTag
-                            ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,        -- 1 - острый характер заболевания
+                            ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,               -- 1 - острый характер заболевания
                                 iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DK) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
                                     iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DK) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
                             from dbo.APSTAC as a                                   -- стационар
-                            left join dbo.ErrorASU    as e    on a.PD = e.Cod         -- справочник ошибок
-                            join dbo.s_Department   as o    on o.Cod = a.otd        -- отделения
+                            left join dbo.ErrorASU    as e    on a.PD = e.Cod      -- справочник ошибок
+                            join dbo.s_Department   as o    on o.Cod = a.otd       -- отделения
                             left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
                               on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
                             left join (select KOD, Nom, PRVSs, IDDOKT
@@ -1699,8 +1706,8 @@ namespace wpfReestr
                                 (PRVSs for Nom in (PRVS, PRVS_1, PRVS_2, PRVS_3, PRVS_4)) as un
                                 where  PRVSs <> ''   ) as v
                               on v.KOD = a.KV
-                                and not((a.OTD in (17, 18) and PRVSs = 41)        -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102
-                                    or (a.Age > 17 and PRVSs = 19)               -- если взрослый, то не берем специальность детскую онкологию
+                                and not((a.OTD in (17, 18) and PRVSs = 41)          -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102
+                                    or (a.Age > 17 and PRVSs = 19)                  -- если взрослый, то не берем специальность детскую онкологию
                                     or (p.Cod is not null and PRVSs not in (41, 57, 58)))      -- отсекаем для ВМП все специальности, кроме онкологии и радиологии
                             left join dbo.StrahTarif   as s
                                on v.PRVSs = s.PRVS and a.DK between s.DateN and s.DateK
@@ -1708,17 +1715,18 @@ namespace wpfReestr
                             left join dbo.kbolInfo as ki
                                on ki.Tab = 'stac' and a.IND = ki.CodZap
                             left join dbo.s_Diag        as d     on d.KOD = a.D
-                            where (a.DK between @DateNNew and @DateKNew                    -- по дате посещения
-                                    or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                            where ((@Main = 0                                       -- основной рестр 
+                                    and a.DK between @DateNNew and @DateKNew)                    
+                                  or (@Main = 1                                     -- исправленный реестр
                                     and isnull(a.VZ10, 0) > 0
                                     and a.DK between @DateNOld and @DateKOld))
                                 and isjson(a.xInfo) > 0
-                                and a.OMS = 1                                           -- только ОМС
-                                and a.FlagOut > 0                                       -- флаг выписки
-                                and a.OtdOut = 0                                        -- отбрасываем переведенных в другие отделения
+                                and a.OMS = 1                                       -- только ОМС
+                                and a.FlagOut > 0                                   -- флаг выписки
+                                and a.OtdOut = 0                                    -- отбрасываем переведенных в другие отделения
                                 and isnull(a.xDelete, 0) = 0
-                                and ((@TipReestr in (3, 4) and p.Cod is null)           -- отбрасываем ВМП, для реестров С и Н
-                                    or (@TipReestr = 1 and p.Cod is not null))           -- берем только ВМП, для реестра Т
+                                and ((@TipReestr in (3, 4) and p.Cod is null)       -- отбрасываем ВМП, для реестров С и Н
+                                    or (@TipReestr = 1 and p.Cod is not null))      -- берем только ВМП, для реестра Т
                                 and ((@TipReestr in (1, 3) and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0')) -- берем ЗНО диагнозы для С и Т реестров
                                     or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
                                 and isnull(e.FlagOut, 1) <> 0
@@ -1739,8 +1747,8 @@ namespace wpfReestr
             string _Return = $@"
                     use Bazis
 
-                declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @TipReestr as int = {pTipReestr};               -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
+                declare @Main as int = {pMain};                         -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -1749,10 +1757,10 @@ namespace wpfReestr
                  declare @A as table
                     (
                         IND decimal,        -- Код стационара
-                        D  nvarchar(5),        -- Диагноз стационара
-                        Dat date,            -- Дата выписки
-                        UslOk tinyint,        -- 1 - круглосуточный, 2 - дневной
-                        Det tinyint,          -- 5 - ребенок до 18 лет, 6 - взрослый
+                        D  nvarchar(5),     -- Диагноз стационара
+                        Dat date,           -- Дата выписки
+                        UslOk tinyint,      -- 1 - круглосуточный, 2 - дневной
+                        Det tinyint,        -- 5 - ребенок до 18 лет, 6 - взрослый
                         uet3 int            -- Койко дни
                     )
                     insert @A
@@ -1764,11 +1772,12 @@ namespace wpfReestr
                             ,a.UET3
                     from dbo.APSTAC as a
                     join dbo.s_Department as o  on o.Cod = a.otd
-                    left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
+                    left join dbo.astProtokol   as p                            -- находим протокол Метод ВМП (если есть)
                       on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
-                    left join dbo.ErrorASU      as e    on a.PD = e.Cod             -- справочник ошибок
-                    where (a.DK between @DateNNew and @DateKNew                    -- по дате посещения
-                            or (@Main = 1                                         -- только для основного реестра, смотрим исправления за прошлый месяц
+                    left join dbo.ErrorASU      as e    on a.PD = e.Cod         -- справочник ошибок
+                    where ((@Main = 0                                           -- основной рестр 
+                                and a.DK between @DateNNew and @DateKNew)
+                            or (@Main = 1                                       -- исправленный реестр
                                 and isnull(a.VZ10, 0) > 0
                                 and a.DK between @DateNOld and @DateKOld))
                         and isjson(a.xInfo) > 0
@@ -1786,18 +1795,18 @@ namespace wpfReestr
                     declare @T as table (
                                         IND decimal,        -- Код стационара
                                         Tip nvarchar(4),    -- Тип услуги
-                                        NomUsl int,            -- Номер услуги стационара (1 - только диагноз, 11 - услуга)
-                                        D  nvarchar(5),        -- Диагноз стационара
-                                        Usl nvarchar(15),    -- Услуга стационара
+                                        NomUsl int,         -- Номер услуги стационара (1 - только диагноз, 11 - услуга)
+                                        D  nvarchar(5),     -- Диагноз стационара
+                                        Usl nvarchar(15),   -- Услуга стационара
                                         DopUsl nvarchar(15),-- Дополнительная услуга схема для лучевойхимии
-                                        Frakc int,            -- Фракции, для радиологии
-                                        UslOk tinyint,        -- 1 - круглосуточный, 2 - дневной
+                                        Frakc int,          -- Фракции, для радиологии
+                                        UslOk tinyint,      -- 1 - круглосуточный, 2 - дневной
                                         Det tinyint,        -- 5 - ребенок до 18 лет, 6 - взрослый
                                         Dat date,           -- Дата оказания услуги
                                         DK date,            -- Дата выписки
-                                        xInfo nvarchar(max), -- поле xInfo из операций
-                                        DayHim int,          -- Плановое количество дней введения химии
-                                        Duration int         -- койко дни (1 – 1-3, 2 - 4-10, 3 - 11-20, 4 - 21-30)
+                                        xInfo nvarchar(max),-- поле xInfo из операций
+                                        DayHim int,         -- Плановое количество дней введения химии
+                                        Duration int        -- койко дни (1 – 1-3, 2 - 4-10, 3 - 11-20, 4 - 21-30)
                                         )
 
                     insert @T
@@ -1926,7 +1935,7 @@ namespace wpfReestr
                     use Bazis
 
                 declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @Main as int = {pMain};             -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -1941,27 +1950,27 @@ namespace wpfReestr
                             ,row_number() over(partition by a.IND order by isnull(a1.DP, s1.DK) desc) as Num
                     from dbo.APSTAC         as a
                     left join dbo.ErrorASU    as e  on a.PD = e.Cod         -- справочник ошибок
-                    join dbo.s_Department   as o  on o.Cod = a.otd        -- отделения
+                    join dbo.s_Department   as o  on o.Cod = a.otd          -- отделения
                     left join dbo.kbolInfo  as kp on kp.KL = a.KL
                     left join dbo.APAC      as a1 on kp.Tab = 'pol' and kp.CodZap = a1.Cod and a.DK >= a1.DP
                     left join dbo.APSTAC    as s1 on kp.Tab = 'stac' and kp.CodZap = s1.IND and a.DK >= s1.DK
                     left join dbo.astProtokol   as p                       -- находим протокол Метод ВМП (если есть)
                         on p.CodApstac = a.IND and p.NumShablon = 8013 and isnull(p.xDelete,0) = 0
-                    where (a.DK between @DateNNew and @DateKNew                 -- по дате посещения
-                            or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                    where ((@Main = 0                                       -- основной рестр 
+                                and a.DK between @DateNNew and @DateKNew)
+                            or (@Main = 1                                   -- исправленный реестр
                                 and isnull(a.VZ10, 0) > 0
                                 and a.DK between @DateNOld and @DateKOld))
                         and isjson(a.xInfo) > 0
-                        and a.OMS = 1                                           -- только ОМС
-                        and a.FlagOut > 0                                       -- флаг выписки
-                        and a.OtdOut = 0                                        -- отбрасываем переведенных в другие отделения
+                        and a.OMS = 1                                       -- только ОМС
+                        and a.FlagOut > 0                                   -- флаг выписки
+                        and a.OtdOut = 0                                    -- отбрасываем переведенных в другие отделения
                         and isnull(a.xDelete, 0) = 0
-                        and ((@TipReestr in (3, 4) and p.Cod is null)           -- отбрасываем ВМП, для реестров С и Н
-                            or (@TipReestr = 1 and p.Cod is not null))          -- берем только ВМП, для реестра Т
+                        and ((@TipReestr in (3, 4) and p.Cod is null)       -- отбрасываем ВМП, для реестров С и Н
+                            or (@TipReestr = 1 and p.Cod is not null))      -- берем только ВМП, для реестра Т
                         and ((@TipReestr in (1, 3) and (left(a.D, 1) = 'C' or left(a.D, 2) = 'D0')) -- берем ЗНО диагнозы для С и Т реестров
                             or (@TipReestr = 4 and (left(a.D, 1) <> 'C' and left(a.D, 2) <> 'D0'))) -- не ЗНО диагнозы для H реестров
                         and isnull(e.FlagOut, 1) <> 0
-
                         and isjson(kp.jTag) > 0
                         and kp.jTag like '%Taktika_%'
                         and (a1.DP is not null or s1.DK is not null)
@@ -1995,6 +2004,7 @@ namespace wpfReestr
                 left join dbo.astProtokol   as p    on p.CodApstac = a.IND and p.NumShablon = 8013   --  метод ВМП находиться в 6м вопросе 8013 шаблона стационара
                 left join dbo.StrahVMP      as sv   on p.Cod is not null and left(dbo.GetPole(6, p.Protokol), charindex('.', dbo.GetPole(6, p.Protokol)) - 1) = sv.IDHM
                                                         and a.DK between sv.xBeginDate and sv.xEndDate
+                                                        and (sv.Diag like '%' + a.D +';%' or Diag like '%' + left(a.D, 3) +';%')
                 left join dbo.StrahTarif    as s    on s.Flag = 7 and sv.Hgr = s.VID_VME and a.DK between s.DateN and s.DateK
                 where a.IND = {pIND}";
 
@@ -2003,71 +2013,6 @@ namespace wpfReestr
         #endregion
 
         #region ---- ПАРАКЛИНИКА ----
-        /// <summary>Загружаем данные параклиники parObsledov</summary>
-        /// <param name="pWerePar">Фрагмента sql для параклиники </param>
-        public static string RePar_Select_1(string pWerePar)
-        {
-            string _Return = $@"
-                use Bazis;
-
-                select d.* from (
-                    select cast(i.Cod as decimal) as Cod
-                        ,4 as LPU_ST
-                        ,k.SCom
-                        ,k.SN
-                        ,k.SS
-                        ,i.jTag
-                        ,json_value(d.xInfo, '$.vrach')    as IDDOKT
-                        ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
-                        ,s.PRVS
-                        ,s.PROFIL
-                        ,s.CODE_USL
-                        ,s.VID_VME
-                        ,s.VidPom
-                        ,s.Tarif
-                        ,isnull(l.KodOKPO, '555509') as NPR_MO
-                        ,convert(date, p.pDate, 104) as NPR_DATE
-                        ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
-                    from dbo.parProtokol    as p
-                    join dbo.parObsledov    as o    on p.CodApstac = o.Cod
-                    join dbo.kbol            as k    on p.KL = k.KL
-                    join dbo.kbolInfo        as i    on i.Tab = 'par' and o.Cod = i.CodZap
-                    join dbo.s_UsersDostup  as d    on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.modul') = 15 and json_value(d.xInfo, '$.element') in (1, 6, 13) and d.isWork = 0
-                    join dbo.StrahStacSv    as s    on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
-                    left join dbo.s_LPU        as l    on k.StrLPU = l.StrLPU
-                    where NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
-                    {pWerePar}
-                ) as d
-                where Dubl = 1  -- избавляемся от дублей
-                union all
-                select cast(i.Cod as decimal) as Cod
-                        ,5 as LPU_ST
-                        ,k.SCom
-                        ,k.SN
-                        ,k.SS
-                        ,i.jTag
-                        ,json_value(d.xInfo, '$.vrach') as IDDOKT
-                        ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
-                        ,s.PRVS
-                        ,s.PROFIL
-                        ,s.CODE_USL
-                        ,s.VID_VME
-                        ,s.VidPom
-                        ,s.Tarif
-                        ,json_value(i.jTag, '$.NPR_MO') as NPR_MO
-                        ,convert(date, json_value(i.jTag, '$.NPR_DATE'), 104) as NPR_DATE
-                        ,1 as Dubl
-                from dbo.kdlProtokol    as p
-                join dbo.kbol           as k on p.KL = k.KL
-                join dbo.kbolInfo       as i on i.Tab = 'kdl' and i.CodZap = p.Cod
-                join dbo.s_UsersDostup  as d on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.userrigth') = 'histologydoctor' and json_value(d.xInfo, '$.vrach') is not null and d.isWork = 0
-                join dbo.StrahStacSv    as s on s.Flag = 11 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.VID_VME
-                where p.NumShablon = 20001
-                {pWerePar}";
-
-            return _Return;
-        }
-
         /// <summary>Загружаем данные параклиники parObsledov и гистологии (новый 2021)</summary>
         /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
         /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
@@ -2079,7 +2024,7 @@ namespace wpfReestr
                     use Bazis
 
                 declare @TipReestr as int = {pTipReestr};   -- 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С
-                declare @Main as int = {pMain};             -- 1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)
+                declare @Main as int = {pMain};             -- 0 - основной реестр, 1 - исправленный реестр
                 declare @DateNNew as date = '{pDateNNew:MM.dd.yyyy}';   -- начальная дата основного реестра
                 declare @DateKNew as date = '{pDateKNew:MM.dd.yyyy}';   -- конечная дата основного реестра
                 declare @DateNOld as date = dateadd(m, -1, @DateNNew);  -- начальная дата родительского реестра
@@ -2105,17 +2050,18 @@ namespace wpfReestr
                         ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
                     from dbo.parProtokol    as p
                     join dbo.parObsledov    as o    on p.CodApstac = o.Cod
-                    join dbo.kbol            as k    on p.KL = k.KL
-                    join dbo.kbolInfo        as i    on i.Tab = 'par' and o.Cod = i.CodZap
+                    join dbo.kbol           as k    on p.KL = k.KL
+                    join dbo.kbolInfo       as i    on i.Tab = 'par' and o.Cod = i.CodZap
                     join dbo.s_UsersDostup  as d    on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.modul') = 15 and json_value(d.xInfo, '$.element') in (1, 6, 13) and d.isWork = 0
-                    join dbo.StrahTarif    as s    on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
-                    left join dbo.s_LPU        as l    on k.StrLPU = l.StrLPU
+                    join dbo.StrahTarif     as s    on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
+                    left join dbo.s_LPU     as l    on k.StrLPU = l.StrLPU
                     left join dbo.ErrorASU  as e    on json_value(i.jTag, '$.Error') = e.Cod
-                    where @TipReestr = 3                                        -- только для С
+                    where @TipReestr = 3                                            -- только для С
                     and NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
                     and i.Oms = 1
-                    and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
-                    or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                    and ((@Main = 0                                                 -- основной рестр 
+                        and p.pDate between @DateNNew and @DateKNew)
+                    or (@Main = 1                                                   -- исправленный реестр
                         and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0
                         and p.pDate between @DateNOld and @DateKOld))
                     and isjson(i.jTag) > 0
@@ -2146,11 +2092,12 @@ namespace wpfReestr
                 join dbo.kbolInfo       as i on i.Tab = 'kdl' and i.CodZap = p.Cod
                 join dbo.s_UsersDostup  as d on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.userrigth') = 'histologydoctor' and json_value(d.xInfo, '$.vrach') is not null and d.isWork = 0
                 join dbo.StrahTarif    as s on s.Flag = 11 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.VID_VME
-                where @TipReestr = 3                                        -- только для С
+                where @TipReestr = 3                                    -- только для С
                     and NumShablon = 20001
                     and i.Oms = 1
-                    and (p.pDate between @DateNNew and @DateKNew            -- по дате посещения
-                    or (@Main = 1                                       -- только для основного реестра, смотрим исправления за прошлый месяц
+                    and ((@Main = 0                                     -- основной рестр 
+                        and p.pDate between @DateNNew and @DateKNew)
+                    or (@Main = 1                                       -- исправленный реестр
                         and isnull(json_value(i.jTag, '$.Korekt'), 0) > 0
                         and p.pDate between @DateNOld and @DateKOld))
                     and isjson(i.jTag) > 0

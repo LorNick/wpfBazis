@@ -276,8 +276,8 @@ namespace wpfStatic
 #if DEBUG
             User = 60; // 5006;
             // Server = 2;
-            //TypeModul = eModul.VrPolicl;
-                  TypeModul = eModul.VrStac;
+            TypeModul = eModul.VrPolicl;
+            //      TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
             //    TypeModul = eModul.Viewer;
             //   TypeModul = eModul.VrPara;

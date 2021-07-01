@@ -10,10 +10,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Telerik.Windows;
 using Telerik.Windows.Controls;
 using wpfGeneral.UserWindows;
-using System.Windows.Media.Imaging;
 using wpfStatic;
 using e = Microsoft.Office.Interop.Excel;
 using m = wpfStatic.MyMet;
@@ -364,79 +364,15 @@ namespace wpfReestr
             m.MET_Lаng();
         }
 
-        /// <summary>СОБЫТИЕ Находим данные по строке ввода Поиска (поиск по dataGrid1)</summary>
+        /// <summary>СОБЫТИЕ Находим данные по строке поиска (ФИО или IDCASE) при нажатии на Enter (поиск по dataGrid1)</summary>
         private void PART_TextBoxFindIDCase_KeyDown(object sender, KeyEventArgs e)
         {
-            if (PRI_DVStrahReestr == null)
-                return;
-
             if (e.Key == Key.Return)
             {
-                // Фильтр строке поиска ФИО или IDCASE
-                if (!string.IsNullOrWhiteSpace(PART_TextBoxFindIDCase.Text))
-                {
-                    string _Text = PART_TextBoxFindIDCase.Text;
-                    string _Where;
-                    string _Colum;
-                    string _Sort = PRI_DVStrahReestr.Sort;
-                    try
-                    {
-                        // Если число, значить IDCASE
-                        int _Val = m.MET_ParseInt(_Text);
-                        if (_Val > 0)
-                        {
-                            _Where = $"((convert(NOM_ZAP, System.String) like '%{_Val.ToString("00000")}' and len(convert(NOM_ZAP, System.String)) = 8) or NOM_ZAP = {_Val})";
-                            _Colum = "NOM_ZAP";
-                        }
-                        else
-                        {
-                            _Where = $"FAMILY like '{_Text}%'";
-                            _Colum = "FAMILY";
-                        }
-                        dataGrid1.Items.SortDescriptions.Clear();   // Удаляем выбранную пользователем сортировку (оставляя её визуально)
-                        PRI_DVStrahReestr.Sort = dataGrid1.Columns[1].SortMemberPath;
-                        _Colum = "Cod";
-                        int _Cou = PRI_DVStrahReestr.Table.Select(_Where, _Colum).Length;
-                        if (_Cou > 0) // если найдено по условию
-                        {
-                            // Находим запись, по условию и по колонке
-                            DataRow _Row = PRI_DVStrahReestr.Table.Select(_Where, _Colum)[PRI_FindCod];
-                            if (_Cou > PRI_FindCod + 1)
-                                PRI_FindCod++;
-                            else
-                                PRI_FindCod = 0;
-                            // Номер записи
-                            int _Index = PRI_DVStrahReestr.Find(_Row[_Colum]);
-                            if (_Index != -1)
-                            {
-                                // Выделяем найденую запись
-                                dataGrid1.SelectedIndex = _Index;
-                                // Возвращаем сортировку на FIO
-                                PRI_DVStrahReestr.Sort = _Sort;
-                                // Отображаем в таблице найденую запись
-                                dataGrid1.Dispatcher.BeginInvoke((Action)(() =>
-                                {
-                                    dataGrid1.ScrollIntoView(dataGrid1.SelectedItem, dataGrid1.Columns[5]);
-                                }));
-                            }
-                        }
-                    }
-                    catch
-                    {
-
-                    }  // если ввели некоректные данные для поиска (к примеру буквы в столбце чисел), то выходим
-                       // Возвращаем сортировку на FIO
-                    PRI_DVStrahReestr.Sort = _Sort;
-                }
-            }
-        }
-
-        /// <summary>СОБЫТИЕ Находим данные по строке поиска (ФИО или IDCASE) при нажатии на Enter (поиск по dataGrid1)</summary>
-        private void PART_TextBoxFiltrFamIDCase_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Return)
-            {
-                MET_Filter();
+                if (PART_ButtonFindFiltr.IsChecked == true)
+                    MET_Filter();
+                else
+                    MET_Find();
             }
         }
 
@@ -482,6 +418,75 @@ namespace wpfReestr
                 // Показываем уже загруженную таблицу
                 PRI_DVStrahReestr.Table = MyGlo.DataSet.Tables[PRI_NameTable];
             }
+            MET_Filter();
+        }
+
+        /// <summary>МЕТОД Ищем по номеру или ФИО</summary>
+        private void MET_Find()
+        {
+            // Фильтр строке поиска ФИО или IDCASE
+            if (!string.IsNullOrWhiteSpace(PART_TextBoxFindIDCase.Text))
+            {
+                string _Text = PART_TextBoxFindIDCase.Text;
+                string _Where;
+                string _Colum;
+                string _Sort = PRI_DVStrahReestr.Sort;
+                try
+                {
+                    // Если число, значить IDCASE
+                    int _Val = m.MET_ParseInt(_Text);
+                    if (_Val > 0)
+                    {
+                        _Where = $"((convert(NOM_ZAP, System.String) like '%{_Val.ToString("00000")}' and len(convert(NOM_ZAP, System.String)) = 8) or NOM_ZAP = {_Val})";
+                        _Colum = "NOM_ZAP";
+                    }
+                    else
+                    {
+                        // Разбиваем строку поиска на отдельные слова
+                        string[] _mFilter = _Text.Split(' ');
+                        _Where = $"FAMILY like '{_mFilter[0]}%'";
+                        if (_mFilter.Length > 1)
+                            _Where += $" and NAME like '{_mFilter[1]}%'";
+                        if (_mFilter.Length > 2)
+                            _Where += $" and FATHER like '{_mFilter[2]}%'";
+                        _Colum = "FAMILY";
+                    }
+                    dataGrid1.Items.SortDescriptions.Clear();   // Удаляем выбранную пользователем сортировку (оставляя её визуально)
+                    PRI_DVStrahReestr.Sort = dataGrid1.Columns[1].SortMemberPath;
+                    _Colum = "Cod";
+                    int _Cou = PRI_DVStrahReestr.Table.Select(_Where, _Colum).Length;
+                    if (_Cou > 0) // если найдено по условию
+                    {
+                        // Находим запись, по условию и по колонке
+                        DataRow _Row = PRI_DVStrahReestr.Table.Select(_Where, _Colum)[PRI_FindCod];
+                        if (_Cou > PRI_FindCod + 1)
+                            PRI_FindCod++;
+                        else
+                            PRI_FindCod = 0;
+                        // Номер записи
+                        int _Index = PRI_DVStrahReestr.Find(_Row[_Colum]);
+                        if (_Index != -1)
+                        {
+                            // Выделяем найденую запись
+                            dataGrid1.SelectedIndex = _Index;
+                            // Возвращаем сортировку на FIO
+                            PRI_DVStrahReestr.Sort = _Sort;
+                            // Отображаем в таблице найденую запись
+                            dataGrid1.Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                dataGrid1.ScrollIntoView(dataGrid1.SelectedItem, dataGrid1.Columns[5]);
+                            }));
+                        }
+                    }
+                }
+                catch
+                {
+
+                }  // если ввели некоректные данные для поиска (к примеру буквы в столбце чисел), то выходим
+                   // Возвращаем сортировку на FIO
+                PRI_DVStrahReestr.Sort = _Sort;
+            }
+
         }
 
         /// <summary>МЕТОД Фильтруем данные</summary>
@@ -555,16 +560,25 @@ namespace wpfReestr
             if (PART_ButtonFindFiltr.IsChecked == true && !string.IsNullOrWhiteSpace(PART_TextBoxFindIDCase.Text))
             {
                 string _Text = PART_TextBoxFindIDCase.Text;
+                string _Where;
                 // Если число, значить IDCASE
                 int _Val = m.MET_ParseInt(_Text);
                 if (_Val > 0)
                 {
-                    PRI_Where += $" and ((convert(NOM_ZAP, System.String) like '%{_Val.ToString("00000")}' and len(convert(NOM_ZAP, System.String)) = 8) or NOM_ZAP = {_Val})";
+
+                    _Where = $" and ((convert(NOM_ZAP, System.String) like '%{_Val.ToString("00000")}' and len(convert(NOM_ZAP, System.String)) = 8) or NOM_ZAP = {_Val})";
                 }
                 else
                 {
-                    PRI_Where += $" and FAMILY like '{_Text}%'";
+                    // Разбиваем строку поиска на отдельные слова
+                    string[] _mFilter = _Text.Split(' ');
+                    _Where = $"FAMILY like '{_mFilter[0]}%'";
+                    if (_mFilter.Length > 1)
+                        _Where += $" and NAME like '{_mFilter[1]}%'";
+                    if (_mFilter.Length > 2)
+                        _Where += $" and FATHER like '{_mFilter[2]}%'";
                 }
+                PRI_Where += _Where;
             }
             try
             {
@@ -641,6 +655,20 @@ namespace wpfReestr
                 PART_FilterPole2.Content = "Поле";
                 PART_FilterZnach2.Content = "Значение";
             }
+            // Поиск
+            //PART_TextBoxFindIDCase.Text = "";
+            // Кнопки
+           // PART_ButtonFindFiltr.IsChecked = false;
+            PART_ToggleButtonDataGrid1Stac.IsChecked = false;
+            PART_ToggleButtonDataGrid1StacDnev.IsChecked = false;
+            PART_ToggleButtonDataGrid1PosPolikl.IsChecked = false;
+            PART_ToggleButtonDataGrid1Paracl.IsChecked = false;
+            PART_ToggleButtonDataGrid1Microscope.IsChecked = false;
+            PART_ToggleButtonDataGrid1SmoAlfa.IsChecked = false;
+            PART_ToggleButtonDataGrid1SmoKapital.IsChecked = false;
+            PART_ToggleButtonDataGrid1SmoSogaz.IsChecked = false;
+            PART_ToggleButtonDataGrid1SmoInogor.IsChecked = false;
+            PART_ToggleButtonDataGrid1Baby.IsChecked = false;
         }
 
         /// <summary>МЕТОД Вытаскиваем строку из поля</summary>

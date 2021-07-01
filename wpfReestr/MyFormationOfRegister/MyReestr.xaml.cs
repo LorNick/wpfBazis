@@ -36,8 +36,8 @@ namespace wpfReestr
         #region ---- Private ----
         /// <summary>Тип реестра (1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С)</summary>
         private int PRI_TipReestr;
-        /// <summary>Вид реестра: 1 - Основной 0 - Тестовый реестр</summary>
-        private int PRI_MainTest;
+        /// <summary>Вид реестра: 0 - Основной 1 - Исправленный реестр</summary>
+        private int PRI_MainCorrect;
         /// <summary>Наша база</summary>
         private StarahReestrDataContext PRI_Context;
         /// <summary>Список реестров</summary>
@@ -192,8 +192,8 @@ namespace wpfReestr
 
             // Начальные значения
 #if DEBUG
-            PART_DateN.Text = "01.01.2021";
-            PART_DateK.Text = "31.01.2021";
+            PART_DateN.Text = "01.03.2021";
+            PART_DateK.Text = "31.03.2021";
 #endif
         }
 
@@ -201,10 +201,10 @@ namespace wpfReestr
         /// <summary>СОБЫТИЕ После загрузки окна</summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            // Тип файла, по умолчанию (С) ЗНО реестр
-            PRI_TipReestr = 3;
+            // Тип файла, по умолчанию (T) ВМП реестр
+            PRI_TipReestr = 1;
             // Основной реестр
-            PRI_MainTest = 1;
+            PRI_MainCorrect = 0;
             // Свиток - Выбор месяца и родительского реестра
             MySql.MET_DsAdapterFill(MyQuery.StrahFile_Select_2(), "StrahFile_Select");
             PRI_DataViewStrachComp = new DataView(MyGlo.DataSet.Tables["StrahFile_Select"]);
@@ -244,14 +244,14 @@ namespace wpfReestr
             PRI_FlagPreInfo = true;
         }
 
-        /// <summary>СОБЫТИЕ Выбираем Основной/Тестовый реестр</summary>
-        private void RadioButtonMainTest_Click(object sender, RoutedEventArgs e)
+        /// <summary>СОБЫТИЕ Выбираем 0 - основной, 1 - исправленный реестр</summary>
+        private void RadioButtonMainCorrection_Click(object sender, RoutedEventArgs e)
         {
             if (!PRI_FlagPreInfo) return;
             PRI_FlagPreInfo = false;
             PART_ComboBoxMainMonth.SelectedValue = null;
-            PRI_MainTest = m.MET_ParseInt(((RadioButton)sender).Tag);
-            if (PRI_MainTest == 0)
+            PRI_MainCorrect = m.MET_ParseInt(((RadioButton)sender).Tag);
+            if (PRI_MainCorrect == 0)
             {
                 PROP_ParentCod = 0;
                 MET_PreInfa();
@@ -319,7 +319,7 @@ namespace wpfReestr
         private void MET_PreInfa()
         {
             // Загружаем заготовку реестра StrahReestr
-            MySql.MET_DsAdapterFill(MyQuery.ReStrahReestr_Select_2(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReStrahReestr");
+            MySql.MET_DsAdapterFill(MyQuery.ReStrahReestr_Select_2(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "ReStrahReestr");
             // Максимум ProgressBar
             PART_Info.Content = "Записей: " + MyGlo.DataSet.Tables["ReStrahReestr"].Rows.Count;
         }
@@ -375,6 +375,7 @@ namespace wpfReestr
                     MONTH = PROP_DateK.Month,
                     NSCHET = PROP_Schet,
                     DSCHET = PROP_DateSchet,
+                    pPaket = PRI_MainCorrect == 1 ? (byte?)124 : (byte?)123,
                     pHide = 0,
                     pParent = PROP_ParentCod
                 };
@@ -396,7 +397,7 @@ namespace wpfReestr
             if (PRI_TipReestr == 3 || PRI_TipReestr == 4)
             {
                 // Поликлиника 1. Apac (только конечные посещения)
-                MySql.MET_DsAdapterFill(MyQuery.ReApac_Select_4(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReApac");
+                MySql.MET_DsAdapterFill(MyQuery.ReApac_Select_4(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "ReApac");
                 // Связываем по колонками
                 DataColumn[] _ReApac = new DataColumn[]
                     {   MyGlo.DataSet.Tables["ReApac"].Columns["Cod"],
@@ -406,7 +407,7 @@ namespace wpfReestr
                 MyGlo.DataSet.Relations.Add(_DataRelation);
 
                 // Поликлиника 2. (промежуточные посещения)
-                MySql.MET_DsAdapterFill(MyQuery.ReApac_Select_5(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "RePol");
+                MySql.MET_DsAdapterFill(MyQuery.ReApac_Select_5(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "RePol");
                 // Связь Apac - Pol
                 _DataRelation = new DataRelation("ReApac_Pol",
                     MyGlo.DataSet.Tables["ReApac"].Columns["NumberFirstTap"],
@@ -414,7 +415,7 @@ namespace wpfReestr
                 MyGlo.DataSet.Relations.Add(_DataRelation);
 
                 // Поликлиника 3. (консилиумы)
-                MySql.MET_DsAdapterFill(MyQuery.ReApac_Select_6(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "RePolCons");
+                MySql.MET_DsAdapterFill(MyQuery.ReApac_Select_6(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "RePolCons");
                 // Связь Apac - PolCons
                 _DataRelation = new DataRelation("ReApac_PolCons",
                     MyGlo.DataSet.Tables["ReApac"].Columns["Cod"],
@@ -423,7 +424,7 @@ namespace wpfReestr
             }
 
             // Стационар 1. Apstac
-            MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_4(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReApstac");
+            MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_4(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "ReApstac");
             // Связываем по колонками
             DataColumn[] _ReApstac = new DataColumn[]
                 {   MyGlo.DataSet.Tables["ReApstac"].Columns["Ind"],
@@ -433,7 +434,7 @@ namespace wpfReestr
             MyGlo.DataSet.Relations.Add(_DataRelation);
 
            // Стационар 2. Ksg
-            MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_5(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReKsg");
+            MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_5(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "ReKsg");
             // Связь Apstac - Ksg
             _DataRelation = new DataRelation("ReApstac_Ksg",
                 MyGlo.DataSet.Tables["ReApstac"].Columns["Ind"],
@@ -441,7 +442,7 @@ namespace wpfReestr
             MyGlo.DataSet.Relations.Add(_DataRelation);
 
             // Стационар 3. (консилиумы)
-            MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_6(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "ReApstacCons");
+            MySql.MET_DsAdapterFill(MyQuery.ReApstac_Select_6(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "ReApstacCons");
             // Связь Apstac - ApstacCons
             _DataRelation = new DataRelation("ReApstac_ApstacCons",
                 MyGlo.DataSet.Tables["ReApstac"].Columns["Ind"],
@@ -451,7 +452,7 @@ namespace wpfReestr
             if (PRI_TipReestr == 3)
             {
                 // Параклиника 1. Par
-                MySql.MET_DsAdapterFill(MyQuery.RePar_Select_2(PRI_TipReestr, PRI_MainTest, PROP_DateN, PROP_DateK), "RePar");
+                MySql.MET_DsAdapterFill(MyQuery.RePar_Select_2(PRI_TipReestr, PRI_MainCorrect, PROP_DateN, PROP_DateK), "RePar");
                 // Связываем по колонками
                 DataColumn[] _RePar = new DataColumn[]
                     {   MyGlo.DataSet.Tables["RePar"].Columns["Cod"],
@@ -615,8 +616,12 @@ namespace wpfReestr
                         ref PRI_ErrorRow);
 
             // PODR (Код отделения)
-            string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
-            PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}1{_Prof}");
+            string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");  
+            if (_Prof == "034")
+                PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}2{_Prof}");
+            else
+                PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}1{_Prof}");
+            
 
             // DET (Детский профиль, если ребёнок то 1 иначе 0)      далее в  MET_CalcAll()
             PRI_Age = m.MET_PoleInt("Age", _RowPar);
@@ -746,11 +751,11 @@ namespace wpfReestr
 
                 string _jTag = m.MET_PoleStr("jTag", _RowPar);
 
-                // Проверка на наличия данных KoblInfo
+                // Проверка на наличия данных KbolInfo
                 if (string.IsNullOrEmpty(_jTag))
                 {
                     PRI_ErrorToExcel.PROP_ErrorCod = "28";
-                    PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найдена строка parObsledov в KoblInfo";
+                    PRI_ErrorToExcel.PROP_ErrorName = "(вну) Не найдена строка parObsledov в KbolInfo";
                     PRI_ErrorToExcel.MET_SaveError();
                     PRI_ErrorRow = true;
                     return;
@@ -764,7 +769,7 @@ namespace wpfReestr
                 catch
                 {
                     PRI_ErrorToExcel.PROP_ErrorCod = "30";
-                    PRI_ErrorToExcel.PROP_ErrorName = "(вну) Неправильная структура тегов в KoblInfo";
+                    PRI_ErrorToExcel.PROP_ErrorName = "(вну) Неправильная структура тегов в KbolInfo";
                     PRI_ErrorToExcel.MET_SaveError();
                     PRI_ErrorRow = true;
                     return;
@@ -772,7 +777,7 @@ namespace wpfReestr
 
                 // Клиническая группа
                 string _klin_gr = (string)_Json["Klin_gr"];
-                // Проверка на наличия Клинической группы в KoblInfo, если нет, то подозрение
+                // Проверка на наличия Клинической группы в KbolInfo, если нет, то подозрение
                 if (string.IsNullOrEmpty(_klin_gr))
                     _klin_gr = "Ia";
 
@@ -1128,4 +1133,3 @@ namespace wpfReestr
         }
     }
 }
-

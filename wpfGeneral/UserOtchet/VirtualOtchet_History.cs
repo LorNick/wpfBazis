@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Documents;
+using wpfGeneral.UserControls;
 using wpfGeneral.UserNodes;
 using wpfGeneral.UserPrints;
-using wpfGeneral.UserControls;
 using wpfStatic;
 
 namespace wpfGeneral.UserOtchet
@@ -26,7 +26,6 @@ namespace wpfGeneral.UserOtchet
         /// <param name="pMyDocumentViewer">Просмоторщик печати</param>
         /// <param name="pFlowDocument">Поток с нашим текстом</param>
         /// <param name="pPrintNow">Печатаем сразу</param>
-
         public override bool MET_CreatePrint(MyDocumentViewer pMyDocumentViewer, FlowDocument pFlowDocument, bool pPrintNow = false)
         {
             if (PRO_PoleHistory.Count == 0)

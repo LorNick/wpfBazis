@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Data.SqlClient;
-using System.Data.Linq;
 using System.Data;
 using System.Xml;
-using System.Linq;
 
 namespace wpfStatic
 {
@@ -12,20 +10,16 @@ namespace wpfStatic
     public static class MySql
     {
         /// <summary>Строка подключения к SQL Server`у</summary>
-        public static readonly SqlConnection PUB_SqlConct;
-
-        /// <summary>Точка входа подключения к SQL Server`у</summary>
-        public static readonly DataContext PUB_Context;
+        static readonly SqlConnection sqlConct;
 
         // КОНСТРУКТОР
         static MySql()
         {
-            PUB_SqlConct = new SqlConnection();                                 // создаем подключение к базе
-            PUB_SqlConct.ConnectionString = MET_ConSql();                       // строка инициализации подключения к базе
-            PUB_Context = new DataContext(PUB_SqlConct);
+            sqlConct = new SqlConnection();                                 // создаем подключение к базе
+            sqlConct.ConnectionString = MET_ConSql();                       // строка инициализации подключения к базе
         }
 
-        /// <summary>Строка подключения к SQL Server`у</summary>
+        /// <summary>Строка подключения к SQL Server</summary>
         /// <returns>Возвращаем строку подключения к серверу MS SQL</returns>
         public static string MET_ConSql()
         {
@@ -57,10 +51,8 @@ namespace wpfStatic
             _Connect += "persist security info=False;";
             _Connect += "initial catalog=Bazis;";
             _Connect += "Connect Timeout=90000000;";
-            // возвращаем строку подключения к SQL Server`у
-
+            // возвращаем строку подключения к SQL Server
             return _Connect;
-            // ~~~~ Строка подключения к SQL Server`у ~~~~
         }
 
         #region ---- Методы с Подключением к серверу ----
@@ -70,7 +62,7 @@ namespace wpfStatic
         public static int MET_DsAdapterFill(string pStrSQL, string pNameTable)
         {
             int _CountTimeout = 0;                                              // попытки достучаться до сервера (5 попыток)
-            SqlDataAdapter _SqlDa = new SqlDataAdapter(pStrSQL, PUB_SqlConct);  // создаем адаптер
+            SqlDataAdapter _SqlDa = new SqlDataAdapter(pStrSQL, sqlConct);  // создаем адаптер
         label1:
             try
             {
@@ -106,8 +98,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     _SqlCom.ExecuteNonQuery();                                  // выполянем запрос
@@ -133,7 +125,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             return _Result;
         }
 
@@ -147,8 +139,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     _Value = MyMet.MET_ParseInt(_SqlCom.ExecuteScalar());       // выполянем запрос
@@ -173,7 +165,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             return _Value;
         }
 
@@ -189,8 +181,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     _Value = MyMet.MET_ParseDec(_SqlCom.ExecuteScalar());       // выполянем запрос
@@ -215,7 +207,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             return _Value;
         }
 
@@ -229,8 +221,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     if(_SqlCom.ExecuteScalar() == null)                         // выполянем запрос
@@ -258,7 +250,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             return _Value;
         }
 
@@ -272,8 +264,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     _Value = (string)_SqlCom.ExecuteScalar();                   // выполянем запрос
@@ -290,7 +282,7 @@ namespace wpfStatic
                     ex.Data["SQL"] = pStrSQL;
                     MyGlo.PUB_Logger.Error(ex, "Ошибка Запроса SQL (возвращающего строку)");
                 }
-                PUB_SqlConct.Close();                                           // закрываем подключение
+                sqlConct.Close();                                           // закрываем подключение
             }
             catch (Exception ex)
             {
@@ -312,8 +304,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     _Value = (DateTime)_SqlCom.ExecuteScalar();                 // выполянем запрос
@@ -338,7 +330,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             return _Value;
         }
 
@@ -352,8 +344,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     SqlDataReader _SqlDr = _SqlCom.ExecuteReader();             // выполянем запрос
@@ -386,7 +378,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             return _Value;
         }
 
@@ -399,8 +391,8 @@ namespace wpfStatic
             label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 try
                 {
                     SqlDataReader _SqlDr = _SqlCom.ExecuteReader(CommandBehavior.CloseConnection);  // выполянем запрос
@@ -441,9 +433,9 @@ namespace wpfStatic
             bool _Result;
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
                 // Создаем объект SqlBulkCopy, указываем таблицу назначения и загружаем.
-                using (var loader = new SqlBulkCopy(PUB_SqlConct))
+                using (var loader = new SqlBulkCopy(sqlConct))
                 {
                     loader.DestinationTableName = "StrahZero";
                     loader.WriteToServer(pDataTable);
@@ -469,9 +461,9 @@ namespace wpfStatic
         label1:
             try
             {
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 _SqlCom.Parameters.Add("@Image", SqlDbType.Image, photo.Length).Value = photo;
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
                 try
                 {
                     _SqlCom.ExecuteNonQuery();                                  // выполянем запрос
@@ -496,7 +488,7 @@ namespace wpfStatic
                 MyGlo.callbackEvent_sError(ex);
                 goto label1;
             }
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
         }
 
         /// <summary>Выполняем XML запрос (без возврата значений)</summary>
@@ -510,8 +502,8 @@ namespace wpfStatic
         label1:
             try
             {
-                if (PUB_SqlConct.State == ConnectionState.Closed) PUB_SqlConct.Open();          // открываем базу
-                SqlCommand _SqlCom = new SqlCommand(pStrSQL, PUB_SqlConct);     // создаем команду
+                if (sqlConct.State == ConnectionState.Closed) sqlConct.Open();          // открываем базу
+                SqlCommand _SqlCom = new SqlCommand(pStrSQL, sqlConct);     // создаем команду
                 _SqlCom.CommandTimeout = 90000000;
                 try
                 {
@@ -545,7 +537,7 @@ namespace wpfStatic
             // Добавляем ветку рут
             XmlElement _Root = _Doc.DocumentElement;
             _Doc.InsertBefore(_XmlDecl, _Root);
-            PUB_SqlConct.Close();                                               // закрываем подключение
+            sqlConct.Close();                                               // закрываем подключение
             // Имя файла
             string _PathToXml = @"c:\1Reestrs\" + pFile + ".xml";
             // Сохроняем xml в файл

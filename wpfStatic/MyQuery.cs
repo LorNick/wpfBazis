@@ -958,7 +958,8 @@ namespace wpfStatic
                 end;
 
                 select top 200
-                    k.KL
+                     d.CodApstac
+                    ,k.KL
                     ,dbo.GetFIO(k.FAM, k.I, k.O) as FIO
                     ,k.DR
                     ,p.Lab
@@ -976,7 +977,8 @@ namespace wpfStatic
                     where Num = 1
                     ) as p on k.KL = p.KL
                 join (
-                    select KL, max(pDate) as DatNapr
+                    select * from (
+                    select KL, pDate as DatNapr, row_number() over(partition by KL order by pDate desc, Cod desc) as Num, Cod as CodApstac
                     from (
                         select KL, pDate, Cod
                         from dbo.apaNProtokol as p
@@ -985,8 +987,8 @@ namespace wpfStatic
                         select KL, pDate, Cod
                         from dbo.astProtokol as p
                         where p.NumShablon = 9957 and xDelete = 0
-                    )  as d
-                    group by KL
+                    )  as d ) as d
+                    where Num = 1
                 ) as d on d.KL = k.KL
                 where not(k.DSmerti is not null and p.KL is null)                                   -- не показываем новых умерших пациентов без результата
                     and ((len(@F) = 0 and p.KL is not null and p.pDate = @Dat)                      -- если строка ФИО пустая
@@ -2302,7 +2304,7 @@ namespace wpfStatic
                                   select
                                      char(13) + concat(Cod, '. ',
                                                        Names, char(13),
-                                                       '   ', 'xInfo: ', xInfo,
+                                                       '   ', 'xInfo: ', replace(replace(xInfo, char(10), ''), char(13), ''),
                                                        iif(isWork = 1, char(13) + '   ' + 'Запись: удалена', ''))
                                   from dbo.s_UsersDostup as ud
                                   where UserCod = u.Cod
@@ -2365,7 +2367,7 @@ namespace wpfStatic
                             iif(isnull(IPPhone, '') = '', '', concat(char(13), 'Телефон IP: ', IPPhone)),
                             iif(isnull(MobilPhone, '') = '', '', concat(char(13), 'Телефон мобильный: ', MobilPhone))) as Tegs
                     ,'' as isWork
-                    ,'0 - телефоны' as Tips
+                    ,'1 - телефоны' as Tips
                 from Phone.dbo.Phones as p
                 left join Phone.dbo.Korpusa as k    on p.KorpusID = k.ID
                 left join Phone.dbo.Divisions as d  on p.DivisionID = d.ID

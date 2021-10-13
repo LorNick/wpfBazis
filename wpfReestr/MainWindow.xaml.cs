@@ -572,7 +572,7 @@ namespace wpfReestr
                 {
                     // Разбиваем строку поиска на отдельные слова
                     string[] _mFilter = _Text.Split(' ');
-                    _Where = $"FAMILY like '{_mFilter[0]}%'";
+                    _Where = $" and FAMILY like '{_mFilter[0]}%'";
                     if (_mFilter.Length > 1)
                         _Where += $" and NAME like '{_mFilter[1]}%'";
                     if (_mFilter.Length > 2)
@@ -846,20 +846,31 @@ namespace wpfReestr
                     PRI_DVStrahFile.RowFilter += " and TipImage <> 'mnFileT'";
             }
 
-            // Cтраховые компании (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
-            if (PART_ToggleButtonSmoAlfa.IsChecked == true || PART_ToggleButtonSmoKapital.IsChecked == true || PART_ToggleButtonSmoSogaz.IsChecked == true
-                                                           || PART_ToggleButtonSmoInogor.IsChecked == true || PART_ToggleButtonSmoAll.IsChecked == true)
+            //// Cтраховые компании (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
+            //if (PART_ToggleButtonSmoAlfa.IsChecked == true || PART_ToggleButtonSmoKapital.IsChecked == true || PART_ToggleButtonSmoSogaz.IsChecked == true
+            //                                               || PART_ToggleButtonSmoInogor.IsChecked == true || PART_ToggleButtonSmoAll.IsChecked == true)
+            //{
+            //    if (PART_ToggleButtonSmoAlfa.IsChecked == false)
+            //        PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoAlfa'";
+            //    if (PART_ToggleButtonSmoKapital.IsChecked == false)
+            //        PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoKapital'";
+            //    if (PART_ToggleButtonSmoSogaz.IsChecked == false)
+            //        PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoSogaz'";
+            //    if (PART_ToggleButtonSmoInogor.IsChecked == false)
+            //        PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoInogor'";
+            //    if (PART_ToggleButtonSmoAll.IsChecked == false)
+            //        PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoAll'";
+            //}
+
+            // Пакеты (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )
+            if (PART_ToggleButtonPaket123.IsChecked == true || PART_ToggleButtonaket124.IsChecked == true || PART_ToggleButtonPaket126.IsChecked == true)
             {
-                if (PART_ToggleButtonSmoAlfa.IsChecked == false)
-                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoAlfa'";
-                if (PART_ToggleButtonSmoKapital.IsChecked == false)
-                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoKapital'";
-                if (PART_ToggleButtonSmoSogaz.IsChecked == false)
-                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoSogaz'";
-                if (PART_ToggleButtonSmoInogor.IsChecked == false)
-                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoInogor'";
-                if (PART_ToggleButtonSmoAll.IsChecked == false)
-                    PRI_DVStrahFile.RowFilter += " and StrahCompImage <> 'mnSmoAll'";
+                if (PART_ToggleButtonPaket123.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and PaketImage <> 'mnReestr123'";
+                if (PART_ToggleButtonaket124.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and PaketImage <> 'mnReestr124'";
+                if (PART_ToggleButtonPaket126.IsChecked == false)
+                    PRI_DVStrahFile.RowFilter += " and PaketImage <> 'mnRakReg'";
             }
 
             // Реестр основные/исправленные (если все выключены, то показываем всё, если хоть один включен, то уже начинаем фильтровать )

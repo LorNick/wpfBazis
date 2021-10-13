@@ -186,7 +186,7 @@ namespace wpfStatic
             string _Value;
             try
             {
-                _Value = ((int)((pToDay.Subtract(pDob).Days * 0.99932) / 365)).ToString(); // 0.99932 - убераем високосные дни
+                _Value = ((int)(pToDay.Subtract(pDob).Days * 0.99932 / 365)).ToString(); // 0.99932 - убераем високосные дни
                 if (_Value == "11" || _Value == "12" || _Value == "13" || _Value == "14")
                     _Value += " лет";
                 else

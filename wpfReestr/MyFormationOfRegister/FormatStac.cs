@@ -715,24 +715,38 @@ namespace wpfReestr
                                 }
                                 _MyOnkUsl.LEK_PR.Add(_LekPr);
 
-                                // Если сверхкороткий случай, то набираем стек дат, со всех выданных лекарств
-                                if (PRI_StrahReestr.KOL_USL < 4)
-                                {
-                                    _DateList.AddRange(_LekPr.DATE_INJ);
-                                }
+                                //// Если сверхкороткий случай, то набираем стек дат, со всех выданных лекарств
+                                //if (PRI_StrahReestr.KOL_USL < 4)
+                                //{
+                                //    _DateList.AddRange(_LekPr.DATE_INJ);
+                                //}
+                                // Набираем стек дат, со всех выданных лекарств
+                                _DateList.AddRange(_LekPr.DATE_INJ);
                             }
                         }
 
-                        // Если дней госпитализации менее 4 дней, то смотрим выполнение дней схемы лечения
-                        if (PRI_StrahReestr.KOL_USL < 4)
-                        {
-                            // Колличество дней схемы лечения
-                            int _DayHim = m.MET_PoleInt("DayHim", _KsgRow);
+                        // Колличество дней схемы лечения
+                        int _DayHim = m.MET_PoleInt("DayHim", _KsgRow);
 
-                            // Если схема не выполненна, то считаем случай - сверхкороткий
-                            if (_DateList.Distinct().Count() < _DayHim)
+                        // Если схема не выполненна, то случай прерванный
+                        if (_DateList.Distinct().Count() < _DayHim)
+                        {
+                            PRI_Sl.Prervan = true;
+                            // Койко дней менее 4, то считаем случай - сверхкороткий
+                            if (PRI_StrahReestr.KOL_USL < 4)
                                 _MyUSL.Day3 = 0;
                         }
+
+                        //// Если дней госпитализации менее 4 дней, то смотрим выполнение дней схемы лечения
+                        //if (PRI_StrahReestr.KOL_USL < 4)
+                        //{
+                        //    // Колличество дней схемы лечения
+                        //    int _DayHim = m.MET_PoleInt("DayHim", _KsgRow);
+
+                        //    // Если схема не выполненна, то считаем случай - сверхкороткий
+                        //    if (_DateList.Distinct().Count() < _DayHim)
+                        //        _MyUSL.Day3 = 0;
+                        //}
 
                         // Проверяем, есть ли хоть один препарат
                         if (_MyOnkUsl.LEK_PR.Count == 0)
@@ -1025,13 +1039,13 @@ namespace wpfReestr
                 if (PRI_Sl.USL[0].KUSmo == 0)
                 // Если не сказанно, что нужно ингорировать коэффициет подуровня (из dbo.StrahKsg поля KUSmo = 1)
                 {
-                    PRI_Sl.KOEF_U = 1.1;
+                    PRI_Sl.KOEF_U = 1.2;
 
                     // Для ВМП отделений другой коэффициент
                     if (PRI_StrahReestr.EX_DATE >= new DateTime(2021, 1, 1))
                     {
                         if (new[] { 11121060m, 11361060m, 11081060m, 10991060m, 10761076m, 10761097m, 10761060m }.Contains((decimal)PRI_StrahReestr.PODR))
-                            PRI_Sl.KOEF_U = 1.20;
+                            PRI_Sl.KOEF_U = 1.40;
                     }
                 }
                 else
@@ -1074,6 +1088,15 @@ namespace wpfReestr
                         PRI_Sl.Short = 0.4;
 
                     PRI_Sl.SUMV *= PRI_Sl.Short;
+                }
+                else 
+                {
+                    // если случай прерван (химия)
+                    if (PRI_Sl.Prervan)
+                    {
+                        PRI_Sl.Short = 0.8;
+                        PRI_Sl.SUMV *= PRI_Sl.Short;
+                    }
                 }
             }
             else
@@ -1132,6 +1155,15 @@ namespace wpfReestr
                             PRI_Sl.Short = 0.4;
 
                         PRI_Sl.SUMV *= PRI_Sl.Short;
+                    }
+                    else
+                    {
+                        // если случай прерван (химия)
+                        if (PRI_Sl.Prervan)
+                        {
+                            PRI_Sl.Short = 0.8;
+                            PRI_Sl.SUMV *= PRI_Sl.Short;
+                        }
                     }
                 }
 

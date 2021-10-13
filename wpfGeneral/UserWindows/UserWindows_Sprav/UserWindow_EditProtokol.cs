@@ -132,6 +132,7 @@ namespace wpfGeneral.UserWindows
             catch
             {
             }
+            Close();
         }
     }
 }

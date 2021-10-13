@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Telerik.Windows.Controls;
 using wpfGeneral.UserNodes;
 using wpfGeneral.UserOtchet;
 using wpfStatic;
@@ -19,10 +24,8 @@ namespace wpfMViewer.UserOtchet
         ///<summary>Наша таблица</summary>
         private volatile Table PRI_Table;
         private volatile string PRI_Filtr1;
-        private volatile string PRI_Filtr2;
-        private DispatcherTimer PRI_Timer;
-        private volatile TextBox PRI_TextBoxFilter1 = new TextBox();
-        private volatile TextBox PRI_TextBoxFilter2 = new TextBox();
+        private volatile RadWatermarkTextBox PRI_TextBoxFilter1 = new RadWatermarkTextBox();
+        private List<string> PRI_FilterList = new List<string>();
 
         ///<summary>МЕТОД Инициализация отчета</summary>
         /// <param name="pNodes">Ветка</param>
@@ -49,34 +52,25 @@ namespace wpfMViewer.UserOtchet
         protected override void MET_Otchet()
         {
             PRO_Paragraph = new Paragraph();
-            // Добавляем кнопки фильтра истории
             StackPanel _Panel = new StackPanel();
             _Panel.Orientation = Orientation.Horizontal;
             var _P = new Paragraph();
             _P.Inlines.Add(_Panel);
             Blocks.Add(_P);
+
             Label _LabelFiltr1 = new Label();
-            _LabelFiltr1.Content = "Поиск по (любой текст):";
+            _LabelFiltr1.Content = "Поиск: (нажмите на Enter)";
             _LabelFiltr1.VerticalAlignment = VerticalAlignment.Center;
             _LabelFiltr1.Background = Brushes.Gold;
-            _Panel.Children.Add(_LabelFiltr1);
-            PRI_TextBoxFilter1.MinWidth = 120;
-            PRI_TextBoxFilter1.SelectionChanged += PART_TextBoxSelectionChanged;
+            _Panel.Children.Add(_LabelFiltr1);            
+            PRI_TextBoxFilter1.WatermarkContent = "Наберите что нибудь через пробел и нажмите на Enter";
+            PRI_TextBoxFilter1.KeyDown += PART_TextBoxFilterKeyDown;
             _Panel.Children.Add(PRI_TextBoxFilter1);
-            Label _LabelFiltr2 = new Label();
-            _LabelFiltr2.Content = "дополнительный поиск:";
-            _LabelFiltr2.VerticalAlignment = VerticalAlignment.Center;
-            _LabelFiltr2.Background = Brushes.LightCoral;
-            _LabelFiltr2.Margin = new Thickness(10, 0, 0, 0);
-            _Panel.Children.Add(_LabelFiltr2);
-            PRI_TextBoxFilter2.MinWidth = 120;
-            PRI_TextBoxFilter2.SelectionChanged += PART_TextBoxSelectionChanged;
-            _Panel.Children.Add(PRI_TextBoxFilter2);
-            PRI_Timer = new DispatcherTimer();
-            PRI_Timer.Interval = new TimeSpan(0, 0, 1);
-            PRI_Timer.Tick += PART_TimerOnTick;
-            // Запрос таблицы Телефонов
+
+
+            // Запрос таблицы Сотрудников
             MySql.MET_DsAdapterFill(MyQuery.MET_varStaff_Select_1(), "Staff");
+
             // Формируем таблицу
             PRI_Table = new Table { CellSpacing = 0, Margin = new Thickness(0) };
             // Колонки
@@ -97,31 +91,34 @@ namespace wpfMViewer.UserOtchet
             PRI_Table.RowGroups[0].FontWeight = FontWeights.Bold;
         }
 
-        /// <summary>МЕТОД Срабатывание таймера и начало построения таблицы</summary>
-        private void PART_TimerOnTick(object sender, EventArgs e)
+        /// <summary>СОБЫТИЕ Поиск по фильтру при нажатии на Enter</summary>
+        private void PART_TextBoxFilterKeyDown(object sender, KeyEventArgs e)
         {
-            PRI_Timer.Stop();
-            TableRowGroup _Group = new TableRowGroup();
+            if (e.Key != Key.Return)
+                return;
+            // Если ничего не менялось, то просто выходим
+            if (PRI_Filtr1 == PRI_TextBoxFilter1.Text.Trim())
+                return;
             PRI_Filtr1 = PRI_TextBoxFilter1.Text.Trim();
-            PRI_Filtr2 = PRI_TextBoxFilter2.Text.Trim();
+            MET_StartFind();
+        }
+
+        /// <summary>МЕТОД Стартуем поиск и формирование найденых данных</summary>
+        private void MET_StartFind()        {          
+            TableRowGroup _Group = new TableRowGroup();
+            string _text = Regex.Replace(PRI_TextBoxFilter1.Text.ToLower().Trim(), "[ ]+", " ");  // удаляем 2е пробелы
+            PRI_FilterList = _text.Split(' ').Distinct().ToList();           
             int _i = 0;
             foreach (DataRow _Row in MyGlo.DataSet.Tables["Staff"].Rows)
             {
-                if (PRI_TextBoxFilter1.Text.Length < 4)
-                    return;
                 _Group.Rows.Add(new TableRow());
                 PRO_RowShablon = _Row;
-                string _Find = MET_PoleStr("FIO") + '|' + MET_PoleStr("Tegs") + '|' + MET_PoleStr("Tips") + '|' + MET_PoleStr("isWork");
-                if (_Find.ToLower().IndexOf(PRI_Filtr1.ToLower()) >= 0 &&
-                    (PRI_Filtr2.Length == 0 ||
-                     _Find.ToLower().IndexOf(PRI_Filtr2.ToLower()) >= 0))
+                string _Find = (MET_PoleStr("FIO") + '|' + MET_PoleStr("Tegs") + '|' + MET_PoleStr("Tips") + '|' + MET_PoleStr("isWork")).ToLower();
+                if (PRI_FilterList.All(x => _Find.Contains(x)))
                 {
                     Brush _Brush = Brushes.White;
                     switch (MET_PoleStr("Tips"))
                     {
-                        case "1 - старые пользователи":
-                            _Brush = Brushes.Gainsboro;
-                            break;
                         case "2 - пользователи":
                             _Brush = Brushes.Beige;
                             break;
@@ -137,18 +134,18 @@ namespace wpfMViewer.UserOtchet
                     }
                     TableCell _Cell;
                     // ФИО
-                    Paragraph _Paragraph = MET_FindText("FIO");
+                    Paragraph _Paragraph = MET_ColorFindText("FIO");
                     if (MET_PoleStr("isWork") == "удален")
                         _Paragraph.TextDecorations = TextDecorations.Strikethrough;
                     _Cell = new TableCell(_Paragraph);
-                    _Paragraph = MET_FindText("Tips");  // тип записи
+                    _Paragraph = MET_ColorFindText("Tips");  // тип записи
                     _Paragraph.FontSize = 12;
                     _Cell.Blocks.Add(_Paragraph);
                     _Cell.Background = _Brush;
                     _Group.Rows[_i].Cells.Add(_Cell);
                     // Теги
                     _Cell.TextAlignment = TextAlignment.Left;
-                    _Cell = new TableCell(MET_FindText("Tegs"));
+                    _Cell = new TableCell(MET_ColorFindText("Tegs"));
                     _Cell.TextAlignment = TextAlignment.Left;
                     _Cell.FontSize = 14;
                     _Cell.Background = _Brush;
@@ -163,26 +160,75 @@ namespace wpfMViewer.UserOtchet
 
         /// <summary>МЕТОД Разукрашиваем найденое поле</summary>
         /// <param name="pPole">Имя поля</param>
-        private Paragraph MET_FindText(string pPole)
+        private Paragraph MET_ColorFindText(string pPole)
         {
             Paragraph _Paragraph = new Paragraph();
             string _Text = MET_PoleStr(pPole);
-            string _Fil1 = PRI_Filtr1.ToLower();
-            string _Fil2 = PRI_Filtr2.ToLower();
-            // Первый фильтр
-            if (_Text.ToLower().IndexOf(_Fil1) >= 0)
+            if (PRI_FilterList.Any(x => _Text.ToLower().Contains(x)))
             {
-                int _Index = _Text.ToLower().IndexOf(_Fil1);
-                MET_LastFindText(_Paragraph, _Text.Substring(0, _Index));
-                Run _ChangeRun = new Run(_Text.Substring(_Index, _Fil1.Length));
-                _ChangeRun.Background = Brushes.Gold;
-                _Paragraph.Inlines.Add(_ChangeRun);
-                MET_LastFindText(_Paragraph, _Text.Remove(0, _Index + _Fil1.Length));
-            }
-            // Второй фильтр
-            else if (_Fil2.Length > 0 && _Text.ToLower().IndexOf(_Fil2) >= 0)
-            {
-                MET_LastFindText(_Paragraph, _Text);
+                // Находим все слова поиска, которые есть в текущем поле и записываем их в SortedList
+                // если есть слова которые начинаются с одной и той же буквы, то они объединяются
+                var keys = new SortedList<int, int>();
+                foreach (string _strFilter in PRI_FilterList) 
+                {
+                    int x = 0;
+                    while (_Text.ToLower().IndexOf(_strFilter, x) >= 0)
+                    {                        
+                        int _Index = _Text.ToLower().IndexOf(_strFilter, x);
+                        x = _Index + _strFilter.Length;
+                        if (keys.ContainsKey(_Index))
+                        {
+                            keys[_Index] = keys[_Index] > x ? keys[_Index] : x;
+                        } else
+                        {
+                            keys.Add(_Index, x);
+                        }
+                    }
+                }
+
+                // Если слова пересекаются, то они тоже объединяются
+                var keyArr = keys.Keys.ToArray();
+                var valueArr = keys.Values.ToArray();               
+                for (int i = 0; i < keyArr.Length - 1; i++)
+                {
+                    if (keyArr[i] > -1)
+                    {
+                        for (int j = i + 1; j < keyArr.Length; j++)
+                        {
+                            if (keyArr[j] > keyArr[i] && keyArr[j] <= valueArr[i])
+                            {
+                                valueArr[i] = valueArr[i] > valueArr[j] ? valueArr[i] : valueArr[j];
+                                keyArr[j] = -1;
+                            }
+                        }
+                    }
+                }
+               
+                // Формируем поле
+                int x1 = 0;
+                for (int i = 0; i < keyArr.Length; i++)
+                {
+                    if (keyArr[i] > -1)
+                    {
+                        // До найденого текста
+                        if (x1 < keyArr[i])
+                        {
+                            Run _FistRun = new Run(_Text.Substring(x1, keyArr[i] - x1));
+                            _Paragraph.Inlines.Add(_FistRun);
+                        }
+                        // Найденый текст, который красим
+                        Run _ChangeRun = new Run(_Text.Substring(keyArr[i], valueArr[i] - keyArr[i]));
+                        _ChangeRun.Background = Brushes.Gold;
+                        _Paragraph.Inlines.Add(_ChangeRun);
+                        x1 = valueArr[i];
+                    }
+                }
+                // После найденого текста и до конца
+                if (x1 < _Text.Length)
+                {
+                    Run _FistRun = new Run(_Text.Substring(x1, _Text.Length - x1));
+                    _Paragraph.Inlines.Add(_FistRun);
+                }
             }
             // Не найдено совпадений с фильтрами
             else
@@ -190,47 +236,6 @@ namespace wpfMViewer.UserOtchet
                 _Paragraph.Inlines.Add(new Run(_Text));
             }
             return _Paragraph;
-        }
-
-        /// <summary>МЕТОД Ищем значение 2го фильтра</summary>
-        /// <param name="pParagraph">Возвращаемый параграф</param>
-        /// <param name="pText">Текст, в котором ищем 2й фильтр</param>
-        private void MET_LastFindText(Paragraph pParagraph, string pText)
-        {
-            string _Fil2 = PRI_Filtr2.ToLower();
-            if (_Fil2.Length > 0 && pText.ToLower().IndexOf(_Fil2) >= 0)
-            {
-                int _Index = pText.ToLower().IndexOf(_Fil2);
-                Run _FistRun = new Run(pText.Substring(0, _Index));
-                pParagraph.Inlines.Add(_FistRun);
-                Run _ChangeRun = new Run(pText.Substring(_Index, _Fil2.Length));
-                _ChangeRun.Background = Brushes.LightCoral;
-                pParagraph.Inlines.Add(_ChangeRun);
-                Run _LastRun = new Run(pText.Remove(0, _Index + _Fil2.Length));
-                pParagraph.Inlines.Add(_LastRun);
-            }
-            // Не найдено совпадений с фильтрами
-            else
-            {
-                pParagraph.Inlines.Add(new Run(pText));
-            }
-        }
-
-        /// <summary>СОБЫТИЕ Поиск по фильтру при наборе символов</summary>
-        private void PART_TextBoxSelectionChanged(object sender, RoutedEventArgs e)
-        {
-            // Если ничего не менялось, то просто выходим (например при смене вкладок и возврате обратно на отчет)
-            if (PRI_Filtr1 == PRI_TextBoxFilter1.Text.Trim() & PRI_Filtr2 == PRI_TextBoxFilter2.Text.Trim())
-                return;
-            if (PRI_TextBoxFilter1.Text.Length < 2)
-            {
-                // Удаляем строки если есть
-                if (PRI_Table.RowGroups.Count > 1)
-                    PRI_Table.RowGroups.RemoveAt(1);
-                return;
-            }
-
-            PRI_Timer.Start();
         }
     }
 }

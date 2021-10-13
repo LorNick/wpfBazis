@@ -58,21 +58,22 @@ namespace wpfGeneral.UserWindows
         protected override void MET_RemoveAt()
         {
             PART_DataGrid.Columns.RemoveAt(0);
+            PART_DataGrid.Columns.RemoveAt(0);
         }
 
         /// <summary>МЕТОД Меняем Наименование колонок на более читаемые</summary>
         protected override string MET_Header(int pIndex)
         {
-            string[] _mName = { "", "ФИО пациента", "Дата рожд.", "Кто завел", "Когда", "Направил" };
+            string[] _mName = { "", "", "ФИО пациента", "Дата рожд.", "Кто завел", "Когда", "Направил" };
             return _mName[pIndex];
         }
 
         /// <summary>МЕТОД Устанавливаем Ширину колонок</summary>
         protected override void MET_WithColumn()
         {
-            PART_DataGrid.Columns[1].Width = 300;
-            PART_DataGrid.Columns[3].Width = 140;
-           // PART_DataGrid.Columns[4].Width = 110;
+            PART_DataGrid.Columns[2].Width = 300;
+            PART_DataGrid.Columns[4].Width = 140;
+            PART_DataGrid.Columns[5].Width = 80;
         }
 
         /// <summary>МЕТОД Создание фильтров</summary>
@@ -146,6 +147,7 @@ namespace wpfGeneral.UserWindows
             {
                 DataRowView _DataRowView = (DataRowView)PART_DataGrid.SelectedItem;
                 MyGlo.KL = Convert.ToDecimal(_DataRowView.Row["KL"]);
+                MyGlo.IND = Convert.ToDecimal(_DataRowView.Row["CodApstac"]);
                 PROP_Return = true;
             }
             catch

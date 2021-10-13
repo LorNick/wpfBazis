@@ -195,7 +195,7 @@ namespace wpfReestr
                     if (PRI_ErrorRow) return; // Критическая ошибка - выходим
 
                     // Дата направления
-                    PRI_Sl.NPR_DATE = m.MET_PoleStr("NPR_DATE", _PolRow);
+                    PRI_Sl.NPR_DATE = m.MET_PoleStr("NPR_DATE", _PolRow).Substring(0, 10);
                     // Дата направления должна быть не пустой и меньше = сегодняшнего дня
                     if (string.IsNullOrEmpty(PRI_Sl.NPR_DATE))
                     {

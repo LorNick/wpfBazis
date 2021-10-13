@@ -283,7 +283,7 @@ namespace wpfStatic
             //   TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
             //  TypeModul = eModul.OtherLpu;
-            // TypeModul = eModul.Laboratory;
+          // TypeModul = eModul.Laboratory;
             //TypeModul = eModul.CAOP;
 #endif
 

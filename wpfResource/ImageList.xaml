@@ -74,7 +74,7 @@
     <BitmapImage x:Key="mnPhysiology" UriSource="mnImag/mnPhysiology.ico" />    <!-- Физиология -->
     <BitmapImage x:Key="mnGreenDown" UriSource="mnImag/mnGreenDown.ico" />      <!-- Стрелка вниз -->
     <BitmapImage x:Key="mnGreenUp" UriSource="mnImag/mnGreenUp.ico" />          <!-- Стрелка вверх -->
-    <BitmapImage x:Key="mnRakReg" UriSource="mnImag/mnRakReg.ico" />            <!-- Раковый Регистр (желтый паучек) -->
+    <BitmapImage x:Key="mnRakReg" UriSource="mnImag/mnRakReg.ico" />            <!-- Раковый Регистр (желтый паучек), Реестры исправленный, пакет 126 -->
     <BitmapImage x:Key="mnDevil" UriSource="mnImag/mnDevil.ico" />              <!-- Ошибки по КСГ (черт) -->
     <BitmapImage x:Key="mnPhone" UriSource="mnImag/mnPhone.ico" />              <!-- Телефоны -->
     <BitmapImage x:Key="mnObDocum" UriSource="mnImag/mnObDocum.ico" />          <!-- Общие документы -->
@@ -111,4 +111,10 @@
 
     <BitmapImage x:Key="mnPdf" UriSource="mnImag/mnPdf.png" />
     <BitmapImage x:Key="mnPdfMain" UriSource="mnImag/mnPdfMain.png" />
+
+    <BitmapImage x:Key="mnVirus" UriSource="mnImag/mnVirus.png" />
+    <BitmapImage x:Key="mnVirusTo" UriSource="mnImag/mnVirusTo.ico" />
+
+    <BitmapImage x:Key="mnReestr123" UriSource="mnImag/mnReestr123.ico" />    <!-- Реестры основной, пакет 123 -->
+    <BitmapImage x:Key="mnReestr124" UriSource="mnImag/mnReestr124.ico" />    <!-- Реестры с ошибками, пакет 124 -->
 </ResourceDictionary>

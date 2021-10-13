@@ -521,7 +521,7 @@ namespace wpfGeneral.UserWindows
             }
             var _TipProtokol = new MyTipProtokol(_eTip);
             UserWindow_EditProtokol _WinSpr = new UserWindow_EditProtokol(_TipProtokol, _CodShablon, _NameSha, _ImageSha, PRI_DatePicker_1.DisplayDate, PRI_DatePicker_2.DisplayDate, PRI_UserCod.PROP_Text);
-            _WinSpr.Show();
+            _WinSpr.Show();           
         }
     }
 }

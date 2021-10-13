@@ -360,9 +360,7 @@ namespace wpfGeneral.UserOtchet
             _Pole.PROP_Prefix = PROP_Prefix;                                    // префикс таблицы
             return _Pole;
         }
-
-
-
+               
         /// <summary>МЕТОД Заполняем данные из протокола </summary>
         /// <param name="pFlowDocument">Если null, то текущий отчет, иначе в заданный FlowDocument</param>
         protected void MET_Protokol(FlowDocument pFlowDocument = null)

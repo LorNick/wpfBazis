@@ -21,13 +21,13 @@ namespace wpfReestr
                         ,f.NSCHET
                         ,concat('mnNumber', iif(day(f.DSCHET) > 14, month(f.DSCHET),month(dateadd(m, -1, f.DSCHET)))) as NumberImage
                         ,f.DSCHET
-                        ,case f.StrahComp
-                            when 0 then 'mnSmoAll'
-                            when 1 then 'mnSmoAlfa'
-                            when 2 then 'mnSmoKapital'
-                            when 3 then 'mnSmoSogaz'
-                            when 4 then 'mnSmoInogor'
-                        end as StrahCompImage
+                     --   ,case f.StrahComp
+                     --       when 0 then 'mnSmoAll'
+                     --       when 1 then 'mnSmoAlfa'
+                     --       when 2 then 'mnSmoKapital'
+                     --       when 3 then 'mnSmoSogaz'
+                     --       when 4 then 'mnSmoInogor'
+                     --   end as StrahCompImage
                         ,case f.StrahComp
                             when 0 then 'Тестовые'
                             when 1 then 'Альфа (50)'
@@ -46,6 +46,11 @@ namespace wpfReestr
                             when 4 then 'mnFileH'
                         end as TipImage
                         ,f.SUMMAV
+                        ,case pPaket
+                            when 123 then 'mnReestr123'
+                            when 124 then 'mnReestr124'
+                            when 126 then 'mnRakReg'
+                        end as PaketImage
                         ,pPaket
                         ,'pDate' = convert(nvarchar(11),f.pDate, 104) + ' (' + convert(nvarchar(5),f.pDate, 108) + ')'
                         ,'pUpDate' = convert(nvarchar(11),f.pUpDate, 104) + ' (' + convert(nvarchar(5),f.pUpDate, 108) + ')'
@@ -542,7 +547,7 @@ namespace wpfReestr
                                 where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh' and left(Usl, 3) <> 'gem'
                                 order by convert(date, DatN, 104), Cod -- Сортируем услуги по дате
                                 for xml path(''), type ) as 'SL'
-            --- Услуга Параклиники USL ---
+            --- Услуга Параклиники USL --- (потом можно будет убрать, так как перенесли в H Реестр)
                                 ,(select
                                      1  as 'USL/IDSERV'
                                     ,'555509'   as 'USL/LPU'
@@ -871,7 +876,7 @@ namespace wpfReestr
                     -- Законченный случай Z_SL ---
                                 ,(select
                                      NOM_ZAP    as 'Z_SL/IDCASE'
-                                    ,LPU_ST     as 'Z_SL/USL_OK'
+                                    ,iif(LPU_ST in (4, 5), 3, LPU_ST)     as 'Z_SL/USL_OK'  -- для параклиники меняем 4 и 5 на 3
                                     ,VIDPOM     as 'Z_SL/VIDPOM'
                                     ,3          as 'Z_SL/FOR_POM'
                                     ,json_value(NOM_USL, '$.NPR_MO')   as 'Z_SL/NPR_MO'                                 --- !!!
@@ -879,7 +884,7 @@ namespace wpfReestr
                                     ,'555509'   as 'Z_SL/LPU'
                                     ,convert(nvarchar(10), ARR_DATE, 20) as 'Z_SL/DATE_Z_1'
                                     ,convert(nvarchar(10), EX_DATE, 20)  as 'Z_SL/DATE_Z_2'
-                                    ,iif(LPU_ST = 3, null, cast(KOL_USL as int))   as 'Z_SL/KD_Z'  -- только для стационара
+                                    ,iif(LPU_ST < 3, cast(KOL_USL as int), null)   as 'Z_SL/KD_Z'  -- только для стационара
                                     ,RES_G      as 'Z_SL/RSLT'
                                     ,ISHOD      as 'Z_SL/ISHOD'
                                     ,iif(OS_SLUCH = '', null, OS_SLUCH) as 'Z_SL/OS_SLUCH'
@@ -892,7 +897,7 @@ namespace wpfReestr
                                         ,PROFIL     as 'SL/PROFIL'
                                         ,json_value(NOM_USL, '$.PROFIL_K') as 'SL/PROFIL_K'
                                         ,DET        as 'SL/DET'
-                                        ,iif(LPU_ST = 3, json_value(NOM_USL, '$.P_Cel'), null) as 'SL/P_CEL'
+                                        ,json_value(NOM_USL, '$.P_Cel') as 'SL/P_CEL' --,iif(LPU_ST = 3, json_value(NOM_USL, '$.P_Cel'), null) as 'SL/P_CEL'
                                         ,PACIENTID  as 'SL/NHISTORY'
                                         ,iif(LPU_ST < 3, 1, null) as 'SL/P_PER'             -- !!! признак поступления/перевода стационара 1 или 4
                                         ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/DATE_1'
@@ -1020,6 +1025,26 @@ namespace wpfReestr
                                         where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh'
                                         order by convert(date, DatN, 104), Cod -- Сортируем услуги по дате
                                     for xml path(''), type ) as 'SL'
+                        --- Услуга Параклиники USL ---
+                                    ,(select
+                                         1  as 'USL/IDSERV'
+                                        ,'555509'   as 'USL/LPU'
+                                        ,LPU_1      as 'USL/LPU_1'
+                                        ,PODR       as 'USL/PODR'
+                                        ,PROFIL     as 'USL/PROFIL'
+                                        ,VID_VME    as 'USL/VID_VME'
+                                        ,DET        as 'USL/DET'
+                                        ,convert(nvarchar(10), ARR_DATE, 20) as 'USL/DATE_IN'
+                                        ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
+                                        ,DS1        as 'USL/DS'
+                                        ,CODE_USL   as 'USL/CODE_USL'
+                                        ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2))  -- 18.05.2021
+                                        ,SUM_LPU    as 'USL/TARIF'
+                                        ,SUM_LPU    as 'USL/SUMV_USL'
+                                        ,PRVS       as 'USL/PRVS'
+                                        ,IDDOKT     as 'USL/CODE_MD'
+                                    where LPU_ST in (4, 5)
+                                    for xml path(''), type ) as 'SL'
                     --- продолжаем Законченный Случай Z_SL ---
                                     ,IDSP       as 'IDSP'
                                     ,SUM_LPU    as 'SUMV'
@@ -1131,7 +1156,7 @@ namespace wpfReestr
         {
             string _Return = $@"
                 select count(*) as Cou, count(distinct z.Reestr) as Rees --, max(f.pParent) as Par
-                from Bazis.dbo.StrahReestr    as r
+                from Bazis.dbo.StrahReestr    as r 
                 join Bazis.dbo.StrahZero    as z  on r.CodFile = z.Reestr and r.NOM_ZAP = z.IDCase
               --  join Bazis.dbo.StrahFile    as f  on z.Reestr = f.Cod";
             return _Return;
@@ -1142,7 +1167,7 @@ namespace wpfReestr
         {
             string _Return = $@"
                 update r
-                    set r.SUM_LPU = 0.01
+                    set r.SUM_LPU = 501.00
                 from Bazis.dbo.StrahReestr as r
                 join Bazis.dbo.StrahZero as t
                   on r.CodFile = t.Reestr and r.NOM_ZAP = t.IDCase";
@@ -1392,13 +1417,13 @@ namespace wpfReestr
                             ,p.pDate as DP
                             ,row_number() over (partition by i.Cod order by p.Cod) as Dubl          -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
                             ,p.KL
-                            ,'Z01.8'                                                                --json_value(i.jTag, '$.Diag') as D с 29/06/2021 ставлю диагноз Z
+                            ,'Z01.8' as D                                                           --json_value(i.jTag, '$.Diag') as D с 29/06/2021 ставлю диагноз Z
                             ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt     -- если исправления то 1, иначе 0
                         from dbo.parProtokol    as p
                         join dbo.parObsledov    as o    on p.CodApstac = o.Cod
                         join dbo.kbolInfo       as i    on i.Tab = 'par' and o.Cod = i.CodZap
                         left join dbo.ErrorASU  as e    on json_value(i.jTag, '$.Error') = e.Cod
-                        where @TipReestr = 3                                                        -- только для С реестра
+                        where @TipReestr = 4                                                        -- только для H реестра (c 30.08.2021 года)
                             and NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
                             and i.Oms = 1
                             and ((@Main = 0                                                         -- основной рестр 
@@ -1419,11 +1444,11 @@ namespace wpfReestr
                             ,cast(i.Cod as decimal) as Cod
                             ,p.pDate as DP
                             ,p.KL
-                            ,'Z01.8'                                                                -- json_value(i.jTag, '$.Diag') as D с 29/06/2021 ставлю диагноз Z
+                            ,'Z01.8' as D                                                           -- json_value(i.jTag, '$.Diag') as D с 29/06/2021 ставлю диагноз Z
                             ,iif(isnull(json_value(i.jTag, '$.Korekt'), 0) = 0, 0, 1) as Korekt     -- если исправления то 1, иначе 0
                     from dbo.kdlProtokol    as p
                     join dbo.kbolInfo        as i    on i.Tab = 'kdl' and i.CodZap = p.Cod
-                    where @TipReestr = 3                                                            -- только для С реестра
+                    where @TipReestr = 4                                                            -- только для H реестра (c 30.08.2021 года)
                             and NumShablon = 20001
                             and i.Oms = 1
                             and ((@Main = 0                                                         -- основной рестр 
@@ -1769,7 +1794,7 @@ namespace wpfReestr
                             ,a.DK
                             ,o.Tip as UslOk
                             ,iif(a.Age < 18, 5, 6) as Det
-                            ,a.UET3
+                            ,iif(a.OtdIn = 0, a.UET3, isnull(json_value(a.xInfo, '$.Uet3'), a.UET3)) as uet3 -- койко дни
                     from dbo.APSTAC as a
                     join dbo.s_Department as o  on o.Cod = a.otd
                     left join dbo.astProtokol   as p                            -- находим протокол Метод ВМП (если есть)
@@ -2056,7 +2081,7 @@ namespace wpfReestr
                     join dbo.StrahTarif     as s    on s.Flag = 10 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.CODE_USL
                     left join dbo.s_LPU     as l    on k.StrLPU = l.StrLPU
                     left join dbo.ErrorASU  as e    on json_value(i.jTag, '$.Error') = e.Cod
-                    where @TipReestr = 3                                            -- только для С
+                    where @TipReestr = 4                                            -- только для H реестра (c 30.08.2021 года)
                     and NumShablon in (515, 518, 519, 101, 102, 103, 105, 1301)
                     and i.Oms = 1
                     and ((@Main = 0                                                 -- основной рестр 
@@ -2092,7 +2117,7 @@ namespace wpfReestr
                 join dbo.kbolInfo       as i on i.Tab = 'kdl' and i.CodZap = p.Cod
                 join dbo.s_UsersDostup  as d on p.xUserUp = d.UserCod and isjson(d.xInfo) > 0 and json_value(d.xInfo, '$.userrigth') = 'histologydoctor' and json_value(d.xInfo, '$.vrach') is not null and d.isWork = 0
                 join dbo.StrahTarif    as s on s.Flag = 11 and p.pDate between s.DateN and s.DateK and json_value(i.jTag, '$.Usl') = s.VID_VME
-                where @TipReestr = 3                                    -- только для С
+                where @TipReestr = 4                                    -- только для H реестра (c 30.08.2021 года)
                     and NumShablon = 20001
                     and i.Oms = 1
                     and ((@Main = 0                                     -- основной рестр 

@@ -34,6 +34,8 @@ namespace wpfReestr
         public double KOEF_Dzp { get; set; }
         /// <summary>Короткий случай</summary>
         public double Short { get; set; }
+        /// <summary>Прерваный случай</summary>
+        public bool Prervan { get; set; }
         /// <summary>Итоговый коэффициент КСЛП</summary>
         public double IT_SL { get; set; }
         /// <summary>Код перевода (указывает на код строки куда переводят)</summary>

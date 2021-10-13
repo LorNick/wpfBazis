@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections;
+using System.IO;
+using System.Net;
+using System.Security.Cryptography;
 using System.Windows;
 using wpfGeneral.UserNodes;
-using System.Net;
-using Microsoft.Win32;
-using System.IO;
-using System.Security.Cryptography;
 
 namespace wpfGeneral.UserPage
 {
@@ -93,7 +93,5 @@ namespace wpfGeneral.UserPage
         {
             //  this.progressBar.Value = e.ProgressPercentage;
         }
-
     }
-
 }

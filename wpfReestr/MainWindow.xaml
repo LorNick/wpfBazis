@@ -121,12 +121,12 @@
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnParacl}"/>
                     </telerik:RadToggleButton>
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Microscope" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Гистология (LPU_ST = 5)"
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1Microscope" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Гистология (LPU_ST = 5)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnMicroscope}"/>
                     </telerik:RadToggleButton>
                     <!--Фильтры Страховые Компании-->
-                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoAlfa" CornerRadius="7" Width="28" Margin="20,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)"
+                    <telerik:RadToggleButton Name="PART_ToggleButtonDataGrid1SmoAlfa" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)"
                                              Click="PART_RadToggleButtonDataGrid1_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoAlfa}"/>
                     </telerik:RadToggleButton>
@@ -276,7 +276,21 @@
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnFileT}"/>
                     </telerik:RadToggleButton>
-                    <Label Content="Страх. комп.:" Height="24" Margin="20,1,0,1" Padding="0" />
+                    <!--Фильтры Пакет реестров-->
+                    <Label Content="Пакет:" Height="24" Margin="20,1,0,1" Padding="0" />
+                    <telerik:RadToggleButton Name="PART_ToggleButtonPaket123" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Основной реестр, пакет 123"
+                                             Click="PART_RadToggleButton_Click" Focusable="False">
+                        <Image Source="{StaticResource mnReestr123}"/>
+                    </telerik:RadToggleButton>
+                    <telerik:RadToggleButton Name="PART_ToggleButtonaket124" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Реестр с ошибками, пакет 124"
+                                             Click="PART_RadToggleButton_Click" Focusable="False">
+                        <Image Source="{StaticResource mnReestr124}"/>
+                    </telerik:RadToggleButton>
+                    <telerik:RadToggleButton Name="PART_ToggleButtonPaket126" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Реестр с превышениями, пакет 126"
+                                             Click="PART_RadToggleButton_Click" Focusable="False">
+                        <Image Source="{StaticResource mnRakReg}"/>
+                    </telerik:RadToggleButton>
+                    <!--<Label Content="Страх. комп.:" Height="24" Margin="20,1,0,1" Padding="0" />
                     <telerik:RadToggleButton Name="PART_ToggleButtonSmoAlfa" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Страховая компания Альфа (код 50)"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoAlfa}"/>
@@ -296,7 +310,7 @@
                     <telerik:RadToggleButton Name="PART_ToggleButtonSmoAll" CornerRadius="7" Width="28" Margin="2,0,0,0" ToolTipService.ToolTip="Тестовые - (только для внутреннего использования)"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
                         <Image Source="{StaticResource mnSmoAll}"/>
-                    </telerik:RadToggleButton>
+                    </telerik:RadToggleButton>-->
                     <Label Content="Реестры:" Height="24" Margin="20,1,0,1" Padding="0" />
                     <telerik:RadToggleButton Name="PART_ToggleButtonMain" CornerRadius="7" Width="28" Margin="5,0,0,0" ToolTipService.ToolTip="Основные реестры"
                                              Click="PART_RadToggleButton_Click" Focusable="False">
@@ -341,11 +355,11 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Дата счета" Binding="{Binding DSCHET, StringFormat={}{0:dd\.}{0:MM\.}{0:yyyy}}" Width="80" ElementStyle="{StaticResource Column_Center}" />
-                        <DataGridTemplateColumn Header="Страх. комп." IsReadOnly="True">
+                        <DataGridTemplateColumn Header="Страх. комп." IsReadOnly="True" Visibility="Collapsed">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" >
-                                        <Image Source="{Binding Path=StrahCompImage, Converter={StaticResource ConvertTextToImage}}" Height="20"/>
+                                        <!--<Image Source="{Binding Path=StrahCompImage, Converter={StaticResource ConvertTextToImage}}" Height="20"/>-->
                                         <TextBlock Text="{Binding StrahComp}" Margin="2, 2, 2, 0"/>
                                     </StackPanel>
                                 </DataTemplate>
@@ -384,6 +398,14 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Родитель"   Binding="{Binding pParent}" ElementStyle="{StaticResource Column_Center}" Visibility="Hidden"/>
+                        <DataGridTextColumn Header="Пакет"      Binding="{Binding pPaket}" ElementStyle="{StaticResource Column_Center}" />
+                        <DataGridTemplateColumn Header="П" IsReadOnly="True" ToolTipService.ToolTip="Тип пакета: 123 - основной, 124 - ошибки, 126 - сверхплана">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Image Source="{Binding Path=PaketImage, Converter={StaticResource ConvertTextToImage}}" Height="20"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTextColumn Header="Создан"     Binding="{Binding pDate}" Width="110" ElementStyle="{StaticResource Column_Center}" IsReadOnly="True" />
                         <DataGridTextColumn Header="Изменен"    Binding="{Binding pUpDate}" Width="110" ElementStyle="{StaticResource Column_Center}" IsReadOnly="True" />
                         <DataGridCheckBoxColumn Header="Скрыть" Binding="{Binding pHide}" />

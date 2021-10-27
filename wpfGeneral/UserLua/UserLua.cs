@@ -90,7 +90,7 @@ namespace wpfGeneral.UserLua
             PRI_Env.lNew = new Func<bool>(lNew);
             // Текущее поле
             PRI_Env["Pole"] = PUB_Pole;
-            // Сравниваем текстовые 2 даты
+            // Сравниваем текстовые 2 даты (НЕ РАБОТАЕТ)
             PRI_Env.lDateIf = new Func<string, string, int>(lDateIf);
             // Время госпитализации
             PRI_Env.lTimeGosp = new Func<string>(lTimeGosp);
@@ -125,6 +125,7 @@ namespace wpfGeneral.UserLua
         /// <param name="pRazdCod">Код раздела (не ставим, если нет раздела)</param>
         /// <param name="pTab">К какой таблицы привязываемся (kbol, pol, stac), по умолчанию привязываем в зависимости от типа шаблона</param>
         /// <returns>Возвращаем успех или не успех добавления/изменения данных</returns>
+        /// <remarks>Реализовано только указание параметров pTag, pValue</remarks>
         private bool lKbolInfoAdd(string pTag, object pValue = null, string pRazdKey = "", decimal pRazdCod = 0,  string pTab = "")
         {
             // Значение
@@ -148,6 +149,7 @@ namespace wpfGeneral.UserLua
         /// <param name="pRazdCod">Код раздела (не ставим, если нет раздела)</param>
         /// <param name="pTab">К какой таблицы привязываемся (kbol, pol, stac, par), по умолчанию привязываем в зависимости от типа шаблона</param>
         /// <returns>Возвращаем успех или не успех добавления/изменения данных</returns>
+        /// <remarks>Реализовано только указание параметров pTag</remarks>
         private bool lKbolInfoDel(string pTag, string pRazdKey = "", decimal pRazdCod = 0, string pTab = "")
         {
             // Смотрим наличие раздела
@@ -275,6 +277,7 @@ namespace wpfGeneral.UserLua
 
         /// <summary>Lua Функция. Сравниваем текстовые 2 даты (в Разработке)</summary>
         /// <returns>Возвращаем -1 если первая дата меньше второй, 0 если даты равны, 1 если первая дата больше 2й, 99 если это не даты</returns>
+        /// <remarks>Не работает</remarks>
         private int lDateIf(string pDate1, string pDate2)
         {
             int _Rezult;

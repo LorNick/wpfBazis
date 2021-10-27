@@ -34,8 +34,10 @@
         </Grid.ColumnDefinitions>
         <telerik:RadMenu Grid.Row="0" FontSize="12">
             <telerik:RadMenuItem Header="_Файлы">
-                <telerik:RadMenuItem Header="_Обновление НСИ" IsEnabled="False">
-                    <telerik:RadMenuItem Header="_Обновление Страховых компаний" Click="MenuItem_Click"></telerik:RadMenuItem>
+                <telerik:RadMenuItem Header="_Обновление НСИ">
+                    <telerik:RadMenuItem Header="_Обновление Страховых компаний" Click="MenuItem_Click" IsEnabled="False"></telerik:RadMenuItem>
+                    <telerik:RadMenuItem Header="_Обновление Врачей МИАЦ" Click="MenuItem_Click"></telerik:RadMenuItem>
+                    <telerik:RadMenuItem Header="_Обновление OKATO" Click="MenuItem_Click"></telerik:RadMenuItem>
                 </telerik:RadMenuItem>
                 <telerik:RadMenuItem Header="_Отчеты">
                     <telerik:RadMenuItem Header="_Реестр для экономистов" Click="MenuItem_Click"></telerik:RadMenuItem>

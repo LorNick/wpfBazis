@@ -148,7 +148,17 @@ namespace wpfReestr
                     MyLoadStrahCompXML _WinStrahComp = new MyLoadStrahCompXML();
                     _WinStrahComp.ShowDialog();
                     break;
-                 case "_Реестр для экономистов":
+                case "_Обновление Врачей МИАЦ":
+                    // Обновляем справочник Врачей МИАЦ
+                    MyLoadVrachMiacXML _WinVrachMiac = new MyLoadVrachMiacXML();
+                    _WinVrachMiac.ShowDialog();
+                    break;
+                case "_Обновление OKATO":
+                    // Меняем ОКАТО
+                    MyUpdateOKATO _WinUpdateOKATO = new MyUpdateOKATO();
+                    _WinUpdateOKATO.ShowDialog();
+                    break;
+                case "_Реестр для экономистов":
                     // Выводим в Excel реестр для экономиство
                     MET_Report_ReestrEco();
                     break;

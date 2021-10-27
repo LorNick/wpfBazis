@@ -7,8 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+
 using m = wpfReestr.MyMet;
 using wpfStatic;
 using e = Microsoft.Office.Interop.Excel;

@@ -1,0 +1,31 @@
+﻿<Window x:Class="wpfReestr.MyUpdateOKATO"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        Title="Обновление ОКАТО" Height="380" Width="600"
+        ShowInTaskbar="false"
+        FontFamily="Tahoma" FontSize="14"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions >
+            <RowDefinition Height="100"></RowDefinition>            
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions >
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <telerik:RadWatermarkTextBox Name="PART_TextBoxOldOKATO" Margin="3" WatermarkBehavior="HideOnTextEntered" WatermarkContent="Старый ОКАТО"/>
+            <telerik:RadWatermarkTextBox Grid.Row="1" Name="PART_TextBoxNewOKATO" Margin="3" WatermarkBehavior="HideOnTextEntered" WatermarkContent="Новый ОКАТО"/>
+            <telerik:RadButton Grid.Column="1" Name="PART_ButtonOldOKATO" Margin="3" Click="PART_ButtonOldOKATO_Click">Проверить старый ОКАТО</telerik:RadButton>
+            <telerik:RadButton Grid.Column="1" Grid.Row="1" Name="PART_ButtonNewOKATO" Margin="3" Click="PART_ButtonNewOKATO_Click" IsEnabled="False">Загрузить новый ОКАТО</telerik:RadButton>   
+        </Grid>
+        <RichTextBox Grid.Row="1" Name="PART_RichTextBox" Margin="3" Block.LineHeight="2"></RichTextBox>
+    </Grid>
+</Window>

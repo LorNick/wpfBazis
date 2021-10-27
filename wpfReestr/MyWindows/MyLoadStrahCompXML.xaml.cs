@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Xml;
 using wpfStatic;
 
 namespace wpfReestr
 {
     /// <summary>КЛАСС Загружаем XML файл Страховых Компаний </summary>
-    /// <remarks>Устаревшие страховые компание помечаем как old, а новые добавляем</remarks>
+    /// <remarks>НЕ РАБОЧАЯ! Устаревшие страховые компание помечаем как old, а новые добавляем</remarks>
     public partial class MyLoadStrahCompXML : Window
     {
         /// <summary>Наша база</summary>
@@ -32,6 +24,9 @@ namespace wpfReestr
         public MyLoadStrahCompXML()
         {
             InitializeComponent();
+
+            // Родительская форма (что бы окно не пропадало)
+            Owner = Application.Current.MainWindow;
         }
 
         /// <summary>СОБЫТИЕ Выбор XML файла</summary>

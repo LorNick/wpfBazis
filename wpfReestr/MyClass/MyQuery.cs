@@ -2145,6 +2145,20 @@ namespace wpfReestr
 
             return _Return;
         }
+
+        /// <summary>Загружаем Справочник Врачей МИАЦ</summary>
+        public static string ReVrachMiac_Select_1()
+        {
+            string _Return = @"
+                select s.KOD    as Cod
+                      ,s.OGRN   as OGRN
+                      ,s.TKOD   as Names
+                      ,o.NewKod as OKATO
+                from dbo.s_StrahComp as s
+                join dbo.s_Oblast    as o on o.kod = s.KodReg";
+
+            return _Return;
+        }
         #endregion
     }
 }

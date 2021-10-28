@@ -150,7 +150,6 @@ _NCrunch*
 /.vs/BazisWPF/v15/Server/sqlite3
 /Bazis.WPF/Resources/VS2010ImageLibrary
 /Bazis.WPF/Resources/ImageSQL
-*.csproj
 *.licx
 *.sqlite
 *.json

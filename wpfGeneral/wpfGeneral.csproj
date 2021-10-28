@@ -1,0 +1,461 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D96018DD-5698-4ECE-9392-06F5D6F189E3}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>wpfGeneral</RootNamespace>
+    <AssemblyName>wpfGeneral</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\wpfGeneral.XML</DocumentationFile>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FastColoredTextBox, Version=2.16.24.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\packages\FCTB.2.16.24\lib\FastColoredTextBox.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>C:\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Reporting.WinForms.v11.1.0.0.0\lib\Microsoft.ReportViewer.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.ProcessingObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Reporting.WinForms.v11.1.0.0.0\lib\Microsoft.ReportViewer.ProcessingObjectModel.DLL</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Reporting.WinForms.v11.1.0.0.0\lib\Microsoft.ReportViewer.WinForms.DLL</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Reporting.WinForms.v11.1.0.0.0\lib\Microsoft.SqlServer.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="Neo.Lua">
+      <HintPath>..\packages\NeoLua.0.9.17\lib\net4\Neo.Lua.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.6.8\lib\net40-client\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationUI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
+      <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.10.0\lib\net40-client\SuperSocket.ClientEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Windows.Controls, Version=2018.1.220.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.FixedDocumentViewers">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.FixedDocumentViewers.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.FixedDocumentViewersUI">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.FixedDocumentViewersUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2018.1.220.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2018.1.220.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data, Version=2018.1.220.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Core">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Documents.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Documents.Fixed">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Documents.Fixed.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Zip">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WebSocket4Net, Version=0.15.2.11, Culture=neutral, PublicKeyToken=eb4e154b696bf72a, processorArchitecture=MSIL">
+      <HintPath>..\packages\WebSocket4Net.0.15.2\lib\net40\WebSocket4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserControls\UserJson\UserJson_Form.cs" />
+    <Compile Include="UserControls\UserJson\UserJson_FormMenu.cs" />
+    <Compile Include="UserControls\UserJson\UserJson_Menu.xaml.cs">
+      <DependentUpon>UserJson_Menu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserJson\VirtualJson.cs" />
+    <Compile Include="UserControls\UserPoleOtchet\UserPoleOtchet_Image.cs" />
+    <Compile Include="UserControls\UserPole\UserPole_CheckBox.xaml.cs">
+      <DependentUpon>UserPole_CheckBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Calendar.xaml.cs">
+      <DependentUpon>UserPole_Calendar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_ComboBox.xaml.cs">
+      <DependentUpon>UserPole_ComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Data.xaml.cs">
+      <DependentUpon>UserPole_Data.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Sprav.xaml.cs">
+      <DependentUpon>UserPole_Sprav.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Grid.xaml.cs">
+      <DependentUpon>UserPole_Grid.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_History.xaml.cs">
+      <DependentUpon>UserPole_History.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Image.xaml.cs">
+      <DependentUpon>UserPole_Image.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Label.xaml.cs">
+      <DependentUpon>UserPole_Label.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_MultyList.xaml.cs">
+      <DependentUpon>UserPole_MultyList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_RadioButton.xaml.cs">
+      <DependentUpon>UserPole_RadioButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Razdel.xaml.cs">
+      <DependentUpon>UserPole_Razdel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserJson\UserJson_Text.xaml.cs">
+      <DependentUpon>UserJson_Text.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_Text.xaml.cs">
+      <DependentUpon>UserPole_Text.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPole\VirtualPole.cs" />
+    <Compile Include="UserControls\UserPole\UserPole_Number.xaml.cs">
+      <DependentUpon>UserPole_Number.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UserPoleOtchet\UserPoleOtchet_Text.cs" />
+    <Compile Include="UserControls\UserPoleOtchet\UserPoleOtchet_Razdel.cs" />
+    <Compile Include="UserControls\UserPoleOtchet\UserPoleOtchet_Grid.cs" />
+    <Compile Include="UserControls\UserPoleOtchet\UserPoleOtchet_Label.cs" />
+    <Compile Include="UserControls\UserPole\UserPole_ListProtokol.xaml.cs">
+      <DependentUpon>UserPole_ListProtokol.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\User_Button.xaml.cs">
+      <DependentUpon>User_Button.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserFormShablon\UseFormShablon_PDF.cs" />
+    <Compile Include="UserFormShablon\UseFormShablon_Voice.cs" />
+    <Compile Include="UserLua\UserWindow_Lua.xaml.cs">
+      <DependentUpon>UserWindow_Lua.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserLua\UserLua.cs" />
+    <Compile Include="UserModul\VirtualModul.cs" />
+    <Compile Include="UserNodes\UserNodes_AddPdf.cs" />
+    <Compile Include="UserNodes\UserNodes_RootPdf.cs" />
+    <Compile Include="UserNodes\UserNodes_RootObDocum.cs" />
+    <Compile Include="UserNodes\VirtualNodes.cs" />
+    <Compile Include="UserNodes\UserNodes_Add.cs" />
+    <Compile Include="UserNodes\UserNodes_Inform.cs" />
+    <Compile Include="UserNodes\VirtualNodes_RootsList.cs" />
+    <Compile Include="UserOtchet\UserOtcher_InformKancerRegistr.cs" />
+    <Compile Include="UserOtchet\UserOtcher_InformPasport.cs" />
+    <Compile Include="UserOtchet\UserOtchet_AddDocum.cs" />
+    <Compile Include="UserOtchet\UserOtchet_History.cs" />
+    <Compile Include="UserOtchet\UserOtchet_Staff.cs" />
+    <Compile Include="UserOtchet\UserOtchet_Phone.cs" />
+    <Compile Include="UserOtchet\VirtualOtchet_Edit.cs" />
+    <Compile Include="UserOtchet\VirtualOtchet_History.cs" />
+    <Compile Include="UserOtchet\VirtualOtchet_Inform.cs" />
+    <Compile Include="UserOtchet\VirtualOtchet.cs" />
+    <Compile Include="UserOtchet\UserOtchet_Roots.cs" />
+    <Compile Include="UserControls\UserPoleOtchet\VirtualPoleOtchet.cs" />
+    <Compile Include="UserOtchet\UserOtchet_Shablon.cs" />
+    <Compile Include="UserPrint\UserPrint.cs" />
+    <Compile Include="UserFormShablon\UserFormShablon_Standart.cs" />
+    <Compile Include="UserStruct\UserLog.cs" />
+    <Compile Include="UserStruct\UserListShablon.cs" />
+    <Compile Include="UserStruct\UserElemet.cs" />
+    <Compile Include="UserStruct\UserKbolInfo.cs" />
+    <Compile Include="UserStruct\UserProtokol.cs" />
+    <Compile Include="UserStruct\UserShablon.cs" />
+    <Compile Include="UserStruct\UserDocument.cs" />
+    <Compile Include="UserVariable\UserVariable.cs" />
+    <Compile Include="UserFormShablon\VirtualFormShablon.cs" />
+    <Compile Include="UserTab\VirtualTab.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_EditProtokol.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_s_List.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_StrahVrachMIAC.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_EditShablon.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_FindPac.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Log.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_LecMNN.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Laboratory.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_OtherLpu.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_StrahTarif.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\VirtualWindow_Shablon.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Kbol.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_APSTAC.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\VirtualUserWindow.xaml.cs">
+      <DependentUpon>VirtualUserWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Department.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Shablon_Kdl.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_KbolLPU.cs" />
+    <Compile Include="UserWindows\UserWindow_Test.xaml.cs">
+      <DependentUpon>UserWindow_Test.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserWindows\UserWindow_DocumLog.xaml.cs">
+      <DependentUpon>UserWindow_DocumLog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_List.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Diag.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_MorfTip.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Oper.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_VrachStac.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_VrachPol.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Image.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_ParObsledov.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_PolApac.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Zay_NaznachMedLSLS.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_KancerReg.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Shablon_Stac.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Shablon_Paracl.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_Shablon_Policl.cs" />
+    <Compile Include="UserWindows\UserWindow_CardAdmin.xaml.cs">
+      <DependentUpon>UserWindow_CardAdmin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_ParTalon.cs" />
+    <Compile Include="UserWindows\UserWindows_Sprav\UserWindow_MetodVMP.cs" />
+    <Compile Include="UserPage\UserPage_ShablonPDF.xaml.cs">
+      <DependentUpon>UserPage_ShablonPDF.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\wpfResource\wpfResource.csproj">
+      <Project>{60bf897e-adf7-4a77-9131-d94a59efe904}</Project>
+      <Name>wpfResource</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\wpfStatic\wpfStatic.csproj">
+      <Project>{B8C7F81F-225C-467F-A025-AE557877E940}</Project>
+      <Name>wpfStatic</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UserControls\UserJson\UserJson_Menu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_CheckBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Calendar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_ComboBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Data.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Sprav.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Grid.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_History.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Image.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Label.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_MultyList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_RadioButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Razdel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserJson\UserJson_Text.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Text.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_Number.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_ListProtokol.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\User_Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserLua\UserWindow_Lua.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserWindows\UserWindows_Sprav\VirtualUserWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserWindows\UserWindow_Test.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserWindows\UserWindow_DocumLog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserWindows\UserWindow_CardAdmin.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserPage\UserPage_ShablonPDF.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Licenses.licx" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

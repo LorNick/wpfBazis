@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{60BF897E-ADF7-4A77-9131-D94A59EFE904}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>wpfResource</RootNamespace>
+    <AssemblyName>wpfResource</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\wpfResource.XML</DocumentationFile>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Windows.Controls, Version=2018.1.220.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2018.1.220.40, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Interfays.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Resource Include="btImag\btAdd.png" />
+    <Page Include="ImageList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btImag\btCheck.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btImag\btDelete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btImag\btEdit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btImag\btUndo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btImag\Emblema.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btImag\ImageBazis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsClose.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsCopy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsDelete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsDisting.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsEdit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsNew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsPrint.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsPrintPreview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsRedo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsRu.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsSave.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsUndo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="btsImag\btsUs.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnAnest.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_10.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_11.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_12.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_2.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_4.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_5.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_6.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_7.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_8.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDoc_9.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDocuments.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnExtact.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnGoHome.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnHimTer.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnHistory.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnKdl_green.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnMicroscope.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnNaznach.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnNaznachMed.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnObhod.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnObSved.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnOneOsmotr.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnOper.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnParacl.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPasp.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPerev.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPin_blue.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPin_green.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPin_grey.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPin_red.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPin_yellow.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPosPolikl.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPredOperEpikriz.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPriemnOtd.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnReg.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSelectPac.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnStac.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnMen.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnChild.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPhysiology.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnGreenDown.ico" />
+    <Resource Include="mnImag\mnGreenUp.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnRakReg.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDevil.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPhone.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnObDocum.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnMonitor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSubscr.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnDelete.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnKarta.ico" />
+    <Resource Include="mnImag\mnLog.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnAngel.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnKons.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnCito.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnFileC.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnFileH.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSmoAlfa.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSmoAll.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSmoInogor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSmoKapital.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnSmoSogaz.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnFileT.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnNumber1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnNumber2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnNumber10.png" />
+    <Resource Include="mnImag\mnNumber11.png" />
+    <Resource Include="mnImag\mnNumber12.png" />
+    <Resource Include="mnImag\mnNumber3.png" />
+    <Resource Include="mnImag\mnNumber4.png" />
+    <Resource Include="mnImag\mnNumber5.png" />
+    <Resource Include="mnImag\mnNumber6.png" />
+    <Resource Include="mnImag\mnNumber7.png" />
+    <Resource Include="mnImag\mnNumber8.png" />
+    <Resource Include="mnImag\mnNumber9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPdf.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnPdfMain.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnStacDnev.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnBaby.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnVirus.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnVirusTo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnReestr123.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnReestr124.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mnImag\mnVirus.png" />
+    <Resource Include="mnImag\mnVirusTo.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

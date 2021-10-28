@@ -90,7 +90,7 @@ namespace wpfGeneral.UserLua
             PRI_Env.lNew = new Func<bool>(lNew);
             // Текущее поле
             PRI_Env["Pole"] = PUB_Pole;
-            // Сравниваем текстовые 2 даты (НЕ РАБОТАЕТ)
+            // Сравниваем текстовые 2 даты
             PRI_Env.lDateIf = new Func<string, string, int>(lDateIf);
             // Время госпитализации
             PRI_Env.lTimeGosp = new Func<string>(lTimeGosp);
@@ -277,7 +277,6 @@ namespace wpfGeneral.UserLua
 
         /// <summary>Lua Функция. Сравниваем текстовые 2 даты (в Разработке)</summary>
         /// <returns>Возвращаем -1 если первая дата меньше второй, 0 если даты равны, 1 если первая дата больше 2й, 99 если это не даты</returns>
-        /// <remarks>Не работает</remarks>
         private int lDateIf(string pDate1, string pDate2)
         {
             int _Rezult;

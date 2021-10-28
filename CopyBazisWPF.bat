@@ -30,7 +30,6 @@ copy %CD%\wpfReestr\bin\Release\wpfReestr.exe.config D:\Bazis.kod\Exe
 copy %CD%\wpfReestr\bin\Release\ExcelNumberFormat.dll D:\Bazis.kod\Exe 
 copy %CD%\wpfReestr\bin\Release\FastMember.dll D:\Bazis.kod\Exe 
 copy %CD%\Bazis.WPF\bin\Release\WebSocket4Net.dll D:\Bazis.kod\Exe 
-
 copy %CD%\Bazis.WPF\bin\Release\SuperSocket.ClientEngine.dll D:\Bazis.kod\Exe 
 
 

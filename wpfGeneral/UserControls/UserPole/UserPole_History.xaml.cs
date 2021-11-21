@@ -156,7 +156,7 @@ namespace wpfGeneral.UserControls
             set
             {
                 // Для протоколов проверяем, прошло ли удаление/восстановление удачно
-                if (PROP_DocumHistory.PROP_Protokol != null &&
+                if (PROP_DocumHistory?.PROP_Protokol != null &&
                         (value && PROP_DocumHistory.PROP_Protokol.PROP_xDelete == 0 ||   // удаляем, а протокол так и не удалился   
                         !value && PROP_DocumHistory.PROP_Protokol.PROP_xDelete == 1))    // восстонавливаем, а протокол так и остался удаленным
                     return;

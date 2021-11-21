@@ -158,7 +158,7 @@ namespace wpfGeneral.UserTab
         private void PART_Close_Click(object sender, RoutedEventArgs e)
         {
             // Вызываем делегат закрытия вкладки
-            MyGlo.callbackEvent_sClose((sender as Button).Tag as TabItem);
+            MyGlo.Event_CloseTabItem((sender as Button).Tag as TabItem);
         }
     }
 }

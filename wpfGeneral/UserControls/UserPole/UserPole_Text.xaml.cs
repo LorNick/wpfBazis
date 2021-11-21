@@ -176,7 +176,7 @@ namespace wpfGeneral.UserControls
                 // Помечаем, что текст поменялся
                 PROP_BoolChangeText = true;
                 // Активируем кнопку "Сохранить"
-                MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                MyGlo.Event_SaveShablon?.Invoke(true);
             }
             // Вызываем TextChanged для новых форм (если есть, такое событие)
             TextChanged?.Invoke(this, e);

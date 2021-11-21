@@ -247,6 +247,7 @@
     <Compile Include="UserOtchet\UserOtcher_InformPasport.cs" />
     <Compile Include="UserOtchet\UserOtchet_AddDocum.cs" />
     <Compile Include="UserOtchet\UserOtchet_History.cs" />
+    <Compile Include="UserOtchet\UserOtchet_RootsPdf.cs" />
     <Compile Include="UserOtchet\UserOtchet_Staff.cs" />
     <Compile Include="UserOtchet\UserOtchet_Phone.cs" />
     <Compile Include="UserOtchet\VirtualOtchet_Edit.cs" />

@@ -147,7 +147,7 @@ namespace wpfGeneral.UserControls
             // Дата операции
             PRI_Date = PROP_FormShablon.PUB_VirtualNodes.PROP_Data;
             // Если старый протокол
-            if (!PROP_FormShablon.PROP_Now)
+            if (!PROP_FormShablon.PROP_NewProtokol)
             {
                 // Если старый протокол, то находим заполенные операции
                 MySql.MET_DsAdapterFill(MyQuery.Oper_Select_2(PROP_FormShablon.PROP_Cod), "Oper");
@@ -198,7 +198,7 @@ namespace wpfGeneral.UserControls
         private void PART_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             // Активируем кнопку "Сохранить"
-            MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+            MyGlo.Event_SaveShablon?.Invoke(true);
             // Перекрашиваем шрифт в черный, если был серый
             if (Equals(PROP_ForegroundText, Brushes.Gray))
                 PROP_ForegroundText = Brushes.Black;

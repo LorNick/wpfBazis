@@ -63,7 +63,7 @@ namespace wpfGeneral.UserStruct
             catch (Exception ex)
             {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Конвертация данных ListShablon из DataReader");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
             }
         }
 
@@ -94,7 +94,7 @@ namespace wpfGeneral.UserStruct
                 catch (Exception ex)
                 {
                     MyGlo.PUB_Logger.Fatal(ex, "Ошибка Загрузки данных ListShablon из SQL");
-                    MyGlo.callbackEvent_sError(ex);
+                    MyGlo.Event_Error(ex);
                     _Value = null;
                 }
             }
@@ -128,7 +128,7 @@ namespace wpfGeneral.UserStruct
             catch (Exception ex)
             {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Массовой Загрузки данных ListShablon из SQL");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 return false;
             }
         }

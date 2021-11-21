@@ -144,7 +144,7 @@ namespace wpfGeneral.UserOtchet
                         // Ставим значек консилиум
                         if (MET_PoleStr("ImageInform") == "консилиум")
                             _Pole.MET_LoadIconInform("mnKons", "Наличие консилиума");
-                        _Pole.callbackOpenNew = MET_OpenPolicl;
+                        _Pole.Event_OpenNewPoleHistory = MET_OpenPolicl;
                         break;
                     case eTipDocum.Stac:
                         _Icon = MET_PoleStr("ImageInform");
@@ -163,7 +163,7 @@ namespace wpfGeneral.UserOtchet
                             _Pole.PROP_Metca = "(без протоколов)";
                             _Pole.IsEnabled = false;
                         }
-                        _Pole.callbackOpenNew = MET_OpenStac;
+                        _Pole.Event_OpenNewPoleHistory = MET_OpenStac;
                         break;
                     case eTipDocum.Paracl:
                         _Icon = "mnParacl";
@@ -176,7 +176,7 @@ namespace wpfGeneral.UserOtchet
                         _Pole.PROP_DocumHistory = new UserDocument(_Pole.PROP_Type);
                         _Pole.PROP_DocumHistory.PROP_Protokol = UserProtokol.MET_FactoryProtokol(_Pole.PROP_Type, (int)_Pole.PROP_Cod);
                         _Pole.MET_Inicial();
-                        _Pole.callbackOpenNew = MET_Protokol;
+                        _Pole.Event_OpenNewPoleHistory = MET_Protokol;
                         // Костыль для физиологов
                         if (_Pole.PROP_NumerShablon > 300 & _Pole.PROP_NumerShablon < 400)
                         {
@@ -301,13 +301,13 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_DocumHistory.PROP_Protokol = UserProtokol.MET_FactoryProtokol(pPole.PROP_Type, (int)_Pole.PROP_Cod);
                 _Pole.MET_Inicial();
                 // Делегат при открытии документа
-                _Pole.callbackOpenNew = MET_Protokol;                           // Новый протокол
+                _Pole.Event_OpenNewPoleHistory = MET_Protokol;                           // Новый протокол
                 // Если запрет для просмотра
                 if (PUB_Ban && MET_PoleInt("Dostup") == 0)
                 {
                     _Pole.PROP_Description = "(Доступ Закрыт)   ";
                     _Pole.PROP_Background = Brushes.GhostWhite;
-                    _Pole.callbackOpenNew = null;
+                    _Pole.Event_OpenNewPoleHistory = null;
                 }
                 _Pole.PROP_IsDelete = MET_PoleInt("xDelete") == 1;
                 pPole.MET_AddEle(_Pole);
@@ -320,7 +320,7 @@ namespace wpfGeneral.UserOtchet
                 }
             }
             // Отключаем делегат
-            pPole.callbackOpenNew = null;
+            pPole.Event_OpenNewPoleHistory = null;
         }
 
         /// <summary>МЕТОД Заполняем экспандер при первом открытии Стационара</summary>
@@ -353,14 +353,14 @@ namespace wpfGeneral.UserOtchet
                 _Pole.PROP_Vrach = _Pole.PROP_DocumHistory.PROP_Protokol.PROP_UserName;
                 _Pole.MET_Inicial();
                 // Делегат при открытии документа
-                _Pole.callbackOpenNew = MET_Protokol;
+                _Pole.Event_OpenNewPoleHistory = MET_Protokol;
                 // Если запрет для просмотра
                 if (PUB_Ban && MET_PoleInt("Dostup") == 0)
                 {
                     _Pole.PROP_Description = "(Доступ Закрыт)   ";
                     _Pole.PROP_Background = Brushes.GhostWhite;
                     _Pole.IsEnabled = false;
-                    _Pole.callbackOpenNew = null;
+                    _Pole.Event_OpenNewPoleHistory = null;
                 }
                 _Pole.PROP_IsDelete = MET_PoleInt("xDelete") == 1;
                 pPole.MET_AddEle(_Pole);
@@ -373,7 +373,7 @@ namespace wpfGeneral.UserOtchet
                 }
             }
             // Отключаем делегат
-            pPole.callbackOpenNew = null;
+            pPole.Event_OpenNewPoleHistory = null;
         }
 
         /// <summary>МЕТОД Создаем поле истории результата исседования КДЛ</summary>
@@ -408,7 +408,7 @@ namespace wpfGeneral.UserOtchet
             _Pole.PROP_Vrach = _Pole.PROP_DocumHistory.PROP_Protokol.PROP_UserName;
             _Pole.MET_Inicial();
             // Делегат при открытии документа
-            _Pole.callbackOpenNew = MET_Protokol;
+            _Pole.Event_OpenNewPoleHistory = MET_Protokol;
             return _Pole;
         }
 
@@ -454,7 +454,7 @@ namespace wpfGeneral.UserOtchet
             // Добавляем отчет к документу
             _FlowDocument.Blocks.Add(pPole.PROP_DocumHistory.PROP_Otchet.MET_Inizial());
             // Отключаем делегат
-            pPole.callbackOpenNew = null;
+            pPole.Event_OpenNewPoleHistory = null;
         }
     }
 }

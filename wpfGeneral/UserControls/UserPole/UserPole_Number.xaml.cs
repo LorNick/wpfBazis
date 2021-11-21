@@ -169,7 +169,7 @@ namespace wpfGeneral.UserControls
                 // Помечаем, что текст поменялся
                 PROP_BoolChangeText = true;
                 // Активируем кнопку "Сохранить"
-                MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                MyGlo.Event_SaveShablon?.Invoke(true);
             }
             // Перекрашиваем шрифт в черный, если был серый
             if (Equals(PROP_ForegroundText, Brushes.Gray))

@@ -61,7 +61,7 @@ namespace wpfGeneral.UserOtchet
             var _Protokols = _mHistories.OrderBy(x => Convert.ToDateTime(x.PROP_Dp)); //.ThenBy(x => x.PROP_NumerShablon);
             // Чистим очередь
             PRO_PoleHistory.Clear();
-            // Выводим протокол на экра и запоминаем его в очередь
+            // Выводим протокол на экран и запоминаем его в очередь
             foreach (var _Protokol in _Protokols)
             {
                 PRO_PoleHistory.Enqueue(_Protokol);
@@ -102,16 +102,22 @@ namespace wpfGeneral.UserOtchet
                     _Pole.PROP_Nodes = _Node;
                     _Pole.MET_Inicial();
                     // Делегат при открытии документа
-                    _Pole.callbackOpenNew = MET_OpenOtch;
+                    _Pole.Event_OpenNewPoleHistory = MET_OpenOtch;
                     // Добавляем поле в очередь
                     PRO_PoleHistory.Enqueue(_Pole);
+                    // Настраиваем дополнительные параметры для подветки
+                    MET_PropertyPoleAdd(_Pole);
+                    _Node.PROP_Docum.PROP_UserPole_History = _Pole;
                 }
             }
         }
 
+        /// <summary>МЕТОД Настраиваем дополнительные параметры для подветки</summary>
+        protected virtual void MET_PropertyPoleAdd(UserPole_History pPole) { }
+
         /// <summary>МЕТОД Заполняем экспандер при первом открытии Отчетов</summary>
         /// <param name="pPole">Наше поле</param>
-        public void MET_OpenOtch(UserPole_History pPole)
+        public virtual void MET_OpenOtch(UserPole_History pPole)
         {
             // Документ
             FlowDocument _FlowDocument = new FlowDocument();
@@ -140,7 +146,7 @@ namespace wpfGeneral.UserOtchet
                 _TextRange.Load(_Stream, DataFormats.Xaml);
             }
             // Отключаем делегат
-            pPole.callbackOpenNew = null;
+            pPole.Event_OpenNewPoleHistory = null;
         }
 
         ///<summary>МЕТОД Создаем объект для печати</summary>

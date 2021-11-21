@@ -447,12 +447,27 @@ namespace wpfStatic
              return _Query;
         }
 
-        /// <summary>Удаляем/Востанавливаем протоколы Protokol по 7м параметрам</summary>
+        /// <summary>Удаляем/Востанавливаем протоколы Protokol по 6м параметрам</summary>
         public static string MET_Protokol_Update_2(int pCod, int pxDelete, DateTime xDateUp, int xUserUp, string pPrefix, string pxLog)
         {
             string _Query = $@"
                 update dbo.{pPrefix}Protokol
                     set xDelete = {pxDelete}
+                       ,xDateUp = '{xDateUp:MM.dd.yyyy}'
+                       ,xUserUp = {xUserUp}
+                       ,xLog = '{pxLog}'
+                where Cod = {pCod}";
+
+            return _Query;
+        }
+
+        /// <summary>Удаляем/Востанавливаем протоколы Protokol по 7м параметрам</summary>
+        public static string MET_Protokol_Update_3(int pCod, string Protokol, int pxDelete, DateTime xDateUp, int xUserUp, string pPrefix, string pxLog)
+        {
+            string _Query = $@"
+                update dbo.{pPrefix}Protokol
+                    set Protokol = '{Protokol}'
+                       ,xDelete = {pxDelete}
                        ,xDateUp = '{xDateUp:MM.dd.yyyy}'
                        ,xUserUp = {xUserUp}
                        ,xLog = '{pxLog}'
@@ -1102,10 +1117,10 @@ namespace wpfStatic
 
         /// <summary>Выборка списка по 3м параметрам</summary>
         /// <param name="TabName">Имя таблицы List</param>
-        ///  <param name="ID">Код шаблона</param>
-        ///  <param name="VarId">VarId вопроса</param>
-        ///  <param name="pSortList">Сортировка
-        ///         true - сортируе по порядку расположению в таблице List по полю Cod,
+        /// <param name="ID">Код шаблона</param>
+        /// <param name="VarId">VarId вопроса</param>
+        /// <param name="pSortList">Сортировка
+        ///         true - сортируем по порядку расположению в таблице List по полю Cod,
         ///         false - сортируем по алфавиту по полю Value (по умолчанию)</param>
         public static string MET_List_Select_4(string TabName, int ID, int VarId, bool pSortList = false)
         {
@@ -1115,6 +1130,31 @@ namespace wpfStatic
                 from dbo.{TabName}
                 where ID = {ID} and Nomer = {VarId}
                 order by {_SortList}";
+            return _Query;
+        }
+
+        /// <summary>Варианты ответа Нового справочника s_List</summary>
+        /// <param name="ID">Имя индификатора списка</param>
+        /// <param name="isDate">Дата действия ответа (как правило сегодняшняя)</param>
+        /// <param name="isNumber">Отображать (true) или не отображать (false - по умолчанию)</param>
+        /// <param name="sortPole">Имя поля по которому будет сортироваться список по умолчанию</param>
+        public static string MET_s_List_Select_5(string ID, DateTime isDate, bool isNumber = false, string sortPole = "Number")
+        {
+            int _isNumber = isNumber ? 1 : 0;
+            string _Query = $@"
+                declare @ID as nvarchar(30) = '{ID}'
+                declare @isNumber as int = {_isNumber}; -- 0 - скрывать отрицательные значения Number, 1 - показывать все Number
+                declare @isDate as date = '{isDate:MM.dd.yyyy}'  -- действуют на момент
+                select Cod     
+                      ,Number
+                      ,Value
+                      ,ValueCod
+                from dbo.s_List
+                where ID = @ID
+                    and (@isNumber = 0 and Number > 0 or @isNumber = 1)
+                    and @isDate between DateBeg and DateEnd
+                    and xDelete = 0
+                order by {sortPole}";
             return _Query;
         }
 

@@ -17,7 +17,7 @@
         <StackPanel Grid.Column="1">
             <TextBlock Name="PART_Bazis" Text="wpfBazis" FontSize="40" Margin="0,15,0,0"/>
             <TextBlock Name="PART_Ver" Text="Версия:" Margin="0,5,0,0" Foreground="Blue"/>
-            <TextBlock Text="БУЗОО КОД 2009 - 2021:" Margin="0,3,0,5" />
+            <TextBlock Text="БУЗОО КОД 2009 - 2022:" Margin="0,3,0,5" />
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130" />
@@ -25,23 +25,23 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Text="автор:" FontSize="12" Height="18"/>
-                    <TextBlock Text="работа с шаблонами:" FontSize="12" TextWrapping="Wrap" Height="82"/>
-                    <TextBlock Text="базы данных: " FontSize="12" Height="18" />
+                    <TextBlock Text="редактор: " FontSize="12" Height="18" />
+                    <TextBlock Text="работа с шаблонами:" FontSize="12" TextWrapping="Wrap" Height="82"/>                   
                     <TextBlock FontSize="12" Height="36" ><Run Text="шеф:"/></TextBlock>
                     <TextBlock Text="техподдержка:" FontSize="12" Height="36" />
                     <TextBlock Text="техподдержка (филиал):" FontSize="12" Height="18" />
                 </StackPanel>
                 <StackPanel Grid.Column="1">
-                    <TextBlock Text="Кривко Николай (3-41)" FontSize="12" Height="18" MouseDown="TextBlock_MouseDown"/>
+                    <TextBlock Text="Кривко Николай" FontSize="12" Foreground="Silver" Height="18" MouseDown="TextBlock_MouseDown"/>
+                    <TextBlock Text="Хуколенко Алексей (3-41)" FontSize="12" Height="18"/>
                     <TextBlock Text="Кремнева Марина (3-40) (IP 210-023)" Height="18" MouseDown="TextBlock_MouseDown_1"/>
                     <TextBlock Text="Колмогорова Наталья" Foreground="Silver" Height="16"/>
                     <TextBlock Text="Авдеева Елена" FontSize="12" Foreground="Silver" Height="16"/>
                     <TextBlock Text="Ищенко Ира" FontSize="12" Foreground="Silver" Height="16"/>
-                    <TextBlock Text="Рагулин Михаил" FontSize="12" Foreground="Silver" Height="16"/>
-                    <TextBlock Text="Хуколенко Алексей" FontSize="12" Height="18"/>
+                    <TextBlock Text="Рагулин Михаил" FontSize="12" Foreground="Silver" Height="16"/>                    
                     <TextBlock Text="Черкашин Антон (3-28) (IP 210-098)" FontSize="12" Height="18"/>
                     <TextBlock Text="Тихомиров Виктор" FontSize="12" Height="18" Foreground="Silver"/>
-                    <TextBlock Text="Волков Сергей (3-25)" FontSize="12" Height="18"/>
+                    <TextBlock Text="главный корпус (3-25)" FontSize="12" Height="18"/>
                     <TextBlock Text="Вакар Александр" FontSize="12" Height="18" Foreground="Silver"/>
                     <TextBlock Text="Панфилов Виктор (1-23) (IP 205-044)" FontSize="12"  Height="18"/>
                 </StackPanel>

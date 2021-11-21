@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using wpfGeneral.UserModul;
@@ -56,20 +57,17 @@ namespace wpfGeneral.UserStruct
         /// <summary>СВОЙСТВО Имя пользователя создавшего/изменившего протокол</summary>
         public string PROP_UserName { get; set; }
 
-        /// <summary>Тип делегата Удаление протокола</summary>
-        public delegate void callbackEvent();
-
         /// <summary>Переменная делегата Удаление протокола</summary>
-        public callbackEvent OnDelete;
+        public Action Event_OnDelete;
 
         /// <summary>Переменная делегата Отмена Удаления протокола</summary>
-        public callbackEvent OnRestore;
+        public Action Event_OnRestore;
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserProtokol()
         {
-            OnDelete = new callbackEvent(MET_Delete);
-            OnRestore = new callbackEvent(MET_Restore);
+            Event_OnDelete = new Action(MET_Delete);
+            Event_OnRestore = new Action(MET_Restore);
         }
 
         ///<summary>МЕТОД Конвертация данных Protokol из DataReader</summary>
@@ -95,7 +93,7 @@ namespace wpfGeneral.UserStruct
             catch (Exception ex)
             {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Конвертация данных Protokol из DataReader");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
             }
         }
 
@@ -117,6 +115,13 @@ namespace wpfGeneral.UserStruct
         /// <summary>МЕТОД Удаляем протокол</summary>
         public void MET_Delete()
         {
+            // Удаление для PDF
+            if (PROP_TipProtokol.PROP_TipDocum == eTipDocum.Kdl && PROP_NumShablon == 2000)
+            {
+                MET_DeletePdf();
+                return;
+            }
+
             if (PROP_xDelete == 0)
             {
                 PROP_xDelete = 1;
@@ -129,9 +134,39 @@ namespace wpfGeneral.UserStruct
             }
         }
 
-        /// <summary>МЕТОД Отмена Удаления протокола</summary>
+        /// <summary>МЕТОД Удаляем PDF протокол</summary>
+        public void MET_DeletePdf()
+        {
+            if (PROP_xDelete == 0)
+            {
+                string _fileName = MET_GetPole(2);
+                string _fileNameDel = Regex.Replace(_fileName, @"\.pdf", $@"_{PROP_Cod}Del.pdf");
+                PROP_Protokol = Regex.Replace(PROP_Protokol, _fileName, _fileNameDel);
+                // Переименовываем Pdf файл на сервере, если неудача выходим
+                if (!MyPdf.MET_DeleteProtokol(_fileName, _fileNameDel))
+                    return;
+                // Меняем протокол с новым именем
+                PROP_Protokol = Regex.Replace(PROP_Protokol, _fileName, _fileNameDel);
+                PROP_xDelete = 1;
+                // Обновим логи
+                MET_ChangeLogs(MyGlo.User, "Удалён");
+                string _StrSql = MyQuery.MET_Protokol_Update_3(PROP_Cod, PROP_Protokol, PROP_xDelete, PROP_xDateUp, PROP_xUserUp,
+                        PROP_TipProtokol.PROP_Prefix, PROP_xLog);
+                // Обновим протокол в SQL
+                MySql.MET_QueryNo(_StrSql);
+            }
+        }
+
+        /// <summary>МЕТОД Отмена удаление протокола</summary>
         public void MET_Restore()
         {
+            // Восстановление для PDF
+            if (PROP_TipProtokol.PROP_TipDocum == eTipDocum.Kdl && PROP_NumShablon == 2000)
+            {
+                MET_RestorePdf();
+                return;
+            }
+
             if (PROP_xDelete == 1)
             {
                 PROP_xDelete = 0;
@@ -140,6 +175,32 @@ namespace wpfGeneral.UserStruct
                 // Обновим логи
                 MET_ChangeLogs(MyGlo.User, "Изменён");
                 string _StrSql = MyQuery.MET_Protokol_Update_2(PROP_Cod, PROP_xDelete, PROP_xDateUp, PROP_xUserUp,
+                        PROP_TipProtokol.PROP_Prefix, PROP_xLog);
+                // Обновим протокол в SQL
+                MySql.MET_QueryNo(_StrSql);
+            }
+        }
+
+        /// <summary>МЕТОД Отмена удаление PDF протокол</summary>
+        public void MET_RestorePdf()
+        {
+            if (PROP_xDelete == 1)
+            {
+                string _fileNameDel = MET_GetPole(2);
+                string _fileNameRes = Regex.Replace(_fileNameDel, $@"_{PROP_Cod}Del.pdf", @".pdf");
+                // Проверяем на наличие на сервере восстанавливаемого файла
+                if (!MyPdf.MET_isNotExistPdfFileOnServer(_fileNameRes, eServerOrLocal.Server))
+                    return;                
+                PROP_Protokol = Regex.Replace(PROP_Protokol, _fileNameDel, _fileNameRes);
+                // Переименовываем Pdf файл на сервере, если неудача выходим
+                if (!MyPdf.MET_DeleteProtokol(_fileNameDel, _fileNameRes))
+                    return;
+                // Меняем протокол с новым именем
+                PROP_Protokol = Regex.Replace(PROP_Protokol, _fileNameDel, _fileNameRes);
+                PROP_xDelete = 0;
+                // Обновим логи
+                MET_ChangeLogs(MyGlo.User, "Изменён");
+                string _StrSql = MyQuery.MET_Protokol_Update_3(PROP_Cod, PROP_Protokol, PROP_xDelete, PROP_xDateUp, PROP_xUserUp,
                         PROP_TipProtokol.PROP_Prefix, PROP_xLog);
                 // Обновим протокол в SQL
                 MySql.MET_QueryNo(_StrSql);
@@ -274,7 +335,7 @@ namespace wpfGeneral.UserStruct
                 catch (Exception ex)
                 {
                     MyGlo.PUB_Logger.Fatal(ex, "Ошибка Загрузки данных Protokol из SQL");
-                    MyGlo.callbackEvent_sError(ex);
+                    MyGlo.Event_Error(ex);
                     _Value = null;
                 }
             }
@@ -308,7 +369,7 @@ namespace wpfGeneral.UserStruct
                 catch (Exception ex)
                 {
                     MyGlo.PUB_Logger.Fatal(ex, "Ошибка Загрузки данных Protokol из SQL");
-                    MyGlo.callbackEvent_sError(ex);
+                    MyGlo.Event_Error(ex);
                     _Value = null;
                 }
             }
@@ -345,7 +406,7 @@ namespace wpfGeneral.UserStruct
             catch (Exception ex)
             {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Массовой Загрузки данных Protokol из SQL");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 return false;
             }
         }
@@ -360,6 +421,22 @@ namespace wpfGeneral.UserStruct
             ((VirtualModul)MyGlo.Modul).PUB_ListShablons.Clear();
             // Чистим Shablon
             ((VirtualModul)MyGlo.Modul).PUB_Shablon.Clear();
+        }
+
+        /// <summary>МЕТОД Выборка ответа из строки протокола по VarId</summary>
+        /// <param name="pVarId">Номер индификатора VarId</param>
+        public string MET_GetPole(int pVarId)
+        {
+            int _N = PROP_Protokol.IndexOf("\\" + pVarId + "#");                // номер первого символа ответа
+            if (_N >= 0)                                                        // есть ответ на вопрос
+            {
+                int _K = PROP_Protokol.IndexOf("\\", _N + 2);                   // находим номер последнего символа ответа
+                if (_K == -1) _K = PROP_Protokol.Length;                        // если последний вопрос, то номер последнего символа равен длинне ответов
+                _N += pVarId.ToString().Length + 2;                             // увеличиваем номер первого символа на количество служебных символов (\45#)
+                _K = _K - _N;                                                   // высчитываем длинну ответа
+                return PROP_Protokol.Substring(_N, _K);
+            }
+            return "";                                                          // если ответа нету
         }
     }
 }

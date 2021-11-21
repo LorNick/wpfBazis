@@ -143,6 +143,9 @@ namespace wpfGeneral.UserNodes
         /// <summary>СВОЙСТВО (шаблона) Кнопка очистить шаблон</summary>
         public virtual Visibility PROP_shaButtonClearSha { get; set; }
 
+        /// <summary>СВОЙСТВО (шаблона) Кнопки печати и быстрой печати шаблон</summary>
+        public virtual Visibility PROP_shaButtonPrintSha { get; set; }
+
         /// <summary>СВОЙСТВО (шаблона) Индекс протокола</summary>
         public virtual int PROP_shaIndex { get; set; }
 
@@ -173,6 +176,7 @@ namespace wpfGeneral.UserNodes
             PROP_shaButtonEdit = false;
             PROP_shaButtonSvaveSha = Visibility.Visible;
             PROP_shaButtonClearSha = Visibility.Visible;
+            PROP_shaButtonPrintSha = Visibility.Visible;
             PROP_prnPadding = 1;
             // Рисуем ветку
             Header = new UserTabNod(PROP_ImageSource, PROP_Text, PROP_TextDown);
@@ -191,8 +195,8 @@ namespace wpfGeneral.UserNodes
             // Регистрируем события на удаление и восстановление протоколов
             if (PROP_Docum != null && PROP_Docum.PROP_Protokol != null)
             {
-                PROP_Docum.PROP_Protokol.OnDelete += delegate { MET_Delete(true); };
-                PROP_Docum.PROP_Protokol.OnRestore += delegate { MET_Delete(false); };
+                PROP_Docum.PROP_Protokol.Event_OnDelete += delegate { MET_DeleteVsRestore(true); };
+                PROP_Docum.PROP_Protokol.Event_OnRestore += delegate { MET_DeleteVsRestore(false); };
             }
         }
 
@@ -208,12 +212,12 @@ namespace wpfGeneral.UserNodes
 
         /// <summary>МЕТОД Отображение шаблона</summary>
         /// <param name="pGrid">Сюда добавляем шабллон</param>
-        /// <param name="pNewShablon">ture - Новый шаблон, false - Старый шаблон</param>
+        /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>
         /// <param name="pNomerShablon">Номер шаблона</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
-        public virtual bool MET_ShowShablon(Grid pGrid, bool pNewShablon, int pNomerShablon = 0, string pText = "")
+        public virtual bool MET_ShowShablon(Grid pGrid, bool pNewProtokol, int pNomerShablon = 0, string pText = "")
         {
-            if (pNewShablon)
+            if (pNewProtokol)
             {
                 // Создаем шаблон
                 PROP_Docum.PROP_FormShablon = new UserFormShablon_Standart(PROP_Docum);
@@ -238,9 +242,23 @@ namespace wpfGeneral.UserNodes
             return true;
         }
 
-        /// <summary>МЕТОД Признак удаления ветки (зачеркивание текста)</summary>
+        /// <summary>МЕТОД Удаляем/восстанавливаем ветку</summary>
+        /// <param name="pDelete">true - удаляем, false - восстонавливаем</param>
+        public virtual void MET_DeleteVsRestore(bool pDelete)
+        {
+            // Для протоколов проверяем, прошло ли удаление/восстановление удачно
+            // по идее можно вообще просто проверять xDelete у протокола, но вдруго потом будут документы не связанные с протоколом
+            if (PROP_Docum.PROP_Protokol != null &&
+                    (pDelete && PROP_Docum.PROP_Protokol.PROP_xDelete == 0 ||   // удаляем, а протокол так и не удалился   
+                    !pDelete && PROP_Docum.PROP_Protokol.PROP_xDelete == 1))    // восстонавливаем, а протокол так и остался удаленным
+                return;
+            PROP_Docum.PROP_Otchet.PROP_NewCreate = true;  // отчет необходимо переформировать
+            MET_Remote(pDelete);
+        }
+
+        /// <summary>МЕТОД Удаленная ветки (зачеркивание текста)</summary>
         /// <param name="pDelete">true - удалено, false - не удалено</param>
-        public void MET_Delete(bool pDelete)
+        public virtual void MET_Remote(bool pDelete)
         {
             PROP_Delete = pDelete;
             // Если протокол удаленый, то помечаем его

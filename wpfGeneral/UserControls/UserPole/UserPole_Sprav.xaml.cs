@@ -195,7 +195,7 @@ namespace wpfGeneral.UserControls
                 if (this.PROP_FormShablon?.PROP_Created ?? false)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }
@@ -252,7 +252,7 @@ namespace wpfGeneral.UserControls
                 if (this.PROP_FormShablon?.PROP_Created ?? false)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }
@@ -286,7 +286,7 @@ namespace wpfGeneral.UserControls
                 if (this.PROP_FormShablon?.PROP_Created ?? false)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }
@@ -335,7 +335,7 @@ namespace wpfGeneral.UserControls
                 if (this.PROP_FormShablon?.PROP_Created ?? false)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }
@@ -370,7 +370,7 @@ namespace wpfGeneral.UserControls
                 if ((bool) this.PROP_FormShablon?.PROP_Created)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }
@@ -402,7 +402,7 @@ namespace wpfGeneral.UserControls
                 if (this.PROP_FormShablon?.PROP_Created ?? false)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }
@@ -434,7 +434,7 @@ namespace wpfGeneral.UserControls
                 if (this.PROP_FormShablon?.PROP_Created ?? false)
                 {
                     // Активируем кнопку "Сохранить"
-                    MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+                    MyGlo.Event_SaveShablon?.Invoke(true);
                     // Запускаем Lua фунцкию, на изменение записи
                     this.PROP_Lua?.MET_OnChange();
                 }

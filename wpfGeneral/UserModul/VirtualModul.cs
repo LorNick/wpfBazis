@@ -137,11 +137,11 @@ namespace wpfGeneral.UserModul
                         PROP_Text = "PDF документы",
                         PROP_TextDefault = "PDF документы",
                         PROP_ImageName = "mnPdfMain",
-                        PROP_ParentName = "eleTVItem_ObDocum"
+                        PROP_ParentName = "eleTVItemObSved"
                     };
                     ((UserNodes_RootPdf)_Node).PROP_shaTipObsled = 2;
                     _Node.PROP_Docum = new UserDocument(_Node);
-                    _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
+                    _Node.PROP_Docum.PROP_Otchet = new UserOtchet_RootsPdf { PROP_Docum = _Node.PROP_Docum };
                     _Node.MET_Inizial();
                 }
 

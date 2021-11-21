@@ -77,7 +77,7 @@ namespace wpfGeneral.UserStruct
             catch (Exception ex)
             {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Загрузки данных KbolInfo из SQL");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 _Value = false;
             }
             return _Value;

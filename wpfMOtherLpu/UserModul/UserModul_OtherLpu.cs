@@ -193,7 +193,7 @@ namespace wpfMOtherLpu
                 if (_WinSpr.PROP_Return)
                 {
                     // Запуск программы MET_Window_Loaded()
-                    MyGlo.callbackEvent_sReloadWindows?.Invoke(true);
+                    MyGlo.Event_ReloadWindows?.Invoke(true);
                 }
             }
         }

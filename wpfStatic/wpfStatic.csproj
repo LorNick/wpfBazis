@@ -55,6 +55,15 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Telerik.Windows.Controls">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.FixedDocumentViewers">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.FixedDocumentViewers.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2018\Binaries\WPF40\Telerik.Windows.Controls.Input.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +83,7 @@
     <Compile Include="MyMet\MyTransliter.cs" />
     <Compile Include="MyMet\MyTipProtokol.cs" />
     <Compile Include="MyMet\MyMet.cs" />
+    <Compile Include="MyMet\MyPdf.cs" />
     <Compile Include="MyQuery.cs" />
     <Compile Include="MySql.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -26,7 +26,6 @@ namespace wpfStatic
         Stac_RootsList,
         /// <summary>Добавочная ветка Стационара</summary>
         Stac_Add,
-
         /// <summary>Списки Параклиники</summary>
         Para_RootsList,
         /// <summary>Добавочная ветка Параклиники</summary>
@@ -175,28 +174,19 @@ namespace wpfStatic
     /// <summary>КЛАСС для Глобальных переменных</summary>
     public static class MyGlo
     {
-
         #region ---- Public ----
-        /// <summary>Тип делегата</summary>
-        public delegate void callbackEvent_Error(Exception pException);
         /// <summary>Переменная делегата (вызывает окно ошибки)</summary>
-        public static callbackEvent_Error callbackEvent_sError;
-
-        /// <summary>Тип делегата</summary>
-        public delegate void callbackEvent(bool pEnable);
-        /// <summary>Переменная делегата (нужно ли сохранять шаблон)</summary>
-        public static callbackEvent callbackEvent_sEditShablon;
-
+        public static Action<Exception> Event_Error;
+        /// <summary>Переменная делегата (сохранть шаблон)</summary>
+        public static Action<bool> Event_SaveShablon;
         /// <summary>Переменная делегата (обновляем окно, с новыми данными)</summary>
-        public static callbackEvent callbackEvent_sReloadWindows;
-
-        /// <summary>Тип делегата</summary>
-        public delegate void callbackEvents(TabItem pTabItem);
+        public static Action<bool> Event_ReloadWindows;
         /// <summary>Переменная делегата (закрытие вкладки)</summary>
-        public static callbackEvents callbackEvent_sClose;
-
+        public static Action<TabItem> Event_CloseTabItem;
         /// <summary>Переменная делегата (вызывает для записи сообщения в Log окно формы UserWindow_Lua)</summary>
-        public static Action<string> callbackEvent_sLuaLog;
+        public static Action<string> Event_sLuaLog;
+        /// <summary>Переменная делегата (открыли ветку PDF файла)</summary>
+        public static Action<TreeViewItem> Event_OpenPdfNode;
 
         /// <summary>Контекстное меню</summary>
         public static ContextMenu ContextMenu;
@@ -276,10 +266,10 @@ namespace wpfStatic
 #if DEBUG
             User = 60; // 5006;
             // Server = 2;
-            TypeModul = eModul.VrPolicl;
+           // TypeModul = eModul.VrPolicl;
             //      TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
-            //    TypeModul = eModul.Viewer;
+                TypeModul = eModul.Viewer;
             //   TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
             //  TypeModul = eModul.OtherLpu;

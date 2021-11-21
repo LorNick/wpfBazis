@@ -199,7 +199,7 @@ namespace wpfGeneral.UserControls
             // Добавляем код рисунка в строку текста
             PROP_Text += _NewImage.Tag.ToString();
             // Активируем кнопку "Сохранить"
-            MyGlo.callbackEvent_sEditShablon(true);
+            MyGlo.Event_SaveShablon(true);
         }
 
         /// <summary>СОБЫТИЕ Удаляем все рисунки</summary>
@@ -213,7 +213,7 @@ namespace wpfGeneral.UserControls
             // Отчищаем строку ответа
             PROP_Text = "";
             // Активируем кнопку "Сохранить"
-            MyGlo.callbackEvent_sEditShablon(true);
+            MyGlo.Event_SaveShablon(true);
         }
     }
 }

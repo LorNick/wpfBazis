@@ -72,7 +72,7 @@
                             <RowDefinition Height="30"></RowDefinition>
                             <RowDefinition Height="*"></RowDefinition>
                         </Grid.RowDefinitions>
-                        <ToolBar Grid.Row="0" Grid.ColumnSpan="2">
+                        <ToolBar Grid.Row="0" Grid.ColumnSpan="2" Height="30">
                             <Button Name="PART_Button_Edit" Focusable="False" Click="PART_Button_Edit_Click">
                                 <StackPanel Orientation="Horizontal" >
                                     <Image Source="{StaticResource btsEdit}" ></Image>
@@ -128,7 +128,7 @@
                 </TabItem>
                 <TabItem Header="Шаблоны" Name="PART_TabForm" Visibility="Collapsed" Padding="3" LostKeyboardFocus="PART_TabForm_LostKeyboardFocus" >
                     <Grid Name="PART_GridShablon"  FocusManager.IsFocusScope="True">
-                        <ToolBar Name="PART_ToolBarShablon">
+                        <ToolBar Name="PART_ToolBarShablon" Height="30">
                             <Button Name="PART_Button_SaveSha"  Focusable="False" Click="PART_Button_SaveSha_Click">
                                 <StackPanel Orientation="Horizontal" >
                                     <Image Source="{StaticResource btsSave}"></Image>
@@ -200,8 +200,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition/>
-                        </Grid.RowDefinitions>
-                        <my2:UserPole_ComboBox Name="PART_PdfComboBox" PROP_Description="Наименование документа:"/>
+                        </Grid.RowDefinitions>                        
                         <telerik:RadPdfViewerToolBar  RadPdfViewer="{Binding ElementName=pdfViewer, Mode=OneTime}"
                                                       SignaturePanel="{Binding ElementName=signaturePanel, Mode=OneTime}" Grid.Row="1"
                                                       HasOpenButton="False" HasSignatureButton="False"/>

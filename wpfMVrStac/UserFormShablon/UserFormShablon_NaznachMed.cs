@@ -14,13 +14,13 @@ namespace wpfMVrStac
 
         /// <summary>МЕТОД Инициализация Шаблона</summary>
         /// <param name="pNodes">Ветка</param>
-        /// <param name="pNew">ture - Новый шаблон, false - Старый шаблон</param>
+        /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>
         /// <param name="pShablon">Номер шаблона, по умолчанию 0</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
-        public override VirtualFormShablon MET_Inizial(VirtualNodes pNodes, bool pNew, int pShablon = 0,
+        public override VirtualFormShablon MET_Inizial(VirtualNodes pNodes, bool pNewProtokol, int pShablon = 0,
             string pText = "")
         {
-            base.MET_Inizial(pNodes, pNew, pShablon, pText);
+            base.MET_Inizial(pNodes, pNewProtokol, pShablon, pText);
             MET_CreateForm();
             return this;
         }

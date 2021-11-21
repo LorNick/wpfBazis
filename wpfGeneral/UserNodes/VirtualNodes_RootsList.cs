@@ -80,7 +80,7 @@ namespace wpfGeneral.UserNodes
                 _Node.PROP_shaNomerShablon = _pro.PROP_NumShablon;                  // номер шаблона
                 _Node.PROP_shaIndex = _pro.PROP_pIndex;                             // индекс
                 _Node.PROP_ImageName = _Node.PROP_Docum.PROP_ListShablon.PROP_Icon; // иконка
-                _Node.PROP_Text = _Node.PROP_Docum.PROP_ListShablon.PROP_NameKr;    // описание ветки
+                _Node.PROP_Text = MET_CreateTextNode(_Node.PROP_Docum);             // описание ветки
                 _Node.PROP_TextDefault = _Node.PROP_Text;
                 _Node.PROP_shaIND = _pro.PROP_CodApstac;
                 _Node.PROP_Data = _pro.PROP_pDate;                                  // дата ветки
@@ -88,9 +88,9 @@ namespace wpfGeneral.UserNodes
                 _Node.PROP_TextDown = _pro.PROP_pDate.ToString().Substring(0, 10) + " " + _pro.PROP_UserName;    // нижний текст ветки
                 _Node.MET_Inizial();
                 // Если протокол удаленый, то помечаем его
-                _Node.MET_Delete(_pro.PROP_xDelete == 1);
+                _Node.MET_Remote(_pro.PROP_xDelete == 1);
                 _Node.PROP_shaPresenceProtokol = true;
-                // Настраиваем дополнительные параметры для новой подветки
+                // Настраиваем дополнительные параметры для подветки
                 MET_PropertyNodeAdd(_Node);
             }
         }
@@ -110,7 +110,7 @@ namespace wpfGeneral.UserNodes
             _Node.Name = Name + "_Child" + _Node.PROP_shaIndex;                     // имя
             _Node.PROP_shaNomerShablon = _Node.PROP_Docum.PROP_Protokol.PROP_NumShablon;  // номер шаблона
             _Node.PROP_ImageName = _Node.PROP_Docum.PROP_ListShablon.PROP_Icon;     // иконка
-            _Node.PROP_Text = _Node.PROP_Docum.PROP_ListShablon.PROP_NameKr;        // описание ветки
+            _Node.PROP_Text = MET_CreateTextNode(_Node.PROP_Docum);                 // описание ветки
             _Node.PROP_TextDefault = _Node.PROP_Text;
             _Node.PROP_shaIND = _Node.PROP_Docum.PROP_Protokol.PROP_CodApstac;
             _Node.PROP_Data = _Node.PROP_Docum.PROP_Protokol.PROP_pDate;            // дата ветки
@@ -125,12 +125,19 @@ namespace wpfGeneral.UserNodes
             PROP_Docum = new UserDocument { PROP_Nodes = this };
             PROP_Docum.PROP_Otchet = _Otchet;
             PROP_shaNomerShablon = 0;
-            // Настраиваем дополнительные параметры для новой подветки
+            // Настраиваем дополнительные параметры для подветки
             MET_PropertyNodeAdd(_Node);
             return _Node;
         }
 
-        /// <summary>МЕТОД Настраиваем дополнительные параметры для НОВОЙ подветки</summary>
+        /// <summary>МЕТОД Создание Текста подветки (описание ветки)</summary>
+        /// <remarks>По умолчанию берется из ListShablon.PROP_NameKr</remarks>
+        protected virtual string MET_CreateTextNode(UserDocument userDocument)
+        {
+            return userDocument.PROP_ListShablon.PROP_NameKr;
+        }
+
+        /// <summary>МЕТОД Настраиваем дополнительные параметры для подветки</summary>
         protected virtual void MET_PropertyNodeAdd(VirtualNodes pNodes) { }
 
         ///<summary>МЕТОД Отчет подветки</summary>

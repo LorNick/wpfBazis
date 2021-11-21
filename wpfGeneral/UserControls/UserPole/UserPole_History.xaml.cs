@@ -15,12 +15,9 @@ namespace wpfGeneral.UserControls
 {
     /// <summary>КЛАСС для поля Истории болезни (History)</summary>
     public partial class UserPole_History : UserControl
-    {
-        /// <summary>Тип делегата</summary>
-        public delegate void callbackEvent(UserPole_History pMyPole);
-
+    {        
         /// <summary>Переменная делегата (открытие вкладки в первый раз)</summary>
-        public callbackEvent callbackOpenNew;
+        public Action<UserPole_History> Event_OpenNewPoleHistory;
 
         /// <summary>Очередь элементов истории (если есть подэлементы)</summary>
         public readonly Queue PROP_PoleHistory = new Queue();
@@ -158,6 +155,12 @@ namespace wpfGeneral.UserControls
             get { return PRI_IsDelete; }
             set
             {
+                // Для протоколов проверяем, прошло ли удаление/восстановление удачно
+                if (PROP_DocumHistory.PROP_Protokol != null &&
+                        (value && PROP_DocumHistory.PROP_Protokol.PROP_xDelete == 0 ||   // удаляем, а протокол так и не удалился   
+                        !value && PROP_DocumHistory.PROP_Protokol.PROP_xDelete == 1))    // восстонавливаем, а протокол так и остался удаленным
+                    return;
+
                 PRI_IsDelete = value;
 
                 if (PRI_IsDelete)
@@ -190,7 +193,7 @@ namespace wpfGeneral.UserControls
             }
         }
 
-        /// <summary>СВОЙСТВО xLog (пока только для поликлиники и стационара)</summary>
+        /// <summary>СВОЙСТВО xLog</summary>
         public string PROP_xLog { get; set; }
         #endregion
 
@@ -215,8 +218,8 @@ namespace wpfGeneral.UserControls
         {
             if (PROP_DocumHistory?.PROP_Protokol != null)
             {
-                PROP_DocumHistory.PROP_Protokol.OnDelete += delegate { PROP_IsDelete = true; };
-                PROP_DocumHistory.PROP_Protokol.OnRestore += delegate { PROP_IsDelete = false; };
+                PROP_DocumHistory.PROP_Protokol.Event_OnDelete += delegate { PROP_IsDelete = true; };
+                PROP_DocumHistory.PROP_Protokol.Event_OnRestore += delegate { PROP_IsDelete = false; };
             }
         }
 
@@ -322,7 +325,7 @@ namespace wpfGeneral.UserControls
         /// <summary>СОБЫТИЕ Открытие Expander</summary>
         private void PART_Expander_Expanded(object sender, RoutedEventArgs e)
         {
-            callbackOpenNew?.Invoke(this);
+            Event_OpenNewPoleHistory?.Invoke(this);
         }
 
         #region ---- СОБЫТИЯ Контекстного меню----
@@ -400,7 +403,7 @@ namespace wpfGeneral.UserControls
             if (MessageBox.Show("Вы точно хотите удалить этот протокол?", "Удалить", MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
             {
-                PROP_DocumHistory.PROP_Protokol.OnDelete?.Invoke();
+                PROP_DocumHistory.PROP_Protokol.Event_OnDelete?.Invoke();
             }
         }
 
@@ -410,7 +413,7 @@ namespace wpfGeneral.UserControls
             if (MessageBox.Show("Вы точно хотите восстановить этот протокол?", "Восстановить", MessageBoxButton.YesNo) ==
                 MessageBoxResult.Yes)
             {
-                PROP_DocumHistory.PROP_Protokol.OnRestore?.Invoke();
+                PROP_DocumHistory.PROP_Protokol.Event_OnRestore?.Invoke();
             }
         }
         #endregion

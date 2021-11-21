@@ -87,7 +87,7 @@ namespace wpfGeneral.UserLua
             PART_RadListBox.SelectedValue = PRI_Shablon;
 
             // Делегаты для функции lLog
-            MyGlo.callbackEvent_sLuaLog = MET_LogAdd;
+            MyGlo.Event_sLuaLog = MET_LogAdd;
         }
 
         /// <summary>СОБЫТИЕ После загрузки окна</summary>

@@ -34,13 +34,13 @@ namespace wpfMVrStac
 
         /// <summary>МЕТОД Отображение формы</summary>
         /// <param name="pGrid">Сюда добавляем шабллон</param>
-        /// <param name="pNew">ture - Новый шаблон, false - Старый шаблон</param>
+        /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>
         /// <param name="pShablon">Номер шаблона</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
-        public override bool MET_ShowShablon(Grid pGrid, bool pNew, int pShablon = 0, string pText = "")
+        public override bool MET_ShowShablon(Grid pGrid, bool pNewProtokol, int pShablon = 0, string pText = "")
         {
             PROP_Docum.PROP_FormShablon = new UserFormShablon_NaznachMed(PROP_Docum);
-            PROP_Docum.PROP_FormShablon.MET_Inizial(this, pNew, pShablon, pText);
+            PROP_Docum.PROP_FormShablon.MET_Inizial(this, pNewProtokol, pShablon, pText);
             PROP_Docum.PROP_FormShablon.Margin = new Thickness(0, 30, 0, 0);
             if (pGrid.Children.Count > 1)
                 pGrid.Children.RemoveAt(1);

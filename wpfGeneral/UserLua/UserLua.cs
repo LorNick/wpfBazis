@@ -115,7 +115,7 @@ namespace wpfGeneral.UserLua
         private void lLog(string pText)
         {
             // Если открыто окно UserWindows_Lua, то выводим в логи код VarId вопроса и заданный текст
-            MyGlo.callbackEvent_sLuaLog?.Invoke($"VarId{PUB_Pole.PROP_VarId}: {pText}");
+            MyGlo.Event_sLuaLog?.Invoke($"VarId{PUB_Pole.PROP_VarId}: {pText}");
         } // func lLog
 
         /// <summary>Lua Функция. Добавление/изменение таблицы kbolInfo</summary>
@@ -349,7 +349,7 @@ namespace wpfGeneral.UserLua
         /// <summary>Lua Функция. Новый протокол (True), старый протокол (False)</summary>
         private bool lNew()
         {
-            return PUB_Pole.PROP_FormShablon.PROP_Now;
+            return PUB_Pole.PROP_FormShablon.PROP_NewProtokol;
         } // func lNew
 
         /// <summary>Lua Функция. Выдает значение полей из APSTAC (ast), APAC (apa), Kbol (kbol - по умолчанию), Последний диагноз из поликлиники/стационара(LastDiag)</summary>

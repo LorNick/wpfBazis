@@ -61,7 +61,7 @@ namespace wpfGeneral.UserControls
         {
             CheckBox _CheckBox = (CheckBox)sender;
             // Активируем кнопку "Сохранить"
-            MyGlo.callbackEvent_sEditShablon?.Invoke(true);
+            MyGlo.Event_SaveShablon?.Invoke(true);
             RoutedPropertyChangedEventArgs<bool> _Args = new RoutedPropertyChangedEventArgs<bool>(false, true);
             _Args.RoutedEvent = CheckedEvent;
             _CheckBox.RaiseEvent(_Args);

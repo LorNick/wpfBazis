@@ -54,7 +54,7 @@ namespace wpfReestr
         /// <summary>СОБЫТИЕ Открытие окна </summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MyGlo.callbackEvent_sError = MET_Delg_Error;                        // переменная делегата (показываем окно с ошибкой соединения)
+            MyGlo.Event_Error = MET_Delg_Error;                        // переменная делегата (показываем окно с ошибкой соединения)
             // Считываем начальные параметры командной строки
             MyGlo.MET_ComStr();
             // Проверка на пользователя (848 - без пользователя)

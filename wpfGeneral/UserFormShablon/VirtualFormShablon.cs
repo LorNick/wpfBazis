@@ -61,8 +61,8 @@ namespace wpfGeneral.UserFormShablon
 
 
         #region ---- Свойства ----
-        /// <summary>СВОЙСТВО Новый или старый шаблон</summary>
-        public bool PROP_Now { get; set; }
+        /// <summary>СВОЙСТВО Новый или старый протокол</summary>
+        public bool PROP_NewProtokol { get; set; }
 
         /// <summary>СВОЙСТВО Процесс оздания шаблона (true - создан, false - в процессе создания)</summary>
         public bool PROP_Created { get; set; }
@@ -80,7 +80,7 @@ namespace wpfGeneral.UserFormShablon
             {
                 PRO_EditShablon = value;
                 // Отображаем, либо скрываем кнопку "Сохранить"
-                MyGlo.callbackEvent_sEditShablon(PRO_EditShablon);
+                MyGlo.Event_SaveShablon(PRO_EditShablon);
             }
         }
 
@@ -97,8 +97,7 @@ namespace wpfGeneral.UserFormShablon
         /// <summary>СВОЙСТВО Тип протокола</summary>
         public MyTipProtokol PROP_TipProtokol { get; set; }
         #endregion
-
-
+        
         /// <summary>КОНСТРУКТОР (пустой)</summary>
         protected VirtualFormShablon() { }
 
@@ -112,14 +111,14 @@ namespace wpfGeneral.UserFormShablon
 
         /// <summary>МЕТОД Инициализация Шаблона</summary>
         /// <param name="pNodes">Ветка</param>
-        /// <param name="pNew">ture - Новый шаблон, false - Старый шаблон</param>
+        /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>
         /// <param name="pShablon">Номер шаблона, по умолчанию 0</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
-        public virtual VirtualFormShablon MET_Inizial(VirtualNodes pNodes, bool pNew, int pShablon = 0, string pText = "")
+        public virtual VirtualFormShablon MET_Inizial(VirtualNodes pNodes, bool pNewProtokol, int pShablon = 0, string pText = "")
         {
             PUB_VirtualNodes = pNodes;                                          // ветка
             PUB_VirtualNodes.Background = Brushes.LightGreen;                   // показываем, что данную ветку редактируем
-            PROP_Now = pNew;                                                    // новый или старый шаблон
+            PROP_NewProtokol = pNewProtokol;                                     // новый или старый протокол
             PROP_EditShablon = false;                                           // вначале сохранять нечего
             PRO_NomerShablon = pShablon != 0 ? pShablon : PUB_VirtualNodes.PROP_shaNomerShablon;
             PUB_Text = pText != "" ? pText : PUB_VirtualNodes.PROP_Text;

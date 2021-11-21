@@ -1,97 +1,76 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections;
-using System.IO;
-using System.Net;
-using System.Security.Cryptography;
-using System.Windows;
+﻿using System;
+using System.Data;
+using wpfGeneral.UserControls;
+using wpfGeneral.UserFormShablon;
 using wpfGeneral.UserNodes;
+using wpfStatic;
 
 namespace wpfGeneral.UserPage
 {
-    /// <summary>КЛАСС Страница Листа назначений</summary>
+    /// <summary>КЛАСС Страница PDF документа</summary>
+    /// <remarks>В принципе лишняя страница, можно было в ручную собрать в шаблоне UseFormShablon_PDF 
+    /// или даже реализовать через стандартный генератор шаблона UserFormShablon_Standart,
+    /// добавив PdfViewer в UserCorntorl
+    /// </remarks>
     public sealed partial class UserPage_ShablonPDF
-    {
-        /// <summary>Список полей</summary>
-        public SortedList PUB_HashPole;
-        /// <summary>Ветка</summary>
-        public VirtualNodes PUB_Node;
-
-        /// <summary>Веб клиент</summary>
-        private WebClient PRI_WebClient;
+    {        
+        /// <summary>Шаблон</summary>
+        private VirtualFormShablon PRI_FormShablon;
+        /// <summary>Полное Имя PDF файла</summary>
+        private string PRI_FullFileName;
+        /// <summary>Новый протокол</summary>
+        private bool PRI_NewProtokol;
 
         /// <summary>КОНСТРУКТОР</summary>
         public UserPage_ShablonPDF()
         {
             InitializeComponent();
-            MET_SavePdfFileOnServer();
         }
 
-        /// <summary>СОБЫТИЕ После загрузки окна</summary>
-        private void UserPage_Loaded(object sender, RoutedEventArgs e)
+        /// <summary>МЕТОД Инициализация Страницы шаблона</summary>
+        /// <param name="pNodes">Ветка</param>
+        /// <param name="pFormShablon">Редактор шаблона</param>
+        /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>       
+        public void MET_Inizial(VirtualNodes pNodes, VirtualFormShablon pFormShablon, bool pNewProtokol)
         {
+            PRI_FormShablon = pFormShablon;
+            PRI_NewProtokol = pNewProtokol;
+           
+            PRI_FullFileName = pNewProtokol ? (pNodes as UserNodes_RootPdf).PROP_FullFileName :(pNodes as UserNodes_AddPdf).PROP_FullFileName;
+            // Если файл новый загружаем с локального диска, иначе с сервера
+            MyPdf.MET_LoadPdfFile(PRI_FullFileName, PART_PdfViewer, pNewProtokol ? eServerOrLocal.Local : eServerOrLocal.Server);
+
+            // Формируем свиток выбора типа документа
+            MySql.MET_DsAdapterFill(MyQuery.MET_s_List_Select_5("PDF-kdlList", DateTime.Today), "s_List");
+            PART_PdfComboBox.ItemsSource = new DataView(MyGlo.DataSet.Tables["s_List"]);
+            PART_PdfComboBox.DisplayMemberPath = "Value";
+            PART_PdfComboBox.SelectedValuePath = "Value";
+            if (!pNewProtokol)
+            {
+                PART_PdfComboBox.Text = ((VirtualPole)PRI_FormShablon.PUB_HashPole["elePoleShabl_1"]).PROP_Text;
+            }
+
+            // PDF файл
+            if (pNewProtokol)
+                ((VirtualPole)PRI_FormShablon.PUB_HashPole["elePoleShabl_2"]).PROP_Text = MyPdf.MET_FileNameHash(PRI_FullFileName);
         }
 
-        /// <summary>МЕТОД Сохраняем PDF файл на сервер</summary>
-        private bool MET_SavePdfFileOnServer()
-        {
-            OpenFileDialog _OpenFileDialog = new OpenFileDialog();
-            _OpenFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
-            _OpenFileDialog.ShowDialog();
-            if (string.IsNullOrWhiteSpace(_OpenFileDialog.FileName))
-                return false;
-            // Алгоритм нахождения MD5
-            // Просто отображает Хэш на экране
-            FileStream stream = File.OpenRead(_OpenFileDialog.FileName);
-            MD5 _MD5 = new MD5CryptoServiceProvider();
-            byte[] _Hashenc = _MD5.ComputeHash(stream);
-            string _Result = "";
-            foreach (var _b in _Hashenc)
-            {
-                _Result += _b.ToString("x2");
-            }
-            PRI_WebClient = new WebClient();
-            // Завершение загрузки
-            PRI_WebClient.UploadFileCompleted += new UploadFileCompletedEventHandler(MET_Completed);
-            // Прогресс загрузки
-            PRI_WebClient.UploadProgressChanged += new UploadProgressChangedEventHandler(MET_ProgressChanged);
-            // URI сервера и api
-            var uri = new Uri("http://192.168.0.6:81/api/Storage/UploadFile");
-            try
-            {
-                // Заголовок с токеном для аутентификации в функции загрузки
-                PRI_WebClient.Headers.Add("auth-key", "wpfBazisDownloadAndUploadFileWebApi20201014");
-                // Асинхронная загрузка файла
-                PRI_WebClient.UploadFileAsync(uri, _OpenFileDialog.FileName);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+        /// <summary>МЕТОД Сохраняем данные</summary>
+        public bool MET_Save()
+        {            
+            // Сохраняем Pdf файл на сервер (только у нового протокола)
+            if (PRI_NewProtokol)
+                return MyPdf.MET_SavePdfFileOnServer(PRI_FullFileName);
             return true;
         }
 
-        /// <summary>МЕТОД Завершение сохранения PDF файла на сервер</summary>
-        private void MET_Completed(object sender, UploadFileCompletedEventArgs e)
+        /// <summary>СОБЫТИЕ Изменили наименование документа</summary>
+        private void PART_PdfComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (e?.Error is WebException)
-            {
-                var _Response = (HttpWebResponse)((WebException)e.Error).Response;
-                switch (_Response.StatusCode)
-                {
-                    case HttpStatusCode.Conflict:
-                        MessageBox.Show($"Данный файл уже был загружен!", "Ошибка 409");
-                        break;
-                }
-                return;
-            }
-            MessageBox.Show("Файл Загружен!");
-        }
-
-        /// <summary>МЕТОД Прогесс сохранения PDF файла на сервер</summary>
-        private void MET_ProgressChanged(object sender, UploadProgressChangedEventArgs e)
-        {
-            //  this.progressBar.Value = e.ProgressPercentage;
+            if (PART_PdfComboBox.SelectedValue == null) return;
+            ((VirtualPole)PRI_FormShablon.PUB_HashPole["elePoleShabl_1"]).PROP_Text = PART_PdfComboBox.SelectedValue.ToString();
+            // Активируем кнопку "Сохранить"
+            MyGlo.Event_SaveShablon?.Invoke(true);
         }
     }
 }

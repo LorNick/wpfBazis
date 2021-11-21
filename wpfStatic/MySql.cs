@@ -78,7 +78,7 @@ namespace wpfStatic
                     goto label1;
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Загрузки данных в DataSet из SQL");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             catch                                                               // остальные проблемы
@@ -122,7 +122,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (без возврата значения)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -162,7 +162,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего целое число)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -204,7 +204,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего реальное число)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -247,7 +247,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего bool)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -288,7 +288,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего строку)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             return _Value;
@@ -327,7 +327,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего дату)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -375,7 +375,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего Hashtable)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -405,14 +405,14 @@ namespace wpfStatic
                         goto label1;
                     ex.Data["SQL"] = pStrSQL;
                     MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего DataReader)");
-                    MyGlo.callbackEvent_sError(ex);
+                    MyGlo.Event_Error(ex);
                     goto label1;
                 }
                 catch (Exception ex)
                 {
                     ex.Data["SQL"] = pStrSQL;
                     MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего DataReader)");
-                    MyGlo.callbackEvent_sError(ex);
+                    MyGlo.Event_Error(ex);
                     goto label1;
                 }
             }
@@ -420,7 +420,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (возвращающего DataReader)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
         }
@@ -445,7 +445,7 @@ namespace wpfStatic
             catch (Exception ex)
             {
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка массовой вставки SqlBulkCopy");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 _Result = false;
             }
             return _Result;
@@ -485,7 +485,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (для работы с изображениями)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             sqlConct.Close();                                               // закрываем подключение
@@ -531,7 +531,7 @@ namespace wpfStatic
             {
                 ex.Data["SQL"] = pStrSQL;
                 MyGlo.PUB_Logger.Fatal(ex, "Ошибка Запроса SQL (формирование XML файла)");
-                MyGlo.callbackEvent_sError(ex);
+                MyGlo.Event_Error(ex);
                 goto label1;
             }
             // Добавляем ветку рут

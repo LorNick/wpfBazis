@@ -31,12 +31,12 @@ namespace wpfGeneral.UserFormShablon
 
         /// <summary>МЕТОД Инициализация Шаблона</summary>
         /// <param name="pNodes">Ветка</param>
-        /// <param name="pNew">ture - Новый шаблон, false - Старый шаблон</param>
+        /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>
         /// <param name="pShablon">Номер шаблона, по умолчанию 0</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>
-        public override VirtualFormShablon MET_Inizial(VirtualNodes pNodes, bool pNew, int pShablon = 0, string pText = "")
+        public override VirtualFormShablon MET_Inizial(VirtualNodes pNodes, bool pNewProtokol, int pShablon = 0, string pText = "")
         {
-            base.MET_Inizial(pNodes, pNew, pShablon, pText);
+            base.MET_Inizial(pNodes, pNewProtokol, pShablon, pText);
             PROP_TipProtokol = new MyTipProtokol(PUB_VirtualNodes.PROP_shaTipProtokol.PROP_TipDocum);
             MET_CreateForm();
             // Если шаблон содержит тег Voice, то начинаем работу со звуком
@@ -57,7 +57,7 @@ namespace wpfGeneral.UserFormShablon
                 PUB_HashPole = new SortedList();                                // список полей
                 Background = Brushes.GhostWhite;
                 // Если открываем заполненый протокол
-                if (!PROP_Now)
+                if (!PROP_NewProtokol)
                 {
                     PRO_StrProtokol = PROP_Docum.PROP_Protokol.PROP_Protokol;
                     PROP_Cod = PROP_Docum.PROP_Protokol.PROP_Cod;
@@ -82,8 +82,8 @@ namespace wpfGeneral.UserFormShablon
                 VirtualPole _Date = MET_CreateUserPole(3);
                 _Date.PROP_Necessarily = true;
                 _Date.PROP_Description = PROP_Format.MET_If("pDateT") ? PROP_Format.PROP_Value["pDateT"].ToString() : "Дата";
-                // Если старый шаблон
-                if (!PROP_Now)
+                // Если старый протокол
+                if (!PROP_NewProtokol)
                     _Date.PROP_Text = PROP_Docum.PROP_Protokol.PROP_pDate.ToString();
                 else
                 {
@@ -151,8 +151,8 @@ namespace wpfGeneral.UserFormShablon
                     else
                         // Значения из протокола (либо eStadNodes.Old, либо eStadNodes.NewPerw)
                         _Pole.PROP_Text = MyMet.MET_GetPole(_Pole.PROP_VarId, PRO_StrProtokol);
-                    // Если новый шаблон, то текст серый (значение по умолчанию)
-                    if (PROP_Now)
+                    // Если новый протокол, то текст серый (значение по умолчанию)
+                    if (PROP_NewProtokol)
                         _Pole.PROP_ForegroundText = Brushes.Gray;
                     _Pole.Name = "elePoleShabl_" + _Pole.PROP_VarId; // имя поля
 

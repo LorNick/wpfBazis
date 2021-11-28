@@ -63,7 +63,7 @@ namespace wpfGeneral.UserStruct
                 bool _Value = false;
                 if (PROP_Protokol != null)
                 {
-                    if (MyGlo.Admin || MyGlo.FlagEdit)
+                    if (MyGlo.PROP_Admin || MyGlo.FlagEdit)
                     {
                         _Value = true;
                     }

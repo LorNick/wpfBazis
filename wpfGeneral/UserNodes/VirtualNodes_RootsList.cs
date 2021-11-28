@@ -59,8 +59,7 @@ namespace wpfGeneral.UserNodes
         {
             // Заполняем свойства базового класса
             base.MET_Inizial();
-
-            // По умолчанию, в данной ветки можно создавать новые протоколы
+                        
             PROP_shaButtonNew = true;
             // По умолчанию ветка пустая
             PROP_shaCountNodesChild = 0;

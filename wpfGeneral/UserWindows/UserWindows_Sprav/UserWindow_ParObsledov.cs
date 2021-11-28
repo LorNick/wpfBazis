@@ -26,7 +26,7 @@ namespace wpfGeneral.UserWindows
             Title = "Выбор ранее обследованного пациента:";
             // Подсказка в строке поиска
             PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И)";
-            if (MyGlo.Admin) // Пояснение только для админов
+            if (MyGlo.PROP_Admin) // Пояснение только для админов
             {
                 // Подсказка в строке поиска
                 PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И) или Код обследования или KL";

@@ -22,7 +22,7 @@ copy %CD%\Bazis.WPF\bin\Release\Telerik.Windows.Controls.Navigation.dll D:\Bazis
 copy %CD%\Bazis.WPF\bin\Release\Telerik.Windows.Data.dll D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\Telerik.Windows.Documents.Core.dll D:\Bazis.kod\Exe
 copy %CD%\Bazis.WPF\bin\Release\Telerik.Windows.Documents.Fixed.dll D:\Bazis.kod\Exe
-copy %CD%\Bazis.WPF\bin\Release\Telerik.Windows.Zip D:\Bazis.kod\Exe
+copy %CD%\Bazis.WPF\bin\Release\Telerik.Windows.Zip.dll D:\Bazis.kod\Exe
 copy %CD%\wpfReestr\bin\Release\ClosedXML.dll D:\Bazis.kod\Exe
 copy %CD%\wpfReestr\bin\Release\DocumentFormat.OpenXml.dll D:\Bazis.kod\Exe
 copy %CD%\wpfReestr\bin\Release\wpfReestr.exe D:\Bazis.kod\Exe

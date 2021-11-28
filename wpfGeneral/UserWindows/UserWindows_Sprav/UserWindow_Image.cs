@@ -112,7 +112,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static new bool MET_Access()
         {
-            if (!MyGlo.Admin)
+            if (!MyGlo.PROP_Admin)
             {
                 MessageBox.Show("У вас нет доступа.");
                 return false;

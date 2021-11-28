@@ -258,7 +258,7 @@ namespace wpfGeneral.UserOtchet
                 MET_Print();
             }
             // Служебная информация (только для администраторов)
-            if (MyGlo.Admin)
+            if (MyGlo.PROP_Admin)
             {
                 xEnter = 1;
                 MET_Print();

@@ -174,6 +174,18 @@ namespace wpfStatic
     /// <summary>КЛАСС для Глобальных переменных</summary>
     public static class MyGlo
     {
+        private static bool PRI_Admin;
+        /// <summary>Администратор (берется из реестра)</summary>        
+        public static bool PROP_Admin
+        {
+            get => PRI_Admin;
+            set
+            {
+                PRI_Admin = value;
+                MyPdf.MET_SetAccessPdf();
+            }
+        }
+
         #region ---- Public ----
         /// <summary>Переменная делегата (вызывает окно ошибки)</summary>
         public static Action<Exception> Event_Error;
@@ -243,8 +255,6 @@ namespace wpfStatic
         public static string DatePriem;
         /// <summary>Полная строка диагноза (из приемного отделения) (нужно отсюда убрать)</summary>
         public static string DiagStac;
-        /// <summary>Администратор (берется из реестра)</summary>
-        public static bool Admin;
         /// <summary>Показать удаленые протоколы</summary>
         public static bool ShowDeletedProtokol;
         /// <summary>Путь к wpfBazis</summary>
@@ -254,7 +264,7 @@ namespace wpfStatic
         /// <summary>Создаем логгер</summary>
         public static Logger PUB_Logger = LogManager.GetCurrentClassLogger();
         /// <summary>Наша база</summary>
-        public static BazisDataContext PUB_Context;
+        public static BazisDataContext PUB_Context;        
         #endregion
 
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
@@ -299,16 +309,9 @@ namespace wpfStatic
             MyMet.MET_Log();
             // Корпус
             Korpus = MySql.MET_QueryInt(MyQuery.z_ConsttKorpus_Select_1());
-            // Разрешение на Редактирование протоколов/Администратора из реестра
-            using (var _Key = Registry.CurrentUser.OpenSubKey("Software\\wpfBazis"))
-            {
-                if (_Key != null)
-                {
-                    FlagEdit = (string) _Key.GetValue("Edit") == "true";
-                    Admin = (string)_Key.GetValue("Admin") == "true";
-                    ShowDeletedProtokol = (string)_Key.GetValue("Admin") == "true";
-                }
-            }
+
+            // Уровень доступа
+            MyMet.MET_AccessWpf();
         }
     }
 }

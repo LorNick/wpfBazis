@@ -126,8 +126,18 @@ namespace wpfGeneral.UserModul
                 _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
 
-                // Тест. Пока только для админов
-                if (MyGlo.Admin)
+                bool _accessPdfView = false;
+                // Для тех кто может смотреть, показываем только если есть протоколы
+                if (MyPdf.PROP_AccessPdf == eAccessPdf.View)
+                {
+                    _accessPdfView = PUB_Protokol.Exists(p => p.PROP_TipProtokol.PROP_TipDocum == eTipDocum.Kdl &&
+                            p.PROP_NumShablon == 2000 &&
+                            p.PROP_xDelete == 0);
+                }
+                // Показываем админу, редактору в любом случае и просмоторщику если есть протоколы
+                if (MyPdf.PROP_AccessPdf == eAccessPdf.Admin ||
+                    MyPdf.PROP_AccessPdf == eAccessPdf.Edit ||
+                    _accessPdfView)
                 {
                     // ВЕТКА Pdf документы
                     _Node = new UserNodes_RootPdf
@@ -159,7 +169,7 @@ namespace wpfGeneral.UserModul
                 _Node.MET_Inizial();
 
                 // ВЕТКА Сотрудники (Только для админов)
-                if (MyGlo.Admin)
+                if (MyGlo.PROP_Admin)
                 {
                     _Node = new UserNodes_Inform
                     {

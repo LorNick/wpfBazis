@@ -123,7 +123,7 @@ namespace wpfGeneral.UserFormShablon
             if (PROP_Cod > 0)
             {
                 // Если установлен админ - то обновляем протокол с пользователем, создавшем данный протокол
-                if (MyGlo.Admin || MyGlo.FlagEdit)
+                if (MyGlo.PROP_Admin || MyGlo.FlagEdit)
                 {
                     _User = PROP_Docum.PROP_Protokol.PROP_xUserUp;
                     _UserName = MyMet.MET_UserName(_User);

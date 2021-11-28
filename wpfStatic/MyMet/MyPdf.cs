@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Data;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Windows;
 using Microsoft.Win32;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Documents.Fixed;
+using Newtonsoft.Json.Linq;
 
 namespace wpfStatic
 {
@@ -35,14 +38,77 @@ namespace wpfStatic
         Local
     }
 
+    /// <summary>Доступы к PDF файлам</summary>
+    public enum eAccessPdf
+    {
+        /// <summary>Нет доступа, даже просмотра</summary>
+        None,
+        /// <summary>Только смотреть</summary>
+        View,
+        /// <summary>Может создавать, а так же редактировать и удалять свои протоколы</summary>
+        Edit,
+        /// <summary>Админ</summary>
+        Admin
+    }
+
     /// <summary>КЛАСС для Работы с PDF файлами</summary>
     public static class MyPdf
     {
+        /// <summary>Доступы к PDF файлам</summary>
+        public static eAccessPdf PROP_AccessPdf;
+
         /// <summary>Строка пути к API сервера PDF</summary>
         private static readonly string PRI_Uri = "http://10.30.103.197:81/api/Storage/";
 
         /// <summary>Строка аутентификации</summary>
         private static readonly string PRI_Authenticate = "wpfBazisDownloadAndUploadFileWebApi20201014";
+
+        /// <summary>Установить доступ работы с Pdf файлами</summary>
+        /// <remarks>Для модулей wpfMVrPolicl и wpfMVrStac ставим доступ Edit
+        /// для компов с админским доступом - Admin
+        /// для остальных View
+        /// так же планируется доступ с помощью accessWpfPdf тега из s_Users поля xInfo
+        /// </remarks>
+        public static void MET_SetAccessPdf()
+        {
+            // По умолчанию
+            PROP_AccessPdf = eAccessPdf.View;
+
+            // Модули врачей
+            if (MyGlo.TypeModul == eModul.VrPolicl || MyGlo.TypeModul == eModul.VrStac)
+                PROP_AccessPdf = eAccessPdf.Edit;
+
+            // Находим тег доступа, если есть
+            string _xInfo = MyGlo.DataSet.Tables["s_Users"].AsEnumerable()
+                .FirstOrDefault(p => p.Field<int>("Cod") == MyGlo.User)?.Field<string>("xInfo");
+            if (!string.IsNullOrEmpty(_xInfo))
+            {
+                JObject _json;
+                try
+                {
+                    _json = JObject.Parse(_xInfo);
+                    switch ((string)_json["accessWpfPdf"] ?? "")
+                    {
+                        case "None":
+                            PROP_AccessPdf = eAccessPdf.None;
+                            break;
+                        case "View":
+                            PROP_AccessPdf = eAccessPdf.View;
+                            break;
+                        case "Edit":
+                            PROP_AccessPdf = eAccessPdf.Edit;
+                            break;
+                    }
+                }
+                catch
+                {
+                    // ну не получилось
+                }
+            }
+            // Админские права
+            if (MyGlo.PROP_Admin || MyGlo.FlagEdit)
+                PROP_AccessPdf = eAccessPdf.Admin;
+        }
 
         /// <summary>Uri в зависимости от типа Rest запроса</summary>
         /// <param name="restPdf">Команда REST API Pdf сервака</param>
@@ -165,9 +231,9 @@ namespace wpfStatic
                 MemoryStream _Stream = new MemoryStream(e.Result);
                 (e.UserState as RadPdfViewer).DocumentSource = new PdfDocumentSource(_Stream);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"{ex.Message}/n{ex.InnerException}");
+                MessageBox.Show($"Не смог загрузить PDF файл", "Ошибка загрузки файла");
             }
         }
 

@@ -25,7 +25,7 @@ namespace wpfGeneral.UserWindows
             Title = "Выбор ранее принятого ВАМИ пациента:";
             // Подсказка в строке поиска
             PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И)";
-            if (MyGlo.Admin) // Пояснение только для админов
+            if (MyGlo.PROP_Admin) // Пояснение только для админов
             {
                 // Подсказка в строке поиска
                 PART_TextBox.WatermarkContent = "Введите ФИО пациента (например: ИВАНОВ Ф И) или Код посещения или KL";
@@ -117,7 +117,7 @@ namespace wpfGeneral.UserWindows
             // Фильтр по дате
             PRO_SqlWhere = $" where a.DP between '{PRI_BeginDate.PROP_Date:MM.dd.yyyy}' and '{PRI_EndDate.PROP_Date:MM.dd.yyyy}'";
             // Если НЕ админ - то показываем только своих пациентов
-           if (!MyGlo.Admin)
+           if (!MyGlo.PROP_Admin)
                 PRO_SqlWhere += $" and v.[User] = {MyGlo.User}";
             // Фильтр по строке поиска
             if (PRO_TextFilter.Length > 0)

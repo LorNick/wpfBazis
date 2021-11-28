@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.Win32;
 using NLog;
+using Newtonsoft.Json.Linq;
 
 namespace wpfStatic
 {
@@ -131,6 +132,50 @@ namespace wpfStatic
         #endregion
 
         #region ---- Разные ----
+        /// <summary>Устанавливаем уровень доступа из таблицы s_Users или реестра, так же запускаем установку доступа к Pdf файлам</summary>
+        public static void MET_AccessWpf()
+        {
+            // Разрешение на Редактирование протоколов/Администратора из реестра
+            using (var _Key = Registry.CurrentUser.OpenSubKey("Software\\wpfBazis"))
+            {
+                if (_Key != null)
+                {
+                    MyGlo.FlagEdit = (string)_Key.GetValue("Edit") == "true";
+                    MyGlo.PROP_Admin = (string)_Key.GetValue("Admin") == "true";
+                    MyGlo.ShowDeletedProtokol = (string)_Key.GetValue("Admin") == "true";
+                }
+            }
+
+            // Находим тег доступа accessWpfAdmin, если есть
+            string _xInfo = MyGlo.DataSet.Tables["s_Users"].AsEnumerable()
+                .FirstOrDefault(p => p.Field<int>("Cod") == MyGlo.User)?.Field<string>("xInfo");
+            if (!string.IsNullOrEmpty(_xInfo))
+            {
+                JObject _json;
+                try
+                {
+                    _json = JObject.Parse(_xInfo);
+                    switch ((string)_json["accessWpfAdmin"] ?? "")
+                    {
+                        case "Edit":
+                            MyGlo.FlagEdit = true;
+                            break;
+                        case "Admin":
+                            MyGlo.PROP_Admin = true;
+                            MyGlo.ShowDeletedProtokol = true;
+                            break;
+                    }
+                }
+                catch
+                {
+                    // ну не получилось
+                }
+            }
+
+            // Устанавливаем доступ к PDF файлам
+            MyPdf.MET_SetAccessPdf();
+        }
+
         /// <summary>МЕТОД Версия программы</summary>
         public static string MET_Ver()
         {

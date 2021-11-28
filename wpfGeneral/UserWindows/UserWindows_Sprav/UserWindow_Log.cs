@@ -214,7 +214,7 @@ namespace wpfGeneral.UserWindows
                             break;
                     }
                     // У не админов доступ только в историю болезни
-                    if (!MyGlo.Admin)
+                    if (!MyGlo.PROP_Admin)
                     {
                         _MyTipProtokol = new MyTipProtokol(eTipDocum.Null);
                     }
@@ -289,7 +289,7 @@ namespace wpfGeneral.UserWindows
         /// <summary>МЕТОД Проверяем доступность данного окна текущему пользователю</summary>
         public static new bool MET_Access()
         {
-            if (!MyGlo.Admin)
+            if (!MyGlo.PROP_Admin)
             {
                 MessageBox.Show("У вас нет доступа к данной информации.");
                 return false;

@@ -28,7 +28,17 @@ namespace wpfGeneral.UserNodes
             //  Тип протоколов
             PROP_shaTipProtokol = new MyTipProtokol(eTipDocum.Kdl);
             // Заполняем свойства базового класса
-            base.MET_Inizial();            
+            base.MET_Inizial();
+            // Редактор и админ может создавать протоколы
+            PROP_shaButtonNew = MyPdf.PROP_AccessPdf == eAccessPdf.Edit || MyPdf.PROP_AccessPdf == eAccessPdf.Admin;
+        }
+
+        /// <summary>МЕТОД Настраиваем дополнительные параметры для подветки</summary>
+        protected override void MET_PropertyNodeAdd(VirtualNodes pNodes)
+        {
+            // Редактор и админ могут редактировать протоколы (редактор только свои)
+            pNodes.PROP_shaButtonEdit = (MyPdf.PROP_AccessPdf == eAccessPdf.Edit && pNodes.PROP_Docum.PROP_Protokol.PROP_xUserUp == MyGlo.User)
+                || MyPdf.PROP_AccessPdf == eAccessPdf.Admin;
         }
 
         ///<summary>МЕТОД Отчет подветки</summary>

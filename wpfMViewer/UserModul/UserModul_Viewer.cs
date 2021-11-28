@@ -102,7 +102,7 @@ namespace wpfMViewer
                 _Node.IsSelected = true;
 
                 // ВЕТКА Сотрудники (Только для админов)
-                if (MyGlo.Admin)
+                if (MyGlo.PROP_Admin)
                 {
                     _Node = new UserNodes_Inform
                     {

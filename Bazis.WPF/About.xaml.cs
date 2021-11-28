@@ -35,7 +35,7 @@ namespace wpfBazis
             // Версия программы и IP серевера
             PART_Ver.Text = "Версия " + MyMet.MET_Ver() + _Server;
             // Если включен режим Админа
-            if (MyGlo.Admin)
+            if (MyGlo.PROP_Admin)
             {
                 PRI_Flag = 3;
                 PART_Bazis.Foreground = new SolidColorBrush(Colors.BlueViolet);
@@ -52,7 +52,7 @@ namespace wpfBazis
                 PART_Bazis.Foreground = new SolidColorBrush(Colors.Black);
             if (PRI_Flag > 2)
                 PRI_Flag = 0;
-            MyGlo.Admin = false;                                               // режим админа выключен
+            MyGlo.PROP_Admin = false;                                               // режим админа выключен
         }
 
         /// <summary>Включаем/Выключаем режим админа 2е действие</summary>
@@ -62,12 +62,12 @@ namespace wpfBazis
             if (PRI_Flag == 3)
             {
                 PART_Bazis.Foreground = new SolidColorBrush(Colors.BlueViolet);
-                MyGlo.Admin = true;                                             // режим админа включен
+                MyGlo.PROP_Admin = true;                                             // режим админа включен
             }
             else
             {
                 PART_Bazis.Foreground = new SolidColorBrush(Colors.Black);
-                MyGlo.Admin = false;                                            // режим админа выключен
+                MyGlo.PROP_Admin = false;                                            // режим админа выключен
             }
         }
     }

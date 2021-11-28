@@ -122,7 +122,7 @@ namespace wpfBazis
             // Показываем имя пользователя
             PART_LabelUserName.Content = MyGlo.UserName;
             // Если Админ - закрашиваем поле имя пользователя
-            if (MyGlo.Admin) PART_Border_UserName.Background = new SolidColorBrush(Colors.Orchid);
+            if (MyGlo.PROP_Admin) PART_Border_UserName.Background = new SolidColorBrush(Colors.Orchid);
             // Пациент
             PART_LabelPacient.Content = MyGlo.FIO + " " + MyGlo.DR;
             // Главное дерево
@@ -359,7 +359,7 @@ namespace wpfBazis
                     // О программе
                     new About().ShowDialog();
                     // Если Админ - закрашиваем поле имя пользователя
-                    if (MyGlo.Admin)
+                    if (MyGlo.PROP_Admin)
                         PART_Border_UserName.Background = new SolidColorBrush(Colors.Orchid);
                     else
                         PART_Border_UserName.Background = new SolidColorBrush(Colors.White);
@@ -640,7 +640,7 @@ namespace wpfBazis
         private void MET_ContextMenu_EditShablon(ContextMenu pContextMenu)
         {
             // Форма Редактор Шаблона (только для админа)
-            if (MyGlo.Admin)
+            if (MyGlo.PROP_Admin)
             {
                 if ((MyGlo.ContextMenu.PlacementTarget as FrameworkElement)?.Tag is VirtualPole _VirtualPole && _VirtualPole.PROP_VarId > 0)
                 {

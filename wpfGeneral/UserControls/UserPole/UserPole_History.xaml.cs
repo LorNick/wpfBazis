@@ -304,8 +304,8 @@ namespace wpfGeneral.UserControls
         /// <summary>СОБЫТИЕ Открытие контекстного меню</summary>
         private void UserPole_ContextMenuOpening(object sender, ContextMenuEventArgs e)
         {
-            PART_MenuItem_CardAdmin.IsEnabled = MyGlo.Admin;
-            PART_MenuItem_Edit.IsEnabled = MyGlo.Admin || MyGlo.FlagEdit;
+            PART_MenuItem_CardAdmin.IsEnabled = MyGlo.PROP_Admin;
+            PART_MenuItem_Edit.IsEnabled = MyGlo.PROP_Admin || MyGlo.FlagEdit;
 
             if (PROP_IsTexted)
             {

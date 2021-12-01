@@ -33,7 +33,7 @@ namespace wpfMVrStac
         }
 
         /// <summary>МЕТОД Отображение формы</summary>
-        /// <param name="pGrid">Сюда добавляем шабллон</param>
+        /// <param name="pGrid">Сюда добавляем шаблон</param>
         /// <param name="pNewProtokol">ture - Новый протокол, false - Старый протокол</param>
         /// <param name="pShablon">Номер шаблона</param>
         /// <param name="pText">Наименование шаблона (по умолчанию pMyNodes.svoText)</param>

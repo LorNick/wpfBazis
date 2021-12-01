@@ -658,13 +658,17 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Возвращаем строку</summary>
         private string MET_PoleStr(string pPole)
         {
+            if (PRI_Row == null)
+                return "";
             return Convert.ToString(PRI_Row[pPole]);
         }
 
         /// <summary>МЕТОД Возвращаем Дату</summary>
         private DateTime MET_PoleDat(string pPole)
         {
-            try { return Convert.ToDateTime(PRI_Row[pPole]); }
+            if (PRI_Row == null)
+                return DateTime.Today; ;
+            try { return MyMet.MET_PoleDate(pPole, PRI_Row.Row) ?? DateTime.Today; } // Convert.ToDateTime(PRI_Row[pPole]); }
             catch
             {
                 // ignored
@@ -675,7 +679,7 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Возвращаем строку c Целым числом</summary>
         private int MET_PoleInt(string pPole)
         {
-            try { return Convert.ToInt32(PRI_Row[pPole]); }
+            try { return MyMet.MET_PoleInt(pPole, PRI_Row.Row); }
             catch
             {
                 // ignored
@@ -738,9 +742,8 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Конвертор</summary>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            DataGridColumnHeader _ColumnHeader = values[0] as DataGridColumnHeader;
             // Начиная с 23 столбца идут данные с датой
-            if (_ColumnHeader != null && _ColumnHeader.DisplayIndex > 23)
+            if (values[0] is DataGridColumnHeader _ColumnHeader && _ColumnHeader.DisplayIndex > 23)
             {
                 int _DayOfWeek;
                 try

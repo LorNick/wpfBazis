@@ -349,6 +349,7 @@ namespace wpfMVrStac
         /// <summary>СОБЫТИЕ Изменили количество дней</summary>
         private void PART_Pole_2_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Text _Pole = (UserPole_Text)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Text == MET_PoleStr("Kurs")) return;
@@ -374,6 +375,7 @@ namespace wpfMVrStac
         /// <summary>СОБЫТИЕ Изменили начальную дату</summary>
         private void PART_Pole_1_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Data _Pole = (UserPole_Data)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Date == MET_PoleDat("DateN")) return;
@@ -390,6 +392,7 @@ namespace wpfMVrStac
         /// <summary>СОБЫТИЕ Изменили конечную дату</summary>
         private void PART_Pole_3_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Data _Pole = (UserPole_Data)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Date == MET_PoleDat("DateK")) return;
@@ -406,6 +409,7 @@ namespace wpfMVrStac
         /// <summary>СОБЫТИЕ Изменили схему приема</summary>
         private void PART_Pole_5_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Text _Pole = (UserPole_Text)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Text == MET_PoleStr("Amt")) return;
@@ -430,6 +434,7 @@ namespace wpfMVrStac
         /// <summary>СОБЫТИЕ Изменили периодичность</summary>
         private void PART_Pole_4_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Text _Pole = (UserPole_Text)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Text == MET_PoleStr("Period")) return;
@@ -452,37 +457,21 @@ namespace wpfMVrStac
             MET_FormatNazn();
         }
 
-        /// <summary>СОБЫТИЕ Изменили текст способа приема</summary>
-        private void PART_Pole_6_LostFocus(object sender, RoutedEventArgs e)
+        /// <summary>СОБЫТИЕ Изменили текстовое поле, без специальной логики</summary>
+        private void PART_Pole_Text_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Text _Pole = (UserPole_Text)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-            if (_Pole.PROP_Text == MET_PoleStr("Route")) return;
-            PRI_Row["Route"] = _Pole.PROP_Text;
-            MET_FormatNazn();
-        }
-
-        /// <summary>СОБЫТИЕ Изменили текст примечания</summary>
-        private void PART_Pole_7_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UserPole_Text _Pole = (UserPole_Text)sender;
-            PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-            PRI_Row["Note"] = _Pole.PROP_Text;
-            MET_FormatNazn();
-        }
-
-        /// <summary>СОБЫТИЕ Изменили текст назначения</summary>
-        private void PART_Pole_14_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UserPole_Text _Pole = (UserPole_Text)sender;
-            PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-            PRI_Row["NameLS"] = _Pole.PROP_Text;
+            if (_Pole.PROP_Text == MET_PoleStr(_Pole.Tag.ToString())) return;
+            PRI_Row[_Pole.Tag.ToString()] = _Pole.PROP_Text;
             MET_FormatNazn();
         }
 
         /// <summary>СОБЫТИЕ Изменили дату отмены</summary>
         private void PART_Pole_11_LostFocus(object sender, RoutedEventArgs e)
         {
+            if (eleDataGrid.SelectedItem == null) return;
             UserPole_Data _Pole = (UserPole_Data)sender;
             PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
             if (_Pole.PROP_Date == MET_PoleDat("DelDate")) return;
@@ -491,16 +480,6 @@ namespace wpfMVrStac
                 _Pole.PROP_Date = MET_PoleDat("DelDate");
                 return;
             }
-            MET_FormatNazn();
-        }
-
-        /// <summary>СОБЫТИЕ Изменили текст примечания отмены</summary>
-        private void PART_Pole_13_LostFocus(object sender, RoutedEventArgs e)
-        {
-            UserPole_Text _Pole = (UserPole_Text)sender;
-            PRI_Row = (DataRowView)eleDataGrid.SelectedItem;
-            if (_Pole.PROP_Text == MET_PoleStr("DelNote")) return;
-            PRI_Row["DelNote"] = _Pole.PROP_Text;
             MET_FormatNazn();
         }
 
@@ -658,16 +637,12 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Возвращаем строку</summary>
         private string MET_PoleStr(string pPole)
         {
-            if (PRI_Row == null)
-                return "";
             return Convert.ToString(PRI_Row[pPole]);
         }
 
         /// <summary>МЕТОД Возвращаем Дату</summary>
         private DateTime MET_PoleDat(string pPole)
         {
-            if (PRI_Row == null)
-                return DateTime.Today; ;
             try { return MyMet.MET_PoleDate(pPole, PRI_Row.Row) ?? DateTime.Today; } // Convert.ToDateTime(PRI_Row[pPole]); }
             catch
             {
@@ -742,22 +717,23 @@ namespace wpfMVrStac
         /// <summary>МЕТОД Конвертор</summary>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            Color _color = Colors.Black;
             // Начиная с 23 столбца идут данные с датой
             if (values[0] is DataGridColumnHeader _ColumnHeader && _ColumnHeader.DisplayIndex > 23)
             {
-                int _DayOfWeek;
                 try
                 {
-                    _DayOfWeek = (int)System.Convert.ToDateTime(values[2]).DayOfWeek;
-                    // Если сегодня
-                    if (System.Convert.ToDateTime(values[2]) == DateTime.Today)
-                        return new SolidColorBrush(Colors.Green);
+                    if (DateTime.TryParse(values[2].ToString(), out DateTime _Result))
+                    {
+                        if (_Result == DateTime.Today)
+                            _color = Colors.Green;
+                        else if (_Result.DayOfWeek == DayOfWeek.Sunday || _Result.DayOfWeek == DayOfWeek.Saturday)
+                            _color = Colors.Red;
+                    }
                 }
-                catch { return new SolidColorBrush(Colors.Black); }
-                // Все проверки для краткости выкинул
-                return (_DayOfWeek == 0 | _DayOfWeek == 6) ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black);
+                catch { }
             }
-            return new SolidColorBrush(Colors.Black);
+            return new SolidColorBrush(_color);
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

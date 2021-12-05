@@ -1201,7 +1201,8 @@ namespace wpfStatic
                 from dbo.lnzVrachLS     as ln
                 left join dbo.s_Users   as u   on ln.UserVrach = u.Cod
                 left join dbo.s_Users   as ud  on ln.DelUserVrach = ud.Cod
-                where isnull(ln.xDelete, 0) = 0 and ln.CodApstac = {CodApstac}";
+                where isnull(ln.xDelete, 0) = 0 and ln.CodApstac = {CodApstac}
+                order by ln.Cod";
              return _Query;
         }
 

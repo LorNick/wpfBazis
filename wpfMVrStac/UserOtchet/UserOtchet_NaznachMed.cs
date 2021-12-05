@@ -190,9 +190,10 @@ namespace wpfMVrStac
                 for (int i = 0; i < 17; i++)
                     PRI_Row.Cells.Add(new TableCell());
                 PRI_Row.Cells[1].ColumnSpan = 2;
-                // Строки назначения
-                string _Str = String.Format("'{0}' >= DateN and '{1}' <= DateK", _DN + new TimeSpan(15, 0, 0, 0), _DN);
-                DataRow[] _mRow = _TableSQL.Select(_Str);
+                // Строки назначения (сначала фильтр, потом сортировка)
+                string _filter = $"'{_DN + new TimeSpan(15, 0, 0, 0)}' >= DateN and '{_DN}' <= DateK";
+                string _sort = "Cod";
+                DataRow[] _mRow = _TableSQL.Select(_filter, _sort);
                 int n = 0;
                 foreach(DataRow row in _mRow)
                 {

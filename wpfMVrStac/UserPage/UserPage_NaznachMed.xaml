@@ -110,7 +110,7 @@
                         <StackPanel Orientation="Vertical" d:DataContext="{Binding}">
                             <Border Style="{StaticResource Border_1}">
                                 <WrapPanel>
-                                    <Button Name="PART_Hide" Click="PART_Hide_Click">Скрыть</Button>
+                                    <Button Name="PART_Hide" Click="PART_Hide_Click" ToolTip="Скрыть панель" >Скрыть</Button>
                                     <TextBlock Foreground="Navy" Padding="5,0" Width="100" TextAlignment="Right" VerticalAlignment="Center">Назначение:</TextBlock>
                                     <!--Текст назначения-->
                                     <my1:UserPole_Text Name="PART_Pole_14" PROP_VarId="14" PROP_Description="" PROP_Text="{Binding Path=NameLS, Mode=TwoWay}"
@@ -118,7 +118,8 @@
                                                       Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompStr}"
                                                       PROP_Type="Text"
                                                       PROP_Shablon="3"
-                                                      LostFocus="PART_Pole_14_LostFocus"
+                                                      Tag="NameLS"
+                                                      LostFocus="PART_Pole_Text_LostFocus"
                                                        />
                                     <!--Таблица компонентов-->
                                     <DataGrid x:Name="eleDataGrid2" ItemsSource="{Binding}" Width="441" Loaded="eleDataGrid2_Loaded" IsReadOnly="False"
@@ -134,8 +135,8 @@
                                     </DataGrid>
                                     <!--Кнопки Добавить/Удалить Компонент ЛС-->
                                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                        <Button Name="PART_SaveLS" Click="PART_SaveLS_Click">Добавить</Button>
-                                        <Button Name="PART_DeleteLS" Click="PART_DeleteLS_Click"
+                                        <Button Name="PART_SaveLS" Click="PART_SaveLS_Click" ToolTip="Добавить ЛС из справочника">Добавить</Button>
+                                        <Button Name="PART_DeleteLS" Click="PART_DeleteLS_Click" ToolTip="Удалить ЛС"
                                                 Visibility="{Binding ElementName=UserPage, Path=PROP_FlagCompTab}">Удалить</Button>
                                     </StackPanel>
                                 </WrapPanel>
@@ -148,7 +149,7 @@
                                                           PROP_ValueMinDate="{Binding ElementName=UserPage, Path=PROP_DateN}"
                                                           PROP_ValueMaxDate="{Binding ElementName=UserPage, Path=PROP_DateK}"
                                                           PROP_Date="{Binding Path=DateN, Mode=TwoWay}" ToolTip="1. Дата начала"
-                                                          PROP_PometkaText="1" PROP_MinWidthDescription="150"
+                                                          PROP_PometkaText="1" PROP_MinWidthDescription="150"                                                          
                                                           LostFocus="PART_Pole_1_LostFocus" />
                                         <!--Сколько дней принимать ЛС-->
                                         <my1:UserPole_Text Name="PART_Pole_2" PROP_Description="Дней:" PROP_VarId="2"
@@ -156,7 +157,7 @@
                                                           PROP_MaxLength="2" PROP_WidthText="28" PROP_Insert="True" PROP_DefaultText="16"
                                                           PROP_PometkaText="1" PROP_MinWidthDescription="68"
                                                           PROP_Shablon="3"
-                                                          PROP_Type="Text"
+                                                          PROP_Type="Text"                                                          
                                                           LostFocus="PART_Pole_2_LostFocus" />
                                         <!--Дата окончания приема ЛС-->
                                         <my1:UserPole_Data Name="PART_Pole_3" PROP_Description="Дата окончания:" PROP_VarId="3"
@@ -191,7 +192,8 @@
                                                           PROP_PometkaText="1" PROP_MinWidthDescription="120"
                                                           PROP_Shablon="3"
                                                           PROP_Type="Text"
-                                                          LostFocus="PART_Pole_6_LostFocus" />
+                                                          Tag="Route"
+                                                          LostFocus="PART_Pole_Text_LostFocus" />
                                     </WrapPanel>
                                     <WrapPanel>
                                         <!--Примечание приема-->
@@ -201,7 +203,8 @@
                                                           PROP_DefaultText="После еды" PROP_MinWidthDescription="150"
                                                           PROP_Shablon="3"
                                                           PROP_Type="Text"
-                                                          LostFocus="PART_Pole_7_LostFocus" />
+                                                          Tag="Note"
+                                                          LostFocus="PART_Pole_Text_LostFocus" />
                                     </WrapPanel>
                                 </StackPanel>
                             </Border>
@@ -222,7 +225,7 @@
                                 </WrapPanel>
                             </Border>
                             <!--Отмена назначения-->
-                            <Expander Margin="0, 2, 0, 0">
+                            <Expander Margin="0, 2, 0, 0" Visibility="Collapsed">
                                 <Expander.Header>
                                     <Label Content="Отмена выдачи назначения" Foreground="Navy" />
                                 </Expander.Header>
@@ -235,7 +238,9 @@
                                                               PROP_Insert="True"  PROP_WidthText="510"
                                                               PROP_DefaultText="Пациента от этого лекарства пучит"
                                                               PROP_Type="Text"
-                                                              PROP_MinWidthDescription="150" LostFocus="PART_Pole_13_LostFocus" />
+                                                              PROP_MinWidthDescription="150" 
+                                                              Tag="DelNote"
+                                                              LostFocus="PART_Pole_Text_LostFocus" />
                                         </WrapPanel>
                                         <WrapPanel>
                                             <!--Дата отмены-->

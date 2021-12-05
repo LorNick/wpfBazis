@@ -1053,7 +1053,7 @@ namespace wpfBazis
             return true;
         }
 
-        /// <summary>СОБЫТИЕ Потеря фокуса вкладки шаблона, запоминаем фокус полседнего поля, что бы потом к нему вернуться</summary>
+        /// <summary>СОБЫТИЕ Потеря фокуса вкладки шаблона, запоминаем фокус последнего поля, что бы потом к нему вернуться</summary>
         private void PART_TabForm_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             if (PRI_FormMyNodes.PROP_Docum.PROP_FormShablon != null)

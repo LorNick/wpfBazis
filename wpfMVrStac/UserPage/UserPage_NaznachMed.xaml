@@ -267,13 +267,13 @@
         </DataGrid>
         <!--Кнопки Добавить/Удалить Назначения-->
         <WrapPanel HorizontalAlignment="Center" Grid.Row="1" Height="30">
-            <Button Name="PART_AddNaz"  Focusable="False" Click="PART_AddNaz_Click">
+            <Button Name="PART_AddNaz"  Click="PART_AddNaz_Click">
                 <StackPanel Orientation="Horizontal" >
                     <Image Source="{StaticResource btAdd}"  Margin="4"></Image>
                     <Label Content="Добавить" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>
                 </StackPanel>
             </Button>
-            <Button Name="PART_DeleteNaz"  Focusable="False" Click="PART_DeleteNaz_Click" Margin="10,0,0,0">
+            <Button Name="PART_DeleteNaz" Click="PART_DeleteNaz_Click" Margin="10,0,0,0">
                 <StackPanel Orientation="Horizontal" >
                     <Image Source="{StaticResource btDelete}" Margin="4"></Image>
                     <Label Content="Удалить" VerticalContentAlignment="Center" Padding="0" Margin="2"></Label>

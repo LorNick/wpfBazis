@@ -277,10 +277,10 @@ namespace wpfStatic
             User = 60; // 5006;
             // Server = 2;
            // TypeModul = eModul.VrPolicl;
-                  TypeModul = eModul.VrStac;
+            //      TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
             //    TypeModul = eModul.Viewer;
-            //   TypeModul = eModul.VrPara;
+               TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
             //  TypeModul = eModul.OtherLpu;
           // TypeModul = eModul.Laboratory;

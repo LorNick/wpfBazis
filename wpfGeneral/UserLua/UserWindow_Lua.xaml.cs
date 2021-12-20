@@ -73,6 +73,7 @@ namespace wpfGeneral.UserLua
             PRI_Regular += "lOperInfo|lOperInfoDel|lRead|lNew|lDateIf|lTimeGosp|lSqlToStr|";
             PRI_Regular += "lKbolInfoOms|lLog|lVisiblOn|lVisiblOff|lNecesOn|lNecesOf|";
             PRI_Regular += "lTextClear|";
+            PRI_Regular += "gKorpus|gKL|gFIO|gDR|gUser|gUserName|gPol|gLpu|gOtd|gCodApstac|";
             PRI_Regular += "OnCreat|OnChange|OnBeforeSave|OnSave|";
             PRI_Regular += "PROP_Text|OnChange|OnBeforeSave|OnSave)";
 
@@ -154,6 +155,8 @@ namespace wpfGeneral.UserLua
         private void PART_ButtonSaveLua_Click(object sender, RoutedEventArgs e)
         {
             PRI_Shablon.PROP_xLua = PART_FCTextBox.Text;
+            if (PRI_Pole.PROP_Lua == null)
+                PRI_Pole.PROP_Lua = new UserLua_Standart(PRI_Pole);
             PRI_Pole.PROP_Lua.PROP_ChankText = PRI_Shablon.PROP_xLua;
             PRI_Pole.PROP_Lua.MET_StartLua();
             MET_LogAdd("Предварительное сохрание кода Lua");

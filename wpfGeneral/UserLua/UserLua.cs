@@ -97,6 +97,28 @@ namespace wpfGeneral.UserLua
             // Выполняем SQL запрос, возвращаем текст
             PRI_Env.lSqlToStr = new Func<string, string>(lSqlToStr);
 
+            // Глобальные переменные программы
+            // Корпус (1- главный, 2 - филиал)
+            PRI_Env["gKorpus"] = MyGlo.Korpus;
+            // Код пациента
+            PRI_Env["gKL"] = MyGlo.KL;
+            // Полное ФИО пациента (КРИВКО Николай Васильевич)
+            PRI_Env["gFIO"] = MyGlo.FIO;
+            // Дата рождения пациента
+            PRI_Env["gDR"] = MyGlo.DR;
+            // Код пользователя
+            PRI_Env["gUser"] = MyGlo.User;
+            // Имя пользователя
+            PRI_Env["gUserName"] = MyGlo.UserName;
+            // Пол (Мужской, Женский)
+            PRI_Env["gPol"] = MyGlo.Pol;
+            // Код ЛПУ
+            PRI_Env["gLpu"] = MyGlo.Lpu;
+            // Стационар - Номер отделения (otd), поликлиника - код специальности (SPRS), параклиника - код элемента кабинета (parEL:Cod)
+            PRI_Env["gOtd"] = MyGlo.Otd;
+            // Код посещения в стационар/поликлиники/параклиники (в протоколах тоже поле)
+            PRI_Env["gCodApstac"] = MyGlo.IND;
+
             // Подключаем функцию для Ссылки на поле по VarId
             //PRI_Env.lFocusPole = new Func<int, bool>(lFocusPole);
         }
@@ -106,7 +128,7 @@ namespace wpfGeneral.UserLua
         /// <param name="pMessage">Строка сообщения</param>
         /// <param name="pHeader">Заголовок окна</param>
         private void lMessage(string pMessage, string pHeader)
-        {
+        {            
             MessageBox.Show(pMessage, pHeader);
         } // func lMessage
 

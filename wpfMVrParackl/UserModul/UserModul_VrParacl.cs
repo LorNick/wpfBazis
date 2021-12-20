@@ -13,8 +13,8 @@ namespace wpfMVrParacl
         /// <summary>МЕТОД Считываем параметры командной строки</summary>
         public override void MET_ComStr()
         {
-            MyGlo.KL = 125069331097215;
-            MyGlo.IND = 480177;
+            MyGlo.KL = 95650426077001;
+            MyGlo.IND = 603446;
             MyGlo.Otd = 2;
             string[] _mArgs = Environment.GetCommandLineArgs();
             for (int x = 0; x < _mArgs.Length; x++)

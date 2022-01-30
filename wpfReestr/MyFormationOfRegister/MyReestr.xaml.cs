@@ -569,8 +569,6 @@ namespace wpfReestr
             // Показываем ошибки
             PRI_ErrorToExcel.MET_End();
         }
-
-
         
 
         /// <summary>МЕТОД 7. Расчет общих полей</summary>

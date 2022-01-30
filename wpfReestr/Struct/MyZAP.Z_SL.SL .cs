@@ -12,7 +12,11 @@ namespace wpfReestr
 
         /// <summary>Итоговая сумма</summary>
         public double SUMV { get; set; }
-        /// <summary>Дети до 4 года (с 2021)</summary>
+        /// <summary>Дети до 4 года НЕ ЗНО (с 2022)</summary>
+        public double Sl01 { get; set; }
+        /// <summary>Дети до 4 года ЗНО (с 2022)</summary>
+        public double Sl02 { get; set; }
+        /// <summary>Дети до 4 года (с 2021 по 2022)</summary>
         public double Sl03 { get; set; }
         /// <summary>Сверхдлительность</summary>
         public double Sl10 { get; set; }
@@ -22,11 +26,11 @@ namespace wpfReestr
         public double Sl14 { get; set; }
         /// <summary>Дополнительные диагнозы (типо E11)</summary>
         public double Sl15 { get; set; }
-        /// <summary>Коэффициент затратоемкости</summary>
+        /// <summary>Коэффициент затратоемкости КЗксг</summary>
         public double KOEF_Z { get; set; }
-        /// <summary>Управленчиский коэффициент</summary>
+        /// <summary>Коэффициент специфики КСксг (бывший Управленчиский коэффицент)</summary>
         public double KOEF_UP { get; set; }
-        /// <summary>Коэффициент подуровня</summary>
+        /// <summary>Коэффициент подуровня КУСмо</summary>
         public double KOEF_U { get; set; }
         /// <summary>Коэффициент Дифференциации</summary>
         public double KOEF_D { get; set; }

@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using m = wpfReestr.MyMet;
-using wpfStatic;
-using e = Microsoft.Office.Interop.Excel;
 
 namespace wpfReestr
 {
@@ -57,14 +52,6 @@ namespace wpfReestr
                         "12", "(вну) Не найден профиль",
                         ref PRI_ErrorRow);
 
-            // PODR (Код отделения)
-            string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
-            if (_Prof == "034")
-                PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}2{_Prof}");
-            else
-                PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}1{_Prof}");
-
-
             // DET (Детский профиль, если ребёнок то 1 иначе 0)      далее в  MET_CalcAll()
             PRI_Age = m.MET_PoleInt("Age", _RowPar);
 
@@ -79,6 +66,20 @@ namespace wpfReestr
 
             // EX_DATE -> DATE_OUT (Дата окончания)
             PRI_StrahReestr.EX_DATE = PRI_StrahReestr.ARR_DATE;
+
+            // PODR (Код отделения)
+            if (PRI_StrahReestr.EX_DATE.Value.Year < 2022)
+            {
+                string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
+                if (_Prof == "034")
+                    PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}2{_Prof}");
+                else
+                    PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}1{_Prof}");
+            }
+            else
+            {
+                PRI_StrahReestr.PODR = m.MET_ParseDec(PRI_StrahReestr.LPU_1.ToString() + m.MET_PoleInt("Profil_K", _RowPar).ToString("D2"));
+            }
 
             // DS1 (Диагноз)
             PRI_StrahReestr.DS1 = m.MET_PoleStr("D", PRI_RowReestr);

@@ -582,6 +582,360 @@ namespace wpfReestr
             return _Return;
         }
 
+        /// <summary>Выгрузка файла ЗНО ВЕРСИЯ 2022</summary>
+        public static string StrahReestrXML_Select_C_2022(int CodFile, string pMainFileName)
+        {
+            string _Return = $@"
+            use Bazis;
+
+            --- Заголовок ZGLV ---
+            select
+                '3.1'                                   as 'ZGLV/VERSION'
+                ,convert(nvarchar(10), getdate(), 20)   as 'ZGLV/DATA'
+                ,'{pMainFileName}'                      as 'ZGLV/FILENAME'
+                ,(select count(*) from dbo.StrahReestr where CodFile = sf.Cod) as 'ZGLV/SD_Z'
+            --- Счет SCHET ---
+                ,Cod        as 'SCHET/CODE'
+                ,'555509'   as 'SCHET/CODE_MO'
+                ,[YEAR]     as 'SCHET/YEAR'
+                ,[MONTH]    as 'SCHET/MONTH'
+                ,NSCHET     as 'SCHET/NSCHET'
+                ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'
+                ,SUMMAV     as 'SCHET/SUMMAV'
+            --- Запись ZAP ---
+                ,(select
+                        N_ZAP               as 'ZAP/N_ZAP'
+                        ,isnull(PR_NOV, 0)  as 'ZAP/PR_NOV'
+            --- Пациент PACIENT ---
+                        ,ID_PAC     as 'ZAP/PACIENT/ID_PAC'
+                        ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
+                        ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
+                        ,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
+                        ,iif(VPOLIS = 3, NUMBER, null) as 'ZAP/PACIENT/ENP'
+                        ,0          as 'ZAP/PACIENT/NOVOR'
+            -- Законченный случай Z_SL ---
+                        ,(select
+                             NOM_ZAP    as 'Z_SL/IDCASE'
+                            ,iif(LPU_ST in (4, 5), 3, LPU_ST)     as 'Z_SL/USL_OK'  -- для параклиники меняем 4 и 5 на 3
+                            ,VIDPOM     as 'Z_SL/VIDPOM'
+                            ,3          as 'Z_SL/FOR_POM'
+                            ,json_value(NOM_USL, '$.NPR_MO')   as 'Z_SL/NPR_MO'                                 --- !!!
+                            ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.NPR_DATE'), 104), 20)  as 'Z_SL/NPR_DATE'    --- !!!
+                            ,'555509'   as 'Z_SL/LPU'
+                            ,convert(nvarchar(10), ARR_DATE, 20) as 'Z_SL/DATE_Z_1'
+                            ,convert(nvarchar(10), EX_DATE, 20)  as 'Z_SL/DATE_Z_2'
+                            ,iif(LPU_ST < 3, cast(KOL_USL as int), null)   as 'Z_SL/KD_Z'  -- только для стационара
+                            ,RES_G      as 'Z_SL/RSLT'
+                            ,ISHOD      as 'Z_SL/ISHOD'
+                            ,iif(OS_SLUCH = '', null, OS_SLUCH) as 'Z_SL/OS_SLUCH'
+                            --   ,iif(1 = 2, 1, null) as 'Z_SL/VB_P'                         -- !!! переводы между отделением
+            --- Случай SL ---
+                            ,(select
+                                 1          as 'SL/SL_ID'
+                                ,LPU_1      as 'SL/LPU_1'
+                                ,PODR       as 'SL/PODR'
+                                ,PROFIL     as 'SL/PROFIL'
+                                ,json_value(NOM_USL, '$.PROFIL_K') as 'SL/PROFIL_K'
+                                ,DET        as 'SL/DET'
+                                ,json_value(NOM_USL, '$.P_Cel') as 'SL/P_CEL'
+                                ,PACIENTID  as 'SL/NHISTORY'
+                                ,iif(LPU_ST < 3, 1, null) as 'SL/P_PER'             -- !!! признак поступления/перевода стационара 1 или 4
+                                ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/DATE_1'
+                                ,convert(nvarchar(10), EX_DATE, 20)  as 'SL/DATE_2'
+                                ,iif(LPU_ST < 3, cast(KOL_USL as int), null) as 'SL/KD'
+                                ,DS1        as 'SL/DS1'
+                                ,iif(DS2 = '', null, DS2)      as 'SL/DS2'
+                                ,json_value(NOM_USL, '$.C_ZAB') as 'SL/C_ZAB'
+                                ,iif(json_value(NOM_USL, '$.DS_ONK') = 1, 1, 0) as 'SL/DS_ONK'
+                                ,json_value(NOM_USL, '$.DN') as 'SL/DN'             --  диспансерное наблюдение
+            --- БЛОК Направления к врачу околога при подозрении NAPR --- Убрал 29/04/2019
+                             --   ,convert(nvarchar(10), EX_DATE, 20) as 'SL/NAPR/NAPR_DATE'
+                             --   ,1                                  as 'SL/NAPR/NAPR_V'
+                --- БЛОК Направления на исследования добавил 17/12/2019 ---
+                                ,(select convert(nvarchar(10), convert(date, NAPR_DATE, 104 ), 20) as NAPR_DATE, NAPR_V, MET_ISSL, NAPR_USL
+                                  from openjson(NOM_USL, '$.NAPR')
+                                  with (
+                                    NAPR_DATE varchar(10)   '$.NAPR_DATE' ,
+                                    NAPR_V    int           '$.NAPR_V',
+                                    MET_ISSL  int           '$.MET_ISSL',
+                                    NAPR_USL  nvarchar(15)  '$.NAPR_USL'
+                                    )
+                                  for xml path('NAPR'), type) as 'SL'
+                --- БЛОК Консилиумы CONS ---
+                                ,(select
+                                        0                                   as 'CONS/PR_CONS'     -- нет консилиума  для параклиники
+                                    where LPU_ST in (4, 5) and dbo.jsonIf(NOM_USL, 'C_ZAB') = 1
+                                    for xml path(''), type ) as 'SL'
+                                ,(select
+                                        0                                   as 'CONS/PR_CONS'     -- нет консилиума
+                                    where dbo.jsonIf(NOM_USL, 'Taktika_1') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_2') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_3') = 0 and LPU_ST not in (4, 5)
+                                    for xml path(''), type ) as 'SL'
+                                ,(select
+                                        1                                   as 'CONS/PR_CONS'     -- противопоказания химии
+                                        ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'Taktika_1'), 104 ), 20)   as 'CONS/DT_CONS'
+                                    where dbo.jsonIf(NOM_USL, 'Taktika_1') = 1
+                                    for xml path(''), type ) as 'SL'
+                                ,(select
+                                        2                                   as 'CONS/PR_CONS'     -- противопоказания лучевой
+                                        ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'Taktika_2'), 104 ), 20)   as 'CONS/DT_CONS'
+                                    where dbo.jsonIf(NOM_USL, 'Taktika_2') = 1
+                                    for xml path(''), type ) as 'SL'
+                                ,(select
+                                        3                                   as 'CONS/PR_CONS'     -- отказ от хирургии
+                                        ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'Taktika_3'), 104 ), 20)   as 'CONS/DT_CONS'
+                                    where dbo.jsonIf(NOM_USL, 'Taktika_3') = 1
+                                    for xml path(''), type ) as 'SL'
+                --- БЛОК Онкологическое лечение ONK_SL ---
+                                ,(select
+                                     iif(dbo.jsonIf(NOM_USL, 'DS1_T') = 1, dbo.jsonValInt(NOM_USL, 'DS1_T'), 0) as 'ONK_SL/DS1_T'
+                                    ,dbo.jsonValInt(NOM_USL, 'STAD')  as 'ONK_SL/STAD'
+                                    ,dbo.jsonValInt(NOM_USL, 'ONK_T') as 'ONK_SL/ONK_T'
+                                    ,dbo.jsonValInt(NOM_USL, 'ONK_N') as 'ONK_SL/ONK_N'
+                                    ,dbo.jsonValInt(NOM_USL, 'ONK_M') as 'ONK_SL/ONK_M'
+                                    ,dbo.jsonValInt(NOM_USL, 'MTSTZ') as 'ONK_SL/MTSTZ'
+                                    ,try_cast(dbo.jsonValReal(NOM_USL, 'SOD')  as decimal(6,2)) as 'ONK_SL/SOD'
+                --- БЛОК Диагноститческий блок B_DIAG ---
+                                    ,(select
+                                         convert(date, DIAG_DATE, 104 )    as 'B_DIAG/DIAG_DATE'
+                                        ,DIAG_TIP       as 'B_DIAG/DIAG_TIP'
+                                        ,DIAG_CODE      as 'B_DIAG/DIAG_CODE'
+                                        ,DIAG_RSLT      as 'B_DIAG/DIAG_RSLT'
+                                        ,1              as 'B_DIAG/REC_RSLT'
+                                    from
+                                    (select parent_id
+                                            ,name
+                                            ,stringvalue
+                                    from dbo.jsonParse(NOM_USL)
+                                    where object_id is null ) as Piv
+                                    pivot
+                                    (
+                                    max(stringvalue)
+                                    for name in (DIAG_DATE, DIAG_TIP, DIAG_CODE, DIAG_RSLT)
+                                    ) as dd
+                                    where LPU_ST < 3 and DIAG_TIP is not null
+                                    for xml path(''), type ) as 'ONK_SL'
+                --- БЛОК Противопоказания или отказы B_PROT ---
+                                    ,(select
+                                            1                                   as 'B_PROT/PROT'     -- противопоказания хирургии
+                                            ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_1'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                        where dbo.jsonIf(NOM_USL, 'PrOt_1') = 1
+                                        for xml path(''), type ) as 'ONK_SL'
+                                    ,(select
+                                            2                                   as 'B_PROT/PROT'     -- противопоказания химии
+                                            ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_2'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                        where dbo.jsonIf(NOM_USL, 'PrOt_2') = 1
+                                        for xml path(''), type ) as 'ONK_SL'
+                                    ,(select
+                                            3                                   as 'B_PROT/PROT'     -- противопоказания лучевой
+                                            ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_3'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                        where dbo.jsonIf(NOM_USL, 'PrOt_3') = 1
+                                        for xml path(''), type ) as 'ONK_SL'
+                                    ,(select
+                                            4                                   as 'B_PROT/PROT'     -- отказ от хирургии
+                                            ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_4'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                        where dbo.jsonIf(NOM_USL, 'PrOt_4') = 1
+                                        for xml path(''), type ) as 'ONK_SL'
+                                    ,(select
+                                            5                                   as 'B_PROT/PROT'     -- отказ от химии
+                                            ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_5'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                        where dbo.jsonIf(NOM_USL, 'PrOt_5') = 1
+                                        for xml path(''), type ) as 'ONK_SL'
+                                    ,(select
+                                            6                                   as 'B_PROT/PROT'     -- отказ от лучевой
+                                            ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_6'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                        where dbo.jsonIf(NOM_USL, 'PrOt_6') = 1
+                                        for xml path(''), type ) as 'ONK_SL'
+                --- БЛОК Онкологическое лечение ONK_USL ---
+                                    ,(select
+                                         json_value(value, '$.USL_TIP')   as 'ONK_USL/USL_TIP'
+                                        ,json_value(value, '$.HIR_TIP')   as 'ONK_USL/HIR_TIP'
+                                        ,json_value(value, '$.LEK_TIP_L') as 'ONK_USL/LEK_TIP_L'
+                                        ,json_value(value, '$.LEK_TIP_V') as 'ONK_USL/LEK_TIP_V'
+                                        ,(select
+                                             json_value(value, '$.REGNUM') as 'LEK_PR/REGNUM'
+                                            ,json_value(value, '$.CODE_SH') as 'LEK_PR/CODE_SH'
+                                            ,(select convert(nvarchar(10), convert(date, value, 104 ), 20) as DATE_INJ
+                                              from openjson(value, '$.DATE_INJ')    for xml path(''), type) as 'LEK_PR'
+                                         from openjson(value, '$.LEK_PR')
+                                         for xml path(''), type) as 'ONK_USL'
+                                        ,json_value(value, '$.LUCH_TIP') as 'ONK_USL/LUCH_TIP'
+                                        ,json_value(value, '$.PPTR') as 'ONK_USL/PPTR'
+                                    from openjson(NOM_USL, '$.ONK_SL.ONK_USL')
+                                    for xml path(''), type) as 'ONK_SL'
+              --- Продолжаем блок Онкологическое лечение ONK_SL
+                                    ,iif(dbo.jsonIf(NOM_USL, 'K_FR') = 1, iif(dbo.jsonValInt(NOM_USL, 'K_FR') = -1, 0, dbo.jsonValInt(NOM_USL, 'K_FR')), null) as 'ONK_SL/K_FR'
+                                    ,try_cast(dbo.jsonValReal(NOM_USL, 'WEI')  as decimal(4,1)) as 'ONK_SL/WEI'
+                                    ,dbo.jsonValInt(NOM_USL, 'HEI')     as 'ONK_SL/HEI'
+                                    ,try_cast(dbo.jsonValReal(NOM_USL, 'BSA')  as decimal(3,2)) as 'ONK_SL/BSA'
+                                    where isjson(NOM_USL) > 0
+                                          and (json_value(NOM_USL, '$.ONK_SL.DS1_T') is not null
+                                                or json_value(NOM_USL, '$.ONK_SL.STAD') is not null)
+                                    for xml path(''), type ) as 'SL'
+            --- Услуга по КСГ для стационара KSG_KPG ---
+                                ,(select
+                                     json_value(NOM_USL, '$.KSG')  as 'KSG_KPG/N_KSG'
+                                    ,[YEAR]     as 'KSG_KPG/VER_KSG'
+                                    ,0          as 'KSG_KPG/KSG_PG'
+                                    ,cast(dbo.jsonValReal(NOM_USL, 'KOEF_Z') as decimal(8,5))   as 'KSG_KPG/KOEF_Z'
+                                    ,cast(dbo.jsonValReal(NOM_USL, 'KOEF_UP') as decimal(8,5))  as 'KSG_KPG/KOEF_UP'
+                                    ,TARIF      as 'KSG_KPG/BZTSZ'
+                                    ,1.10500    as 'KSG_KPG/KOEF_D'
+                                    ,cast(dbo.jsonValReal(NOM_USL, 'KOEF_U') as decimal(8,5))           as 'KSG_KPG/KOEF_U'
+                                    ,(select value as CRIT from openjson(NOM_USL, '$.CRIT') for xml path(''), type) as 'KSG_KPG'
+                                    ,iif(dbo.jsonValReal(NOM_USL, 'IT_SL') is not null, 1, 0)           as 'KSG_KPG/SL_K'
+                                    ,cast(dbo.jsonValReal(NOM_USL, 'IT_SL') as decimal(8,5))            as 'KSG_KPG/IT_SL'
+            --- КСЛП для стационара SL_KOEF ---
+                                    ,(select -- с 2022 года
+                                                1      as 'SL_KOEF/IDSL'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl01') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl01') = 1
+                                        for xml path(''), type ) as 'KSG_KPG'
+                                    ,(select -- с 2022 года
+                                                2      as 'SL_KOEF/IDSL'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl02') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl02') = 1
+                                        for xml path(''), type ) as 'KSG_KPG'
+                                    ,(select -- до 2022 года
+                                                24      as 'SL_KOEF/IDSL'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl03') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl03') = 1
+                                        for xml path(''), type ) as 'KSG_KPG'
+                                    ,(select -- до 2022 года
+                                                10      as 'SL_KOEF/IDSL'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl10') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                        where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl10') = 1
+                                        for xml path(''), type ) as 'KSG_KPG'
+                                     where LPU_ST in (1, 2)
+                                    for xml path(''), type ) as 'SL'
+            --- продолжаем Случай SL ---
+                                ,PRVS       as 'SL/PRVS'
+                                ,'V021'     as 'SL/VERS_SPEC'
+                                ,IDDOKT     as 'SL/IDDOKT'
+                                ,1.00       as 'SL/ED_COL'
+                                ,SUM_LPU    as 'SL/TARIF'
+                                ,SUM_LPU    as 'SL/SUM_M'
+            --- Услуга Поликлиники USL ---
+                                ,(select
+                                    row_number() over (order by Cod) as 'USL/IDSERV'
+                                    ,'555509'   as 'USL/LPU'
+                                    ,LPU_1      as 'USL/LPU_1'
+                                    ,PODR       as 'USL/PODR'
+                                    ,PROFIL     as 'USL/PROFIL'
+                                    ,Usl        as 'USL/VID_VME'
+                                    ,DET        as 'USL/DET'
+                                    ,convert(nvarchar(10), convert(date, DatN, 104 ), 20) as 'USL/DATE_IN'
+                                    ,convert(nvarchar(10), convert(date, DatN, 104 ), 20)  as 'USL/DATE_OUT'
+                                    ,D          as 'USL/DS'
+                                    ,Code_Usl   as 'USL/CODE_USL'
+                                    ,1.00       as 'USL/KOL_USL'
+                                    ,0.00       as 'USL/TARIF'
+                                    ,0.00       as 'USL/SUMV_USL'
+                                    ,PRVS_Usl   as 'USL/PRVS'
+                                    ,MD         as 'USL/CODE_MD'
+                                from
+                                (select parent_id
+                                        ,name
+                                        ,stringvalue
+                                from dbo.jsonParse(NOM_USL)
+                                where object_id is null ) as Piv
+                                pivot
+                                (
+                                max(stringvalue)
+                                for name in (Nom, Usl, PRVS_Usl, DatN, Code_Usl, MD, D)
+                                ) as dd
+                                where LPU_ST = 3 and Usl is not null
+                                for xml path(''), type ) as 'SL'
+
+            --- Услуга Стационара USL ---
+                                ,(select
+                                     1  as 'USL/IDSERV'
+                                    ,'555509'   as 'USL/LPU'
+                                    ,LPU_1      as 'USL/LPU_1'
+                                    ,PODR       as 'USL/PODR'
+                                    ,PROFIL     as 'USL/PROFIL'
+                                    ,VID_VME    as 'USL/VID_VME'
+                                    ,DET        as 'USL/DET'
+                                    ,convert(nvarchar(10), ARR_DATE, 20) as 'USL/DATE_IN'
+                                    ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
+                                    ,DS1        as 'USL/DS'
+                                    ,CODE_USL   as 'USL/CODE_USL'
+                                    ,1.00       as 'USL/KOL_USL'    --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
+                                    ,0.00       as 'USL/TARIF'
+                                    ,0.00       as 'USL/SUMV_USL'
+                                    ,PRVS       as 'USL/PRVS'
+                                    ,IDDOKT     as 'USL/CODE_MD'
+                                where LPU_ST in (1, 2)
+                                for xml path(''), type ) as 'SL'
+
+            --- Услуга лечения операции USL ---
+                                ,(select
+                                    row_number() over (order by convert(date, DatN, 104), Cod) + 1 as 'USL/IDSERV'
+                                    ,'555509'   as 'USL/LPU'
+                                    ,LPU_1      as 'USL/LPU_1'
+                                    ,PODR       as 'USL/PODR'
+                                    ,PROFIL     as 'USL/PROFIL'
+                                    ,iif(left(Usl, 2) = 'sh', null, Usl)        as 'USL/VID_VME'
+                                    ,DET        as 'USL/DET'
+                                    ,convert(nvarchar(10), convert(date, DatN, 104 ), 20) as 'USL/DATE_IN'
+                                    ,convert(nvarchar(10), convert(date, DatK, 104 ), 20)  as 'USL/DATE_OUT' -- Для схем дату окончания ставим равной дате выписки
+                                    ,DS1        as 'USL/DS'
+                                  -- по решению Корешковой Убрал (возможно временно) 23.03.2021
+                                  --  ,iif(left(DopUsl, 2) = 'mt', DopUsl, left(Usl, charindex('.', Usl, 6) - 1))   as 'USL/CODE_USL'
+                                    ,left(Usl, charindex('.', Usl, 6) - 1)    as 'USL/CODE_USL'
+                                    ,1          as 'USL/KOL_USL' -- cast(isnull(Frakc, 1) as decimal(5,2)) -- 18.05.2021
+                                    ,0.00       as 'USL/TARIF'
+                                    ,0.00       as 'USL/SUMV_USL'
+                                    ,PRVS       as 'USL/PRVS'
+                                    ,IDDOKT     as 'USL/CODE_MD'
+                                from
+                                (select parent_id
+                                        ,name
+                                        ,stringvalue
+                                from dbo.jsonParse(NOM_USL)
+                                where object_id is null ) as Piv
+                                pivot
+                                (
+                                max(stringvalue)
+                                for name in (Usl, Tip, DatN, DatK, DopUsl, Frakc)
+                                ) as dd
+                                where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh' and left(Usl, 3) <> 'gem'
+                                order by convert(date, DatN, 104), Cod -- Сортируем услуги по дате
+                                for xml path(''), type ) as 'SL'
+            --- Услуга Параклиники USL --- (потом можно будет убрать, так как перенесли в H Реестр)
+                                ,(select
+                                     1  as 'USL/IDSERV'
+                                    ,'555509'   as 'USL/LPU'
+                                    ,LPU_1      as 'USL/LPU_1'
+                                    ,PODR       as 'USL/PODR'
+                                    ,PROFIL     as 'USL/PROFIL'
+                                    ,VID_VME    as 'USL/VID_VME'
+                                    ,DET        as 'USL/DET'
+                                    ,convert(nvarchar(10), ARR_DATE, 20) as 'USL/DATE_IN'
+                                    ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
+                                    ,DS1        as 'USL/DS'
+                                    ,CODE_USL   as 'USL/CODE_USL'
+                                    ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2))  -- 18.05.2021
+                                    ,SUM_LPU    as 'USL/TARIF'
+                                    ,SUM_LPU    as 'USL/SUMV_USL'
+                                    ,PRVS       as 'USL/PRVS'
+                                    ,IDDOKT     as 'USL/CODE_MD'
+                                where LPU_ST in (4, 5)
+                                for xml path(''), type ) as 'SL'
+            --- продолжаем Законченный Случай Z_SL ---
+                            ,IDSP       as 'IDSP'
+                            ,SUM_LPU    as 'SUMV'
+                        for xml path(''), type) as 'Z_SL'
+                    for xml path(''), type) as 'ZAP'
+                from dbo.StrahReestr as b
+                where CodFile = sf.Cod
+                order by N_ZAP, NOM_ZAP
+                for xml path(''),  type)
+            from dbo.StrahFile as sf
+            where Cod = {CodFile}
+            for xml path(''), root('ZL_LIST'),  type";
+            return _Return;
+        }
+
         /// <summary>Выгрузка ВМП Файла ВЕРСИЯ 2021</summary>
         public static string StrahReestrXML_Select_T_2021(int CodFile, string pMainFileName)
         {
@@ -611,6 +965,268 @@ namespace wpfReestr
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
                                 ,NUMBER     as 'ZAP/PACIENT/NPOLIS'
+                                ,0          as 'ZAP/PACIENT/NOVOR'
+                    -- Законченный случай Z_SL ---
+                                ,(select
+                                     NOM_ZAP    as 'Z_SL/IDCASE'
+                                    ,LPU_ST     as 'Z_SL/USL_OK'
+                                    ,VIDPOM     as 'Z_SL/VIDPOM'
+                                    ,3          as 'Z_SL/FOR_POM'
+                                    ,json_value(NOM_USL, '$.NPR_MO')   as 'Z_SL/NPR_MO'                                 --- !!!
+                                    ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.NPR_DATE'), 104 ), 20)  as 'Z_SL/NPR_DATE'    --- !!!
+                                    ,'555509'   as 'Z_SL/LPU'
+                                    ,convert(nvarchar(10), ARR_DATE, 20) as 'Z_SL/DATE_Z_1'
+                                    ,convert(nvarchar(10), EX_DATE, 20)  as 'Z_SL/DATE_Z_2'
+                                    ,cast(KOL_USL as int)   as 'Z_SL/KD_Z'
+                                    ,RES_G      as 'Z_SL/RSLT'
+                                    ,ISHOD      as 'Z_SL/ISHOD'
+                                    ,iif(OS_SLUCH = '', null, OS_SLUCH) as 'Z_SL/OS_SLUCH'
+                    --- Случай SL ---
+                                    ,(select
+                                         1          as 'SL/SL_ID'
+                                        ,VID_HMP    as 'SL/VID_HMP'
+                                        ,METOD_HMP  as 'SL/METOD_HMP'
+                                        ,json_value(NOM_USL, '$.IDMODP')    as 'SL/IDMODP'
+                                        ,json_value(NOM_USL, '$.HGR')       as 'SL/HGR'
+                                        ,LPU_1      as 'SL/LPU_1'
+                                        ,PODR       as 'SL/PODR'
+                                        ,PROFIL     as 'SL/PROFIL'
+                                        ,json_value(NOM_USL, '$.PROFIL_K') as 'SL/PROFIL_K'
+                                        ,DET        as 'SL/DET'
+                                        ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.TAL_D'), 104 ), 20)  as 'SL/TAL_D'
+                                        ,json_value(NOM_USL, '$.TAL_NUM') as 'SL/TAL_NUM'
+                                        ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/TAL_P'
+                                        ,PACIENTID  as 'SL/NHISTORY'
+                                        ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/DATE_1'
+                                        ,convert(nvarchar(10), EX_DATE, 20)  as 'SL/DATE_2'
+                                        ,DS1        as 'SL/DS1'
+                                        ,iif(DS2 = '', null, DS2)      as 'SL/DS2'
+                                        ,json_value(NOM_USL, '$.C_ZAB') as 'SL/C_ZAB'
+                                        ,iif(json_value(NOM_USL, '$.DS_ONK') = 1, 1, 0) as 'SL/DS_ONK'
+                        --- БЛОК Направления к врачу околога при подозрении NAPR --- Убрал 29/04/2019
+                                      --  ,convert(nvarchar(10), EX_DATE, 20) as 'SL/NAPR/NAPR_DATE'
+                                      --  ,1                                  as 'SL/NAPR/NAPR_V'
+                         --- БЛОК Направления на исследования добавил 17/12/2019 ---
+                                        ,(select convert(nvarchar(10), convert(date, NAPR_DATE, 104 ), 20) as NAPR_DATE, NAPR_V, MET_ISSL, NAPR_USL
+                                          from openjson(NOM_USL, '$.NAPR')
+                                          with (
+                                            NAPR_DATE varchar(10)    '$.NAPR_DATE' ,
+                                            NAPR_V    int            '$.NAPR_V',
+                                            MET_ISSL  int            '$.MET_ISSL',
+                                            NAPR_USL  nvarchar(15)  '$.NAPR_USL'
+                                            )
+                                          for xml path('NAPR'), type) as 'SL'
+                        --- БЛОК Консилиумы CONS ---
+                                        ,(select
+                                                0                                   as 'CONS/PR_CONS'     -- нет консилиума
+                                            where dbo.jsonIf(NOM_USL, 'Taktika_1') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_2') = 0 and dbo.jsonIf(NOM_USL, 'Taktika_3') = 0
+                                            for xml path(''), type ) as 'SL'
+                                        ,(select
+                                                1                                   as 'CONS/PR_CONS'     -- противопоказания химии
+                                                ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'Taktika_1'), 104 ), 20)   as 'CONS/DT_CONS'
+                                            where dbo.jsonIf(NOM_USL, 'Taktika_1') = 1
+                                            for xml path(''), type ) as 'SL'
+                                        ,(select
+                                                2                                   as 'CONS/PR_CONS'     -- противопоказания лучевой
+                                                ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'Taktika_2'), 104 ), 20)   as 'CONS/DT_CONS'
+                                            where dbo.jsonIf(NOM_USL, 'Taktika_2') = 1
+                                            for xml path(''), type ) as 'SL'
+                                        ,(select
+                                                3                                   as 'CONS/PR_CONS'     -- отказ от хирургии
+                                                ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'Taktika_3'), 104 ), 20)   as 'CONS/DT_CONS'
+                                            where dbo.jsonIf(NOM_USL, 'Taktika_3') = 1
+                                            for xml path(''), type ) as 'SL'
+                    --- БЛОК Онкологическое лечение ONK_SL ---
+                                        ,(select
+                                             iif(dbo.jsonIf(NOM_USL, 'DS1_T') = 1, dbo.jsonValInt(NOM_USL, 'DS1_T'), 0) as 'ONK_SL/DS1_T'
+                                            ,dbo.jsonValInt(NOM_USL, 'STAD')  as 'ONK_SL/STAD'
+                                            ,dbo.jsonValInt(NOM_USL, 'ONK_T') as 'ONK_SL/ONK_T'
+                                            ,dbo.jsonValInt(NOM_USL, 'ONK_N') as 'ONK_SL/ONK_N'
+                                            ,dbo.jsonValInt(NOM_USL, 'ONK_M') as 'ONK_SL/ONK_M'
+                                            ,dbo.jsonValInt(NOM_USL, 'MTSTZ') as 'ONK_SL/MTSTZ'
+                                            ,try_cast(dbo.jsonValReal(NOM_USL, 'SOD')  as decimal(6,2)) as 'ONK_SL/SOD'
+                        --- БЛОК Диагноститческий блок B_DIAG ---
+                                            ,(select
+                                                 convert(date, DIAG_DATE, 104 )    as 'B_DIAG/DIAG_DATE'
+                                                ,DIAG_TIP       as 'B_DIAG/DIAG_TIP'
+                                                ,DIAG_CODE      as 'B_DIAG/DIAG_CODE'
+                                                ,DIAG_RSLT      as 'B_DIAG/DIAG_RSLT'
+                                                ,1              as 'B_DIAG/REC_RSLT'
+                                            from
+                                            (select parent_id
+                                                    ,name
+                                                    ,stringvalue
+                                            from dbo.jsonParse(NOM_USL)
+                                            where object_id is null ) as Piv
+                                            pivot
+                                            (
+                                            max(stringvalue)
+                                            for name in (DIAG_DATE, DIAG_TIP, DIAG_CODE, DIAG_RSLT)
+                                            ) as dd
+                                            where LPU_ST < 3 and DIAG_TIP is not null
+                                            for xml path(''), type ) as 'ONK_SL'
+                        --- БЛОК Противопоказания или отказы B_PROT ---
+                                            ,(select
+                                                    1                                   as 'B_PROT/PROT'     -- противопоказания хирургии
+                                                    ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_1'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                                where dbo.jsonIf(NOM_USL, 'PrOt_1') = 1
+                                                for xml path(''), type ) as 'ONK_SL'
+                                            ,(select
+                                                    2                                   as 'B_PROT/PROT'     -- противопоказания химии
+                                                    ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_2'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                                where dbo.jsonIf(NOM_USL, 'PrOt_2') = 1
+                                                for xml path(''), type ) as 'ONK_SL'
+                                            ,(select
+                                                    3                                   as 'B_PROT/PROT'     -- противопоказания лучевой
+                                                    ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_3'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                                where dbo.jsonIf(NOM_USL, 'PrOt_3') = 1
+                                                for xml path(''), type ) as 'ONK_SL'
+                                            ,(select
+                                                    4                                   as 'B_PROT/PROT'     -- отказ от хирургии
+                                                    ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_4'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                                where dbo.jsonIf(NOM_USL, 'PrOt_4') = 1
+                                                for xml path(''), type ) as 'ONK_SL'
+                                            ,(select
+                                                    5                                   as 'B_PROT/PROT'     -- отказ от химии
+                                                    ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_5'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                                where dbo.jsonIf(NOM_USL, 'PrOt_5') = 1
+                                                for xml path(''), type ) as 'ONK_SL'
+                                            ,(select
+                                                    6                                   as 'B_PROT/PROT'     -- отказ от лучевой
+                                                    ,convert(nvarchar(10), convert(date, dbo.jsonValStr(NOM_USL, 'PrOt_6'), 104 ), 20)   as 'B_PROT/D_PROT'
+                                                where dbo.jsonIf(NOM_USL, 'PrOt_6') = 1
+                                                for xml path(''), type ) as 'ONK_SL'
+                        --- БЛОК Онкологическое лечение ONK_USL ---
+                                            ,(select
+                                                 json_value(value, '$.USL_TIP')     as 'ONK_USL/USL_TIP'
+                                                ,json_value(value, '$.HIR_TIP')     as 'ONK_USL/HIR_TIP'
+                                                ,json_value(value, '$.LEK_TIP_L')   as 'ONK_USL/LEK_TIP_L'
+                                                ,json_value(value, '$.LEK_TIP_V')   as 'ONK_USL/LEK_TIP_V'
+                                                ,(select
+                                                     json_value(value, '$.REGNUM') as 'LEK_PR/REGNUM'
+                                                    ,json_value(value, '$.CODE_SH') as 'LEK_PR/CODE_SH'
+                                                    ,(select convert(nvarchar(10), convert(date, value, 104 ), 20) as DATE_INJ
+                                                      from openjson(value, '$.DATE_INJ')    for xml path(''), type) as 'LEK_PR'
+                                                 from openjson(value, '$.LEK_PR')
+                                                 for xml path(''), type) as 'ONK_USL'
+                                                ,json_value(value, '$.LUCH_TIP') as 'ONK_USL/LUCH_TIP'
+                                                ,json_value(value, '$.PPTR') as 'ONK_USL/PPTR'
+                                            from openjson(NOM_USL, '$.ONK_SL.ONK_USL')
+                                            for xml path(''), type) as 'ONK_SL'
+                        --- Продолжаем блок Онкологическое лечение ONK_SL
+                                            ,iif(dbo.jsonIf(NOM_USL, 'K_FR') = 1, iif(dbo.jsonValInt(NOM_USL, 'K_FR') = -1, 0, dbo.jsonValInt(NOM_USL, 'K_FR')), null) as 'ONK_SL/K_FR'
+                                            ,try_cast(dbo.jsonValReal(NOM_USL, 'WEI')  as decimal(4,1)) as 'ONK_SL/WEI'
+                                            ,dbo.jsonValInt(NOM_USL, 'HEI')     as 'ONK_SL/HEI'
+                                            ,try_cast(dbo.jsonValReal(NOM_USL, 'BSA')  as decimal(3,2)) as 'ONK_SL/BSA'
+                                            where isjson(NOM_USL) > 0
+                                                  and (json_value(NOM_USL, '$.ONK_SL.DS1_T') is not null
+                                                       or json_value(NOM_USL, '$.ONK_SL.STAD') is not null)
+                                            for xml path(''), type ) as 'SL'
+                    --- Продолжаем блок случая SL
+                                        ,PRVS       as 'SL/PRVS'
+                                        ,'V021'     as 'SL/VERS_SPEC'
+                                        ,IDDOKT     as 'SL/IDDOKT'
+                                        ,1.00       as 'SL/ED_COL'
+                                        ,SUM_LPU    as 'SL/TARIF'
+                                        ,SUM_LPU    as 'SL/SUM_M'
+                    --- Услуга Стационара USL ---
+                                        ,(select
+                                                1  as 'USL/IDSERV'
+                                            ,'555509'   as 'USL/LPU'
+                                            ,LPU_1      as 'USL/LPU_1'
+                                            ,PODR       as 'USL/PODR'
+                                            ,PROFIL     as 'USL/PROFIL'
+                                            ,VID_VME    as 'USL/VID_VME'
+                                            ,DET        as 'USL/DET'
+                                            ,convert(nvarchar(10), ARR_DATE, 20) as 'USL/DATE_IN'
+                                            ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
+                                            ,DS1        as 'USL/DS'
+                                            ,CODE_USL   as 'USL/CODE_USL'
+                                            ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
+                                            ,PRVS       as 'USL/PRVS'
+                                            ,IDDOKT     as 'USL/CODE_MD'
+                                        where LPU_ST in (1, 2)
+                                        for xml path(''), type ) as 'SL'
+
+                    --- Услуга лечения операции USL --- (пока не подаем 03/02/2020)
+                      --                  ,(select
+                      --                      row_number() over (order by convert(date, DatN, 104), Cod) + 1 as 'USL/IDSERV'
+                      --                      ,'555509'   as 'USL/LPU'
+                      --                      ,LPU_1      as 'USL/LPU_1'
+                      --                      ,PODR       as 'USL/PODR'
+                      --                      ,PROFIL     as 'USL/PROFIL'
+                      --                      ,iif(left(Usl, 2) = 'sh', null, Usl)        as 'USL/VID_VME'
+                      --                      ,DET        as 'USL/DET'
+                      --                      ,convert(nvarchar(10), convert(date, DatN, 104 ), 20) as 'USL/DATE_IN'
+                      --                      ,convert(nvarchar(10), convert(date, DatK, 104 ), 20)  as 'USL/DATE_OUT' -- Для схем дату окончания ставим равной дате выписки
+                      --                      ,DS1        as 'USL/DS'
+                      --                      ,iif(left(DopUsl, 2) = 'mt', DopUsl, left(Usl, charindex('.', Usl, 6) - 1))   as 'USL/CODE_USL'
+                      --                      ,cast(isnull(Frakc, 1) as decimal(5,2))  as 'USL/KOL_USL'
+                      --                      ,0.00       as 'USL/TARIF'
+                      --                      ,0.00       as 'USL/SUMV_USL'
+                      --                      ,PRVS       as 'USL/PRVS'
+                      --                      ,IDDOKT     as 'USL/CODE_MD'
+                      --                  from
+                      --                  (select parent_id
+                      --                          ,name
+                      --                          ,stringvalue
+                      --                  from dbo.jsonParse(NOM_USL)
+                      --                  where object_id is null ) as Piv
+                      --                  pivot
+                      --                  (
+                      --                  max(stringvalue)
+                      --                  for name in (Usl, Tip, DatN, DatK, DopUsl, Frakc)
+                      --                  ) as dd
+                      --                  where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh'
+                      --                  order by convert(date, DatN, 104), Cod -- Сортируем услуги по дате
+                      --              for xml path(''), type ) as 'SL'
+                    --- продолжаем Законченный Случай Z_SL ---
+                                    ,IDSP       as 'IDSP'
+                                    ,SUM_LPU    as 'SUMV'
+                                for xml path(''), type) as 'Z_SL'
+                            for xml path(''), type) as 'ZAP'
+                        from dbo.StrahReestr as b
+                        where CodFile = sf.Cod
+                        order by N_ZAP, NOM_ZAP
+                        for xml path(''),  type)
+                    from dbo.StrahFile as sf
+                    where Cod = {CodFile}
+                    for xml path(''), root('ZL_LIST'),  type";
+            return _Return;
+        }
+
+        /// <summary>Выгрузка ВМП Файла ВЕРСИЯ 2022</summary>
+        public static string StrahReestrXML_Select_T_2022(int CodFile, string pMainFileName)
+        {
+            string _Return = $@"
+                    use Bazis;
+
+                     --- Заголовок ZGLV ---
+                    select
+                        '3.1'                                   as 'ZGLV/VERSION'
+                        ,convert(nvarchar(10), getdate(), 20)   as 'ZGLV/DATA'
+                        ,'{pMainFileName}'                      as 'ZGLV/FILENAME'
+                        ,(select count(*) from dbo.StrahReestr where CodFile = sf.Cod) as 'ZGLV/SD_Z'
+                    --- Счет SCHET ---
+                        ,Cod        as 'SCHET/CODE'
+                        ,'555509'   as 'SCHET/CODE_MO'
+                        ,[YEAR]     as 'SCHET/YEAR'
+                        ,[MONTH]    as 'SCHET/MONTH'
+                        ,NSCHET     as 'SCHET/NSCHET'
+                        ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'
+                        ,SUMMAV     as 'SCHET/SUMMAV'
+                    --- Запись ZAP ---
+                        ,(select
+                                N_ZAP               as 'ZAP/N_ZAP'
+                                ,isnull(PR_NOV, 0)  as 'ZAP/PR_NOV'
+                    --- Пациент PACIENT ---
+                                ,ID_PAC     as 'ZAP/PACIENT/ID_PAC'
+                                ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
+                                ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
+                                ,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
+                                ,iif(VPOLIS = 3, NUMBER, null) as 'ZAP/PACIENT/ENP'
                                 ,0          as 'ZAP/PACIENT/NOVOR'
                     -- Законченный случай Z_SL ---
                                 ,(select
@@ -1043,6 +1659,228 @@ namespace wpfReestr
                                         ,SUM_LPU    as 'USL/SUMV_USL'
                                         ,PRVS       as 'USL/PRVS'
                                         ,IDDOKT     as 'USL/CODE_MD'
+                                    where LPU_ST in (4, 5)
+                                    for xml path(''), type ) as 'SL'
+                    --- продолжаем Законченный Случай Z_SL ---
+                                    ,IDSP       as 'IDSP'
+                                    ,SUM_LPU    as 'SUMV'
+                                for xml path(''), type) as 'Z_SL'
+                            for xml path(''), type) as 'ZAP'
+                        from dbo.StrahReestr as b
+                        where CodFile = sf.Cod
+                        order by N_ZAP, NOM_ZAP
+                        for xml path(''),  type)
+                    from dbo.StrahFile as sf
+                    where Cod = {CodFile}
+                    for xml path(''), root('ZL_LIST'),  type";
+            return _Return;
+        }
+
+        /// <summary>Выгрузка файла НЕ зно ВЕРСИЯ 2022</summary>
+        public static string StrahReestrXML_Select_H_2022(int CodFile, string pMainFileName)
+        {
+            string _Return = $@"
+                    use Bazis;
+
+                    --- Заголовок ZGLV ---
+                    select
+                        '3.2'                                   as 'ZGLV/VERSION'
+                        ,convert(nvarchar(10), getdate(), 20)   as 'ZGLV/DATA'
+                        ,'{pMainFileName}'                      as 'ZGLV/FILENAME'
+                        ,(select count(*) from dbo.StrahReestr where CodFile = sf.Cod) as 'ZGLV/SD_Z'
+                    --- Счет SCHET ---
+                        ,Cod        as 'SCHET/CODE'
+                        ,'555509'   as 'SCHET/CODE_MO'
+                        ,[YEAR]     as 'SCHET/YEAR'
+                        ,[MONTH]    as 'SCHET/MONTH'
+                        ,NSCHET     as 'SCHET/NSCHET'
+                        ,convert(nvarchar(10), DSCHET, 20) as 'SCHET/DSCHET'
+                        ,SUMMAV     as 'SCHET/SUMMAV'
+                    --- Запись ZAP ---
+                        ,(select
+                                 N_ZAP              as 'ZAP/N_ZAP'
+                                ,isnull(PR_NOV, 0)  as 'ZAP/PR_NOV'
+                    --- Пациент PACIENT ---
+                                ,ID_PAC     as 'ZAP/PACIENT/ID_PAC'
+                                ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
+                                ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
+                                ,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
+                                ,iif(VPOLIS = 3, NUMBER, null) as 'ZAP/PACIENT/ENP'
+                                ,0          as 'ZAP/PACIENT/NOVOR'
+                    -- Законченный случай Z_SL ---
+                                ,(select
+                                     NOM_ZAP    as 'Z_SL/IDCASE'
+                                    ,iif(LPU_ST in (4, 5), 3, LPU_ST)     as 'Z_SL/USL_OK'  -- для параклиники меняем 4 и 5 на 3
+                                    ,VIDPOM     as 'Z_SL/VIDPOM'
+                                    ,3          as 'Z_SL/FOR_POM'
+                                    ,json_value(NOM_USL, '$.NPR_MO')   as 'Z_SL/NPR_MO'                                 --- !!!
+                                    ,convert(nvarchar(10), convert(date, json_value(NOM_USL, '$.NPR_DATE'), 104 ), 20)  as 'Z_SL/NPR_DATE'    --- !!!
+                                    ,'555509'   as 'Z_SL/LPU'
+                                    ,convert(nvarchar(10), ARR_DATE, 20) as 'Z_SL/DATE_Z_1'
+                                    ,convert(nvarchar(10), EX_DATE, 20)  as 'Z_SL/DATE_Z_2'
+                                    ,iif(LPU_ST < 3, cast(KOL_USL as int), null)   as 'Z_SL/KD_Z'  -- только для стационара
+                                    ,RES_G      as 'Z_SL/RSLT'
+                                    ,ISHOD      as 'Z_SL/ISHOD'
+                                    ,iif(OS_SLUCH = '', null, OS_SLUCH) as 'Z_SL/OS_SLUCH'
+                                    --   ,iif(1 = 2, 1, null) as 'Z_SL/VB_P'                         -- !!! переводы между отделением
+                    --- Случай SL ---
+                                    ,(select
+                                         1          as 'SL/SL_ID'
+                                        ,LPU_1      as 'SL/LPU_1'
+                                        ,PODR       as 'SL/PODR'
+                                        ,PROFIL     as 'SL/PROFIL'
+                                        ,json_value(NOM_USL, '$.PROFIL_K') as 'SL/PROFIL_K'
+                                        ,DET        as 'SL/DET'
+                                        ,json_value(NOM_USL, '$.P_Cel') as 'SL/P_CEL' --,iif(LPU_ST = 3, json_value(NOM_USL, '$.P_Cel'), null) as 'SL/P_CEL'
+                                        ,PACIENTID  as 'SL/NHISTORY'
+                                        ,iif(LPU_ST < 3, 1, null) as 'SL/P_PER'             -- !!! признак поступления/перевода стационара 1 или 4
+                                        ,convert(nvarchar(10), ARR_DATE, 20) as 'SL/DATE_1'
+                                        ,convert(nvarchar(10), EX_DATE, 20)  as 'SL/DATE_2'
+                                        ,iif(LPU_ST < 3, cast(KOL_USL as int), null) as 'SL/KD'
+                                        ,DS1        as 'SL/DS1'
+                                        ,iif(DS2 = '', null, DS2)            as 'SL/DS2'
+                                        ,json_value(NOM_USL, '$.C_ZAB')     as 'SL/C_ZAB'
+                                        ,iif(LPU_ST = 3 and json_value(NOM_USL, '$.P_CEL') = '1.3', 1, null) as 'SL/DN'  -- если в поликлинике цель посещение 1.3 диспансерное наблюдение
+                    --- Услуга по КСГ для стационара KSG_KPG ---
+                                        ,(select
+                                             json_value(NOM_USL, '$.KSG')    as 'KSG_KPG/N_KSG'
+                                            ,[YEAR]     as 'KSG_KPG/VER_KSG'
+                                            ,0          as 'KSG_KPG/KSG_PG'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'KOEF_Z') as decimal(8,5))   as 'KSG_KPG/KOEF_Z'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'KOEF_UP') as decimal(8,5))  as 'KSG_KPG/KOEF_UP'
+                                            ,TARIF      as 'KSG_KPG/BZTSZ'
+                                            ,1.10500    as 'KSG_KPG/KOEF_D'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'KOEF_U') as decimal(8,5))           as 'KSG_KPG/KOEF_U'
+                                            ,(select value as CRIT from openjson(NOM_USL, '$.CRIT') for xml path(''), type) as 'KSG_KPG'
+                                            ,iif(dbo.jsonValReal(NOM_USL, 'IT_SL') is not null, 1, 0)           as 'KSG_KPG/SL_K'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'IT_SL') as decimal(8,5))            as 'KSG_KPG/IT_SL'
+                    --- КСЛП для стационара SL_KOEF ---
+                                            ,(select
+                                                     24      as 'SL_KOEF/IDSL'
+                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl03') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl03') = 1
+                                                for xml path(''), type ) as 'KSG_KPG'
+                                            ,(select
+                                                     10      as 'SL_KOEF/IDSL'
+                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl10') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl10') = 1
+                                                for xml path(''), type ) as 'KSG_KPG'
+                                             where LPU_ST in (1, 2)
+                                            for xml path(''), type ) as 'SL'
+                    --- продолжаем Случай SL ---
+                                        ,PRVS       as 'SL/PRVS'
+                                        ,'V021'     as 'SL/VERS_SPEC'
+                                        ,IDDOKT     as 'SL/IDDOKT'
+                                        ,1.00       as 'SL/ED_COL'
+                                        ,SUM_LPU    as 'SL/TARIF' --iif(LPU_ST in (1, 2), SUM_LPU, null)    as 'SL/TARIF'
+                                        ,SUM_LPU    as 'SL/SUM_M'
+                    --- Услуга Поликлиники USL ---
+                                        ,(select
+                                            row_number() over (order by Cod) as 'USL/IDSERV'
+                                            ,'555509'   as 'USL/LPU'
+                                            ,LPU_1      as 'USL/LPU_1'
+                                            ,PODR       as 'USL/PODR'
+                                            ,PROFIL     as 'USL/PROFIL'
+                                            ,Usl        as 'USL/VID_VME'
+                                            ,DET        as 'USL/DET'
+                                            ,convert(nvarchar(10), convert(date, DatN, 104 ), 20) as 'USL/DATE_IN'
+                                            ,convert(nvarchar(10), convert(date, DatN, 104 ), 20)  as 'USL/DATE_OUT'
+                                            ,D          as 'USL/DS'
+                                            ,Code_Usl   as 'USL/CODE_USL'
+                                            ,1.00       as 'USL/KOL_USL'
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
+                                            ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
+                                            ,PRVS_Usl   as 'USL/MR_USL_N/PRVS'
+                                            ,MD         as 'USL/MR_USL_N/CODE_MD'
+                                        from
+                                        (select parent_id
+                                                ,name
+                                                ,stringvalue
+                                        from dbo.jsonParse(NOM_USL)
+                                        where object_id is null ) as Piv
+                                        pivot
+                                        (
+                                        max(stringvalue)
+                                        for name in (Nom, Usl, PRVS_Usl, DatN, Code_Usl, MD, D)
+                                        ) as dd
+                                        where LPU_ST = 3 and Usl is not null
+                                        for xml path(''), type ) as 'SL'
+
+                    --- Услуга Стационара USL ---
+                                        ,(select
+                                             1  as 'USL/IDSERV'
+                                            ,'555509'   as 'USL/LPU'
+                                            ,LPU_1      as 'USL/LPU_1'
+                                            ,PODR       as 'USL/PODR'
+                                            ,PROFIL     as 'USL/PROFIL'
+                                            ,VID_VME    as 'USL/VID_VME'
+                                            ,DET        as 'USL/DET'
+                                            ,convert(nvarchar(10), ARR_DATE, 20) as 'USL/DATE_IN'
+                                            ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
+                                            ,DS1        as 'USL/DS'
+                                            ,CODE_USL   as 'USL/CODE_USL'
+                                            ,1          as 'USL/KOL_USL'  --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
+                                            ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
+                                            ,PRVS       as 'USL/MR_USL_N/PRVS'
+                                            ,IDDOKT     as 'USL/MR_USL_N/CODE_MD'
+                                        where LPU_ST in (1, 2)
+                                        for xml path(''), type ) as 'SL'
+
+                    --- Услуга лечения операции USL ---
+                                        ,(select
+                                            row_number() over (order by convert(date, DatN, 104), Cod) + 1 as 'USL/IDSERV'
+                                            ,'555509'   as 'USL/LPU'
+                                            ,LPU_1      as 'USL/LPU_1'
+                                            ,PODR       as 'USL/PODR'
+                                            ,PROFIL     as 'USL/PROFIL'
+                                            ,iif(left(Usl, 2) = 'sh', null, Usl)        as 'USL/VID_VME'
+                                            ,DET        as 'USL/DET'
+                                            ,convert(nvarchar(10), convert(date, DatN, 104 ), 20) as 'USL/DATE_IN'
+                                            ,convert(nvarchar(10), convert(date, DatK, 104 ), 20)  as 'USL/DATE_OUT'  -- Для схем дату окончания ставим равной дате выписки
+                                            ,DS1        as 'USL/DS'
+                                            ,iif(left(DopUsl, 2) = 'mt', DopUsl, left(Usl, charindex('.', Usl, 6) - 1))   as 'USL/CODE_USL'
+                                            ,1          as 'USL/KOL_USL' --cast(isnull(Frakc, 1) as decimal(5,2)) -- 18.05.2021
+                                            ,0.00       as 'USL/TARIF'
+                                            ,0.00       as 'USL/SUMV_USL'
+                                            ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
+                                            ,PRVS       as 'USL/MR_USL_N/PRVS'
+                                            ,IDDOKT     as 'USL/MR_USL_N/CODE_MD'
+                                        from
+                                        (select parent_id
+                                                ,name
+                                                ,stringvalue
+                                        from dbo.jsonParse(NOM_USL)
+                                        where object_id is null ) as Piv
+                                        pivot
+                                        (
+                                        max(stringvalue)
+                                        for name in (Usl, Tip, DatN, DatK, DopUsl, Frakc)
+                                        ) as dd
+                                        where LPU_ST in (1, 2) and Usl is not null and Tip <> 'диаг' and left(Usl, 2) <> 'sh'
+                                        order by convert(date, DatN, 104), Cod -- Сортируем услуги по дате
+                                    for xml path(''), type ) as 'SL'
+                        --- Услуга Параклиники USL ---
+                                    ,(select
+                                         1  as 'USL/IDSERV'
+                                        ,'555509'   as 'USL/LPU'
+                                        ,LPU_1      as 'USL/LPU_1'
+                                        ,PODR       as 'USL/PODR'
+                                        ,PROFIL     as 'USL/PROFIL'
+                                        ,VID_VME    as 'USL/VID_VME'
+                                        ,DET        as 'USL/DET'
+                                        ,convert(nvarchar(10), ARR_DATE, 20) as 'USL/DATE_IN'
+                                        ,convert(nvarchar(10), EX_DATE, 20)  as 'USL/DATE_OUT'
+                                        ,DS1        as 'USL/DS'
+                                        ,CODE_USL   as 'USL/CODE_USL'
+                                        ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2))  -- 18.05.2021
+                                        ,SUM_LPU    as 'USL/TARIF'
+                                        ,SUM_LPU    as 'USL/SUMV_USL'
+                                        ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
+                                        ,PRVS       as 'USL/MR_USL_N/PRVS'
+                                        ,IDDOKT     as 'USL/MR_USL_N/CODE_MD'
                                     where LPU_ST in (4, 5)
                                     for xml path(''), type ) as 'SL'
                     --- продолжаем Законченный Случай Z_SL ---
@@ -1664,7 +2502,7 @@ namespace wpfReestr
         #endregion
 
         #region ---- СТАЦИОНАР ----
-        /// <summary>Загружаем данные стационара Apstac 1 (новый 2021)</summary>
+        /// <summary>Загружаем данные стационара Apstac 1 (новый 2022)</summary>
         /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
         /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
         /// <param name="pDateNNew">Начальная дата основного реестра</param>
@@ -1698,7 +2536,7 @@ namespace wpfReestr
                             ,iif(a.OtdIn = 0, a.UET3, isnull(json_value(a.xInfo, '$.Uet3'), a.UET3)) as Uet3 -- койко дни
                             ,o.Korpus                                           -- корпус отделения 1-главный, 2-филиал
                             ,iif(o.Cod in (15, 16), 1, 0) as OtdInPol           -- 1 - дневное отделение при поликлиники, 0 - соответственно при стационаре
-                            ,json_value(o.xInfo, '$.PODR') as PODR              -- код отделения
+                            ,json_value(o.xInfo, iif(year(a.DK) < 2022, '$.PODR', '$.PODRTF')) as PODR     -- код отделения, Внимание! после сдачи декабря 2021 это условие удалить
                             ,s.PROFIL                                           -- профиль врача
                             ,s.PROFIL_K                                         -- профиль койки
                             ,v.PRVSs                                            -- специальность врача
@@ -1894,7 +2732,7 @@ namespace wpfReestr
 
 
                     select IND, Tip, Nom, Usl, Dat, DopUsl, FrakcT
-                        , KSG, Factor, UprFactor, KUSmo, Day3, xInfo, Frakc as FrakcText, DayHim, Dzp
+                        , KSG, Factor, UprFactor, Day3, xInfo, Frakc as FrakcText, DayHim, Dzp
                          --,Num2, D1, NomUsl, DopUslT,  D, Duration, dur-- для тестов
                     from(
                     select  row_number() over(partition by t.IND order by k.Factor desc, len(g.D1) desc) as Nom
@@ -1913,8 +2751,7 @@ namespace wpfReestr
                             ,g.DopUsl
                             ,g.Frakc
                             ,k.Factor
-                            ,k.UprFactor
-                            ,isnull(k.KUSmo, 0) as KUSmo
+                            ,k.UprFactor                           
                             ,k.Day3
                             ,t.xInfo
                             ,t.DopUsl as DopUslT
@@ -2066,6 +2903,7 @@ namespace wpfReestr
                         ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
                         ,s.PRVS
                         ,s.PROFIL
+                        ,s.Profil_K  -- последнице цифры кода подразделения (начиная с 2022)
                         ,s.CODE_USL
                         ,s.VID_VME
                         ,s.VidPom
@@ -2105,6 +2943,7 @@ namespace wpfReestr
                         ,datename(yy, cast(p.pDate as datetime) - k.DR) - 1900 as Age
                         ,s.PRVS
                         ,s.PROFIL
+                        ,s.Profil_K
                         ,s.CODE_USL
                         ,s.VID_VME
                         ,s.VidPom

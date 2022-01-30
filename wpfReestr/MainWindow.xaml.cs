@@ -902,14 +902,14 @@ namespace wpfReestr
             MET_Create_StrahFile();
         }
 
-        /// <summary>МЕТОД Выгузка в XML 2021</summary>
+        /// <summary>МЕТОД Выгузка в XML 2022</summary>
         private void MET_SaveXML()
         {
             try
             {
-                if (MET_IntGrid2("YEAR") < 2019 || MET_IntGrid2("Cod") < 1256)
+                if (MET_IntGrid2("YEAR") < 2021 || MET_IntGrid2("Cod") < 1373)
                 {
-                    MessageBox.Show("Данная версия выгружает, только реестры начиная с 2021 года, начиная с 1256 реестра");
+                    MessageBox.Show("Данная версия выгружает, только реестры начиная с 2022 года (включая превышения за декабрь 2021, начиная с 1373 реестра");
                     return;
                 }
 
@@ -921,13 +921,13 @@ namespace wpfReestr
                 switch (MET_StrGrid2("VMP"))
                 {
                     case "ЗНО":
-                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_C_2021(_Cod, _MainFileName), _MainFileName);
+                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_C_2022(_Cod, _MainFileName), _MainFileName);
                         break;
                     case "ВМП":
-                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_T_2021(_Cod, _MainFileName), _MainFileName);
+                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_T_2022(_Cod, _MainFileName), _MainFileName);
                         break;
                     case "без С":
-                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_H_2021(_Cod, _MainFileName), _MainFileName);
+                        MySql.MET_QueryXML(MyQuery.StrahReestrXML_Select_H_2022(_Cod, _MainFileName), _MainFileName);
                         break;
                     default:
                         MessageBox.Show("Данная версия не выгружает такие файлы, обратитесь к...");

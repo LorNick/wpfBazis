@@ -78,7 +78,7 @@ namespace wpfReestr
             }
             else
             {
-                PRI_StrahReestr.PODR = m.MET_ParseDec(PRI_StrahReestr.LPU_1.ToString() + m.MET_PoleInt("Profil_K", _RowPar).ToString("D2"));
+                PRI_StrahReestr.PODR = m.MET_ParseDec("550900" + m.MET_PoleInt("Profil_K", _RowPar).ToString("D2"));
             }
 
             // DS1 (Диагноз)

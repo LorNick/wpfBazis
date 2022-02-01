@@ -2047,7 +2047,7 @@ namespace wpfReestr
                 // Коэффицент подуровня стационара (КУСмо)
                 PRI_Sl.KOEF_U = 1.2;
                 // Для ВМП отделений другой коэффициент
-                if (new[] { 5555090001m, 5555090002m, 5555090003m, 5555090004m, 5555090009m, 5555090010m }.Contains((decimal)PRI_StrahReestr.PODR))
+                if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
                         PRI_Sl.KOEF_U = 1.35;
 
                 // Коэфициент затратоёмкости
@@ -2068,7 +2068,7 @@ namespace wpfReestr
                 else
                 {
                     // ССксг = БС * КД * (КЗксг * КСксг * КУСмо * КСЛП)
-                    PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_D * (PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U * PRI_Sl.IT_SL);
+                    PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_D * (PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U * (PRI_Sl.IT_SL == 0 ? 1 : PRI_Sl.IT_SL));
                 }
 
                 //if (PRI_Sl.IT_SL == 1)

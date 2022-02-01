@@ -83,13 +83,16 @@ namespace wpfReestr
             PRI_StrahReestr.EX_DATE = m.MET_PoleDate("DK", _RowApac);
 
             // PODR (Код отделения)
-            if (PRI_StrahReestr.EX_DATE.Value.Year < 2022)
-            {
-                string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
-                PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}2{_Prof}");
-            }
-            else
-                PRI_StrahReestr.PODR = _Podrazd == 3 ? 5555090026m : 5555090109m;
+            // Все что до 2022 ггода закоментировал, так как
+            // Корешкова сказала случаи 2021 года, закрытые в 2022 году
+            // подавать с новым кодом отделения.
+            //if (PRI_StrahReestr.EX_DATE.Value.Year < 2022)
+            //{
+            //    string _Prof = ((int)PRI_StrahReestr.PROFIL).ToString("D3");
+            //    PRI_StrahReestr.PODR = m.MET_ParseDec($"3{_Prof}2{_Prof}");
+            //}
+            //else
+            PRI_StrahReestr.PODR = _Podrazd == 3 ? 55090026m : 55090109m;
 
             // DS1 -> DS (Диагноз)
             PRI_StrahReestr.DS1 = m.MET_PoleStr("D", PRI_RowReestr);

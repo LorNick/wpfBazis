@@ -610,7 +610,7 @@ namespace wpfReestr
                         ,ID_PAC     as 'ZAP/PACIENT/ID_PAC'
                         ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                         ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
-                        ,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
+                        ,NUMBER     as 'ZAP/PACIENT/NPOLIS'
                         ,iif(VPOLIS = 3, NUMBER, null) as 'ZAP/PACIENT/ENP'
                         ,0          as 'ZAP/PACIENT/NOVOR'
             -- Законченный случай Z_SL ---
@@ -787,12 +787,12 @@ namespace wpfReestr
             --- КСЛП для стационара SL_KOEF ---
                                     ,(select -- с 2022 года
                                                 1      as 'SL_KOEF/IDSL'
-                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl01') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl01') as decimal(8,5))  as 'SL_KOEF/Z_SL'
                                         where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl01') = 1
                                         for xml path(''), type ) as 'KSG_KPG'
                                     ,(select -- с 2022 года
                                                 2      as 'SL_KOEF/IDSL'
-                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl02') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                            ,cast(dbo.jsonValReal(NOM_USL, 'Sl02') as decimal(8,5))  as 'SL_KOEF/Z_SL'
                                         where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl02') = 1
                                         for xml path(''), type ) as 'KSG_KPG'
                                     ,(select -- до 2022 года
@@ -1225,7 +1225,7 @@ namespace wpfReestr
                                 ,ID_PAC     as 'ZAP/PACIENT/ID_PAC'
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
-                                ,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
+                                ,NUMBER     as 'ZAP/PACIENT/NPOLIS'
                                 ,iif(VPOLIS = 3, NUMBER, null) as 'ZAP/PACIENT/ENP'
                                 ,0          as 'ZAP/PACIENT/NOVOR'
                     -- Законченный случай Z_SL ---
@@ -1704,7 +1704,8 @@ namespace wpfReestr
                                 ,ID_PAC     as 'ZAP/PACIENT/ID_PAC'
                                 ,VPOLIS     as 'ZAP/PACIENT/VPOLIS'
                                 ,iif(SERIA = '', null, SERIA) as 'ZAP/PACIENT/SPOLIS'
-                                ,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
+                                ,NUMBER     as 'ZAP/PACIENT/NPOLIS'
+                                --,iif(VPOLIS < 3, NUMBER, null) as 'ZAP/PACIENT/NPOLIS'
                                 ,iif(VPOLIS = 3, NUMBER, null) as 'ZAP/PACIENT/ENP'
                                 ,0          as 'ZAP/PACIENT/NOVOR'
                     -- Законченный случай Z_SL ---
@@ -1790,6 +1791,8 @@ namespace wpfReestr
                                             ,1.00       as 'USL/KOL_USL'
                                             ,0.00       as 'USL/TARIF'
                                             ,0.00       as 'USL/SUMV_USL'
+                                            ,PRVS_Usl   as 'USL/PRVS'               
+                                            ,MD         as 'USL/CODE_MD'            
                                             ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
                                             ,PRVS_Usl   as 'USL/MR_USL_N/PRVS'
                                             ,MD         as 'USL/MR_USL_N/CODE_MD'
@@ -1823,6 +1826,8 @@ namespace wpfReestr
                                             ,1          as 'USL/KOL_USL'  --cast(KOL_USL as decimal(5,2)) -- 18.05.2021
                                             ,0.00       as 'USL/TARIF'
                                             ,0.00       as 'USL/SUMV_USL'
+                                            ,PRVS       as 'USL/PRVS'               
+                                            ,IDDOKT     as 'USL/CODE_MD'            
                                             ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
                                             ,PRVS       as 'USL/MR_USL_N/PRVS'
                                             ,IDDOKT     as 'USL/MR_USL_N/CODE_MD'
@@ -1845,6 +1850,8 @@ namespace wpfReestr
                                             ,1          as 'USL/KOL_USL' --cast(isnull(Frakc, 1) as decimal(5,2)) -- 18.05.2021
                                             ,0.00       as 'USL/TARIF'
                                             ,0.00       as 'USL/SUMV_USL'
+                                            ,PRVS       as 'USL/PRVS'               
+                                            ,IDDOKT     as 'USL/CODE_MD'            
                                             ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
                                             ,PRVS       as 'USL/MR_USL_N/PRVS'
                                             ,IDDOKT     as 'USL/MR_USL_N/CODE_MD'
@@ -1878,6 +1885,8 @@ namespace wpfReestr
                                         ,1          as 'USL/KOL_USL' --cast(KOL_USL as decimal(5,2))  -- 18.05.2021
                                         ,SUM_LPU    as 'USL/TARIF'
                                         ,SUM_LPU    as 'USL/SUMV_USL'
+                                        ,PRVS       as 'USL/PRVS'               
+                                        ,IDDOKT     as 'USL/CODE_MD'            
                                         ,1          as 'USL/MR_USL_N/MR_N'      -- врачи
                                         ,PRVS       as 'USL/MR_USL_N/PRVS'
                                         ,IDDOKT     as 'USL/MR_USL_N/CODE_MD'

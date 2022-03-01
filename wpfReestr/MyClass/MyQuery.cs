@@ -2162,7 +2162,7 @@ namespace wpfReestr
         #endregion
 
         #region ---- Для формирования реестра ----
-        /// <summary>Заготовка таблицы StrahReestr  (Новый 2021)</summary>
+        /// <summary>Заготовка таблицы StrahReestr  (2021)</summary>
         /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
         /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
         /// <param name="pDateNNew">Начальная дата основного реестра</param>
@@ -2511,7 +2511,7 @@ namespace wpfReestr
         #endregion
 
         #region ---- СТАЦИОНАР ----
-        /// <summary>Загружаем данные стационара Apstac 1 (новый 2022)</summary>
+        /// <summary>Загружаем данные стационара Apstac 1 (2022)</summary>
         /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
         /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
         /// <param name="pDateNNew">Начальная дата основного реестра</param>
@@ -2609,7 +2609,7 @@ namespace wpfReestr
             return _Return;
         }
 
-        /// <summary>Загружаем данные кодов КСГ в файл стационара Apstac 2 (новый 2021)</summary>
+        /// <summary>Загружаем данные кодов КСГ в файл стационара Apstac 2 (2021)</summary>
         /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
         /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
         /// <param name="pDateNNew">Начальная дата основного реестра</param>
@@ -2741,7 +2741,7 @@ namespace wpfReestr
 
 
                     select IND, Tip, Nom, Usl, Dat, DopUsl, FrakcT
-                        , KSG, Factor, UprFactor, Day3, xInfo, Frakc as FrakcText, DayHim, Dzp
+                        , KSG, Factor, UprFactor, KUSmo, Day3, xInfo, Frakc as FrakcText, DayHim, Dzp
                          --,Num2, D1, NomUsl, DopUslT,  D, Duration, dur-- для тестов
                     from(
                     select  row_number() over(partition by t.IND order by k.Factor desc, len(g.D1) desc) as Nom
@@ -2760,7 +2760,8 @@ namespace wpfReestr
                             ,g.DopUsl
                             ,g.Frakc
                             ,k.Factor
-                            ,k.UprFactor                           
+                            ,k.UprFactor
+                            ,isnull(k.KUSmo, 0) as KUSmo -- Вернул 01/03/2022
                             ,k.Day3
                             ,t.xInfo
                             ,t.DopUsl as DopUslT
@@ -2795,7 +2796,7 @@ namespace wpfReestr
             return _Return;
         }
 
-        /// <summary>Загружаем данные стационара Apstac 3 (консилиумы) (новый 2021)</summary>
+        /// <summary>Загружаем данные стационара Apstac 3 (консилиумы) (2021)</summary>
         /// <param name="pTipReestr">Тип реестра 1 - (T) ВМП, 3 - (C) ЗНО, 4 - (H) Без С</param>
         /// <param name="pMain">1 - основной реестр (учитываем иправления за прошлый месяц), 0 - тестовый реестр (только данные за указанный период)</param>
         /// <param name="pDateNNew">Начальная дата основного реестра</param>

@@ -10,7 +10,7 @@
         public string Ksg { get; set; }
         public double Fact { get; set; }
         public double UprFactor { get; set; }
-        //public int KUSmo { get; set; }  // устарел с 2021 года
+        public int KUSmo { get; set; }  // устарел с 2021 года (вернули в феврале 2022)
         public string D { get; set; }
         public string PRVS_Usl { get; set; }
         public string Code_Usl { get; set; }

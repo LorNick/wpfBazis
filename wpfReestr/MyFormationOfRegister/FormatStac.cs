@@ -510,7 +510,7 @@ namespace wpfReestr
                     Ksg = m.MET_PoleStr("KSG", _KsgRow),
                     Fact = m.MET_PoleRea("Factor", _KsgRow),
                     UprFactor = m.MET_PoleRea("UprFactor", _KsgRow),
-                    //KUSmo = m.MET_PoleInt("KUSmo", _KsgRow),
+                    KUSmo = m.MET_PoleInt("KUSmo", _KsgRow),
                     Day3 = m.MET_PoleInt("Day3", _KsgRow),
                     Dzp = m.MET_PoleRea("Dzp", _KsgRow)
                 };
@@ -1036,7 +1036,7 @@ namespace wpfReestr
                 PRI_Sl.IT_SL = Math.Round(PRI_Sl.IT_SL + 1, 2);
 
                 // Коэффицент подуровня стационара (КУСмо)
-                //if (PRI_Sl.USL[0].KUSmo == 0) устарел с 2021
+                //if (PRI_Sl.USL[0].KUSmo == 0) устарел с 2021 - а нифига, в феврале вернули
                 //// Если не сказанно, что нужно ингорировать коэффициет подуровня (из dbo.StrahKsg поля KUSmo = 1)
                 //{
                     PRI_Sl.KOEF_U = 1.2;
@@ -1528,7 +1528,7 @@ namespace wpfReestr
                     Ksg = m.MET_PoleStr("KSG", _KsgRow),
                     Fact = m.MET_PoleRea("Factor", _KsgRow),
                     UprFactor = m.MET_PoleRea("UprFactor", _KsgRow),
-                    //KUSmo = m.MET_PoleInt("KUSmo", _KsgRow), устарел ещё с 2021
+                    KUSmo = m.MET_PoleInt("KUSmo", _KsgRow), //устарел ещё с 2021, вернули в фервале 2022
                     Day3 = m.MET_PoleInt("Day3", _KsgRow),
                     Dzp = m.MET_PoleRea("Dzp", _KsgRow)
                 };
@@ -2045,10 +2045,27 @@ namespace wpfReestr
                 //PRI_Sl.IT_SL = Math.Round(PRI_Sl.IT_SL + 1, 2);
 
                 // Коэффицент подуровня стационара (КУСмо)
-                PRI_Sl.KOEF_U = 1.2;
-                // Для ВМП отделений другой коэффициент
-                if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
+                if (PRI_StrahReestr.EX_DATE >= new DateTime(2022, 2, 1))
+                {
+                    if (PRI_Sl.USL[0].KUSmo == 0)
+                    // Если не сказанно, что нужно ингорировать коэффициет подуровня (из dbo.StrahKsg поля KUSmo = 1)
+                    {                   
+                        PRI_Sl.KOEF_U = 1.17;
+                        // Для ВМП отделений другой коэффициент
+                        if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
+                            PRI_Sl.KOEF_U = 1.32;                                        
+                    }
+                    else
+                        PRI_Sl.KOEF_U = 1;
+                }
+                else
+                {
+                    // Старые за январь
+                    PRI_Sl.KOEF_U = 1.2;
+                    // Для ВМП отделений другой коэффициент
+                    if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
                         PRI_Sl.KOEF_U = 1.35;
+                }
 
                 // Коэфициент затратоёмкости
                 PRI_Sl.KOEF_Z = PRI_Sl.USL[0].Fact;
@@ -2067,8 +2084,8 @@ namespace wpfReestr
                 }
                 else
                 {
-                    // ССксг = БС * КД * (КЗксг * КСксг * КУСмо * КСЛП)
-                    PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_D * (PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U * (PRI_Sl.IT_SL == 0 ? 1 : PRI_Sl.IT_SL));
+                    // ССксг = БС * КД * ((КЗксг * КСксг * КУСмо) + КСЛП)
+                    PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_D * ((PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U) + PRI_Sl.IT_SL);
                 }
 
                 //if (PRI_Sl.IT_SL == 1)
@@ -2126,8 +2143,8 @@ namespace wpfReestr
                     }
                     else
                     {
-                        // ССксг = БС * КД * (КЗксг * КСксг * КУСмо * КСЛП)
-                        PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_D * (PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U); // * PRI_Sl.IT_SL); // КСЛП неделаем
+                        // ССксг = БС * КД * (КЗксг * КСксг * КУСмо + КСЛП)
+                        PRI_Sl.SUMV = (double)PRI_StrahReestr.TARIF * PRI_Sl.KOEF_D * (PRI_Sl.KOEF_Z * PRI_Sl.KOEF_UP * PRI_Sl.KOEF_U); // + PRI_Sl.IT_SL); // КСЛП неделаем
                     }
 
                     // Сверх короткий случай (если нет операций (не Ашки), а только диагноз)

@@ -94,6 +94,10 @@ namespace wpfReestr
                     // Перерасчет реестра
                     MET_DeleteFromExcel();
                     break;
+                case "_Комментарии к случаям реестра через Excel":
+                    // Перерасчет реестра
+                    MET_CommentFromExcel();
+                    break;
                 case "_Обновить":
                     // Обновить
                     MET_Update_StrahFile();
@@ -1224,6 +1228,64 @@ namespace wpfReestr
             {
                 MySql.MET_QueryNo(MyQuery.ZeroFromExcel_Update_1());
                 MessageBox.Show($"Записей обнулено", "Это конец");
+            }
+        }
+
+        /// <summary>МЕТОД Проставляем коментарии в реестре, по выбранному Excel файлу</summary>
+        public void MET_CommentFromExcel()
+        {
+            OpenFileDialog _OpenFileDialog = new OpenFileDialog();
+            _OpenFileDialog.Filter = "Файл комментарии (Комментарии*.xlsx)|Комментарии*.xlsx";
+            if (_OpenFileDialog.ShowDialog() != true) return;
+
+            e.Application _ExcelApp = new e.Application();
+            e.Workbook _WorkBook = _ExcelApp.Workbooks.Open(_OpenFileDialog.FileName);
+            e.Worksheet _Sheet = (e.Worksheet)_WorkBook.Worksheets.Item[1];
+
+            DataTable _Table = new DataTable();
+            _Table.Columns.Add("IDCase", Type.GetType("System.Int32"));
+            _Table.Columns.Add("Reestr", Type.GetType("System.Int32"));
+            _Table.Columns.Add("Comment", Type.GetType("System.String"));
+
+            int _y = 1;
+            int _x = 1;
+            try
+            {
+                while (_Sheet.Cells[_y, 1].Value2 is double)
+                {
+                    _x = 1;
+                    _Table.Rows.Add(new object[] { (int)_Sheet.Cells[_y, _x++].Value2, (int)_Sheet.Cells[_y, _x++].Value2, (string)_Sheet.Cells[_y, _x++].Value2 });
+                    _y++;
+                }
+            }
+            catch (Exception)
+            {
+                _WorkBook.Close();
+                _ExcelApp.Quit();
+                MessageBox.Show($"Ошибка загрузки в строке: {_y}, в столбце: {--_x}", "Ошибка");
+                return;
+            }
+
+            _WorkBook.Close();
+            _ExcelApp.Quit();
+
+            MySql.MET_QueryNo("delete Bazis.dbo.StrahZero");
+
+            MySql.MET_SqlBulkCopy(_Table);
+
+            var _Hach = MySql.MET_QueryHash(MyQuery.CommentFromExcel_Select_1());
+
+            if ((int)_Hach["Cou"] == 0)
+            {
+                MessageBox.Show($"Что то не нашел что комментровать?! Тут что то не так.", "Ошибка");
+                return;
+            }
+
+            if (MessageBox.Show($"Вы точно хотите проставить комментрии {(int)_Hach["Cou"]} записей в {(int)_Hach["Rees"]} реестрах?", "Одумайтесь!",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                MySql.MET_QueryNo(MyQuery.CommentFromExcel_Update_1());
+                MessageBox.Show($"Комментарии проставлены", "Это конец");
             }
         }
         #endregion

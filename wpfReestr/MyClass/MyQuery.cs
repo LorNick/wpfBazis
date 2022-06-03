@@ -814,6 +814,7 @@ namespace wpfReestr
                                 ,1.00       as 'SL/ED_COL'
                                 ,SUM_LPU    as 'SL/TARIF'
                                 ,SUM_LPU    as 'SL/SUM_M'
+                                ,JSON_VALUE(NOM_USL,'$.COMENTSL') as 'SL/COMENTSL'
             --- Услуга Поликлиники USL ---
                                 ,(select
                                     row_number() over (order by Cod) as 'USL/IDSERV'
@@ -1775,6 +1776,7 @@ namespace wpfReestr
                                         ,1.00       as 'SL/ED_COL'
                                         ,SUM_LPU    as 'SL/TARIF' --iif(LPU_ST in (1, 2), SUM_LPU, null)    as 'SL/TARIF'
                                         ,SUM_LPU    as 'SL/SUM_M'
+                                        ,JSON_VALUE(NOM_USL,'$.COMENTSL') as 'SL/COMENTSL'
                     --- Услуга Поликлиники USL ---
                                         ,(select
                                             row_number() over (order by Cod) as 'USL/IDSERV'
@@ -2020,6 +2022,29 @@ namespace wpfReestr
                   on r.CodFile = t.Reestr and r.NOM_ZAP = t.IDCase";
             return _Return;
         }
+        /// <summary>Смотрим скольким записям будет проставлен комментарий и тип реестров (основные или исправленные) (из Excel)</summary>
+        public static string CommentFromExcel_Select_1()
+        {
+            string _Return = $@"
+                select count(*) as Cou, count(distinct z.Reestr) as Rees
+                from Bazis.dbo.StrahReestr    as r 
+                join Bazis.dbo.StrahZero    as z  on r.CodFile = z.Reestr and r.NOM_ZAP = z.IDCase
+              --  join Bazis.dbo.StrahFile    as f  on z.Reestr = f.Cod";
+            return _Return;
+        }
+
+        /// <summary>Ставим комментарии записям из реестров (из Excel)</summary>
+        public static string CommentFromExcel_Update_1()
+        {
+            string _Return = $@"
+                update r
+                    set r.NOM_USL = JSON_MODIFY(r.NOM_USL,'$.COMENTSL', t.Comment)
+                from Bazis.dbo.StrahReestr as r
+                join Bazis.dbo.StrahZero as t
+                  on r.CodFile = t.Reestr and r.NOM_ZAP = t.IDCase";
+            return _Return;
+        }
+
         #endregion
 
         #region ---- Отчеты ----
@@ -2357,9 +2382,12 @@ namespace wpfReestr
                                                         from dbo.APAC as a2
                                                         where a2.NumberFirstTap = a.NumberFirstTap), 1) as uet3
                         ,iif(a.Cod <> a.NumberFirstTap, '3.0', '1.0') as P_CEL      -- цель посещения
-                        ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,        -- 1 - острый характер заболевания
-                            iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DP) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
-                                iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DP) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
+                        ,iif(@TipReestr = 3,										-- если реестр ЗНО то смотрим впервые/повторно в канцер-регистре
+								iif(exists(select kr.CD from RakReg.dbo.kr_Pasport as kr join RakReg.dbo.Ds as d on kr.CD = d.PatientCD join RakReg.dbo._Sick as s on d.[Top] = s.CD 
+											 where kr.KL = a.KL and s.[Text] like left(a.D,3) + '%' and isnull(d.D_ADDSDate,d.D_DsSDate) < a.DP ),3,2) -- Если состоит в канцер-регистре с данным заболеванием: 3 - хронический повторный иначе 2 - хронический впервые	
+    							,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,        -- 1 - острый характер заболевания
+									iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DP) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
+										iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DP) >  year(a3.DK)), 3, 2))))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
                 from dbo.APAC               as a                                    -- поликлиника
                 join dbo.APAC               as a1   on a.NumberFirstTap = a1.Cod
                 left join dbo.s_VrachPol    as v    on a.KV = v.KOD
@@ -2563,9 +2591,12 @@ namespace wpfReestr
                             ,555509 as NPR_MO                                   -- ЛПУ направления
                             ,cast(json_value(a.xInfo, '$.DateNapr') as date) as NPR_DATE        -- дата направления
                             ,ki.jTag
-                            ,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,               -- 1 - острый характер заболевания
-                                iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DK) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
-                                    iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DK) >  year(a3.DK)), 3, 2)))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
+                            ,iif(@TipReestr = 3,								  -- если реестр ЗНО то смотрим впервые/повторно в канцер-регистре (23.03.2022)
+								iif(exists(select kr.CD from RakReg.dbo.kr_Pasport as kr join RakReg.dbo.Ds as d on kr.CD = d.PatientCD join RakReg.dbo._Sick as s on d.[Top] = s.CD 
+											 where kr.KL = a.KL and s.[Text] like left(a.D,3) + '%' and isnull(d.D_ADDSDate,d.D_DsSDate) < a.DK ),3,2) -- Если состоит в канцер-регистре с данным заболеванием: 3 - хронический повторный иначе 2 - хронический впервые	
+								,iif(json_value (d.xInfo, '$.character') = 'ostr', 1,               -- 1 - острый характер заболевания
+									iif(exists(select a2.Cod from dbo.APAC as a2 with (nolock) where a2.KL = a.KL and a2.D = a.D and year(a.DK) >  year(a2.DP)), 3,  -- 3 - хронический повторный, если был в прошлом году в поликлинике
+										iif(exists(select a3.IND from dbo.APSTAC as a3 with (nolock) where a3.KL = a.KL and a3.D = a.D and year(a.DK) >  year(a3.DK)), 3, 2))))   as C_Zab  -- 3 - хронический повторный, если был в прошлом году в стационаре, иначе 2 - хронический впервые
                             from dbo.APSTAC as a                                   -- стационар
                             left join dbo.ErrorASU    as e    on a.PD = e.Cod      -- справочник ошибок
                             join dbo.s_Department   as o    on o.Cod = a.otd       -- отделения
@@ -2743,9 +2774,9 @@ namespace wpfReestr
                     select IND, Tip, Nom, Usl, Dat, DopUsl, FrakcT
                         , KSG, Factor, UprFactor, KUSmo, Day3, xInfo, Frakc as FrakcText, DayHim, Dzp
                          --,Num2, D1, NomUsl, DopUslT,  D, Duration, dur-- для тестов
-                    from(
+                    from(   -- Если не получится то вернуть а произведение коэф удалить
                     select  row_number() over(partition by t.IND order by k.Factor desc, len(g.D1) desc) as Nom
-                                ,row_number() over(partition by t.IND, t.NomUsl order by k.Factor desc, len(g.D1) desc) as Num2
+                            ,row_number() over(partition by t.IND, t.NomUsl order by k.Factor desc, len(g.D1) desc) as Num2
                             -- старая строка, должны потом скорей всего вернуть
                             -- если есть и диагноз и услуга, а напротив только услуга, то берем ту где и услуга и диагноз
                             -- ,row_number() over(partition by t.IND, t.NomUsl order by iif(len(g.D1) > 0 and len(g.Usl) > 0, 0, 1), k.Factor desc, len(g.D1) desc) as Num2

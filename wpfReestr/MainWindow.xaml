@@ -65,6 +65,7 @@
                 <telerik:RadMenuItem Header="_Перерасчет реестра" Click="MenuItem_Click"></telerik:RadMenuItem>
                 <telerik:RadMenuItem Header="_Обнуление реестра через Excel" Click="MenuItem_Click"></telerik:RadMenuItem>
                 <telerik:RadMenuItem Header="_Удаление реестра через Excel" Click="MenuItem_Click"></telerik:RadMenuItem>
+                <telerik:RadMenuItem Header="_Комментарии к случаям реестра через Excel" Click="MenuItem_Click"></telerik:RadMenuItem>
                 <telerik:RadMenuItem IsSeparator="True" />
                 <telerik:RadMenuItem Header="_Обновить" Click="MenuItem_Click"></telerik:RadMenuItem>
                 <telerik:RadMenuItem IsSeparator="True" />

@@ -132,7 +132,7 @@ namespace wpfStatic
         public static string MET_OpenFileDialog()
         {
             OpenFileDialog _OpenFileDialog = new OpenFileDialog();
-            _OpenFileDialog.Filter = "pdf files (*.pdf)|*.pdf";
+            _OpenFileDialog.Filter = "pdf files (*.pdf)|*.pdf"; //"pdf files (*.pdf)|*.pdf|Image Files(*.jpg;*.jpeg;*.png)|*.jpg;*.jpeg;*.png";
             _OpenFileDialog.ShowDialog();
             return _OpenFileDialog.FileName;           
         }
@@ -151,7 +151,7 @@ namespace wpfStatic
             {
                 _hashName += _b.ToString("x2");
             }
-            return _hashName + ".pdf";
+            return $"{_hashName}{new FileInfo(fullNameFile).Extension}";
         }
 
         /// <summary>МЕТОД API Проверяем Отсутствие файла на сервере</summary>
@@ -233,7 +233,7 @@ namespace wpfStatic
             }
             catch (Exception)
             {
-                MessageBox.Show($"Не смог загрузить PDF файл", "Ошибка загрузки файла");
+                MessageBox.Show($"Не смог загрузить файл", "Ошибка загрузки файла");
             }
         }
 

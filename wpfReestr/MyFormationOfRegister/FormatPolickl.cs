@@ -116,7 +116,7 @@ namespace wpfReestr
             int[] _RES_G = { 0, 301, 301, 304, 305, 306, 307, 308, 309, 311, 311, 306 };
             int _Rezobr = m.MET_PoleInt("REZOBR", _RowApac);
             // Если месяц сдачи совпадает с месяцем посещения или исправленный, то смотрим какой результат проставили врачи
-            if (PRI_StrahReestr.EX_DATE.Value.Month == PRI_StrahFile.MONTH || PRI_StrahFile.pParent > 0)
+            if (PRI_StrahReestr.EX_DATE.Value.Month == PRI_StrahFile.MONTH || (PRI_StrahFile.pParent > 0 && PRI_StrahReestr.EX_DATE.Value >= PRI_StrahFile.DateN.Value.AddMonths(-1)))
                 PRI_StrahReestr.RES_G = _RES_G[_Rezobr];
             else        
                 // если месяц не совпадает, то ставим результат обращения 302 - прерван по инициативе пациента (ну типо больше не пришел)
@@ -276,7 +276,8 @@ namespace wpfReestr
                                 // Цель посещения - диспансерное наблюдение - Состоит
                                 // 20.05.2022 если случай совпадает с отчетным месяцем то оставляем диспансерное наблюдение
                                 // иначе разовое посещение, так как диспансерное наблюдение подается в отчетный месяц
-                                if (_Cel == 4.0 && PRI_StrahReestr.EX_DATE.Value.Month == PRI_StrahFile.MONTH)
+                                if (_Cel == 4.0 && (PRI_StrahReestr.EX_DATE.Value.Month == PRI_StrahFile.MONTH 
+                                    || (PRI_StrahFile.pParent > 0 && PRI_StrahReestr.EX_DATE.Value >= PRI_StrahFile.DateN.Value.AddMonths(-1))))
                                 {
                                     PRI_Sl.P_Cel = "1.3";
                                   //  PRI_Sl.DN = 1;

@@ -2045,26 +2045,31 @@ namespace wpfReestr
                 //PRI_Sl.IT_SL = Math.Round(PRI_Sl.IT_SL + 1, 2);
 
                 // Коэффицент подуровня стационара (КУСмо)
-                if (PRI_StrahReestr.EX_DATE >= new DateTime(2022, 2, 1))
+                if (PRI_StrahReestr.EX_DATE >= new DateTime(2022, 8, 1))
                 {
                     if (PRI_Sl.USL[0].KUSmo == 0)
                     // Если не сказанно, что нужно ингорировать коэффициет подуровня (из dbo.StrahKsg поля KUSmo = 1)
                     {                   
-                        PRI_Sl.KOEF_U = 1.17;
+                        PRI_Sl.KOEF_U = 1.04;
                         // Для ВМП отделений другой коэффициент
                         if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
-                            PRI_Sl.KOEF_U = 1.32;                                        
+                            PRI_Sl.KOEF_U = 1.1;                                        
                     }
                     else
                         PRI_Sl.KOEF_U = 1;
                 }
                 else
                 {
-                    // Старые за январь
-                    PRI_Sl.KOEF_U = 1.2;
-                    // Для ВМП отделений другой коэффициент
-                    if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
-                        PRI_Sl.KOEF_U = 1.35;
+                    if (PRI_Sl.USL[0].KUSmo == 0)
+                    // Если не сказанно, что нужно ингорировать коэффициет подуровня (из dbo.StrahKsg поля KUSmo = 1)
+                    {
+                        PRI_Sl.KOEF_U = 1.17;
+                        // Для ВМП отделений другой коэффициент
+                        if (new[] { 55090001m, 55090002m, 55090003m, 55090004m, 55090009m, 55090010m }.Contains((decimal)PRI_StrahReestr.PODR))
+                            PRI_Sl.KOEF_U = 1.32;
+                    }
+                    else
+                        PRI_Sl.KOEF_U = 1;
                 }
 
                 // Коэфициент затратоёмкости
@@ -2130,8 +2135,13 @@ namespace wpfReestr
                     //PRI_Sl.IT_SL = 1;
 
                     // Коэффицент подуровня стационара (КУСмо)
-                    PRI_Sl.KOEF_U = 1.09;
-
+                    if (PRI_StrahReestr.EX_DATE >= new DateTime(2022, 8, 1))
+                    {
+                        PRI_Sl.KOEF_U = 1.04;
+                    }
+                    else {
+                        PRI_Sl.KOEF_U = 1.09;
+                    }
                     // Если взрослая химия
                     if (PRI_Sl.USL[0]?.Dzp > 0)
                     {

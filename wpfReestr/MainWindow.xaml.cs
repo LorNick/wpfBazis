@@ -1060,6 +1060,7 @@ namespace wpfReestr
             _Sheet.Cell("AD1").Value = "Архив";
             _Sheet.Cell("AE1").Value = "N013";
             _Sheet.Cell("AF1").Value = "Основной";
+            _Sheet.Cell("AG1").Value = "Комментарий";
             // Заголовок
             _Sheet.Row(1).InsertRowsAbove(1);
             _Sheet.Cell("A1").Value = "РЕЕСТР СЧЕТА № " + PRI_CodFile;

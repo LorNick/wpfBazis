@@ -1211,6 +1211,7 @@ namespace wpfReestr
         /// <summary>МЕТОД 5. Расчет Стационара 2022 (Расчет КСГ)</summary>
         private void MET_CalcKsg2022(DataRow pApstac)
         {
+
             // ЛПУ направления
             PRI_Sl.NPR_MO = m.MET_PoleInt("NPR_MO", pApstac);
 

@@ -182,6 +182,16 @@ namespace wpfReestr
 
             // Дата направления
             PRI_Sl.NPR_DATE = _Usluga.DatN;
+            // Дата направления
+            PRI_Sl.NPR_DATE = m.MET_PoleStr("NPR_DATE", _RowPar).Substring(0, 10);
+            // Дата направления должна быть не пустой и меньше = сегодняшнего дня
+            if (string.IsNullOrEmpty(PRI_Sl.NPR_DATE))
+            {
+                PRI_ErrorToExcel.PROP_ErrorCod = "59";
+                PRI_ErrorToExcel.PROP_ErrorName = $"(вну) Отсутствует дата направления NPR_DATE в параклинике или патоморфологии";
+                PRI_ErrorToExcel.MET_SaveError();
+                PRI_ErrorRow = true;
+            }
 
             // DS_ONK - Подозрение на ЗНО
             // PRI_Sl.DS_ONK = 1; -- убрал 30.08.2021 года

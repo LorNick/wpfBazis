@@ -2160,6 +2160,7 @@ namespace wpfReestr
                     ,iif(s.Arhiv = 1, 'не в архиве', '') as Arhiv
                     ,iif(r.LPU_ST < 3, isnull(json_value(r.NOM_USL, '$.ONK_SL.ONK_USL[0].USL_TIP'), ''), '') as N013
                     ,PR_NOV
+                    ,isnull(json_value(r.NOM_USL, '$.COMENTSL'), '') as COMENTSL
                 from @Reestr as r
                 left join (select r.Cod    -- Поликлиника
                                  ,iif(r.LPU_1 = 55550900, '1я поликлиника', '2я поликлиника') as Podr
@@ -2819,7 +2820,7 @@ namespace wpfReestr
                             and t.Duration = g.Duration
                     left join dbo.StrahKsg as k
                         on k.UslOk = t.UslOk and k.KSG = g.KSG and t.DK between k.xBeginDate and k.xEndDate
-                    where(t.Det = g.Age or g.Age is null)
+                    where (t.Det = g.Age or g.Age is null)
                             and not(g.D1 = 'C00-C80' and not left(t.D, 3) between 'C00' and 'C80') -- отсекаем химию с диагнозами, которые не входят в диапазон C00 - C80
                             and not(g.D1 = 'D00-D09' and not left(t.D, 3) between 'D00' and 'D09')
                             and not(g.D1 = 'C81-C96' and not left(t.D, 3) between 'C81' and 'C96')

@@ -13,6 +13,11 @@ namespace wpfGeneral.UserControls
         ///<summary>Скрываем отображение сетки</summary>
         private bool PRI_HideThick;
 
+        ///<summary>Выделение строк таблицы если есть значения хоть в одной ячейки</summary>
+        private bool PRI_OnlyValThick;
+
+        private int? PRI_RowSelection = null;
+
         ///<summary>МЕТОД Инициализация поля</summary>
         public override void MET_Inicial()
         {
@@ -45,6 +50,7 @@ namespace wpfGeneral.UserControls
             catch { _Column = 1; }
             //  Нужно ли скрывать отображение сетки
             PRI_HideThick = PROP_Format.MET_If("hdt");
+            PRI_OnlyValThick = PROP_Format.MET_If("onlyvaldt");
             // Формируем таблицу
             PRI_Table = new Table { CellSpacing = 0, Margin = new Thickness(0) };
             PRI_Table.RowGroups.Add(new TableRowGroup());
@@ -120,9 +126,16 @@ namespace wpfGeneral.UserControls
             {
                 _Cell = new TableCell(new Paragraph((Inline)_Element));
             }
+
+            //Если что-то есть в строке то подчеркиваем
+            if ((pPole.PROP_OutText.Length > 0 | pPole.PROP_Otvet.Length > 0 | pPole.PROP_InText.Length > 0))
+                PRI_RowSelection = _Row;
+            else if (PRI_RowSelection != _Row)
+                PRI_RowSelection = null;
             // Скрываем отображение сетки, если нужно - hdt (hide thickness)
-            if (PRI_HideThick)
+            if (PRI_HideThick || PRI_OnlyValThick)
                 _Cell.BorderThickness = new Thickness(0);
+            
             _Cell.TextAlignment = TextAlignment.Left;
             if (pPole.PROP_Format.MET_If("ac"))
                 _Cell.TextAlignment = TextAlignment.Center;
@@ -130,6 +143,12 @@ namespace wpfGeneral.UserControls
                 _Cell.TextAlignment = TextAlignment.Right;
             // Добавляем ячейку
             PRI_Table.RowGroups[0].Rows[_Row].Cells.Add(_Cell);
+
+            if( PRI_RowSelection != null && PRI_OnlyValThick)
+                foreach (var cell in PRI_Table.RowGroups[0].Rows[(int)PRI_RowSelection].Cells) {
+                    cell.BorderThickness = new Thickness(0.5);
+                }
+
             // Объединение по Строкам
             try { _RowSpan = Convert.ToUInt16(pPole.PROP_Format.PROP_Value["gRs"]); }
             catch { _RowSpan = 0; }

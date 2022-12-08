@@ -163,6 +163,10 @@ namespace wpfGeneral.UserOtchet
                             _Pole.PROP_Metca = "(без протоколов)";
                             _Pole.IsEnabled = false;
                         }
+                        // Ставим значек консилиум
+                        if (MET_PoleStr("Metka") == "консилиум")
+                            _Pole.MET_LoadIconInform("mnKons", "Наличие консилиума");
+
                         _Pole.Event_OpenNewPoleHistory = MET_OpenStac;
                         break;
                     case eTipDocum.Paracl:

@@ -709,7 +709,10 @@ namespace wpfStatic
                         on k.pIndex = 2 and p.NumShablon = k.NumShablon and p.Cod = k.CodApstac and isnull(k.xDelete, 0) = 0 and k.pDate is not NULL
                       where p.NumShablon >= 20000 and a.IND = p.CodApstac and isnull(p.xDelete, 0) = 0
                      ) as kdl
-                    ,'' as Metka
+                    ,(select top 1 'консилиум'
+                       from dbo.astProtokol as p
+                       join dbo.astListShablon as l on p.NumShablon = l.Cod 
+                      where a.IND = p.CodApstac and p.NumShablon%100 = 11 and l.TipObsled = 110 and  isnull(p.xDelete, 0) = 0) as Metka
                     ,iif(o.Tip = 1, 'mnStac', 'mnStacDnev') as ImageInform
                     ,isnull(a.xDelete, 0) as xDelete
                     ,a.xLog

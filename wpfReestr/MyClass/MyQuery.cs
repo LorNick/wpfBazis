@@ -1758,13 +1758,23 @@ namespace wpfReestr
                                             ,iif(dbo.jsonValReal(NOM_USL, 'IT_SL') is not null, 1, 0)           as 'KSG_KPG/SL_K'
                                             ,cast(dbo.jsonValReal(NOM_USL, 'IT_SL') as decimal(8,5))            as 'KSG_KPG/IT_SL'
                     --- КСЛП для стационара SL_KOEF ---
-                                            ,(select
-                                                     24      as 'SL_KOEF/IDSL'
+                                            ,(select -- с 2022 года
+                                                1      as 'SL_KOEF/IDSL'
+                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl01') as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl01') = 1
+                                                for xml path(''), type ) as 'KSG_KPG'
+                                            ,(select -- с 2022 года
+                                                        2      as 'SL_KOEF/IDSL'
+                                                    ,cast(dbo.jsonValReal(NOM_USL, 'Sl02') as decimal(8,5))  as 'SL_KOEF/Z_SL'
+                                                where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl02') = 1
+                                                for xml path(''), type ) as 'KSG_KPG'
+                                            ,(select -- до 2022 года
+                                                        24      as 'SL_KOEF/IDSL'
                                                     ,cast(dbo.jsonValReal(NOM_USL, 'Sl03') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
                                                 where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl03') = 1
                                                 for xml path(''), type ) as 'KSG_KPG'
-                                            ,(select
-                                                     10      as 'SL_KOEF/IDSL'
+                                            ,(select -- до 2022 года
+                                                        10      as 'SL_KOEF/IDSL'
                                                     ,cast(dbo.jsonValReal(NOM_USL, 'Sl10') + 1 as decimal(8,5))  as 'SL_KOEF/Z_SL'
                                                 where LPU_ST = 1 and dbo.jsonIf(NOM_USL, 'Sl10') = 1
                                                 for xml path(''), type ) as 'KSG_KPG'
@@ -2616,7 +2626,7 @@ namespace wpfReestr
                                 (PRVSs for Nom in (PRVS, PRVS_1, PRVS_2, PRVS_3, PRVS_4)) as un
                                 where  PRVSs <> ''   ) as v
                               on v.KOD = a.KV
-                                and not((a.OTD in (17, 18) and PRVSs = 41)          -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102
+                                and not((a.OTD in (17, 18, 52) and PRVSs = 41)      -- это радиологические отделения им не показываем онкологическую специальность, только радиологию 102
                                     or (a.Age > 17 and PRVSs = 19)                  -- если взрослый, то не берем специальность детскую онкологию
                                     or (p.Cod is not null and PRVSs not in (41, 57, 58)))      -- отсекаем для ВМП все специальности, кроме онкологии и радиологии
                             left join dbo.StrahTarif   as s
@@ -2956,8 +2966,8 @@ namespace wpfReestr
                         ,s.VID_VME
                         ,s.VidPom
                         ,s.Tarif
-                        ,isnull(l.KodOKPO, '555509') as NPR_MO
-                        ,convert(date, p.pDate, 104) as NPR_DATE
+                        ,iif(json_value(o.xInfo, '$.NPR_MO') is not null, json_value(o.xInfo, '$.NPR_MO'), isnull(l.KodOKPO, '555509')) as NPR_MO
+                        ,iif(json_value(o.xInfo, '$.NPR_DATE') is not null, try_cast(json_value(o.xInfo, '$.NPR_DATE') as date),convert(date, p.pDate, 104)) as NPR_DATE
                         ,row_number() over (partition by i.Cod order by p.Cod) as Dubl -- дубликат протокола, у кого больше 1, те протоколы нужно удалить
                     from dbo.parProtokol    as p
                     join dbo.parObsledov    as o    on p.CodApstac = o.Cod

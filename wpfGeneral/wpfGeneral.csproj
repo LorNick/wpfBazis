@@ -182,6 +182,9 @@
     <Compile Include="UserControls\UserPole\UserPole_ComboBox.xaml.cs">
       <DependentUpon>UserPole_ComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\UserPole\UserPole_ComboBoxFromSQL.xaml.cs">
+      <DependentUpon>UserPole_ComboBoxFromSQL.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\UserPole\UserPole_Data.xaml.cs">
       <DependentUpon>UserPole_Data.xaml</DependentUpon>
     </Compile>
@@ -237,6 +240,7 @@
     <Compile Include="UserLua\UserLua.cs" />
     <Compile Include="UserModul\VirtualModul.cs" />
     <Compile Include="UserNodes\UserNodes_AddPdf.cs" />
+    <Compile Include="UserNodes\UserNodes_RootLabDiagnosticDocum.cs" />
     <Compile Include="UserNodes\UserNodes_RootPdf.cs" />
     <Compile Include="UserNodes\UserNodes_RootObDocum.cs" />
     <Compile Include="UserNodes\VirtualNodes.cs" />
@@ -343,6 +347,10 @@
     <Page Include="UserControls\UserPole\UserPole_ComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UserPole\UserPole_ComboBoxFromSQL.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\UserPole\UserPole_Data.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -34,7 +34,10 @@ namespace wpfGeneral.UserStruct
 
         /// <summary>СВОЙСТВО Теги (в json)</summary>
         public string PROP_xInfo { get; set; }
-
+        
+        /// <summary>СВОЙСТВО Код Lua (валидация данных)</summary>
+        public string PROP_xLua { get; set; }
+        
         /// <summary>СВОЙСТВО Тип протокола</summary>
         public MyTipProtokol PROP_TipProtokol { get; set; }
 
@@ -59,6 +62,7 @@ namespace wpfGeneral.UserStruct
                 PROP_NameKr = pDataReader.GetString(pDataReader.GetOrdinal("NameKr"));
                 PROP_xFormat = pDataReader.GetString(pDataReader.GetOrdinal("xFormat"));
                 PROP_xInfo = pDataReader[pDataReader.GetOrdinal("xInfo")] as string;
+                PROP_xLua = "function OnChange() lPole(10).MET_Inicial(); end; ";//pDataReader.GetString(pDataReader.GetOrdinal("xLua"));
             }
             catch (Exception ex)
             {

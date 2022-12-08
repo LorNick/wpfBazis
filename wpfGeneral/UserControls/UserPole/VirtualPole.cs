@@ -47,6 +47,9 @@ namespace wpfGeneral.UserControls
         /// <summary>СВОЙСТВО Описание вопроса</summary>
         public virtual string PROP_Description { get; set; }
 
+        /// <summary>СВОЙСТВО Описание вопроса оригинальное значение</summary>
+        public virtual string PROP_DescriptionOriginal { get; set; }
+
         /// <summary>СВОЙСТВО Ответ</summary>
         public virtual string PROP_Text
         {

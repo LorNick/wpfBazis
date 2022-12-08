@@ -106,6 +106,13 @@ namespace wpfGeneral.UserFormShablon
                 _Date.PROP_DefaultText = DateTime.Today.ToString();             // начальное значение
                 _Date.PROP_ValueMin = Convert.ToDateTime("01/01/2011");         // минимальное число - 2011 год
                 _Date.Name = "DateOsmotr";                                      // имя поля
+                // Скрипт ЛУА для ListShablon
+                _Date.PROP_Lua = new UserLua_Standart(_Date)
+                {
+                    PROP_ChankText = PROP_Docum.PROP_ListShablon.PROP_xLua
+                };
+                _Date.PROP_Lua.MET_StartLua();
+
                 _Date.PROP_FormShablon = this;                                  // ссылка на форму
                 PUB_HashPole.Add(_Date.Name, _Date);                            // записываем элемент в очередь
                 PRI_StackPanel.Children.Add(_Date);                             // добавляем элемент на форму
@@ -138,6 +145,7 @@ namespace wpfGeneral.UserFormShablon
                     _Pole.PROP_FormShablon = this; // ссылка на форму
                     _Pole.PROP_Shablon = _Shablon.PROP_ID; // номер шаблона, как минимум нужен для Картинок
                     _Pole.PROP_Description = _Shablon.PROP_Name; // вопрос
+                    _Pole.PROP_DescriptionOriginal = _Shablon.PROP_Name; // вопрос
                     _Pole.PROP_VarId = _Shablon.PROP_VarId; // номер индификатора VarId
                     _Pole.PROP_Format = _Format; // формат поля
                     _Pole.PROP_Necessarily = _Format.MET_If("nec"); // обязательное поле

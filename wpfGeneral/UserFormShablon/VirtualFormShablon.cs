@@ -189,6 +189,9 @@ namespace wpfGeneral.UserFormShablon
                 case 17:
                     _Pole = new UserPole_Calendar();
                     break;
+                case 18:
+                    _Pole = new UserPole_ComboBoxFromSQL();
+                    break;
                 default:
                     _Pole = new UserPole_Text();
                     break;

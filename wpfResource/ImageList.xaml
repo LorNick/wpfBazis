@@ -93,6 +93,8 @@
     <BitmapImage x:Key="mnSmoInogor" UriSource="mnImag/mnSmoInogor.ico" />      <!-- Реестры иногородние страховые компании -->
     <BitmapImage x:Key="mnSmoKapital" UriSource="mnImag/mnSmoKapital.ico" />    <!-- Реестры страховая компания Капитал -->
     <BitmapImage x:Key="mnSmoSogaz" UriSource="mnImag/mnSmoSogaz.ico" />        <!-- Реестры страховая компания Согаз -->
+    <BitmapImage x:Key="mnLabs" UriSource="mnImag/mnLab.ico" />                 <!-- Лабораторная диагностика -->
+    <BitmapImage x:Key="mnLabDiagnostic" UriSource="mnImag/mnLabDiagnostic.ico" />    <!-- Лабораторная диагностика -->
 
     <BitmapImage x:Key="mnNumber1" UriSource="mnImag/mnNumber1.png" />
     <BitmapImage x:Key="mnNumber2" UriSource="mnImag/mnNumber2.png" />

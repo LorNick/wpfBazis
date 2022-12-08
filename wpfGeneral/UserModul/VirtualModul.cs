@@ -126,6 +126,21 @@ namespace wpfGeneral.UserModul
                 _Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
                 _Node.MET_Inizial();
 
+                // ВЕТКА Лабораторная диагностика
+                //_Node = new UserNodes_RootLabDiagnosticDocum
+                //{
+                //    PROP_TipNodes = eTipNodes.Kdl_LabRootsList,
+                //    Name = "eleTVItem_LabDocum",
+                //    PROP_Text = "Лаб. диагностика",
+                //    PROP_TextDefault = "Лаб. диагностика",
+                //    PROP_ImageName = "mnLabs",
+                //    PROP_ParentName = "eleTVItemObSved"
+                //};
+                //((UserNodes_RootLabDiagnosticDocum)_Node).PROP_shaTipObsled = 3;
+                //_Node.PROP_Docum = new UserDocument(_Node);
+                //_Node.PROP_Docum.PROP_Otchet = new UserOtchet_Roots { PROP_Docum = _Node.PROP_Docum };
+                //_Node.MET_Inizial();
+
                 bool _accessPdfView = false;
                 // Для тех кто может смотреть, показываем только если есть протоколы
                 if (MyPdf.PROP_AccessPdf == eAccessPdf.View)

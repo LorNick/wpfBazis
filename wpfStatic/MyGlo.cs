@@ -41,7 +41,11 @@ namespace wpfStatic
         /// <summary>Списки Kdl PDF</summary>
         Kdl_RootsPdf,
         /// <summary>Добавочная ветка Kdl PDF</summary>
-        Kdl_AddPdf
+        Kdl_AddPdf,
+        /// <summary>
+        /// Лабораторная диагностика
+        /// </summary>
+        Kdl_LabRootsList
     }
 
     /// <summary>Тип документа</summary>
@@ -279,8 +283,8 @@ namespace wpfStatic
            // TypeModul = eModul.VrPolicl;
             //      TypeModul = eModul.VrStac;
             // TypeModul = eModul.List;
-                TypeModul = eModul.Viewer;
-            //   TypeModul = eModul.VrPara;
+            //    TypeModul = eModul.Viewer;
+               TypeModul = eModul.VrPara;
             // TypeModul = eModul.KancerReg;
             //  TypeModul = eModul.OtherLpu;
           // TypeModul = eModul.Laboratory;
